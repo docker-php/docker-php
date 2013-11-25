@@ -56,17 +56,17 @@ class ContainerManagerTest extends TestCase
         $this->assertNotEmpty($container->getId());
     }
 
-    public function testStartWithHostConfig()
+    public function testExposePort()
     {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '10']]);
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
 
-        $port = new Port('80/tpc');
+        $port = new Port('8888:80/tcp');
 
         $container->setExposedPorts($port);
 
         $manager = $this->getManager();
         $manager->run($container, ['PortBindings' => $port->toSpec()]);
 
-        $this->assertNotEmpty($container->getId());
+        $this->assertEquals(8888, $container->getMappedPort(80)->getHostPort());
     }
 }

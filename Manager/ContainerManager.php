@@ -3,6 +3,7 @@
 namespace Docker\Manager;
 
 use Docker\Container;
+use Docker\Json;
 
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Exception\ServerErrorException;
@@ -55,7 +56,9 @@ class ContainerManager
      */
     public function create(Container $container)
     {
-        $request = $this->client->post('/containers/create', null, json_encode($container->getConfig()));
+        $request = $this->client->post('/containers/create');
+        $request->setBody(Json::encode($container->getConfig()), 'application/json');
+
         $response = $request->send();
 
         if ($response->getStatusCode() === 500) {
@@ -78,9 +81,11 @@ class ContainerManager
      * 
      * @return Docker\Manager\ContainerManager
      */
-    public function start(Container $container)
+    public function start(Container $container, array $hostConfig = array())
     {
         $request = $this->client->post(['/containers/{id}/start', ['id' => $container->getId()]]);
+        $request->setBody(Json::encode($hostConfig), 'application/json');
+
         $response = $request->send();
 
         if ($response->getStatusCode() === 404) {
@@ -101,11 +106,11 @@ class ContainerManager
      * 
      * @return Docker\Manager\ContainerManager
      */
-    public function run(Container $container, RunSpec $spec = null)
+    public function run(Container $container, array $hostConfig = array())
     {
         return $this
             ->create($container)
-            ->start($container);
+            ->start($container, $hostConfig);
     }
 
     /**

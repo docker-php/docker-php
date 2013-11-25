@@ -85,9 +85,24 @@ class Container
         return $this;
     }
 
+    /**
+     * @return integer
+     */
     public function getExitCode()
     {
         return $this->exitCode;
+    }
+
+    /**
+     * @param array|PortSpecInterface $ports
+     */
+    public function setExposedPorts($ports)
+    {
+        if ($ports instanceof PortSpecInterface) {
+            $this->config['ExposedPorts'] = $ports->toExposedPorts();            
+        } else {
+            $this->config['ExposedPorts'] = $ports;
+        }
     }
 
     /**

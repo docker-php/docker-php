@@ -4,7 +4,7 @@ namespace Docker;
 
 use Docker\Exception;
 
-class Port
+class Port implements PortSpecInterface
 {
     private $raw;
 
@@ -25,7 +25,7 @@ class Port
         $this->port = (integer) $parsed['port'];
         $this->protocol = $parsed['protocol'];
         $this->hostIp = (string) $parsed['hostIp'];
-        $this->hostPort = (strlen($parsed['hostPort']) > 0 ? (integer) $parsed['hostPort'] : '');
+        $this->hostPort = (strlen($parsed['hostPort']) > 0) ? (integer) $parsed['hostPort'] : '';
     }
 
     /**
@@ -35,10 +35,20 @@ class Port
     {
         return [
             $this->port.'/'.$this->protocol => [
-                'HostIp' => $this->hostIp,
-                'HostPort' => $this->hostPort
+                [
+                    'HostIp' => $this->hostIp,
+                    'HostPort' => (string) $this->hostPort
+                ]
             ]
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function toExposedPorts()
+    {
+        return [$this->port.'/'.$this->protocol => []];
     }
 
     /**

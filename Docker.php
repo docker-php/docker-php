@@ -8,6 +8,7 @@ use Docker\Exception\UnexpectedStatusCodeException;
 
 use Guzzle\Http\Client;
 use Guzzle\Stream\PhpStreamRequestFactory;
+use Guzzle\Plugin\Log\LogPlugin;
 
 class Docker
 {
@@ -40,6 +41,16 @@ class Docker
     {
         $this->client = $client ?: new Client('http://127.0.0.1:4243');
         $this->streamRequestFactory = $streamRequestFactory ?: new PhpStreamRequestFactory();
+    }
+
+    /**
+     * @return Docker\Docker
+     */
+    public function enableDebug()
+    {
+        $this->client->addSubscriber(LogPlugin::getDebugPlugin());
+
+        return $this;
     }
 
     /**

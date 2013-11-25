@@ -4,7 +4,7 @@ namespace Docker;
 
 use Docker\Exception;
 
-class PortCollection
+class PortCollection implements PortSpecInterface
 {
     private $ports;
 
@@ -32,6 +32,17 @@ class PortCollection
         }
 
         return $spec;
+    }
+
+    public function toExposedPorts()
+    {
+        $exposed = [];
+
+        foreach ($this->ports as $port) {
+            $exposed = array_merge($exposed, $port->toExposedPorts());
+        }
+
+        return $exposed;
     }
 
     public function add(Port $port)

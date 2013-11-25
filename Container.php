@@ -104,6 +104,40 @@ class Container
     }
 
     /**
+     * Accepts both (eg) 80 or 80/tcp as inputs.
+     * 
+     * @param integer|string ...$ports
+     * 
+     * @return array
+     */
+    public function getMappedPorts()
+    {
+        $ports = func_get_args();
+        $mappedPorts = [];
+
+        foreach ($ports as $protohuik) {
+            // @todo better validation of $protohuik
+            $parts = explode('/', $protohuik);
+
+            if (count($parts) === 1) {
+                $parts[] = 'tcp';
+            }
+
+            list($port, $protocol) = $parts;
+
+            try {
+                $mappedPort = $this->getMappedPort($port, $protocol);
+            } catch (PortNotFoundException $e) {
+                continue;
+            }
+
+            $mappedPorts[] = $mappedPort;
+        }
+
+        return $mappedPorts;
+    }
+
+    /**
      * @param string $id
      * 
      * @return Docker\Container

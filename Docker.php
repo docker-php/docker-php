@@ -130,7 +130,7 @@ class Docker
             $image->setRepository($config['repo']);
         }
 
-        if (array_key_exists('tag', $config['tag'])) {
+        if (array_key_exists('tag', $config)) {
             $image->setTag($config['tag']);
         }
 

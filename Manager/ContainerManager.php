@@ -21,11 +21,30 @@ class ContainerManager
     private $client;
 
     /**
+     * @var array
+     */
+    private $containers = array();
+
+    /**
      * @param Guzzle\Http\Client
      */
     public function __construct(Client $client)
     {
         $this->client = $client;
+    }
+
+    /**
+     * @param Docker\Container $container
+     * 
+     * @return Docker\Manager\ContainerManager
+     */
+    public function addContainer(Container $container)
+    {
+        if (!array_key_exists($container->getId(), $this->containers)) {
+            $this->containers[$container->getId()] = $container;
+        }
+
+        return $this;
     }
 
     /**
@@ -49,6 +68,8 @@ class ContainerManager
 
         $container->setId($response->json()['Id']);
 
+        $this->addContainer($container);
+
         return $this;
     }
 
@@ -70,6 +91,8 @@ class ContainerManager
             throw new UnexpectedStatusCodeException($response->getStatusCode());
         }
 
+        $this->addContainer($container);
+
         return $this;
     }
 
@@ -78,7 +101,7 @@ class ContainerManager
      * 
      * @return Docker\Manager\ContainerManager
      */
-    public function run(Container $container)
+    public function run(Container $container, RunSpec $spec = null)
     {
         return $this
             ->create($container)
@@ -104,6 +127,8 @@ class ContainerManager
         }
 
         $container->setExitCode($response->json()['StatusCode']);
+
+        $this->addContainer($container);
 
         return $this;
     }

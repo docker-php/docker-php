@@ -20,8 +20,18 @@ class PortCollectionTest extends PHPUnit_Framework_TestCase
         $ports = new PortCollection('80', '22');
 
         $this->assertEquals([
-            '80/tcp' => ['HostIp' => '', 'HostPort' => ''],
-            '22/tcp' => ['HostIp' => '', 'HostPort' => ''],
+            '80/tcp' => [['HostIp' => '', 'HostPort' => '']],
+            '22/tcp' => [['HostIp' => '', 'HostPort' => '']],
         ], $ports->toSpec());
+    }
+
+    public function testToExposedPorts()
+    {
+        $ports = new PortCollection('80', '22');
+
+        $this->assertEquals([
+            '80/tcp' => [],
+            '22/tcp' => [],
+        ], $ports->toExposedPorts());
     }
 }

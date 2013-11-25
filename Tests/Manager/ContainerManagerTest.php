@@ -3,6 +3,7 @@
 namespace Docker\Tests\Manager;
 
 use Docker\Container;
+use Docker\Port;
 
 use Docker\Tests\TestCase;
 
@@ -46,11 +47,25 @@ class ContainerManagerTest extends TestCase
 
     public function testWait()
     {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['sleep 1']]);
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
 
         $manager = $this->getManager();
         $manager->run($container);
         $manager->wait($container);
+
+        $this->assertNotEmpty($container->getId());
+    }
+
+    public function testStartWithHostConfig()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '10']]);
+
+        $port = new Port('80/tpc');
+
+        $container->setExposedPorts($port);
+
+        $manager = $this->getManager();
+        $manager->run($container, ['PortBindings' => $port->toSpec()]);
 
         $this->assertNotEmpty($container->getId());
     }

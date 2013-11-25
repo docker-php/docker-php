@@ -2,6 +2,8 @@
 
 namespace Docker;
 
+use Docker\Exception\PortNotFoundException;
+
 use Guzzle\Http\Client;
 
 class Container
@@ -21,6 +23,11 @@ class Container
      * @var array
      */
     private $config = array();
+
+    /**
+     * @var array
+     */
+    private $runtimeInformations = array();
 
     /**
      * @var null|integer
@@ -51,9 +58,49 @@ class Container
     /**
      * @return array
      */
+    public function getRuntimeInformations()
+    {
+        return $this->runtimeInformations;
+    }
+
+    /**
+     * @param array $runtimeInformations
+     * 
+     * @return Docker\Container
+     */
+    public function setRuntimeInformations($runtimeInformations)
+    {
+        $this->runtimeInformations = $runtimeInformations;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * @param integer $port
+     * @param string $protocol
+     * 
+     * @return Docker\Port
+     */
+    public function getMappedPort($port, $protocol = 'tcp')
+    {
+        // Problem with $protohuik as a variable name? Harass @futurecat.
+        $protohuik = $port.'/'.$protocol;
+
+        if (!array_key_exists($protohuik, $this->runtimeInformations['NetworkSettings']['Ports'])) {
+            throw new PortNotFoundException($port, $protocol);
+        }
+
+        $portInfo = $this->runtimeInformations['NetworkSettings']['Ports'][$protohuik];
+
+        return new Port(sprintf('%s:%s:%s/%s', $portInfo[0]['HostIp'], $portInfo[0]['HostPort'], $port, $protocol));
     }
 
     /**

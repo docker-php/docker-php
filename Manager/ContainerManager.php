@@ -96,6 +96,11 @@ class ContainerManager
             throw new UnexpectedStatusCodeException($response->getStatusCode());
         }
 
+        $request = $this->client->get(['/containers/{id}/json', ['id' => $container->getId()]]);
+        $response = $request->send();
+
+        $container->setRuntimeInformations($response->json());
+
         $this->addContainer($container);
 
         return $this;

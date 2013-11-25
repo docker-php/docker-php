@@ -24,8 +24,40 @@ class Port implements PortSpecInterface
 
         $this->port = (integer) $parsed['port'];
         $this->protocol = $parsed['protocol'];
-        $this->hostIp = (string) $parsed['hostIp'];
-        $this->hostPort = (strlen($parsed['hostPort']) > 0) ? (integer) $parsed['hostPort'] : '';
+        $this->hostIp = (strlen($parsed['hostIp']) > 0) ? $parsed['hostIp'] : null;
+        $this->hostPort = (strlen($parsed['hostPort']) > 0) ? (integer) $parsed['hostPort'] : null;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getPort()
+    {
+        return (integer) $this->port;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getHostIp()
+    {
+        return $this->hostIp;
+    }
+
+    /**
+     * @return integer|null
+     */
+    public function getHostPort()
+    {
+        return $this->hostPort;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProtocol()
+    {
+        return $this->protocol;
     }
 
     /**

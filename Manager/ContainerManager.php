@@ -22,11 +22,6 @@ class ContainerManager
     private $client;
 
     /**
-     * @var array
-     */
-    private $containers = array();
-
-    /**
      * @param Guzzle\Http\Client
      */
     public function __construct(Client $client)
@@ -37,20 +32,18 @@ class ContainerManager
     /**
      * @param Docker\Container $container
      * 
-     * @return Docker\Manager\ContainerManager
+     * @return Docker\ContainerManager
      */
-    public function addContainer(Container $container)
+    public function inspect(Container $container)
     {
-        if (!array_key_exists($container->getId(), $this->containers)) {
-            $this->containers[$container->getId()] = $container;
-        }
+        $request = $this->client->get(['/containers/{id}/json', ['id' => $container->getId()]]);
+        $response = $request->send();
 
-        return $this;
+        $container->setRuntimeInformations($response->json());
     }
 
     /**
-     * @param string    $image
-     * @param array     $cmd
+     * @param Docker\Container $container
      * 
      * @return Docker\Manager\ContainerManager
      */
@@ -71,7 +64,7 @@ class ContainerManager
 
         $container->setId($response->json()['Id']);
 
-        $this->addContainer($container);
+        $this->inspect($container);
 
         return $this;
     }
@@ -96,12 +89,7 @@ class ContainerManager
             throw new UnexpectedStatusCodeException($response->getStatusCode());
         }
 
-        $request = $this->client->get(['/containers/{id}/json', ['id' => $container->getId()]]);
-        $response = $request->send();
-
-        $container->setRuntimeInformations($response->json());
-
-        $this->addContainer($container);
+        $this->inspect($container);
 
         return $this;
     }
@@ -138,7 +126,30 @@ class ContainerManager
 
         $container->setExitCode($response->json()['StatusCode']);
 
-        $this->addContainer($container);
+        $this->inspect($container);
+
+        return $this;
+    }
+
+    /**
+     * @param Docker\Container $container
+     * 
+     * @return Docker\Manager\ContainerManager
+     */
+    public function stop(Container $container, $timeout = 5)
+    {
+        $request = $this->client->post(['/containers/{id}/stop?t={timeout}', [
+            'id' => $container->getId(),
+            'timeout' => $timeout
+        ]]);
+
+        $response = $request->send();
+
+        if ($response->getStatusCode() !== 204) {
+            throw new UnexpectedStatusCodeException($response->getStatusCode());
+        }
+
+        $this->inspect($container);
 
         return $this;
     }

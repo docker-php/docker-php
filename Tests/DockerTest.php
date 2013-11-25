@@ -33,9 +33,11 @@ class DockerTest extends TestCase
         $manager->run($container);
         $manager->wait($container);
 
-        $image = $docker->commit($container);
+        $image = $docker->commit($container, ['repo' => 'test', 'tag' => 'foo']);
 
         $this->assertNotEmpty($image->getId());
+        $this->assertEquals('test', $image->getRepository());
+        $this->assertEquals('foo', $image->getTag());
     }
 
     public function testGetContainerManager()

@@ -15,10 +15,10 @@ class PortCollection implements PortSpecInterface
         foreach ($args as $port) {
             if ($port instanceof Port) {
                 $this->add($port);
-            } elseif (is_string($port)) {
+            } elseif (is_string($port) || is_integer($port)) {
                 $this->add(new Port($port));
             } else {
-                throw new Exception('Invalid port definition "'.var_export($port, true).'"');
+                throw new Exception('Invalid port definition "('.gettype($port).') '.var_export($port, true).'"');
             }
         }
     }

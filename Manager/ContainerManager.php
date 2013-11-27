@@ -167,7 +167,16 @@ class ContainerManager
             'timeout' => $timeout
         ]]);
 
-        $response = $request->send();
+        try {
+            $response = $request->send();
+        } catch (ClientErrorResponseException $e) {
+            if ($e->getResponse()->getStatusCode() === 404) {
+                throw new ContainerNotFoundException($container->getId(), $e);
+            }
+
+            throw $e;
+        }
+
 
         if ($response->getStatusCode() !== 204) {
             throw new UnexpectedStatusCodeException($response->getStatusCode());

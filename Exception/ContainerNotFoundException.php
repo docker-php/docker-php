@@ -4,10 +4,12 @@ namespace Docker\Exception;
 
 use Docker\Exception;
 
-class ContainerNotFoundException extends Exception
+use Exception as BaseException;
+
+class ContainerNotFoundException extends BaseException
 {
-    public function __construct($containerId)
+    public function __construct($containerId, BaseException $previous = null)
     {
-        parent::__construct(sprintf('Container not found: "'.$containerId.'"'), 404);
+        parent::__construct(sprintf('Container not found: "'.$containerId.'"'), 404, $previous);
     }
 }

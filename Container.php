@@ -211,6 +211,37 @@ class Container
     }
 
     /**
+     * @return array
+     */
+    public function getEnv()
+    {
+        if (isset($this->runtimeInformations['Config']['Env'])) {
+            return $this->runtimeInformations['Config']['Env'];
+        }
+
+        if (isset($this->config['Env'])) {
+            return $this->config['Env'];
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getParsedEnv()
+    {
+        $env = [];
+
+        foreach ($this->getEnv() as $raw) {
+            list($key, $value) = explode('=', $raw);
+            $env[$key] = $value;
+        }
+
+        return $env;
+    }
+
+    /**
      * @param string|Docker\Image $image
      * 
      * @return Docker\Container

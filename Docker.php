@@ -7,6 +7,7 @@ use Docker\Manager\ContainerManager;
 use Docker\Exception\UnexpectedStatusCodeException;
 
 use Guzzle\Http\Client;
+use Guzzle\Http\Exception\ServerErrorResponseException;
 use Guzzle\Stream\PhpStreamRequestFactory;
 use Guzzle\Plugin\Log\LogPlugin;
 
@@ -95,7 +96,16 @@ class Docker
         ]]]);
 
         $request->setBody($context->toStream(), 'application/tar');
-        $response = $request->send();
+
+        try {
+            $response = $request->send();
+        } catch (ServerErrorResponseException $e) {
+            if (strlen($body = $e->getResponse()->getBody(true)) > 0) {
+                throw new Exception($body, $e->getResponse()->getStatusCode(), $e);
+            }
+
+            throw $e;
+        }
 
         return $this->streamRequestFactory->fromRequest($request);
     }

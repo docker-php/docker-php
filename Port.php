@@ -6,8 +6,6 @@ use Docker\Exception;
 
 class Port implements PortSpecInterface
 {
-    private $raw;
-
     private $port;
 
     private $protocol = 'tcp';
@@ -18,14 +16,12 @@ class Port implements PortSpecInterface
 
     public function __construct($raw)
     {
-        $this->raw = $raw;
+        $parsed = static::parse($raw);
+        $filtered = array_filter($parsed);
 
-        $parsed = static::parse($raw, ['protocol' => $this->protocol]);
-
-        $this->port = (integer) $parsed['port'];
-        $this->protocol = $parsed['protocol'];
-        $this->hostIp = (strlen($parsed['hostIp']) > 0) ? $parsed['hostIp'] : null;
-        $this->hostPort = (strlen($parsed['hostPort']) > 0) ? (integer) $parsed['hostPort'] : null;
+        foreach ($filtered as $key => $value) {
+            $this->$key = $value;
+        }
     }
 
     /**
@@ -88,45 +84,22 @@ class Port implements PortSpecInterface
      * 
      * @return array
      * 
-     * [[hostIp:]hostPort:]port[/protocol]
+     * [[hostIp:][hostPort]:]port[/protocol]
      */
-    static public function parse($raw, $defaults = array())
+    static public function parse($raw)
     {
-        $parsed = array_replace([
-            'protocol' => null,
-            'port' => null,
-            'hostIp' => null,
-            'hostPort' => null
-        ], $defaults);
-
-        $parts = explode('/', $raw);
-
-        if (count($parts) > 1) {
-            $parsed['protocol'] = $parts[1];
+        if (!preg_match('/(?:(?<hostIp>[0-9\.]{7,15}):)?(?:(?<hostPort>\d{1,5}|):)?(?<port>\d{1,5})(?:\/(?<protocol>\w+))?/', $raw, $matches)) {
+            throw new Exception('Invalid port specification "'.$raw.'"');
         }
 
-        $parts = explode(':', $parts[0]);
+        $parsed = [];
 
-        /**
-         * This is very naive and will fail on things like HostIp::port/protocol
-         * 
-         * @todo make this more clever, maybe using a token parser, or adding data validation?
-         */
-        switch (count($parts)) {
-            case 1:
-                $parsed['port'] = (integer) $parts[0];
-                break;
-            case 2:
-                $parsed['hostPort'] = (integer) $parts[0];
-                $parsed['port'] = (integer) $parts[1];
-                break;
-            case 3:
-                $parsed['hostIp'] = $parts[0];
-                $parsed['hostPort'] = (integer) $parts[1];
-                $parsed['port'] = (integer) $parts[2];
-                break;
-            default:
-                throw new Exception('Invalid port specification "'.$raw.'"');
+        foreach (['hostIp', 'hostPort', 'port', 'protocol'] as $key) {
+            if (array_key_exists($key, $matches)) {
+                $parsed[$key] = strlen($matches[$key]) > 0 ? $matches[$key] : null;
+            } else {
+                $parsed[$key] = null;
+            }
         }
 
         return $parsed;

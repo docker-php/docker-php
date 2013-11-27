@@ -69,4 +69,16 @@ class ContainerManagerTest extends TestCase
 
         $this->assertEquals(8888, $container->getMappedPort(80)->getHostPort());
     }
+
+    public function testInspect()
+    {
+        $manager = $this->getManager();
+
+        $this->assertEquals(null, $manager->findById('foo'));
+
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
+        $manager->create($container);
+
+        $this->assertInstanceOf('Docker\\Container', $manager->find($container->getId()));
+    }
 }

@@ -10,6 +10,7 @@ use Docker\Exception\ServerErrorException;
 use Docker\Exception\ContainerNotFoundException;
 
 use Guzzle\Http\Client;
+use Guzzle\Http\Exception\ClientErrorResponseException;
 
 /**
  * Docker\Manager\ContainerManager
@@ -27,6 +28,29 @@ class ContainerManager
     public function __construct(Client $client)
     {
         $this->client = $client;
+    }
+
+    /**
+     * @param string $id
+     * 
+     * @return null|Docker\Container
+     */
+    public function find($id)
+    {
+        $container = new Container();
+        $container->setId($id);
+
+        try {
+            $this->inspect($container);
+        } catch (ClientErrorResponseException $e) {
+            if ($e->getResponse()->getStatusCode() === 404) {
+                return null;
+            }
+
+            throw $e;
+        }
+
+        return $container;
     }
 
     /**

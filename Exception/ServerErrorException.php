@@ -4,7 +4,9 @@ namespace Docker\Exception;
 
 use Docker\Exception;
 
-class ServerErrorException extends Exception
+use Exception as BaseException;
+
+class ServerErrorException extends BaseException
 {
 
 }

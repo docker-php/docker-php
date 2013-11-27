@@ -4,7 +4,9 @@ namespace Docker\Exception;
 
 use Docker\Exception;
 
-class PortNotFoundException extends Exception
+use Exception as BaseException;
+
+class PortNotFoundException extends BaseException
 {
     public function __construct($port, $protocol)
     {

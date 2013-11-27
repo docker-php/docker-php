@@ -4,7 +4,9 @@ namespace Docker\Exception;
 
 use Docker\Exception;
 
-class UnexpectedStatusCodeException extends Exception
+use Exception as BaseException;
+
+class UnexpectedStatusCodeException extends BaseException
 {
     public function __construct($statusCode)
     {

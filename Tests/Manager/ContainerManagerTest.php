@@ -74,7 +74,7 @@ class ContainerManagerTest extends TestCase
     {
         $manager = $this->getManager();
 
-        $this->assertEquals(null, $manager->findById('foo'));
+        $this->assertEquals(null, $manager->find('foo'));
 
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
         $manager->create($container);

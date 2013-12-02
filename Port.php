@@ -45,7 +45,7 @@ class Port implements PortSpecInterface
      */
     public function getHostPort()
     {
-        return $this->hostPort;
+        return (integer) $this->hostPort;
     }
 
     /**

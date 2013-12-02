@@ -203,6 +203,18 @@ class Container
      * 
      * @return Docker\Container
      */
+    public function addEnv(array $env)
+    {
+        $this->config['Env'] = array_merge($this->config['Env'], $env);
+
+        return $this;
+    }
+
+    /**
+     * @param array $env
+     * 
+     * @return Docker\Container
+     */
     public function setEnv(array $env)
     {
         $this->config['Env'] = $env;

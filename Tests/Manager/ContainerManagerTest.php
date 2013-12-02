@@ -56,7 +56,7 @@ class ContainerManagerTest extends TestCase
         $this->assertNotEmpty($container->getId());
     }
 
-    public function testExposePort()
+    public function testExposeFixedPort()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
 
@@ -68,6 +68,19 @@ class ContainerManagerTest extends TestCase
         $manager->run($container, ['PortBindings' => $port->toSpec()]);
 
         $this->assertEquals(8888, $container->getMappedPort(80)->getHostPort());
+    }
+
+    public function testExposeRandomPort()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
+
+        $port = new Port('80/tcp');
+        $container->setExposedPorts($port);
+
+        $manager = $this->getManager();
+        $manager->run($container, ['PortBindings' => $port->toSpec()]);
+
+        $this->assertInternalType('integer', $container->getMappedPort(80)->getHostPort());
     }
 
     public function testInspect()

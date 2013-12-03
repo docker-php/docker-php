@@ -4,10 +4,19 @@ namespace Docker;
 
 use Docker\Exception;
 
+/**
+ * Docker\PortCollection
+ */
 class PortCollection implements PortSpecInterface
 {
+    /**
+     * @var array
+     */
     private $ports;
 
+    /**
+     * @param integer|string ...$ports
+     */
     public function __construct()
     {
         $args = func_get_args();
@@ -23,6 +32,9 @@ class PortCollection implements PortSpecInterface
         }
     }
 
+    /**
+     * @return array
+     */
     public function toSpec()
     {
         $spec = [];
@@ -34,6 +46,9 @@ class PortCollection implements PortSpecInterface
         return $spec;
     }
 
+    /**
+     * @return array
+     */
     public function toExposedPorts()
     {
         $exposed = [];
@@ -45,11 +60,21 @@ class PortCollection implements PortSpecInterface
         return $exposed;
     }
 
+    /**
+     * @param Docker\Port
+     * 
+     * @return Docker\PortCollection
+     */
     public function add(Port $port)
     {
         $this->ports[] = $port;
+
+        return $this;
     }
 
+    /**
+     * @return array
+     */
     public function all()
     {
         return $this->ports;

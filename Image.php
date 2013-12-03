@@ -4,6 +4,9 @@ namespace Docker;
 
 use Docker\Exception;
 
+/**
+ * Docker\Image
+ */
 class Image
 {
     /**

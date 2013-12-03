@@ -2,17 +2,25 @@
 
 namespace Docker;
 
+/**
+ * Docker\HostConfig
+ */
 class HostConfig
 {
+    /**
+     * @var array
+     */
     private $ports = array();
 
     /**
      * @param array $env
      * 
-     * @return RunSpec
+     * @return Docker\HostConfig
      */
     public function setEnv(array $env)
     {
         $this->env = $env;
+
+        return $this;
     }
 }

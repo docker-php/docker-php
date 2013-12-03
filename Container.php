@@ -6,6 +6,9 @@ use Docker\Exception\PortNotFoundException;
 
 use Guzzle\Http\Client;
 
+/**
+ * Docker\Container
+ */
 class Container
 {
     const STATUS_NEW = 0;
@@ -85,7 +88,7 @@ class Container
 
     /**
      * @param integer $port
-     * @param string $protocol
+     * @param string  $protocol
      * 
      * @return Docker\Port
      */
@@ -117,6 +120,7 @@ class Container
 
         foreach ($ports as $protohuik) {
             // @todo better validation of $protohuik
+            //       could use an instance of Port for example
             $parts = explode('/', $protohuik);
 
             if (count($parts) === 1) {
@@ -149,6 +153,9 @@ class Container
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getId()
     {
         return $this->id;
@@ -176,6 +183,8 @@ class Container
 
     /**
      * @param array|PortSpecInterface $ports
+     * 
+     * @return Docker\Container
      */
     public function setExposedPorts($ports)
     {
@@ -184,6 +193,8 @@ class Container
         } else {
             $this->config['ExposedPorts'] = $ports;
         }
+
+        return $this;
     }
 
     /**
@@ -277,5 +288,7 @@ class Container
     public function setCmd(array $cmd)
     {
         $this->config['Cmd'] = $cmd;
+
+        return $this;
     }
 }

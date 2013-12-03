@@ -3,7 +3,6 @@
 namespace Docker;
 
 use Docker\Manager\ContainerManager;
-
 use Docker\Exception\UnexpectedStatusCodeException;
 
 use Guzzle\Http\Client;
@@ -11,6 +10,9 @@ use Guzzle\Http\Exception\ServerErrorResponseException;
 use Guzzle\Stream\PhpStreamRequestFactory;
 use Guzzle\Plugin\Log\LogPlugin;
 
+/**
+ * Docker\Docker
+ */
 class Docker
 {
     const BUILD_VERBOSE = false;

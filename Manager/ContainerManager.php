@@ -33,7 +33,7 @@ class ContainerManager
     /**
      * @param string $id
      * 
-     * @return null|Docker\Container
+     * @return Docker\Container|null
      */
     public function find($id)
     {
@@ -64,6 +64,8 @@ class ContainerManager
         $response = $request->send();
 
         $container->setRuntimeInformations($response->json());
+
+        return $this;
     }
 
     /**
@@ -83,7 +85,7 @@ class ContainerManager
         }
 
         if ($response->getStatusCode() !== 201) {
-            throw new Exception();
+            throw new UnexpectedStatusCodeException($response->getStatusCode());
         }
 
         $container->setId($response->json()['Id']);
@@ -103,10 +105,14 @@ class ContainerManager
         $request = $this->client->post(['/containers/{id}/start', ['id' => $container->getId()]]);
         $request->setBody(Json::encode($hostConfig), 'application/json');
 
-        $response = $request->send();
+        try {
+            $response = $request->send();
+        } catch (ClientErrorResponseException $e) {
+            if ($e->getResponse()->getStatusCode() === 404) {
+                throw new ContainerNotFoundException($container->getId(), $e);
+            }
 
-        if ($response->getStatusCode() === 404) {
-            throw new ContainerNotFoundException($container->getId());
+            throw $e;
         }
 
         if ($response->getStatusCode() !== 204) {
@@ -119,15 +125,18 @@ class ContainerManager
     }
 
     /**
-     * @param Docker\Container $container
+     * @param Docker\Container  $container
+     * @param array             $hostConfig
      * 
      * @return Docker\Manager\ContainerManager
      */
     public function run(Container $container, array $hostConfig = array())
     {
-        return $this
+        $this
             ->create($container)
             ->start($container, $hostConfig);
+
+        return $this;
     }
 
     /**
@@ -140,8 +149,14 @@ class ContainerManager
         $request = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]]);
         $response = $request->send();
 
-        if ($response->getStatusCode() === 404) {
-            throw new ContainerNotFoundException($container->getId());
+        try {
+            $response = $request->send();
+        } catch (ClientErrorResponseException $e) {
+            if ($e->getResponse()->getStatusCode() === 404) {
+                throw new ContainerNotFoundException($container->getId(), $e);
+            }
+
+            throw $e;
         }
 
         if ($response->getStatusCode() !== 200) {
@@ -157,6 +172,7 @@ class ContainerManager
 
     /**
      * @param Docker\Container $container
+     * @param integer          $timeout
      * 
      * @return Docker\Manager\ContainerManager
      */
@@ -176,7 +192,6 @@ class ContainerManager
 
             throw $e;
         }
-
 
         if ($response->getStatusCode() !== 204) {
             throw new UnexpectedStatusCodeException($response->getStatusCode());

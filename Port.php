@@ -4,16 +4,34 @@ namespace Docker;
 
 use Docker\Exception;
 
+/**
+ * Docker\Port
+ */
 class Port implements PortSpecInterface
 {
+    /**
+     * @var integer
+     */
     private $port;
 
+    /**
+     * @var string
+     */
     private $protocol = 'tcp';
 
-    private $hostIp;
-
+    /**
+     * @var integer
+     */
     private $hostPort;
 
+    /**
+     * @var string
+     */
+    private $hostIp;
+
+    /**
+     * @param string|integer $raw
+     */
     public function __construct($raw)
     {
         $parsed = static::parse($raw);
@@ -29,23 +47,7 @@ class Port implements PortSpecInterface
      */
     public function getPort()
     {
-        return (integer) $this->port;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getHostIp()
-    {
-        return $this->hostIp;
-    }
-
-    /**
-     * @return integer|null
-     */
-    public function getHostPort()
-    {
-        return (integer) $this->hostPort;
+        return $this->port;
     }
 
     /**
@@ -54,6 +56,22 @@ class Port implements PortSpecInterface
     public function getProtocol()
     {
         return $this->protocol;
+    }
+
+    /**
+     * @return integer|null
+     */
+    public function getHostPort()
+    {
+        return $this->hostPort;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getHostIp()
+    {
+        return $this->hostIp;
     }
 
     /**
@@ -80,11 +98,11 @@ class Port implements PortSpecInterface
     }
 
     /**
+     * [[hostIp:][hostPort]:]port[/protocol]
+     * 
      * @param string $raw
      * 
      * @return array
-     * 
-     * [[hostIp:][hostPort]:]port[/protocol]
      */
     static public function parse($raw)
     {
@@ -96,7 +114,11 @@ class Port implements PortSpecInterface
 
         foreach (['hostIp', 'hostPort', 'port', 'protocol'] as $key) {
             if (array_key_exists($key, $matches)) {
-                $parsed[$key] = strlen($matches[$key]) > 0 ? $matches[$key] : null;
+                $parsed[$key] = strlen($matches[$key]) > 0
+                    ? (is_numeric($matches[$key])
+                        ? (integer) $matches[$key]
+                        : $matches[$key])
+                    : null;
             } else {
                 $parsed[$key] = null;
             }

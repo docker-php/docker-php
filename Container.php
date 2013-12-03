@@ -216,7 +216,7 @@ class Container
      */
     public function addEnv(array $env)
     {
-        $this->config['Env'] = array_merge($this->config['Env'], $env);
+        $this->config['Env'] = array_merge($this->getEnv(), $env);
 
         return $this;
     }

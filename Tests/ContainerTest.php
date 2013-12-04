@@ -15,4 +15,12 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(['FOO=BAR'], $container->getEnv());
     }
+
+    public function testAddEnvWithExistingEnv()
+    {
+        $container = new Container(['Env' => ['FOO=BAR']]);
+        $container->addEnv(['BAR=FOO']);
+
+        $this->assertEquals(['FOO=BAR', 'BAR=FOO'], $container->getEnv());
+    }
 }

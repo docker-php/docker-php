@@ -201,4 +201,34 @@ class ContainerManager
 
         return $this;
     }
+
+    /**
+     * @param Docker\Container  $container
+     * @param boolean           $volumes
+     * 
+     * @return Docker\Manager\ContainerManager
+     */
+    public function remove(Container $container, $volumes = false)
+    {
+        $request = $this->client->delete(['/containers/{id}?v={volumes}', [
+            'id' => $container->getId(),
+            'v' => $volumes
+        ]]);
+
+        try {
+            $response = $request->send();
+        } catch (ClientErrorResponseException $e) {
+            if ($e->getResponse()->getStatusCode() === 404) {
+                throw new ContainerNotFoundException($container->getId(), $e);
+            }
+
+            throw $e;
+        }
+
+        if ($response->getStatusCode() !== 204) {
+            throw new UnexpectedStatusCodeException($response->getStatusCode());
+        }
+
+        return $this;
+    }
 }

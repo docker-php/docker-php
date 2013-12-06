@@ -100,7 +100,7 @@ class Docker
         $request->setBody($context->toStream(), 'application/tar');
 
         try {
-            $response = $request->send();
+            $request->send();
         } catch (ServerErrorResponseException $e) {
             if (strlen($body = $e->getResponse()->getBody(true)) > 0) {
                 throw new Exception($body, $e->getResponse()->getStatusCode(), $e);

@@ -6,8 +6,6 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Filesystem\Filesystem;
 
-use Exception;
-
 /**
  * Docker\Context
  */

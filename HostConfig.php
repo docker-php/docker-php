@@ -8,11 +8,6 @@ namespace Docker;
 class HostConfig
 {
     /**
-     * @var array
-     */
-    private $ports = array();
-
-    /**
      * @param array $env
      * 
      * @return Docker\HostConfig

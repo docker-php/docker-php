@@ -4,8 +4,6 @@ namespace Docker;
 
 use Docker\Exception\PortNotFoundException;
 
-use Guzzle\Http\Client;
-
 /**
  * Docker\Container
  */

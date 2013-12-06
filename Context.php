@@ -148,6 +148,16 @@ class Context
     /**
      * @return string
      */
+    public function getDockerfileAsString()
+    {
+        $this->write();
+        
+        return file_get_contents($this->getDirectory().'/Dockerfile');
+    }
+
+    /**
+     * @return string
+     */
     public function toTar()
     {
         $directory = $this->write();

@@ -94,8 +94,6 @@ DOCKERFILE
 
     public function testReturnsValidTarContent()
     {
-        $this->markTestSkipped('Something weird when comparing tar contents');
-
         if (!file_exists('/bin/tar')) {
             $this->markTestSkipped('No /bin/tar on host');
         }
@@ -104,10 +102,12 @@ DOCKERFILE
         $context->run('foo command');
         $context->add('/bar', 'bar file content');
 
-        $process = new Process('/bin/tar c .', $context->getDirectory());
+        $directory = $context->write();
+
+        $process = new Process('/bin/tar c .', $directory);
         $process->run();
 
-        $this->assertEquals($process->getOutput(), $context->toTar());
+        $this->assertEquals(md5($process->getOutput()), md5($context->toTar()));
     }
 
     public function testReturnsValidTarStream()

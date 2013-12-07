@@ -32,7 +32,9 @@ class ContainerManagerTest extends TestCase
         $manager->create($container);
         $manager->start($container);
 
-        $this->assertNotEmpty($container->getId());
+        $runtimeInformations = $container->getRuntimeInformations();
+
+        $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
     }
 
     public function testRun()
@@ -42,9 +44,15 @@ class ContainerManagerTest extends TestCase
         $manager = $this->getManager();
         $manager->run($container);
 
-        $this->assertNotEmpty($container->getId());
+        $runtimeInformations = $container->getRuntimeInformations();
+
+        $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
     }
 
+    /**
+     * Not sure how to reliably test that we actually waited for the container
+     * but this should at least ensure no exception is thrown
+     */
     public function testWait()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
@@ -53,7 +61,9 @@ class ContainerManagerTest extends TestCase
         $manager->run($container);
         $manager->wait($container);
 
-        $this->assertNotEmpty($container->getId());
+        $runtimeInformations = $container->getRuntimeInformations();
+
+        $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
     }
 
     public function testExposeFixedPort()

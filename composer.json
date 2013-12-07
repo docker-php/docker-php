@@ -1,0 +1,21 @@
+{
+    "name": "stage1/docker-php",
+    "license": "MIT",
+    "type": "library",
+    "description": "A Docker PHP client",
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "minimum-stability": "stable"
+}

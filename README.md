@@ -21,7 +21,7 @@ The recommended way to install Docker PHP is of course to use [Composer](http://
 Usage
 -----
 
-In a nutshell:
+In a nutshell, this will connect to Docker at `http://127.0.0.1:4243`:
 
 ```php
 <?php
@@ -37,8 +37,9 @@ $container = new Container([
 ]);
 
 $docker->getContainerManager()->run($container);
-
 ```
+
+You could also pass in your own instance of `Guzzle\Http\Client` to `Docker`'s constructor. See [Guzzle's documentation](http://docs.guzzlephp.org/en/latest/docs.html) for more information.
 
 **Note**: due to PHP's HTTP libraries limitations, connecting to a Docker **socket** is not supported. You have to use **tcp**. If anyone knows of an HTTP library that supports socket connections, please open a ticket, I'll be more than happy to add support for it.
 

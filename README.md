@@ -3,6 +3,8 @@ Docker PHP
 
 **Docker PHP** (for lack of a better name) is a [Docker](http://docker.io/) client written in PHP. This library is still a work in progress. Not much is supported yet, but the goal is to reach 100% API support.
 
+See https://gist.github.com/ubermuda/7876615 for an overview of how it works. Real documentation will follow soon.
+
 Installation
 ------------
 

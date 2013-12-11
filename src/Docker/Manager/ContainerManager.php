@@ -90,8 +90,6 @@ class ContainerManager
 
         $container->setId($response->json()['Id']);
 
-        $this->inspect($container);
-
         return $this;
     }
 

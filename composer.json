@@ -10,7 +10,7 @@
     },
     "require": {
         "php": ">=5.4",
-        "guzzle/guzzle": "~3.8",
+        "guzzle/http": "~3.8",
         "symfony/filesystem": "~2.4",
         "symfony/process": "~2.4"
     },

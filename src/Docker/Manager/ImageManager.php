@@ -10,12 +10,12 @@ use Guzzle\Http\Client;
 class ImageManager
 {
     /**
-     * @var Guzzle\Http\Client
+     * @var Zend\Http\Client
      */
     private $client;
 
     /**
-     * @param Guzzle\Http\Client $client
+     * @param Zend\Http\Client $client
      */
     public function __construct(Client $client)
     {

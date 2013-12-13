@@ -5,10 +5,13 @@ namespace Docker;
 use Docker\Manager\ContainerManager;
 use Docker\Exception\UnexpectedStatusCodeException;
 
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\ServerErrorResponseException;
-use Guzzle\Stream\PhpStreamRequestFactory;
-use Guzzle\Plugin\Log\LogPlugin;
+use Zend\Http\Client;
+use Zend\Http\Request;
+use Zend\Stdlib\Parameters;
+use Zend\Http\Headers;
+use Zend\Http\Client\Adapter\StreamInterface;
+use Zend\Http\Client\Exception\RuntimeException;
+use Docker\Exception\ContainerNotFoundException;
 
 /**
  * Docker\Docker
@@ -17,14 +20,18 @@ class Docker
 {
     const BUILD_VERBOSE = false;
     const BUILD_QUIET = true;
-
     const BUILD_CACHE = true;
     const BUILD_NO_CACHE = false;
 
     /**
-     * @var Guzzle\Http\Client
+     * @var Zend\Http\Client
      */
     private $client;
+
+    /**
+     * @var string
+     */
+    private $uri;
 
     /**
      * @var array
@@ -40,10 +47,15 @@ class Docker
      * @param Guzzle\Http\Client                    $client
      * @param Guzzle\Stream\PhpStreamRequestFactory $factory
      */
-    public function __construct(Client $client = null, PhpStreamRequestFactory $streamRequestFactory = null)
+    public function __construct(Client $client = null)
     {
         $this->client = $client ?: new Client('http://127.0.0.1:4243');
-        $this->streamRequestFactory = $streamRequestFactory ?: new PhpStreamRequestFactory();
+
+        if (!$this->client->getAdapter() instanceof StreamInterface) {
+            throw new \RuntimeException("HTTP Client does not support output streaming");
+        }
+
+        $this->uri = $this->client->getUri();
     }
 
     /**
@@ -62,7 +74,7 @@ class Docker
     public function getContainerManager()
     {
         if (null === $this->containerManager) {
-            $this->containerManager = new ContainerManager($this->client);
+            $this->containerManager = new ContainerManager($this->client, $this->uri);
         }
 
         return $this->containerManager;
@@ -84,40 +96,37 @@ class Docker
      * @param Docker\Context    $context
      * @param string            $name
      * @param boolean           $quiet
-     * 
+     *
      * @return Guzzle\Stream\StreamInterface
-     * 
+     *
      * The `q` argument seems to be ignored right now (same behavior observed in the CLI client)
      */
     public function build(Context $context, $name, $quiet = false, $cache = true)
     {
-        $request = $this->client->post(['/build{?data*}', ['data' => [
-            'q' => $quiet,
-            't' => $name,
-            'nocache' => !$cache
-        ]]]);
+        $params = new Parameters();
+        $params->set('q', $quiet);
+        $params->set('t', $name);
+        $params->set('nocache', !$cache);
 
-        $request->setBody($context->toStream(), 'application/tar');
+        $headers = new Headers();
+        $headers->addHeaderLine('content-type', 'application/tar');
 
-        try {
-            $request->send();
-        } catch (ServerErrorResponseException $e) {
-            if (strlen($body = $e->getResponse()->getBody(true)) > 0) {
-                throw new Exception($body, $e->getResponse()->getStatusCode(), $e);
-            }
+        $request = new Request();
+        $request->setMethod(Request::METHOD_POST);
+        $request->setUri(sprintf("%s/build", $this->uri));
+        $request->setContent($context->toStream());
+        $request->setHeaders($headers);
+        $request->setQuery($params);
 
-            throw $e;
-        }
-
-        return $this->streamRequestFactory->fromRequest($request);
+        return $this->client->send($request);
     }
 
     /**
      * @param Docker\Container $container
      * @param array $config
-     * 
+     *
      * @return Docker\Image
-     * 
+     *
      * @see http://docs.docker.io/en/latest/api/docker_remote_api_v1.7/#create-a-new-image-from-a-container-s-changes
      */
     public function commit(Container $container, $config = array())
@@ -128,11 +137,22 @@ class Docker
 
         $config['container'] = $container->getId();
 
-        $request = $this->client->post(['/commit{?config*}', ['config' => $config]]);
-        $response = $request->send();
+        $params = new Parameters();
+        $params->set('config', $config);
+
+        $request = new Request();
+        $request->setMethod(Request::METHOD_POST);
+        $request->setUri(sprintf("%s/commit", $this->uri));
+        $request->setQuery($params);
+
+        $response = $this->client->send($request);
+
+        if ($response->getStatusCode() === 404) {
+            throw new ContainerNotFoundException($container->getId(), null, $response->getBody());
+        }
 
         if ($response->getStatusCode() !== 201) {
-            throw new UnexpectedStatusCodeException($reponse->getStatusCode());
+            throw new UnexpectedStatusCodeException($response->getStatusCode(), $response->getContent());
         }
 
         $image = new Image();

@@ -3,9 +3,7 @@
 namespace Docker\Tests;
 
 use Docker\Docker;
-
-use Guzzle\Http\Client;
-
+use Zend\Http\Client;
 use PHPUnit_Framework_TestCase;
 
 class TestCase extends PHPUnit_Framework_TestCase

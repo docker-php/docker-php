@@ -1,24 +1,27 @@
 {
-    "name": "stage1/docker-php",
-    "license": "MIT",
-    "type": "library",
-    "description": "A Docker PHP client",
-    "autoload": {
-        "psr-0": {
-            "": "src/"
-        }
-    },
-    "require": {
-        "php": ">=5.4",
-        "guzzle/http": "~3.8",
-        "symfony/filesystem": "~2.4",
-        "symfony/process": "~2.4"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~3.7"
-    },
-    "config": {
-        "bin-dir": "bin"
-    },
-    "minimum-stability": "stable"
+	"name" : "stage1/docker-php",
+	"description" : "A Docker PHP client",
+	"type" : "library",
+	"license" : [
+		"MIT"
+	],
+	"require" : {
+		"php" : ">=5.4",
+		"symfony/process" : "~2.4",
+		"guzzle/http" : "~3.8",
+		"symfony/filesystem" : "~2.4",
+		"zendframework/zend-http": "~2.2"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "~3.7"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"" : "src/"
+		}
+	},
+	"minimum-stability" : "stable",
+	"config" : {
+		"bin-dir" : "bin"
+	}
 }

@@ -14,8 +14,8 @@ class UnexpectedStatusCodeException extends BaseException
     /**
      * @param integer $statusCode
      */
-    public function __construct($statusCode)
+    public function __construct($statusCode, $message = null)
     {
-        parent::__construct(null, (integer) $statusCode);
+        parent::__construct($message, (integer) $statusCode);
     }
 }

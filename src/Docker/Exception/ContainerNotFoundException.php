@@ -15,8 +15,8 @@ class ContainerNotFoundException extends BaseException
      * @param string         $containerId
      * @param Exception|null $previous
      */
-    public function __construct($containerId, BaseException $previous = null)
+    public function __construct($containerId, BaseException $previous = null, $message = null)
     {
-        parent::__construct(sprintf('Container not found: "'.$containerId.'"'), 404, $previous);
+        parent::__construct($message ? $message : sprintf('Container not found: "'.$containerId.'"') , 404, $previous);
     }
 }

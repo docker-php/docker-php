@@ -55,7 +55,7 @@ class Docker
             throw new \RuntimeException("HTTP Client does not support output streaming");
         }
 
-        $this->uri = $this->client->getUri();
+        $this->uri = sprintf("%s://%s:%s", $this->client->getUri()->getScheme(), $this->client->getUri()->getHost(), $this->client->getUri()->getPort());
     }
 
     /**
@@ -138,7 +138,7 @@ class Docker
         $config['container'] = $container->getId();
 
         $params = new Parameters();
-        $params->set('config', $config);
+        $params->fromArray($config);
 
         $request = new Request();
         $request->setMethod(Request::METHOD_POST);
@@ -156,7 +156,7 @@ class Docker
         }
 
         $image = new Image();
-        $image->setId($response->json()['Id']);
+        $image->setId(json_decode($response->getBody(), true)['Id']);
 
         if (array_key_exists('repo', $config)) {
             $image->setRepository($config['repo']);

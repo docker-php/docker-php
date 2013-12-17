@@ -6,17 +6,18 @@ use Docker\Context;
 use Docker\Container;
 
 use Guzzle\Http\Client;
+use Docker\Context\ContextBuilder;
 
 class DockerTest extends TestCase
 {
     public function testBuild()
     {
-        $context = new Context();
-        $context->from('ubuntu:precise');
-        $context->add('/test', 'test file content');
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->from('ubuntu:precise');
+        $contextBuilder->add('/test', 'test file content');
 
         $docker = $this->getDocker();
-        $stream = $docker->build($context, 'foo');
+        $stream = $docker->build($contextBuilder->getContext(), 'foo');
 
         $this->assertRegExp('/Successfully built/', (string) $stream);
     }

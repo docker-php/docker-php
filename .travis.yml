@@ -1,0 +1,17 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+
+before_script:
+  - sudo sh -c "wget -qO- https://get.docker.io/gpg | apt-key add -"
+  - sudo sh -c "echo deb http://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list"
+  - sudo apt-get update
+  - echo exit 101 | sudo tee /usr/sbin/policy-rc.d
+  - sudo chmod +x /usr/sbin/policy-rc.d
+  - sudo apt-get install -qy slirp lxc lxc-docker
+  - git clone git://github.com/jpetazzo/sekexe
+  - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source --dev install
+script:
+  - sekexe/run "`pwd`/docker.sh"

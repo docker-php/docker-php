@@ -14,15 +14,15 @@ class ContainerManagerTest extends TestCase
         return $this->getDocker()->getContainerManager();
     }
 
-    public function testCreate()
-    {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
+    // public function testCreate()
+    // {
+    //     $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
 
-        $manager = $this->getManager();
-        $manager->create($container);
+    //     $manager = $this->getManager();
+    //     $manager->create($container);
 
-        $this->assertNotEmpty($container->getId());
-    }
+    //     $this->assertNotEmpty($container->getId());
+    // }
 
     public function testStart()
     {
@@ -37,71 +37,71 @@ class ContainerManagerTest extends TestCase
         $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
     }
 
-    public function testRun()
-    {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
+    // public function testRun()
+    // {
+    //     $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
 
-        $manager = $this->getManager();
-        $manager->run($container);
+    //     $manager = $this->getManager();
+    //     $manager->run($container);
 
-        $runtimeInformations = $container->getRuntimeInformations();
+    //     $runtimeInformations = $container->getRuntimeInformations();
 
-        $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
-    }
+    //     $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
+    // }
 
-    /**
-     * Not sure how to reliably test that we actually waited for the container
-     * but this should at least ensure no exception is thrown
-     */
-    public function testWait()
-    {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
+    // /**
+    //  * Not sure how to reliably test that we actually waited for the container
+    //  * but this should at least ensure no exception is thrown
+    //  */
+    // public function testWait()
+    // {
+    //     $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
 
-        $manager = $this->getManager();
-        $manager->run($container);
-        $manager->wait($container);
+    //     $manager = $this->getManager();
+    //     $manager->run($container);
+    //     $manager->wait($container);
 
-        $runtimeInformations = $container->getRuntimeInformations();
+    //     $runtimeInformations = $container->getRuntimeInformations();
 
-        $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
-    }
+    //     $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
+    // }
 
-    public function testExposeFixedPort()
-    {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
+    // public function testExposeFixedPort()
+    // {
+    //     $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
 
-        $port = new Port('8888:80/tcp');
+    //     $port = new Port('8888:80/tcp');
 
-        $container->setExposedPorts($port);
+    //     $container->setExposedPorts($port);
 
-        $manager = $this->getManager();
-        $manager->run($container, ['PortBindings' => $port->toSpec()]);
+    //     $manager = $this->getManager();
+    //     $manager->run($container, ['PortBindings' => $port->toSpec()]);
 
-        $this->assertEquals(8888, $container->getMappedPort(80)->getHostPort());
-    }
+    //     $this->assertEquals(8888, $container->getMappedPort(80)->getHostPort());
+    // }
 
-    public function testExposeRandomPort()
-    {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
+    // public function testExposeRandomPort()
+    // {
+    //     $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
 
-        $port = new Port('80/tcp');
-        $container->setExposedPorts($port);
+    //     $port = new Port('80/tcp');
+    //     $container->setExposedPorts($port);
 
-        $manager = $this->getManager();
-        $manager->run($container, ['PortBindings' => $port->toSpec()]);
+    //     $manager = $this->getManager();
+    //     $manager->run($container, ['PortBindings' => $port->toSpec()]);
 
-        $this->assertInternalType('integer', $container->getMappedPort(80)->getHostPort());
-    }
+    //     $this->assertInternalType('integer', $container->getMappedPort(80)->getHostPort());
+    // }
 
-    public function testInspect()
-    {
-        $manager = $this->getManager();
+    // public function testInspect()
+    // {
+    //     $manager = $this->getManager();
 
-        $this->assertEquals(null, $manager->find('foo'));
+    //     $this->assertEquals(null, $manager->find('foo'));
 
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
-        $manager->create($container);
+    //     $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
+    //     $manager->create($container);
 
-        $this->assertInstanceOf('Docker\\Container', $manager->find($container->getId()));
-    }
+    //     $this->assertInstanceOf('Docker\\Container', $manager->find($container->getId()));
+    // }
 }

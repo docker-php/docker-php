@@ -3,8 +3,7 @@
 namespace Docker\Tests;
 
 use Docker\Docker;
-
-use Guzzle\Http\Client;
+use Docker\Http\Client;
 
 use PHPUnit_Framework_TestCase;
 
@@ -15,7 +14,7 @@ class TestCase extends PHPUnit_Framework_TestCase
     public function getDocker()
     {
         if (null === $this->docker) {
-            $this->docker = new Docker(new Client('http://127.0.0.1:4243/v1.6'));
+            $this->docker = new Docker(new Client('tcp://127.0.0.1:4243'));
         }
 
         return $this->docker;

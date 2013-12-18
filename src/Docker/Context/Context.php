@@ -67,14 +67,16 @@ class Context
      */
     public function toTar()
     {
-        $process = new Process('/bin/tar c .', $this->directory);
-        $process->run();
+        $filename = tempnam(sys_get_temp_dir(), "docker-build-").".tar";
+        $phar     = new \PharData($filename);
 
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
+        $phar->buildFromDirectory($this->directory);
+        $tarContent = file_get_contents($filename);
 
-        return $process->getOutput();
+        unset($phar);
+        unlink($filename);
+
+        return $tarContent;
     }
 
     /**

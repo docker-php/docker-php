@@ -16,15 +16,16 @@ class Request
 
     private $compiler;
 
-    public function __construct($method, $uri)
+    public function __construct($method, $uri, $headers = array())
     {
-        $this->method = $method;
+        $this->method = strtolower($method);
         $this->uri = $uri;
         $this->compiler = new UriTemplate();
 
-        if ($this->protocolVersion === '1.1') {
-            $this->setHeader('connection', 'close');
-        }
+        $this->setHeaders($headers);
+
+        # this is to make sure protocol specific headers are set/unset
+        $this->setProtocolVersion($this->protocolVersion);
     }
 
     public function __toString()
@@ -39,8 +40,10 @@ class Request
             $message .= $this->formatHeaders()."\r\n";
         }
 
+        $message .= "\r\n";
+
         if (strlen($this->getContent()) > 0) {
-            $message .= "\r\n".$this->getContent();
+            $message .= $this->getContent();
         }
 
         return $message;
@@ -79,6 +82,12 @@ class Request
     {
         $this->protocolVersion = $protocolVersion;
 
+        if ($protocolVersion === '1.1') {
+            $this->setHeader('connection', 'close');
+        } else {
+            $this->removeHeader('connection');
+        }
+
         return $this;
     }
 
@@ -103,6 +112,17 @@ class Request
         return $this;
     }
 
+    public function removeHeader($name)
+    {
+        $key = strtolower($name);
+
+        if (array_key_exists($key, $this->headers)) {
+            unset($this->headers[$key]);
+        }
+
+        return $this;
+    }
+
     public function setHeaders(array $headers)
     {
         foreach ($headers as $name => $value) {
@@ -110,6 +130,11 @@ class Request
         }
 
         return $this;
+    }
+
+    public function hasHeader($name)
+    {
+        return array_key_exists(strtolower($name), $this->headers);
     }
 
     private function formatHeaders()

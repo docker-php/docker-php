@@ -12,7 +12,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $request = new Request('GET', '/example');
 
-        $this->assertEquals("GET /example HTTP/1.0\r\n", (string) $request);
+        $this->assertEquals("GET /example HTTP/1.1\r\nConnection: close\r\n\r\n", (string) $request);
     }
 
     public function testWithProtocolVersion()
@@ -20,7 +20,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request = new Request('GET', '/example');
         $request->setProtocolVersion('1.0');
 
-        $this->assertEquals("GET /example HTTP/1.0\r\n", (string) $request);
+        $this->assertEquals("GET /example HTTP/1.0\r\n\r\n", (string) $request);
     }
 
     public function testUriTemplate()
@@ -30,6 +30,18 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/foo/lol', $request->getRequestUri());
     }
 
+    public function testHttp11IncludesConnectionClose()
+    {
+        $request = new Request('GET', '/example');
+        $request->setProtocolVersion('1.1');
+
+        $expected = 
+            "GET /example HTTP/1.1\r\n".
+            "Connection: close\r\n\r\n";
+
+        $this->assertEquals($expected, (string) $request);
+    }
+
     public function testWithContent()
     {
         $request = new Request('GET', '/example');
@@ -37,7 +49,8 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $request->setContentType('text/plain');
 
         $expected = 
-            "GET /example HTTP/1.0\r\n".
+            "GET /example HTTP/1.1\r\n".
+            "Connection: close\r\n".
             "Content-Length: 14\r\n".
             "Content-Type: text/plain\r\n".
             "\r\n".

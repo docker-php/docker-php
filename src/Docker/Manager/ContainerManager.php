@@ -61,7 +61,7 @@ class ContainerManager
             throw new ContainerNotFoundException($container->getId());
         }
 
-        $container->setRuntimeInformations($response->json());
+        $container->setRuntimeInformations($response->json(true));
 
         return $this;
     }

@@ -83,6 +83,8 @@ class Docker
             'nocache' => (integer) !$cache,
         ]]]);
 
+        # http client does not support chunked responses yet
+        $request->setProtocolVersion('1.0');
         $request->setContent($context->toTar());
         $request->setContentType('application/tar');
 

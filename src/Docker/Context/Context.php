@@ -67,7 +67,13 @@ class Context
      */
     public function toTar()
     {
-        $filename = tempnam(sys_get_temp_dir(), "docker-build-").".tar";
+        $filename = tempnam(sys_get_temp_dir(), "docker-build-");
+
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
+
+        $filename = $filename.".tar";
         $phar     = new \PharData($filename);
 
         $phar->buildFromDirectory($this->directory);

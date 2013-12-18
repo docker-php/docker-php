@@ -2,7 +2,9 @@
 
 namespace Docker;
 
+use Docker\Context\Context;
 use Docker\Manager\ContainerManager;
+use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
 
 use Guzzle\Http\Client;
@@ -84,9 +86,9 @@ class Docker
      * @param Docker\Context    $context
      * @param string            $name
      * @param boolean           $quiet
-     * 
+     *
      * @return Guzzle\Stream\StreamInterface
-     * 
+     *
      * The `q` argument seems to be ignored right now (same behavior observed in the CLI client)
      */
     public function build(Context $context, $name, $quiet = false, $cache = true)
@@ -115,9 +117,9 @@ class Docker
     /**
      * @param Docker\Container $container
      * @param array $config
-     * 
+     *
      * @return Docker\Image
-     * 
+     *
      * @see http://docs.docker.io/en/latest/api/docker_remote_api_v1.7/#create-a-new-image-from-a-container-s-changes
      */
     public function commit(Container $container, $config = array())

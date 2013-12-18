@@ -2,6 +2,8 @@
 
 namespace Docker\Http;
 
+use Guzzle\Parser\UriTemplate\UriTemplate;
+
 class Request
 {
     private $method;
@@ -10,19 +12,18 @@ class Request
 
     private $protocolVersion = '1.1';
 
-    private $headers = array();
+    public $headers;
 
     private $content;
 
-    private $compiler;
+    private $expander;
 
-    public function __construct($method, $uri, $headers = array())
+    public function __construct($method, $uri, $headers = array(), $expander = null)
     {
         $this->method = strtolower($method);
         $this->uri = $uri;
-        $this->compiler = new UriTemplate();
-
-        $this->setHeaders($headers);
+        $this->expander = $expander ?: new UriTemplate();
+        $this->headers = new HeaderBag($headers);
 
         # this is to make sure protocol specific headers are set/unset
         $this->setProtocolVersion($this->protocolVersion);
@@ -37,7 +38,7 @@ class Request
         ])."\r\n";
 
         if (count($this->headers) > 0) {
-            $message .= $this->formatHeaders()."\r\n";
+            $message .= $this->headers->format()."\r\n";
         }
 
         $message .= "\r\n";
@@ -54,7 +55,7 @@ class Request
         $requestUri = $this->uri;
 
         if (is_array($requestUri)) {
-            $requestUri = $this->compiler->compile($requestUri[0], $requestUri[1]);
+            $requestUri = $this->expander->expand($requestUri[0], $requestUri[1]);
         }
 
         return $requestUri;
@@ -64,10 +65,10 @@ class Request
     {
         $this->content = $content;
 
-        $this->setContentLength(mb_strlen($content));
+        $this->headers->set('content-length', mb_strlen($content));
 
         if (null !== $contentType) {
-            $this->setContentType($contentType);
+            $this->headers->set('content-type', $contentType);
         }
 
         return $this;
@@ -83,71 +84,11 @@ class Request
         $this->protocolVersion = $protocolVersion;
 
         if ($protocolVersion === '1.1') {
-            $this->setHeader('connection', 'close');
+            $this->headers->set('connection', 'close');
         } else {
-            $this->removeHeader('connection');
+            $this->headers->remove('connection');
         }
 
         return $this;
-    }
-
-    public function setContentLength($contentLength)
-    {
-        $this->setHeader('content-length', (integer) $contentLength);
-
-        return $this;
-    }
-
-    public function setContentType($contentType)
-    {
-        $this->setHeader('content-type', $contentType);
-
-        return $this;
-    }
-
-    public function setHeader($name, $value)
-    {
-        $this->headers[strtolower($name)] = $value;
-
-        return $this;
-    }
-
-    public function removeHeader($name)
-    {
-        $key = strtolower($name);
-
-        if (array_key_exists($key, $this->headers)) {
-            unset($this->headers[$key]);
-        }
-
-        return $this;
-    }
-
-    public function setHeaders(array $headers)
-    {
-        foreach ($headers as $name => $value) {
-            $this->setHeader($name, $value);
-        }
-
-        return $this;
-    }
-
-    public function hasHeader($name)
-    {
-        return array_key_exists(strtolower($name), $this->headers);
-    }
-
-    private function formatHeaders()
-    {
-        $headers = [];
-
-        foreach ($this->headers as $name => $value) {
-            $name = implode('-', array_map('ucfirst', explode('-', $name)));
-            $headers[] = sprintf('%s: %s', $name, $value);
-        }
-
-        sort($headers);
-
-        return implode("\r\n", $headers);
     }
 }

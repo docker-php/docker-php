@@ -44,9 +44,11 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testWithContent()
     {
-        $request = new Request('GET', '/example');
+        $request = new Request('GET', '/example', [
+            'Content-Type' => 'text/plain',
+        ]);
+        
         $request->setContent('foobar content');
-        $request->setContentType('text/plain');
 
         $expected = 
             "GET /example HTTP/1.1\r\n".

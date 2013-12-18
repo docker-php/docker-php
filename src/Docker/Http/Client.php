@@ -50,7 +50,7 @@ class Client
 
         fwrite($socket, (string) $request);
 
-        $response = $this->parser->parseStream($socket);
+        $response = $this->parser->parse($socket);
 
         fclose($socket);
 

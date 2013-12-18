@@ -18,11 +18,15 @@ Date: Wed, 18 Dec 2013 03:43:33 GMT
 foobar content
 RAW;
 
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, $raw);
+        rewind($stream);
+
         $parser = new ResponseParser();
-        $response = $parser->parse($raw);
+        $response = $parser->parse($stream);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('application/json', $response->getHeader('Content-Type'));
+        $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $this->assertEquals('foobar content', $response->getContent());
     }
 }

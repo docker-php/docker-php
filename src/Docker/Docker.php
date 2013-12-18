@@ -79,12 +79,13 @@ class Docker
             'q' => (integer) $quiet,
             't' => $name,
             'nocache' => (integer) !$cache,
-        ]]]);
+        ]]], [
+            'Content-Type' => 'application/tar'
+        ]);
 
         # http client does not support chunked responses yet
         $request->setProtocolVersion('1.0');
         $request->setContent($context->toTar());
-        $request->setContentType('application/tar');
 
         $response = $this->client->send($request);
 

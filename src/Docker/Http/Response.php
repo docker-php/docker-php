@@ -10,9 +10,14 @@ class Response
 
     private $statusText;
 
-    private $headers = array();
+    public $headers;
 
     private $content;
+
+    public function __construct()
+    {
+        $this->headers = new HeaderBag();
+    }
 
     public function setProtocolVersion($protocolVersion)
     {
@@ -45,24 +50,6 @@ class Response
         return $this;
     }
 
-    public function setHeader($name, $value)
-    {
-        $this->headers[strtolower($name)] = $value;
-
-        return $this;
-    }
-
-    public function getHeader($name)
-    {
-        $key = strtolower($name);
-
-        if (array_key_exists($key, $this->headers)) {
-            return $this->headers[$key];
-        }
-
-        return null;
-    }
-
     public function setContent($content)
     {
         $this->content = $content;
@@ -78,7 +65,7 @@ class Response
     public function getContentLength()
     {
         if (array_key_exists('content-length', $this->headers)) {
-            return (integer) $this->headers['content-length'];
+            return (integer) $this->headers->get('content-length');
         }
 
         return 0;

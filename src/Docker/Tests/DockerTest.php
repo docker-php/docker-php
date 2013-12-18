@@ -22,29 +22,29 @@ class DockerTest extends TestCase
         $this->assertRegExp('/Successfully built/', (string) $stream);
     }
 
-    public function testCommit()
-    {
-        $container = new Container();
-        $container->setImage('ubuntu:precise');
-        $container->setCmd(['/bin/true']);
+    // public function testCommit()
+    // {
+    //     $container = new Container();
+    //     $container->setImage('ubuntu:precise');
+    //     $container->setCmd(['/bin/true']);
 
-        $docker = $this->getDocker();
-        $manager = $docker->getContainerManager();
+    //     $docker = $this->getDocker();
+    //     $manager = $docker->getContainerManager();
 
-        $manager->run($container);
-        $manager->wait($container);
+    //     $manager->run($container);
+    //     $manager->wait($container);
 
-        $image = $docker->commit($container, ['repo' => 'test', 'tag' => 'foo']);
+    //     $image = $docker->commit($container, ['repo' => 'test', 'tag' => 'foo']);
 
-        $this->assertNotEmpty($image->getId());
-        $this->assertEquals('test', $image->getRepository());
-        $this->assertEquals('foo', $image->getTag());
-    }
+    //     $this->assertNotEmpty($image->getId());
+    //     $this->assertEquals('test', $image->getRepository());
+    //     $this->assertEquals('foo', $image->getTag());
+    // }
 
-    public function testGetContainerManager()
-    {
-        $docker = $this->getDocker();
+    // public function testGetContainerManager()
+    // {
+    //     $docker = $this->getDocker();
 
-        $this->assertInstanceOf('Docker\\Manager\\ContainerManager', $docker->getContainerManager());
-    }
+    //     $this->assertInstanceOf('Docker\\Manager\\ContainerManager', $docker->getContainerManager());
+    // }
 }

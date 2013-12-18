@@ -6,11 +6,9 @@ use Docker\Container;
 use Docker\Json;
 
 use Docker\Exception\UnexpectedStatusCodeException;
-use Docker\Exception\ServerErrorException;
 use Docker\Exception\ContainerNotFoundException;
 
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\ClientErrorResponseException;
+use Docker\Http\Client;
 
 /**
  * Docker\Manager\ContainerManager
@@ -18,12 +16,12 @@ use Guzzle\Http\Exception\ClientErrorResponseException;
 class ContainerManager
 {
     /**
-     * @var Guzzle\Http\Client
+     * @var Docker\Http\Client
      */
     private $client;
 
     /**
-     * @param Guzzle\Http\Client
+     * @param Docker\Http\Client
      */
     public function __construct(Client $client)
     {
@@ -42,12 +40,8 @@ class ContainerManager
 
         try {
             $this->inspect($container);
-        } catch (ClientErrorResponseException $e) {
-            if ($e->getResponse()->getStatusCode() === 404) {
-                return null;
-            }
-
-            throw $e;
+        } catch (ContainerNotFoundException $e) {
+            return null;
         }
 
         return $container;
@@ -61,7 +55,11 @@ class ContainerManager
     public function inspect(Container $container)
     {
         $request = $this->client->get(['/containers/{id}/json', ['id' => $container->getId()]]);
-        $response = $request->send();
+        $response = $this->client->send($request);
+
+        if ($response->getStatusCode() === 404) {
+            throw new ContainerNotFoundException($container->getId());
+        }
 
         $container->setRuntimeInformations($response->json());
 
@@ -76,19 +74,15 @@ class ContainerManager
     public function create(Container $container)
     {
         $request = $this->client->post('/containers/create');
-        $request->setBody(Json::encode($container->getConfig()), 'application/json');
+        $request->setContent(Json::encode($container->getConfig()), 'application/json');
 
-        $response = $request->send();
-
-        if ($response->getStatusCode() === 500) {
-            throw new ServerErrorException();
-        }
+        $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 201) {
             throw new UnexpectedStatusCodeException($response->getStatusCode());
         }
 
-        $container->setId($response->json()['Id']);
+        $container->setId($response->json(true)['Id']);
 
         return $this;
     }
@@ -101,17 +95,9 @@ class ContainerManager
     public function start(Container $container, array $hostConfig = array())
     {
         $request = $this->client->post(['/containers/{id}/start', ['id' => $container->getId()]]);
-        $request->setBody(Json::encode($hostConfig), 'application/json');
+        $request->setContent(Json::encode($hostConfig), 'application/json');
 
-        try {
-            $response = $request->send();
-        } catch (ClientErrorResponseException $e) {
-            if ($e->getResponse()->getStatusCode() === 404) {
-                throw new ContainerNotFoundException($container->getId(), $e);
-            }
-
-            throw $e;
-        }
+        $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 204) {
             throw new UnexpectedStatusCodeException($response->getStatusCode());
@@ -145,23 +131,13 @@ class ContainerManager
     public function wait(Container $container)
     {
         $request = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]]);
-        $response = $request->send();
-
-        try {
-            $response = $request->send();
-        } catch (ClientErrorResponseException $e) {
-            if ($e->getResponse()->getStatusCode() === 404) {
-                throw new ContainerNotFoundException($container->getId(), $e);
-            }
-
-            throw $e;
-        }
+        $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 200) {
             throw new UnexpectedStatusCodeException($response->getStatusCode());
         }
 
-        $container->setExitCode($response->json()['StatusCode']);
+        $container->setExitCode($response->json(true)['StatusCode']);
 
         $this->inspect($container);
 
@@ -181,15 +157,7 @@ class ContainerManager
             'timeout' => $timeout
         ]]);
 
-        try {
-            $response = $request->send();
-        } catch (ClientErrorResponseException $e) {
-            if ($e->getResponse()->getStatusCode() === 404) {
-                throw new ContainerNotFoundException($container->getId(), $e);
-            }
-
-            throw $e;
-        }
+        $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 204) {
             throw new UnexpectedStatusCodeException($response->getStatusCode());
@@ -213,15 +181,7 @@ class ContainerManager
             'v' => $volumes
         ]]);
 
-        try {
-            $response = $request->send();
-        } catch (ClientErrorResponseException $e) {
-            if ($e->getResponse()->getStatusCode() === 404) {
-                throw new ContainerNotFoundException($container->getId(), $e);
-            }
-
-            throw $e;
-        }
+        $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 204) {
             throw new UnexpectedStatusCodeException($response->getStatusCode());

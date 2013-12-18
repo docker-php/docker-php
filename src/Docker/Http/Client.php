@@ -31,6 +31,9 @@ class Client
         $this->parser = new ResponseParser();
     }
 
+    /**
+     * @return array
+     */
     public function getDefaultHeaders()
     {
         return [
@@ -60,30 +63,36 @@ class Client
     /**
      * @param string $uri
      * 
-     * @return Docker\Http\Response
+     * @return Docker\Http\Request
      */
-    public function get($uri)
+    public function get($uri, $headers = array())
     {
-        return new Request('GET', $uri, $this->getDefaultHeaders());
+        $headers = array_replace($this->getDefaultHeaders(), $headers);
+
+        return new Request('GET', $uri, $headers);
     }
 
     /**
      * @param string $uri
      * 
-     * @return Docker\Http\Response
+     * @return Docker\Http\Request
      */
-    public function post($uri)
+    public function post($uri, $headers = array())
     {
-        return new Request('POST', $uri, $this->getDefaultHeaders());
+        $headers = array_replace($this->getDefaultHeaders(), $headers);
+
+        return new Request('POST', $uri, $header);
     }
 
     /**
      * @param string $uri
      * 
-     * @return Docker\Http\Response
+     * @return Docker\Http\Request
      */
-    public function delete($uri)
+    public function delete($uri, $headers = array())
     {
-        return new Request('DELETE', $uri, $this->getDefaultHeaders());
+        $headers = array_replace($this->getDefaultHeaders(), $headers);
+
+        return new Request('DELETE', $uri, $headers);
     }
 }

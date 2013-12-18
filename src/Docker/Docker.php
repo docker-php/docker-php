@@ -91,25 +91,25 @@ class Docker
      */
     public function build(Context $context, $name, $quiet = false, $cache = true)
     {
-        $request = $this->client->post(['/build{?data*}', ['data' => [
-            'q' => $quiet,
+        $fp = stream_socket_client('tcp://127.0.0.1:4243');
+
+        $query = http_build_query([
+            'q' => (integer) $quiet,
             't' => $name,
-            'nocache' => !$cache
-        ]]]);
+            'nocache' => (integer) !$cache,
+        ]);
 
-        $request->setBody($context->toStream(), 'application/tar');
+        $length = mb_strlen($context->toTar());
 
-        try {
-            $request->send();
-        } catch (ServerErrorResponseException $e) {
-            if (strlen($body = $e->getResponse()->getBody(true)) > 0) {
-                throw new Exception($body, $e->getResponse()->getStatusCode(), $e);
-            }
+        fwrite($fp, "POST /build?$query HTTP/1.0\r\n");
+        fwrite($fp, "Content-Type: application/tar\r\n");
+        fwrite($fp, "Content-Length: $length\r\n");
+        fwrite($fp, "\r\n");
+        fwrite($fp, $context->toTar());
 
-            throw $e;
-        }
+        $content = stream_get_contents($fp);
 
-        return $this->streamRequestFactory->fromRequest($request);
+        fclose($fp);
     }
 
     /**

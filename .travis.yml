@@ -13,5 +13,6 @@ before_script:
   - sudo apt-get install -qy slirp lxc lxc-docker
   - git clone git://github.com/jpetazzo/sekexe
   - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source --dev install
+
 script:
   - sekexe/run "`pwd`/docker.sh"

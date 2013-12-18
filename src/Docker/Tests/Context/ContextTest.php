@@ -10,25 +10,26 @@ class ContextTest extends TestCase
 {
     public function testReturnsValidTarContent()
     {
-        if (!file_exists('/bin/tar')) {
-            $this->markTestSkipped('No /bin/tar on host');
+        $directory = __DIR__.DIRECTORY_SEPARATOR."context-test";
+        $context   = new Context($directory);
+        $tarFile   = tempnam(sys_get_temp_dir(), "docker-test-build-");
+
+        if (file_exists($tarFile)) {
+            unlink($tarFile);
         }
 
-        $directory = __DIR__.DIRECTORY_SEPARATOR."context-test";
+        $tarFile = $tarFile.".tar";
+        file_put_contents($tarFile, $context->toTar());
+        $phar = new \PharData($tarFile);
 
-        $context = new Context($directory);
-        $process = new Process('/bin/tar c .', $directory);
-        $process->run();
+        $this->assertCount(1, $phar);
+        $this->assertNotNull($phar['Dockerfile']);
 
-        $this->assertEquals(md5($process->getOutput()), md5($context->toTar()));
+        unlink($tarFile);
     }
 
     public function testReturnsValidTarStream()
     {
-        if (!file_exists('/bin/tar')) {
-            $this->markTestSkipped('No /bin/tar on host');
-        }
-
         $directory = __DIR__.DIRECTORY_SEPARATOR."context-test";
 
         $context = new Context($directory);

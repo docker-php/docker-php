@@ -3,11 +3,18 @@
 namespace Docker\Http;
 
 use Guzzle\Parser\Message\MessageParser;
-
 use RuntimeException;
 
+/**
+ * Docker\Http\ResponseParser
+ */
 class ResponseParser
 {
+    /**
+     * @param resource
+     * 
+     * @return Docker\Http\Response
+     */
     public function parse($stream)
     {
         $parser = new MessageParser();

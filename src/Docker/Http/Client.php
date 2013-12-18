@@ -81,7 +81,7 @@ class Client
     {
         $headers = array_replace($this->getDefaultHeaders(), $headers);
 
-        return new Request('POST', $uri, $header);
+        return new Request('POST', $uri, $headers);
     }
 
     /**

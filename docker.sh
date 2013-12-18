@@ -7,7 +7,7 @@ set -e
 trap 'kill $(jobs -p)' SIGINT SIGTERM EXIT
 
 # Start docker daemon
-docker -d -H 0.0.0.0:4243 -H unix:///var/run/docker.sock &
+docker -d -H 0.0.0.0:4243 -H unix:///var/run/docker.sock 2>> /dev/null >> /dev/null &
 sleep 2
 
 cd /home/travis/build/joelwurtz/docker-php && /home/travis/.phpenv/shims/php bin/phpunit -c phpunit.xml.dist

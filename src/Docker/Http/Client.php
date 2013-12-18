@@ -18,13 +18,25 @@ class Client
     private $parser;
 
     /**
+     * @var string
+     */
+    private $userAgent = 'Docker-PHP';
+
+    /**
      * @param string $spec
      */
     public function __construct($spec)
     {
         $this->spec = $spec;
-        $this->socket = stream_socket_client($spec);
         $this->parser = new ResponseParser();
+    }
+
+    public function getDefaultHeaders()
+    {
+        return [
+            'host' => $this->spec,
+            'user-agent' => $this->userAgent,
+        ];
     }
 
     /**
@@ -34,9 +46,15 @@ class Client
      */
     public function send(Request $request)
     {
-        fwrite($this->socket, (string) $request);
+        $socket = stream_socket_client($this->spec);
 
-        return $this->parser->parseStream($this->socket);
+        fwrite($socket, (string) $request);
+
+        $response = $this->parser->parseStream($socket);
+
+        fclose($socket);
+
+        return $response;
     }
 
     /**
@@ -46,7 +64,7 @@ class Client
      */
     public function get($uri)
     {
-        return new Request('GET', $uri);
+        return new Request('GET', $uri, $this->getDefaultHeaders());
     }
 
     /**
@@ -56,7 +74,7 @@ class Client
      */
     public function post($uri)
     {
-        return new Request('POST', $uri);
+        return new Request('POST', $uri, $this->getDefaultHeaders());
     }
 
     /**
@@ -66,6 +84,6 @@ class Client
      */
     public function delete($uri)
     {
-        return new Request('DELETE', $uri);
+        return new Request('DELETE', $uri, $this->getDefaultHeaders());
     }
 }

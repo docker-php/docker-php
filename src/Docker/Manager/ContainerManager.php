@@ -128,11 +128,11 @@ class ContainerManager
      * 
      * @return Docker\Manager\ContainerManager
      */
-    public function wait(Container $container, $timeout = 0)
+    public function wait(Container $container, $timeout = null)
     {
         $request = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]]);
         $request->setTimeout($timeout);
-        
+
         $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 200) {

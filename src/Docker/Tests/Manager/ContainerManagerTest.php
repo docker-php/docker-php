@@ -66,6 +66,18 @@ class ContainerManagerTest extends TestCase
         $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
     }
 
+    /**
+     * @expectedException Docker\Http\Exception\TimeoutException
+     */
+    public function testWaitWithTimeout()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
+
+        $manager = $this->getManager();
+        $manager->run($container);
+        $manager->wait($container, 1);
+    }
+
     public function testExposeFixedPort()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);

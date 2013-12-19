@@ -40,6 +40,11 @@ class Request
     private $expander;
 
     /**
+     * @var integer
+     */
+    private $timeout;
+
+    /**
      * @param string                                $method
      * @param string|array                          $uri
      * @param array                                 $headers
@@ -51,6 +56,9 @@ class Request
         $this->uri = $uri;
         $this->expander = $expander ?: new UriTemplate();
         $this->headers = new HeaderBag($headers);
+
+        # default timeout
+        $this->setTimeout();
 
         # this is to make sure protocol specific headers are set/unset
         $this->setProtocolVersion($this->protocolVersion);
@@ -78,6 +86,26 @@ class Request
         }
 
         return $message;
+    }
+
+    /**
+     * @param integer $timeout
+     * 
+     * @return Docker\Http\Request
+     */
+    public function setTimeout($timeout = null)
+    {
+        $this->timeout = $timeout ?: ini_get('default_socket_timeout');
+
+        return $this;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
     }
 
     /**

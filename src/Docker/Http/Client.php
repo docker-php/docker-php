@@ -53,6 +53,7 @@ class Client
 
         fwrite($socket, (string) $request);
 
+        stream_set_timeout($socket, $request->getTimeout());
         $response = $this->parser->parse($socket);
 
         fclose($socket);

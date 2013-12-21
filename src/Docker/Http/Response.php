@@ -54,7 +54,7 @@ class Response
      * @param boolean $assoc
      * @param integer $depth
      * @param integer $options
-     * 
+     *
      * @return array|stdClass
      */
     public function json($assoc = false, $depth = 512, $options = 0)
@@ -64,7 +64,7 @@ class Response
 
     /**
      * @param integer $statusCode
-     * 
+     *
      * @return Docker\Http\Response
      */
     public function setStatusCode($statusCode)
@@ -84,7 +84,7 @@ class Response
 
     /**
      * @param string $statusText
-     * 
+     *
      * @return Docker\Http\Response
      */
     public function setStatusText($statusText)
@@ -95,8 +95,22 @@ class Response
     }
 
     /**
+     * Append new content
+     *
+     * @param string $content New content to append to actual content
+     *
+     * @return Docker\Http\Response
+     */
+    public function addContent($content)
+    {
+        $this->content .= $content;
+
+        return $this;
+    }
+
+    /**
      * @param string
-     * 
+     *
      * @return Docker\Http\Response
      */
     public function setContent($content)
@@ -112,5 +126,15 @@ class Response
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Fetch rest of incoming response
+     *
+     * @param callable $callback Callback to call, this
+     */
+    public function read(callable $callback)
+    {
+        return $callback($this->getContent());
     }
 }

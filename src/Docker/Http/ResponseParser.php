@@ -14,31 +14,54 @@ class ResponseParser
 {
     /**
      * @param resource
-     * 
+     *
      * @return Docker\Http\Response
      */
     public function parse($stream)
     {
-        $message = stream_get_contents($stream);
+        $content  = "";
+        $parser   = new MessageParser();
+        $gotStatus = false;
+
+        //First create response with only headers
+        while (($line = fgets($stream)) !== false) {
+            $gotStatus = $gotStatus || (strpos($line, 'HTTP') !== false);
+            if ($gotStatus) {
+                $content .= $line;
+
+                if (rtrim($line) === '') {
+                    break;
+                }
+            }
+        }
+
         $metadata = stream_get_meta_data($stream);
 
         if ($metadata['timed_out']) {
             throw new TimeoutException();
         }
 
-        $parser = new MessageParser();
-        $infos = $parser->parseResponse($message);
+        $infos = $parser->parseResponse($content);
 
-        if (false === $infos) {
-            throw new ParseErrorException($message);
+        if (isset($infos['headers']['Transfer-Encoding']) && $infos['headers']['Transfer-Encoding'] == 'chunked') {
+            $response = new StreamResponse();
+            $response->setStream($stream);
+        } else {
+            $response = new Response();
         }
 
-        $response = new Response();
         $response->setStatusCode($infos['code']);
         $response->setStatusText($infos['reason_phrase']);
         $response->setProtocolVersion($infos['version']);
         $response->headers->replace($infos['headers']);
-        $response->setContent($infos['body']);
+
+        if ($response instanceof StreamResponse) {
+            return $response;
+        }
+
+        //Get all remaining content
+        $content  = stream_get_contents($stream);
+        $response->setContent($content);
 
         return $response;
     }

@@ -44,7 +44,7 @@ class Client
 
     /**
      * @param Docker\Http\Request $request
-     * 
+     *
      * @return Docker\Http\Response
      */
     public function send(Request $request)
@@ -56,14 +56,16 @@ class Client
         stream_set_timeout($socket, $request->getTimeout());
         $response = $this->parser->parse($socket);
 
-        fclose($socket);
+        if (!$response instanceof StreamResponse && $response->headers->get('Connection') === 'close') {
+            fclose($socket);
+        }
 
         return $response;
     }
 
     /**
      * @param string $uri
-     * 
+     *
      * @return Docker\Http\Request
      */
     public function get($uri, $headers = array())
@@ -75,7 +77,7 @@ class Client
 
     /**
      * @param string $uri
-     * 
+     *
      * @return Docker\Http\Request
      */
     public function post($uri, $headers = array())
@@ -87,7 +89,7 @@ class Client
 
     /**
      * @param string $uri
-     * 
+     *
      * @return Docker\Http\Request
      */
     public function delete($uri, $headers = array())

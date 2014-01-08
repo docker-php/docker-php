@@ -86,12 +86,12 @@ class Docker
         ]);
 
         # http client does not support chunked responses yet
-        $request->setProtocolVersion('1.0');
+        $request->setProtocolVersion('1.1');
         $request->setContent($context->toTar());
 
         $response = $this->client->send($request);
 
-        return $response->getContent();
+        return $response;
     }
 
     /**

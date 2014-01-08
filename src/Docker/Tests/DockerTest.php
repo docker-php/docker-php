@@ -4,8 +4,6 @@ namespace Docker\Tests;
 
 use Docker\Context;
 use Docker\Container;
-
-use Guzzle\Http\Client;
 use Docker\Context\ContextBuilder;
 
 class DockerTest extends TestCase
@@ -18,8 +16,9 @@ class DockerTest extends TestCase
 
         $docker = $this->getDocker();
         $stream = $docker->build($contextBuilder->getContext(), 'foo');
+        $stream->read();
 
-        $this->assertRegExp('/Successfully built/', (string) $stream);
+        $this->assertRegExp('/Successfully built/', (string) $stream->getContent());
     }
 
     public function testCommit()

@@ -1,9 +1,9 @@
 <?php
 
-use Docker\Http\StreamResponse;
+use Docker\Http\StreamedResponse;
 use Docker\Http\ResponseParser;
 
-class StreamResponseTest extends PHPUnit_Framework_TestCase
+class StreamedResponseTest extends PHPUnit_Framework_TestCase
 {
     public function testRead()
     {
@@ -31,7 +31,7 @@ EORESPONSE
         $responseParser = new ResponseParser();
         $response = $responseParser->parse($stream);
 
-        $this->assertInstanceOf('\Docker\Http\StreamResponse', $response);
+        $this->assertInstanceOf('\Docker\Http\StreamedResponse', $response);
         $actualRead = "";
         $response->read(function ($content) use(&$actualRead) {
             $actualRead .= $content."test\n";

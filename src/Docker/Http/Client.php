@@ -56,7 +56,7 @@ class Client
         stream_set_timeout($socket, $request->getTimeout());
         $response = $this->parser->parse($socket);
 
-        if (!$response instanceof StreamResponse && $response->headers->get('Connection') === 'close') {
+        if (!$response instanceof StreamedResponse && $response->headers->get('Connection') === 'close') {
             fclose($socket);
         }
 

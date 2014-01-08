@@ -44,7 +44,7 @@ class ResponseParser
         $infos = $parser->parseResponse($content);
 
         if (isset($infos['headers']['Transfer-Encoding']) && $infos['headers']['Transfer-Encoding'] == 'chunked') {
-            $response = new StreamResponse();
+            $response = new StreamedResponse();
             $response->setStream($stream);
         } else {
             $response = new Response();
@@ -55,7 +55,7 @@ class ResponseParser
         $response->setProtocolVersion($infos['version']);
         $response->headers->replace($infos['headers']);
 
-        if ($response instanceof StreamResponse) {
+        if ($response instanceof StreamedResponse) {
             return $response;
         }
 

@@ -2,7 +2,7 @@
 
 namespace Docker\Http;
 
-class StreamResponse extends Response
+class StreamedResponse extends Response
 {
     /**
      * Stream ressource to fetch new data of incoming response
@@ -29,7 +29,7 @@ class StreamResponse extends Response
     public function read(callable $callback = null)
     {
         if ($this->stream === null) {
-            return parent::run($callback);
+            return parent::read($callback);
         }
 
         do {

@@ -49,6 +49,40 @@ class ContainerManagerTest extends TestCase
         $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
     }
 
+    public function testAttach()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/bash', '-c', 'sleep 1 && echo -n "output"']]);
+        $manager = $this->getManager();
+
+        $type   = 0;
+        $output = "";
+
+        $manager->run($container)->attach($container, function ($stdtype, $log) use(&$type, &$output) {
+            $type   = $stdtype;
+            $output = $log;
+        });
+
+        $this->assertEquals(1, $type);
+        $this->assertEquals('output', $output);
+    }
+
+    public function testAttachStderr()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/bash', '-c', 'sleep 1 && echo -n "error" 1>&2']]);
+        $manager = $this->getManager();
+
+        $type   = 0;
+        $output = "";
+
+        $manager->run($container)->attach($container, function ($stdtype, $log) use(&$type, &$output) {
+            $type   = $stdtype;
+            $output = $log;
+        });
+
+        $this->assertEquals(2, $type);
+        $this->assertEquals('error', $output);
+    }
+
     /**
      * Not sure how to reliably test that we actually waited for the container
      * but this should at least ensure no exception is thrown

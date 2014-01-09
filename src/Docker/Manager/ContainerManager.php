@@ -141,13 +141,15 @@ class ContainerManager
      */
     public function attach(Container $container, $callback, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true)
     {
-        $request = $this->client->post(['/containers/{id}/attach?logs={logs}&stream={stream}&stdin={stdin}&stdout={stdout}&stderr={stderr}', [
+        $request = $this->client->post(['/containers/{id}/attach{?data*}', [
             'id'     => $container->getId(),
-            'logs'   => $logs,
-            'stream' => $stream,
-            'stdin'  => $stdin,
-            'stdout' => $stdout,
-            'stderr' => $stderr
+            'data' => [
+                'logs'   => $logs,
+                'stream' => $stream,
+                'stdin'  => $stdin,
+                'stdout' => $stdout,
+                'stderr' => $stderr
+            ]
         ]]);
 
         $response = $this->client->send($request);

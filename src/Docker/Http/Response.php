@@ -133,8 +133,10 @@ class Response
      *
      * @param callable $callback Callback to call, this
      */
-    public function read(callable $callback)
+    public function read(callable $callback = null)
     {
-        return $callback($this->getContent());
+        if (null !== $callback) {
+            $callback($this->getContent());
+        }
     }
 }

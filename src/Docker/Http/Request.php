@@ -69,19 +69,15 @@ class Request
      */
     public function __toString()
     {
-        $message  = vsprintf('%s %s HTTP/%s', [
-            strtoupper($this->method),
-            $this->getRequestUri(),
-            $this->protocolVersion
-        ])."\r\n";
+        $message = $this->getHeadersAsString();
+        $content = $this->getContent();
 
-        if (count($this->headers) > 0) {
-            $message .= $this->headers->format()."\r\n";
-        }
-
-        $message .= "\r\n";
-
-        if (strlen($this->getContent()) > 0) {
+        if (is_resource($this->getContent())) {
+            //Send as a chunked message
+            $content = stream_get_contents($this->getContent());
+            $message .= dechex(mb_strlen($content))."\n";
+            $message .= $content;
+        } elseif (strlen($this->getContent()) > 0) {
             $message .= $this->getContent();
         }
 
@@ -90,7 +86,7 @@ class Request
 
     /**
      * @param integer $timeout
-     * 
+     *
      * @return Docker\Http\Request
      */
     public function setTimeout($timeout = null)
@@ -123,26 +119,36 @@ class Request
     }
 
     /**
-     * @param string $content
-     * @param string $contentType
-     * 
+     * Set the content of a request, if a stream is passed it will simply copy stream
+     *
+     * @param string|resource $content Content to send
+     * @param string          $contentType
+     *
      * @return Docker\Http\Request
      */
     public function setContent($content, $contentType = null)
     {
         $this->content = $content;
 
-        $this->headers->set('content-length', mb_strlen($content));
+        if (is_string($content)) {
+            $this->headers->set('content-length', mb_strlen($content));
+        }
 
         if (null !== $contentType) {
             $this->headers->set('content-type', $contentType);
+        }
+
+        if (is_resource($content)) {
+            $this->headers->set('Transfer-Encoding', 'chunked');
         }
 
         return $this;
     }
 
     /**
-     * @return string
+     * Get content of request
+     *
+     * @return string|resource
      */
     public function getContent()
     {
@@ -151,7 +157,7 @@ class Request
 
     /**
      * @param string $protocolVersion
-     * 
+     *
      * @return Docker\Http\Request
      */
     public function setProtocolVersion($protocolVersion)
@@ -165,5 +171,27 @@ class Request
         }
 
         return $this;
+    }
+
+    /**
+     * Get http headers as a string
+     *
+     * @return string
+     */
+    public function getHeadersAsString()
+    {
+        $message  = vsprintf('%s %s HTTP/%s', [
+            strtoupper($this->method),
+            $this->getRequestUri(),
+            $this->protocolVersion
+            ])."\r\n";
+
+        if (count($this->headers) > 0) {
+            $message .= $this->headers->format()."\r\n";
+        }
+
+        $message .= "\r\n";
+
+        return $message;
     }
 }

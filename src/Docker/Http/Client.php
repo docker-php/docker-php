@@ -7,6 +7,8 @@ namespace Docker\Http;
  */
 class Client
 {
+    const CHUNK_SIZE = 8192;
+
     /**
      * @var resource
      */
@@ -50,8 +52,23 @@ class Client
     public function send(Request $request)
     {
         $socket = stream_socket_client($this->spec);
+        fwrite($socket, $request->getHeadersAsString());
+        $content = $request->getContent();
 
-        fwrite($socket, (string) $request);
+        if (is_resource($content)) {
+            while (false !== ($read = fread($content, self::CHUNK_SIZE))) {
+                fwrite($socket, dechex(mb_strlen($read))."\r\n".$read);
+
+                if (empty($read)) {
+                    break;
+                }
+            }
+
+            fclose($content);
+            fwrite($socket, "0\r\n\r\n");
+        } else {
+            fwrite($socket, $content);
+        }
 
         stream_set_timeout($socket, $request->getTimeout());
         $response = $this->parser->parse($socket);

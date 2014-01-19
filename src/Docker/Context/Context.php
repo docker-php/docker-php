@@ -9,7 +9,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Docker\Context
  */
-class Context
+class Context implements ContextInterface
 {
     /**
      * @var string
@@ -20,6 +20,16 @@ class Context
      * @var Symfony\Component\Filesystem\Filesystem
      */
     private $fs;
+
+    /**
+     * @var process Tar process
+     */
+    private $process;
+
+    /**
+     * @var stream Tar stream
+     */
+    private $stream;
 
     /**
      * @param Symfony\Component\Filesystem\Filesystem
@@ -84,10 +94,22 @@ class Context
      */
     public function toStream()
     {
-        $stream = fopen('php://memory', 'r+');
-        fwrite($stream, $this->toTar());
-        rewind($stream);
+        if (!is_resource($this->process)) {
+            $this->process = proc_open("/bin/tar c .", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, $this->directory);
+            $this->stream  = $pipes[1];
+        }
 
-        return $stream;
+        return $this->stream;
+    }
+
+    public function __destruct()
+    {
+        if (is_resource($this->process)) {
+            proc_close($this->process);
+        }
+
+        if (is_resource($this->stream)) {
+            fclose($this->stream);
+        }
     }
 }

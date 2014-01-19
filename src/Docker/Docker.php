@@ -7,6 +7,7 @@ use Docker\Http\Client;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
+use Docker\Context\ContextInterface;
 
 /**
  * Docker\Docker
@@ -67,15 +68,17 @@ class Docker
     }
 
     /**
-     * @param Docker\Context\Context    $context
-     * @param string                    $name
-     * @param boolean                   $quiet
+     * Build an image with docker
+     *
+     * @param Docker\Context\ContextInterface    $context
+     * @param string                             $name
+     * @param boolean                            $quiet
      *
      * @return Guzzle\Stream\StreamInterface
      *
      * The `q` argument seems to be ignored right now (same behavior observed in the CLI client)
      */
-    public function build(Context $context, $name, $quiet = false, $cache = true)
+    public function build(ContextInterface $context, $name, $quiet = false, $cache = true)
     {
         $request = $this->client->post(['/build{?data*}', ['data' => [
             'q' => (integer) $quiet,
@@ -87,7 +90,7 @@ class Docker
 
         # http client does not support chunked responses yet
         $request->setProtocolVersion('1.1');
-        $request->setContent($context->toTar());
+        $request->setContent($context->toStream(), 'application/tar');
 
         $response = $this->client->send($request);
 

@@ -80,6 +80,12 @@ Credits
 
 This README heavily inspired by [willdurand/Negotiation](https://github.com/willdurand/Negotiation) by @willdurand. This guy is pretty awesome.
 
+Projects
+--------
+
+Projects known to be using docker-php:
+
+* [JoliCi](https://github.com/jolicode/JoliCi), Run your tests on different and isolated stacks
 
 License
 -------

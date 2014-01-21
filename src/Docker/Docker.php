@@ -67,20 +67,22 @@ class Docker
     }
 
     /**
-     * @param Docker\Context\Context    $context
-     * @param string                    $name
-     * @param boolean                   $quiet
-     *
+     * Build an image with docker given a specific Context
+     * 
+     * @param Docker\Context\Context    $context  Context sent to docker
+     * @param string                    $name     Will be the name of the image
+     * @param boolean                   $quiet    Remove command output (but not step output)
+     * @param boolean                   $rm       Remove intermediate container during build
+     * 
      * @return Guzzle\Stream\StreamInterface
-     *
-     * The `q` argument seems to be ignored right now (same behavior observed in the CLI client)
      */
-    public function build(Context $context, $name, $quiet = false, $cache = true)
+    public function build(Context $context, $name, $quiet = false, $cache = true, $rm = false)
     {
         $request = $this->client->post(['/build{?data*}', ['data' => [
             'q' => (integer) $quiet,
             't' => $name,
             'nocache' => (integer) !$cache,
+            'rm' => (integer) $rm
         ]]], [
             'Content-Type' => 'application/tar'
         ]);

@@ -59,7 +59,8 @@ class Client
 
         if (is_resource($content)) {
             while (false !== ($read = fread($content, self::CHUNK_SIZE))) {
-                fwrite($socket, dechex(mb_strlen($read))."\r\n".$read);
+                $frame = dechex(mb_strlen($read))."\r\n".$read."\r\n";
+                fwrite($socket, $frame);
 
                 if (empty($read)) {
                     break;

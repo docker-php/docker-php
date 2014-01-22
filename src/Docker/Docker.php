@@ -7,6 +7,7 @@ use Docker\Http\Client;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
+use Docker\Context\ContextInterface;
 
 /**
  * Docker\Docker
@@ -67,16 +68,16 @@ class Docker
     }
 
     /**
-     * Build an image with docker given a specific Context
-     * 
-     * @param Docker\Context\Context    $context  Context sent to docker
-     * @param string                    $name     Will be the name of the image
-     * @param boolean                   $quiet    Remove command output (but not step output)
-     * @param boolean                   $rm       Remove intermediate container during build
-     * 
-     * @return Guzzle\Stream\StreamInterface
+     * Build an image with docker
+     *
+     * @param Docker\Context\ContextInterface    $context
+     * @param string                             $name
+     * @param boolean                            $quiet
+     * @param boolean                            $rm       Remove intermediate container during build
+     *
+     * @return Docker\Http\Response
      */
-    public function build(Context $context, $name, $quiet = false, $cache = true, $rm = false)
+    public function build(ContextInterface $context, $name, $quiet = false, $cache = true, $rm = false)
     {
         $request = $this->client->post(['/build{?data*}', ['data' => [
             'q' => (integer) $quiet,
@@ -89,7 +90,7 @@ class Docker
 
         # http client does not support chunked responses yet
         $request->setProtocolVersion('1.1');
-        $request->setContent($context->toTar());
+        $request->setContent($context->toStream(), 'application/tar');
 
         $response = $this->client->send($request);
 

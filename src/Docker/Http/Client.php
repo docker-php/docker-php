@@ -2,6 +2,8 @@
 
 namespace Docker\Http;
 
+use Docker\Http\Exception\ParseErrorException;
+
 /**
  * Docker\Http\Client
  */
@@ -71,7 +73,14 @@ class Client
         }
 
         stream_set_timeout($socket, $request->getTimeout());
-        $response = $this->parser->parse($socket);
+
+        try {
+            $response = $this->parser->parse($socket);
+        } catch (ParseErrorException $e) {
+            $e->setRequest($request);
+
+            throw $e;
+        }
 
         if (!$response instanceof StreamedResponse && $response->headers->get('Connection') === 'close') {
             fclose($socket);

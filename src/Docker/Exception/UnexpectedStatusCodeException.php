@@ -16,6 +16,6 @@ class UnexpectedStatusCodeException extends BaseException
      */
     public function __construct($statusCode)
     {
-        parent::__construct(null, (integer) $statusCode);
+        parent::__construct('Status code: '.$statusCode, (integer) $statusCode);
     }
 }

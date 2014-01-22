@@ -8,26 +8,17 @@ namespace Docker\Context;
 interface ContextInterface
 {
     /**
+     * Whether the Context should be streamed or not.
+     * 
      * @return boolean
      */
     public function isStreamed();
 
     /**
+     * If `isStreamed()` is `true`, then `read()` should return a resource.
+     * Else it should return the plain content.
+     * 
      * @return ressource|string
      */
     public function read();
-
-    /**
-     * Get context as a tar archive
-     * 
-     * @return string Tar content
-     */
-    public function toTar();
-
-    /**
-     * Get context as a stream
-     *
-     * @return ressource Return a stream ressource
-     */
-    public function toStream();
 }

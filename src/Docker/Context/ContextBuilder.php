@@ -32,11 +32,30 @@ class ContextBuilder
     private $fs;
 
     /**
+     * @var string
+     */
+    private $format;
+
+    /**
      * @param Symfony\Component\Filesystem\Filesystem
      */
     public function __construct(Filesystem $fs = null)
     {
         $this->fs = $fs ?: new Filesystem();
+    }
+
+    /**
+     * Sets the format of the Context output
+     * 
+     * @param string $format
+     * 
+     * @return Docker\Context\ContextBuilder
+     */
+    public function setFormat($format)
+    {
+        $this->format = $format;
+
+        return $this;
     }
 
     /**
@@ -97,7 +116,7 @@ class ContextBuilder
         $this->fs->mkdir($this->directory);
         $this->write($this->directory);
 
-        return new Context($this->directory, $this->fs);
+        return new Context($this->directory, $this->fs, $this->format);
     }
 
     /**

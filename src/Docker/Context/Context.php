@@ -11,6 +11,10 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class Context implements ContextInterface
 {
+    const FORMAT_STREAM = 'stream';
+
+    const FORMAT_TAR = 'tar';
+
     /**
      * @var string
      */
@@ -34,10 +38,11 @@ class Context implements ContextInterface
     /**
      * @param Symfony\Component\Filesystem\Filesystem
      */
-    public function __construct($directory, Filesystem $fs = null)
+    public function __construct($directory, Filesystem $fs = null, $format = self::FORMAT_STREAM)
     {
         $this->directory = $directory;
         $this->fs = $fs ?: new Filesystem();
+        $this->format = $format;
     }
 
     /**
@@ -68,6 +73,22 @@ class Context implements ContextInterface
     public function getDockerfileContent()
     {
         return file_get_contents($this->directory.DIRECTORY_SEPARATOR.'Dockerfile');
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isStreamed()
+    {
+        return $this->format === self::FORMAT_STREAM;
+    }
+
+    /**
+     * @return ressource|string
+     */
+    public function read()
+    {
+        return $this->isStreamed() ? $this->toStream() : $this->toTar();
     }
 
     /**

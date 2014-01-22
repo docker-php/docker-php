@@ -160,6 +160,14 @@ class Container
     }
 
     /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->runtimeInformations['Name'];
+    }
+
+    /**
      * @param integer $exitCode
      * 
      * @return Docker\Container

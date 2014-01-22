@@ -131,11 +131,11 @@ class Request
         $this->content = $content;
 
         if (is_string($content)) {
-            $this->headers->set('content-length', mb_strlen($content));
+            $this->headers->set('Content-Length', mb_strlen($content));
         }
 
         if (null !== $contentType) {
-            $this->headers->set('content-type', $contentType);
+            $this->headers->set('Content-Type', $contentType);
         }
 
         if (is_resource($content)) {
@@ -165,9 +165,9 @@ class Request
         $this->protocolVersion = $protocolVersion;
 
         if ($protocolVersion === '1.1') {
-            $this->headers->set('connection', 'close');
+            $this->headers->set('Connection', 'close');
         } else {
-            $this->headers->remove('connection');
+            $this->headers->remove('Connection');
         }
 
         return $this;

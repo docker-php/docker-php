@@ -41,8 +41,8 @@ class Client
     public function getDefaultHeaders()
     {
         return [
-            'host' => $this->spec,
-            'user-agent' => $this->userAgent,
+            'Host' => $this->spec,
+            'User-Agent' => $this->userAgent,
         ];
     }
 

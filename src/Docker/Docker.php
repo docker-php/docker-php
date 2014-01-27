@@ -117,7 +117,7 @@ class Docker
         $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 201) {
-            throw new UnexpectedStatusCodeException($response->getStatusCode());
+            throw new UnexpectedStatusCodeException($response->getStatusCode(), (string) $response->getContent());
         }
 
         $image = new Image();

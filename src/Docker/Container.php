@@ -164,7 +164,7 @@ class Container
      */
     public function getName()
     {
-        return $this->runtimeInformations['Name'];
+        return array_key_exists('Name', $this->runtimeInformations) ? $this->runtimeInformations['Name'] : null;
     }
 
     /**

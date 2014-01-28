@@ -39,7 +39,9 @@ class ContainerManager
             $container = new Container();
             $container->setId($data['Id']);
             $container->setImage($data['Image']);
-            $container->setCmd($data['Command']);
+            $container->setCmd((array) $data['Command']);
+
+            $container->setData($data);
 
             $coll[] = $container;
         }

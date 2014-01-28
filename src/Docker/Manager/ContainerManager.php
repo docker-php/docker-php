@@ -32,10 +32,21 @@ class ContainerManager
     {
         $request = $this->client->get('/containers/json');
         $response = $this->client->send($request);
+        $response->read();
+
+        if ($response->getStatusCode() !== 200) {
+            throw new UnexpectedStatusCodeException($response->getStatusCode(), $response->getContent());
+        }
 
         $coll = [];
 
-        foreach ($response->json(true) as $data) {
+        $containers = $response->json(true);
+
+        if (!is_array($containers)) {
+            return [];
+        }
+
+        foreach ($containers as $data) {
             $container = new Container();
             $container->setId($data['Id']);
             $container->setImage($data['Image']);

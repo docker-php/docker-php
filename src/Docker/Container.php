@@ -307,7 +307,7 @@ class Container
     public function getImage()
     {
         if (!$this->image instanceof Image) {
-            $this->image = new Image;
+            $this->image = new Image();
             $this->image->setName($this->config['Image']);
         }
 

@@ -43,6 +43,11 @@ class Container
     private $image;
 
     /**
+     * @var array
+     */
+    private $data = array();
+
+    /**
      * @param array $config
      */
     public function __construct(array $config = array())
@@ -306,5 +311,25 @@ class Container
         $this->config['Cmd'] = $cmd;
 
         return $this;
+    }
+
+    /**
+     * @param array $data
+     * 
+     * @return Docker\Container
+     */
+    public function setData(array $data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
     }
 }

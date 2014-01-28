@@ -53,6 +53,25 @@ class Image
     }
 
     /**
+     * @param string $name
+     * 
+     * @return Docker\Image
+     */
+    public function setName($name)
+    {
+        if (false !== strpos($name, ':')) {
+            list($repository, $tag) = explode(':', $name);
+            
+            $this->setRepository($repository);
+            $this->setTag($tag);
+        } else {
+            $this->setRepository($name);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string $id
      * 
      * @return Docker\Image

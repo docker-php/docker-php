@@ -28,6 +28,25 @@ class ContainerManager
         $this->client = $client;
     }
 
+    public function findAll()
+    {
+        $request = $this->client->get('/containers/json');
+        $response = $this->client->send($request);
+
+        $coll = [];
+
+        foreach ($response->json(true) as $data) {
+            $container = new Container();
+            $container->setId($data['Id']);
+            $container->setImage($data['Image']);
+            $container->setCmd($data['Command']);
+
+            $coll[] = $container;
+        }
+
+        return $coll;
+    }
+
     /**
      * @param string $id
      *

@@ -302,6 +302,19 @@ class Container
     }
 
     /**
+     * @return Docker\Image
+     */
+    public function getImage()
+    {
+        if (!$this->image instanceof Image) {
+            $this->image = new Image;
+            $this->image->setName($this->config['Image']);
+        }
+
+        return $this->image;
+    }
+
+    /**
      * @param array $cmd
      *
      * @return Docker\Container

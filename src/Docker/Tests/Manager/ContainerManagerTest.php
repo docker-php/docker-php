@@ -4,11 +4,15 @@ namespace Docker\Tests\Manager;
 
 use Docker\Container;
 use Docker\Port;
-
 use Docker\Tests\TestCase;
 
 class ContainerManagerTest extends TestCase
 {
+    /**
+     * Return a container manager
+     *
+     * @return Docker\Docker\Manager\ContainerManager
+     */
     private function getManager()
     {
         return $this->getDocker()->getContainerManager();
@@ -51,13 +55,15 @@ class ContainerManagerTest extends TestCase
 
     public function testAttach()
     {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/bash', '-c', 'sleep 1 && echo -n "output"']]);
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/bash', '-c', 'echo -n "output"']]);
         $manager = $this->getManager();
 
         $type   = 0;
         $output = "";
 
-        $manager->run($container)->attach($container, function ($stdtype, $log) use(&$type, &$output) {
+        $manager->run($container);
+
+        $container->getAttachResponse()->readAttach(function ($stdtype, $log) use(&$type, &$output) {
             $type   = $stdtype;
             $output = $log;
         });
@@ -68,13 +74,15 @@ class ContainerManagerTest extends TestCase
 
     public function testAttachStderr()
     {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/bash', '-c', 'sleep 1 && echo -n "error" 1>&2']]);
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/bash', '-c', 'echo -n "error" 1>&2']]);
         $manager = $this->getManager();
 
         $type   = 0;
         $output = "";
 
-        $manager->run($container)->attach($container, function ($stdtype, $log) use(&$type, &$output) {
+        $manager->run($container);
+
+        $container->getAttachResponse()->readAttach(function ($stdtype, $log) use(&$type, &$output) {
             $type   = $stdtype;
             $output = $log;
         });

@@ -1,9 +1,9 @@
 <?php
 
-use Docker\Http\StreamedResponse;
+use Docker\Http\ChunkedResponse;
 use Docker\Http\ResponseParser;
 
-class StreamedResponseTest extends PHPUnit_Framework_TestCase
+class ChunkedResponseTest extends PHPUnit_Framework_TestCase
 {
     public function testRead()
     {
@@ -29,9 +29,9 @@ EORESPONSE
         rewind($stream);
 
         $responseParser = new ResponseParser();
-        $response = $responseParser->parse($stream);
+        $response = $responseParser->parse($stream, false);
 
-        $this->assertInstanceOf('\Docker\Http\StreamedResponse', $response);
+        $this->assertInstanceOf('\Docker\Http\ChunkedResponse', $response);
         $actualRead = "";
         $response->read(function ($content) use(&$actualRead) {
             $actualRead .= $content."test\n";

@@ -2,11 +2,26 @@
 
 namespace Docker\Http;
 
+use Docker\Http\Exception\TimeoutException;
 /**
  * Docker\Http\Response
  */
 class Response
 {
+    /**
+     * Stream ressource to fetch new data of incoming response
+     *
+     * @var ressource
+     */
+    protected $stream;
+
+    /**
+     * Is the stream blocked
+     *
+     * @var ressource
+     */
+    protected $blocking = true;
+
     /**
      * @var string
      */
@@ -131,12 +146,99 @@ class Response
     /**
      * Fetch rest of incoming response
      *
-     * @param callable $callback Callback to call, this
+     * @param callable $callback Callback to call
+     *
+     * Callback must be of the following format :
+     * funtion ($output) {
+     *
+     * }
      */
     public function read(callable $callback = null)
     {
-        if (null !== $callback) {
+        if (!empty($this->content) && $callback !== null) {
             $callback($this->getContent());
         }
+
+        if ($this->stream === null) {
+            return;
+        }
+
+        do {
+            $content = $this->readLine($this->stream);
+
+            if (false === $content) {
+                break;
+            }
+
+            $this->addContent($content);
+
+            if ($callback !== null) {
+                $callback($content);
+            }
+        } while (!feof($this->stream));
+
+        $metadata = stream_get_meta_data($this->stream);
+
+        if ($this->headers->get('Connection') == 'close') {
+            fclose($this->stream);
+            $this->stream = null;
+        }
+
+        if ($metadata['timed_out']) {
+            throw new TimeoutException();
+        }
+    }
+
+    /**
+     * Fetch response with docker protocol to handle terminal like response
+     *
+     * @param callable $callback Callback to call
+     */
+    public function readAttach(callable $callback = null)
+    {
+        $this->read(function ($payload) use($callback) {
+            while (!empty($payload)) {
+                $header  = substr($payload, 0, 8);
+                $decoded = unpack('C1stream_type/C3/N1size', $header);
+                $content = substr($payload, 8, $decoded['size']);
+                $payload = substr($payload, 8 + $decoded['size']);
+
+                $callback($decoded['stream_type'], $content);
+            }
+        });
+    }
+
+    /**
+     * Stream resource to set
+     *
+     * @param resource $stream
+     * @param boolean  $blocking
+     */
+    public function setStream($stream, $blocking = true)
+    {
+        $this->stream = $stream;
+        $this->blocking = $blocking;
+    }
+
+    /**
+     * @return resource
+     */
+    public function getStream()
+    {
+        return $this->stream;
+    }
+
+    /**
+     * Read a line from a stream
+     *
+     * @param resource $stream
+     *
+     * @return string|false Return content or false if no content left
+     */
+    protected function readLine($stream)
+    {
+        $content = fgets($stream);
+
+        return $content;
     }
 }

@@ -118,6 +118,7 @@ class ContainerManager
     {
         $this
             ->create($container)
+            ->attach($container)
             ->start($container, $hostConfig);
 
         return $this;
@@ -139,7 +140,7 @@ class ContainerManager
      *
      * @return Docker\Manager\ContainerManager
      */
-    public function attach(Container $container, $callback, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true)
+    public function attach(Container $container, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true)
     {
         $request = $this->client->post(['/containers/{id}/attach{?data*}', [
             'id'     => $container->getId(),
@@ -152,22 +153,15 @@ class ContainerManager
             ]
         ]]);
 
-        $response = $this->client->send($request);
+        $request->setProtocolVersion('1.1');
+
+        $response = $this->client->send($request, false);
 
         if ($response->getStatusCode() !== 200) {
             throw new UnexpectedStatusCodeException($response->getStatusCode());
         }
 
-        $response->read(function ($payload) use($response, $callback) {
-            while (!empty($payload)) {
-                $header  = substr($payload, 0, 8);
-                $decoded = unpack('C1stream_type/C3/N1size', $header);
-                $content = substr($payload, 8, $decoded['size']);
-                $payload = substr($payload, 8 + $decoded['size']);
-
-                $callback($decoded['stream_type'], $content);
-            }
-        });
+        $container->setAttachResponse($response);
 
         return $this;
     }

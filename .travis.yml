@@ -3,6 +3,11 @@ language: php
 php:
   - 5.4
   - 5.5
+  - hhvm
+  
+matrix:
+    allow_failures:
+        - php: hhvm
 
 before_script:
   - sudo sh -c "wget -qO- https://get.docker.io/gpg | apt-key add -"

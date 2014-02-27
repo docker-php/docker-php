@@ -3,7 +3,6 @@
 namespace Docker;
 
 use Docker\Exception\PortNotFoundException;
-use Docker\Http\Response;
 
 /**
  * Docker\Container

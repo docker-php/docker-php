@@ -223,6 +223,20 @@ class ContainerManagerTest extends TestCase
         $manager->wait($container, 1);
     }
 
+    public function testTimeoutExceptionHasMessage()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
+
+        $manager = $this->getManager();
+        $manager->run($container);
+
+        try {
+            $manager->wait($container, 1);
+        } catch (\Docker\Http\Exception\TimeoutException $e) {
+            $this->assertEquals('Timed out while waiting for a response to "/containers/'.$container->getId().'/wait"', $e->getMessage());
+        }
+    }
+
     public function testExposeFixedPort()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);

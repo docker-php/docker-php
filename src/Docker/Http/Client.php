@@ -77,7 +77,7 @@ class Client
         stream_set_timeout($socket, $request->getTimeout());
 
         try {
-            $response = $this->parser->parse($socket, $blocking);
+            $response = $this->parser->parse($socket, $request, $blocking);
         } catch (ParseErrorException $e) {
             $e->setRequest($request);
 

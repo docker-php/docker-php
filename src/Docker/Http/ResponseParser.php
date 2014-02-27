@@ -4,6 +4,8 @@ namespace Docker\Http;
 
 use Docker\Http\Exception\TimeoutException;
 use Docker\Http\Exception\ParseErrorException;
+use Docker\Http\Request;
+
 use Guzzle\Parser\Message\MessageParser;
 
 /**
@@ -16,7 +18,7 @@ class ResponseParser
      *
      * @return Docker\Http\Response
      */
-    public function parse($stream, $blocking = true)
+    public function parse($stream, Request $request, $blocking = true)
     {
         $content  = "";
         $parser   = new MessageParser();
@@ -37,7 +39,9 @@ class ResponseParser
         $metadata = stream_get_meta_data($stream);
 
         if ($metadata['timed_out']) {
-            throw new TimeoutException();
+            throw (null === $request)
+                ? new TimeoutException()
+                : TimeoutException::fromRequest($request);
         }
 
         $infos = $parser->parseResponse($content);

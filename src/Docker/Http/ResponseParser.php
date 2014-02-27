@@ -5,7 +5,6 @@ namespace Docker\Http;
 use Docker\Http\Exception\TimeoutException;
 use Docker\Http\Exception\ParseErrorException;
 use Guzzle\Parser\Message\MessageParser;
-use RuntimeException;
 
 /**
  * Docker\Http\ResponseParser

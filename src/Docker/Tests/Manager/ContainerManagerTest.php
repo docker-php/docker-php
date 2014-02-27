@@ -41,16 +41,101 @@ class ContainerManagerTest extends TestCase
         $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
     }
 
-    public function testRun()
+    public function testRunDefault()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
+        $manager = $this
+            ->getMockBuilder('\Docker\Manager\ContainerManager')
+            ->setMethods(array('create', 'start', 'wait'))
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $manager = $this->getManager();
-        $manager->run($container);
+        $container->setExitCode(0);
 
-        $runtimeInformations = $container->getRuntimeInformations();
+        $manager->expects($this->once())
+            ->method('create')
+            ->with($this->isInstanceOf('\Docker\Container'))
+            ->will($this->returnSelf());
 
-        $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
+        $manager->expects($this->once())
+            ->method('start')
+            ->with($this->isInstanceOf('\Docker\Container'))
+            ->will($this->returnSelf());
+
+        $manager->expects($this->once())
+            ->method('wait')
+            ->with($this->isInstanceOf('\Docker\Container'))
+            ->will($this->returnSelf());
+
+        $this->assertTrue($manager->run($container));
+    }
+
+    public function testRunAttach()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
+        $manager = $this
+            ->getMockBuilder('\Docker\Manager\ContainerManager')
+            ->setMethods(array('create', 'start', 'wait', 'attach'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMock('\Docker\Http\Response');
+
+        $container->setExitCode(0);
+        $callback = function ($type, $output) {};
+
+        $manager->expects($this->once())
+            ->method('create')
+            ->with($this->isInstanceOf('\Docker\Container'))
+            ->will($this->returnSelf());
+
+        $manager->expects($this->once())
+            ->method('attach')
+            ->with($this->isInstanceOf('\Docker\Container'), $this->equalTo(true), $this->equalTo(true), $this->equalTo(true), $this->equalTo(true), $this->equalTo(true), $this->equalTo(null))
+            ->will($this->returnValue($response));
+
+        $manager->expects($this->once())
+            ->method('start')
+            ->with($this->isInstanceOf('\Docker\Container'))
+            ->will($this->returnSelf());
+
+        $response->expects($this->once())
+            ->method('readAttach')
+            ->with($this->equalTo($callback));
+
+        $manager->expects($this->once())
+            ->method('wait')
+            ->with($this->isInstanceOf('\Docker\Container'))
+            ->will($this->returnSelf());
+
+        $this->assertTrue($manager->run($container, $callback));
+    }
+
+    public function testRunDeamon()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
+        $manager = $this
+            ->getMockBuilder('\Docker\Manager\ContainerManager')
+            ->setMethods(array('create', 'start', 'wait'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $container->setExitCode(0);
+
+        $manager->expects($this->once())
+            ->method('create')
+            ->with($this->isInstanceOf('\Docker\Container'))
+            ->will($this->returnSelf());
+
+        $manager->expects($this->once())
+            ->method('start')
+            ->with($this->isInstanceOf('\Docker\Container'))
+            ->will($this->returnSelf());
+
+        $manager->expects($this->never())
+            ->method('wait');
+
+        $this->assertNull($manager->run($container, null, array(), true));
     }
 
     public function testAttach()
@@ -61,9 +146,11 @@ class ContainerManagerTest extends TestCase
         $type   = 0;
         $output = "";
 
-        $manager->run($container);
+        $manager->create($container);
+        $response = $manager->attach($container);
+        $manager->start($container);
 
-        $container->getAttachResponse()->readAttach(function ($stdtype, $log) use(&$type, &$output) {
+        $response->readAttach(function ($stdtype, $log) use(&$type, &$output) {
             $type   = $stdtype;
             $output = $log;
         });
@@ -80,9 +167,11 @@ class ContainerManagerTest extends TestCase
         $type   = 0;
         $output = "";
 
-        $manager->run($container);
+        $manager->create($container);
+        $response = $manager->attach($container);
+        $manager->start($container);
 
-        $container->getAttachResponse()->readAttach(function ($stdtype, $log) use(&$type, &$output) {
+        $response->readAttach(function ($stdtype, $log) use(&$type, &$output) {
             $type   = $stdtype;
             $output = $log;
         });
@@ -116,7 +205,8 @@ class ContainerManagerTest extends TestCase
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
 
         $manager = $this->getManager();
-        $manager->run($container);
+        $manager->create($container);
+        $manager->start($container);
         $manager->wait($container, 1);
     }
 
@@ -129,7 +219,8 @@ class ContainerManagerTest extends TestCase
         $container->setExposedPorts($port);
 
         $manager = $this->getManager();
-        $manager->run($container, ['PortBindings' => $port->toSpec()]);
+        $manager->create($container);
+        $manager->start($container, ['PortBindings' => $port->toSpec()]);
 
         $this->assertEquals(8888, $container->getMappedPort(80)->getHostPort());
     }
@@ -142,7 +233,8 @@ class ContainerManagerTest extends TestCase
         $container->setExposedPorts($port);
 
         $manager = $this->getManager();
-        $manager->run($container, ['PortBindings' => $port->toSpec()]);
+        $manager->create($container);
+        $manager->start($container, ['PortBindings' => $port->toSpec()]);
 
         $this->assertInternalType('integer', $container->getMappedPort(80)->getHostPort());
     }

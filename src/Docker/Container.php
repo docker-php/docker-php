@@ -42,11 +42,6 @@ class Container
     private $image;
 
     /**
-     * @var Docker\Http\StreamedResponse
-     */
-    private $attachResponse;
-
-    /**
      * @param array $config
      */
     public function __construct(array $config = array())
@@ -300,26 +295,6 @@ class Container
     public function setCmd(array $cmd)
     {
         $this->config['Cmd'] = $cmd;
-
-        return $this;
-    }
-
-    /**
-     * @return Docker\Docker\Http\StreamedResponse
-     */
-    public function getAttachResponse()
-    {
-        return $this->attachResponse;
-    }
-
-    /**
-     * @param StreamedResponse $attachResponse
-     *
-     * @return Docker\Container
-     */
-    public function setAttachResponse(Response $attachResponse)
-    {
-        $this->attachResponse = $attachResponse;
 
         return $this;
     }

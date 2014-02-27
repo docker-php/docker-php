@@ -28,6 +28,19 @@ class ContainerManagerTest extends TestCase
         $this->assertNotEmpty($container->getId());
     }
 
+    public function testCreateThrowsRightFormedException()
+    {
+        $container = new Container(['Image' => 'non-existent']);
+
+        $manager = $this->getManager();
+
+        try {
+            $manager->create($container);
+        } catch (\Docker\Exception\UnexpectedStatusCodeException $e) {
+            $this->assertEquals('create: No such image: non-existent (tag: latest)', $e->getMessage());
+        }
+    }
+
     public function testStart()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);

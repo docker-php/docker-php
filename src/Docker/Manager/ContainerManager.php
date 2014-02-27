@@ -79,7 +79,7 @@ class ContainerManager
         $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 201) {
-            throw new UnexpectedStatusCodeException($response->getStatusCode());
+            throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
         $container->setId($response->json(true)['Id']);
@@ -100,7 +100,7 @@ class ContainerManager
         $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 204) {
-            throw new UnexpectedStatusCodeException($response->getStatusCode());
+            throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
         $this->inspect($container);
@@ -177,7 +177,7 @@ class ContainerManager
         $response = $this->client->send($request, false);
 
         if ($response->getStatusCode() !== 200) {
-            throw new UnexpectedStatusCodeException($response->getStatusCode());
+            throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
         return $response;
@@ -196,7 +196,7 @@ class ContainerManager
         $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 200) {
-            throw new UnexpectedStatusCodeException($response->getStatusCode());
+            throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
         $container->setExitCode($response->json(true)['StatusCode']);
@@ -222,7 +222,7 @@ class ContainerManager
         $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 204) {
-            throw new UnexpectedStatusCodeException($response->getStatusCode());
+            throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
         $this->inspect($container);
@@ -246,7 +246,7 @@ class ContainerManager
         $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== 204) {
-            throw new UnexpectedStatusCodeException($response->getStatusCode());
+            throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
         return $this;

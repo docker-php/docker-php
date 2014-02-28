@@ -97,7 +97,7 @@ class Docker
             'Content-Type' => 'application/tar'
         ]);
 
-        $request->setProtocolVersion($context->isStreamed() ? '1.1' : '1.0');
+        $request->setProtocolVersion('1.1');
         $request->setContent($context->read(), 'application/tar');
 
         $response = $this->httpClient->send($request);

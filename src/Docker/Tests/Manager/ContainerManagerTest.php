@@ -18,6 +18,16 @@ class ContainerManagerTest extends TestCase
         return $this->getDocker()->getContainerManager();
     }
 
+    public function testFindAll()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
+
+        $manager = $this->getManager();
+        $manager->run($container);
+
+        $this->assertCount(1, $manager->findAll());
+    }
+
     public function testCreate()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);

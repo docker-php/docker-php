@@ -35,7 +35,7 @@ class ContainerManager
         $response->read();
 
         if ($response->getStatusCode() !== 200) {
-            throw new UnexpectedStatusCodeException($response->getStatusCode(), $response->getContent());
+            throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
         $coll = [];

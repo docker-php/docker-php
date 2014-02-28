@@ -14,7 +14,7 @@ class ContextBuilder
     /**
      * @var string
      */
-    private $from = 'base';
+    private $from;
 
     /**
      * @var array
@@ -118,7 +118,10 @@ class ContextBuilder
     private function write($directory)
     {
         $dockerfile = [];
-        $dockerfile[] = 'FROM '.$this->from;
+
+        if (null !== $this->from) {
+            $dockerfile[] = 'FROM '.$this->from;
+        }
 
         foreach ($this->commands as $command) {
             switch($command['type']) {

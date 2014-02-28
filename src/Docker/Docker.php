@@ -9,9 +9,6 @@ use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Context\ContextInterface;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 /**
  * Docker\Docker
  */
@@ -42,32 +39,9 @@ class Docker
      * @param Docker\Http\Client    $client
      * @param array                 $array
      */
-    public function __construct($options = array(), HttpClient $httpClient = null)
+    public function __construct(HttpClient $httpClient = null)
     {
-        $options = $this
-            ->setDefaultOptions(new OptionsResolver())
-            ->resolve($options);
-
         $this->httpClient = $httpClient ?: new HttpClient('tcp://127.0.0.1:4243');
-        $this->httpClient->setTimeout($options['http_timeout']);
-    }
-
-    /**
-     * @param Symfony\Component\OptionsResolver\OptionsResolverInterface $resolver
-     * 
-     * @return Symfony\Component\OptionsResolver\OptionsResolverInterface
-     */
-    private function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults([
-            'http_timeout' => (integer) ini_get('default_socket_timeout'),
-        ]);
-
-        $resolver->setAllowedTypes([
-            'http_timeout' => 'integer',
-        ]);
-
-        return $resolver;
     }
 
     /**

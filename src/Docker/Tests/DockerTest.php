@@ -15,10 +15,9 @@ class DockerTest extends TestCase
      */
     public function testGlobalHttpTimeout()
     {
-        $docker = new Docker(['http_timeout' => 1], new Client('tcp://127.0.0.1:4243'));
+        $docker = $this->getDocker();
 
-        $this->assertEquals(1, $docker->getHttpClient()->getTimeout());
-
+        $docker->getHttpClient()->setTimeout(1);
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
 
         $docker->getContainerManager()

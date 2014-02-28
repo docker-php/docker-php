@@ -10,6 +10,19 @@ use Docker\Http\Client;
 
 class DockerTest extends TestCase
 {
+    public function testBuild()
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->from('ubuntu:precise');
+        $contextBuilder->add('/test', 'test file content');
+
+        $docker = $this->getDocker();
+        $stream = $docker->build($contextBuilder->getContext(), 'foo');
+        $stream->read();
+
+        $this->assertRegExp('/Successfully built/', (string) $stream->getContent());
+    }
+
     /**
      * @expectedException Docker\Http\Exception\TimeoutException
      */
@@ -24,19 +37,6 @@ class DockerTest extends TestCase
             ->create($container)
             ->start($container)
             ->wait($container);
-    }
-
-    public function testBuild()
-    {
-        $contextBuilder = new ContextBuilder();
-        $contextBuilder->from('ubuntu:precise');
-        $contextBuilder->add('/test', 'test file content');
-
-        $docker = $this->getDocker();
-        $stream = $docker->build($contextBuilder->getContext(), 'foo');
-        $stream->read();
-
-        $this->assertRegExp('/Successfully built/', (string) $stream->getContent());
     }
 
     public function testCommit()

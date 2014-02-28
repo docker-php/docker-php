@@ -18,7 +18,7 @@ class ResponseParser
      *
      * @return Docker\Http\Response
      */
-    public function parse($stream, Request $request, $blocking = true)
+    public function parse($stream, $blocking = true)
     {
         $content  = "";
         $parser   = new MessageParser();
@@ -39,9 +39,7 @@ class ResponseParser
         $metadata = stream_get_meta_data($stream);
 
         if ($metadata['timed_out']) {
-            throw (null === $request)
-                ? new TimeoutException()
-                : TimeoutException::fromRequest($request);
+            throw new TimeoutException('Timed out while reading socket');
         }
 
         $infos = $parser->parseResponse($content);

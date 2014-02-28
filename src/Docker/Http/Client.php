@@ -2,7 +2,7 @@
 
 namespace Docker\Http;
 
-use Docker\Http\Exception\ParseErrorException;
+use Docker\Http\Exception as HttpException;
 
 /**
  * Docker\Http\Client
@@ -77,8 +77,8 @@ class Client
         stream_set_timeout($socket, $request->getTimeout());
 
         try {
-            $response = $this->parser->parse($socket, $request, $blocking);
-        } catch (ParseErrorException $e) {
+            $response = $this->parser->parse($socket, $blocking);
+        } catch (HttpException $e) {
             $e->setRequest($request);
 
             throw $e;

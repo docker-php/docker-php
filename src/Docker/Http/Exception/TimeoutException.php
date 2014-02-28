@@ -2,11 +2,12 @@
 
 namespace Docker\Http\Exception;
 
-use Docker\Exception as BaseException;
+use Docker\Http\Exception as HttpException;
+use Docker\Http\Request;
 
 /**
  * Docker\Http\Exception\TimeoutException
  */
-class TimeoutException extends BaseException
+class TimeoutException extends HttpException
 {
 }

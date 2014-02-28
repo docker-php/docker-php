@@ -2,23 +2,18 @@
 
 namespace Docker\Http\Exception;
 
-use Docker\Exception as BaseException;
+use Docker\Http\Exception as HttpException;
 use Docker\Http\Request;
 
 /**
  * Docker\Http\Exception\ParseErrorException
  */
-class ParseErrorException extends BaseException
+class ParseErrorException extends HttpException
 {
     /**
      * @var string
      */
     private $content;
-
-    /**
-     * @var Docker\Http\Request
-     */
-    private $request;
 
     /**
      * @param string $content
@@ -36,23 +31,5 @@ class ParseErrorException extends BaseException
     public function getContent()
     {
         return $this->content;
-    }
-
-    /**
-     * @param Docker\Http\Request $request
-     */
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-
-        return $this;
-    }
-
-    /**
-     * @return Docker\Http\Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
     }
 }

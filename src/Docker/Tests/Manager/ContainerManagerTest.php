@@ -28,6 +28,19 @@ class ContainerManagerTest extends TestCase
         $this->assertNotEmpty($container->getId());
     }
 
+    public function testCreateThrowsRightFormedException()
+    {
+        $container = new Container(['Image' => 'non-existent']);
+
+        $manager = $this->getManager();
+
+        try {
+            $manager->create($container);
+        } catch (\Docker\Exception\UnexpectedStatusCodeException $e) {
+            $this->assertEquals('create: No such image: non-existent (tag: latest)', $e->getMessage());
+        }
+    }
+
     public function testStart()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
@@ -208,6 +221,20 @@ class ContainerManagerTest extends TestCase
         $manager->create($container);
         $manager->start($container);
         $manager->wait($container, 1);
+    }
+
+    public function testTimeoutExceptionHasRequest()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
+
+        $manager = $this->getManager();
+        $manager->run($container);
+
+        try {
+            $manager->wait($container, 1);
+        } catch (\Docker\Http\Exception\TimeoutException $e) {
+            $this->assertInstanceOf('Docker\\Http\\Request', $e->getRequest());
+        }
     }
 
     public function testExposeFixedPort()

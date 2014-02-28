@@ -66,7 +66,7 @@ class Container
 
     /**
      * @param array $runtimeInformations
-     * 
+     *
      * @return Docker\Container
      */
     public function setRuntimeInformations($runtimeInformations)
@@ -87,7 +87,7 @@ class Container
     /**
      * @param integer $port
      * @param string  $protocol
-     * 
+     *
      * @return Docker\Port
      */
     public function getMappedPort($port, $protocol = 'tcp')
@@ -106,9 +106,9 @@ class Container
 
     /**
      * Accepts both (eg) 80 or 80/tcp as inputs.
-     * 
+     *
      * @param integer|string ...$ports
-     * 
+     *
      * @return array
      */
     public function getMappedPorts()
@@ -141,7 +141,7 @@ class Container
 
     /**
      * @param string $id
-     * 
+     *
      * @return Docker\Container
      */
     public function setId($id)
@@ -169,7 +169,7 @@ class Container
 
     /**
      * @param integer $exitCode
-     * 
+     *
      * @return Docker\Container
      */
     public function setExitCode($exitCode)
@@ -189,13 +189,13 @@ class Container
 
     /**
      * @param array|PortSpecInterface $ports
-     * 
+     *
      * @return Docker\Container
      */
     public function setExposedPorts($ports)
     {
         if ($ports instanceof PortSpecInterface) {
-            $this->config['ExposedPorts'] = $ports->toExposedPorts();            
+            $this->config['ExposedPorts'] = $ports->toExposedPorts();
         } else {
             $this->config['ExposedPorts'] = $ports;
         }
@@ -205,7 +205,7 @@ class Container
 
     /**
      * @param integer $memory
-     * 
+     *
      * @return Docker\Container;
      */
     public function setMemory($memory)
@@ -217,7 +217,7 @@ class Container
 
     /**
      * @param array $env
-     * 
+     *
      * @return Docker\Container
      */
     public function addEnv(array $env)
@@ -229,7 +229,7 @@ class Container
 
     /**
      * @param array $env
-     * 
+     *
      * @return Docker\Container
      */
     public function setEnv(array $env)
@@ -272,7 +272,7 @@ class Container
 
     /**
      * @param string|Docker\Image $image
-     * 
+     *
      * @return Docker\Container
      */
     public function setImage($image)
@@ -288,7 +288,7 @@ class Container
 
     /**
      * @param array $cmd
-     * 
+     *
      * @return Docker\Container
      */
     public function setCmd(array $cmd)

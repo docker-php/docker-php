@@ -48,10 +48,11 @@ class Client
 
     /**
      * @param Docker\Http\Request $request
+     * @param boolean             $blocking Do we have to wait for content (always blocking for headers) default is true
      *
      * @return Docker\Http\Response
      */
-    public function send(Request $request)
+    public function send(Request $request, $blocking = true)
     {
         $socket = stream_socket_client($this->spec);
         fwrite($socket, $request->getHeadersAsString());
@@ -76,15 +77,11 @@ class Client
         stream_set_timeout($socket, $request->getTimeout());
 
         try {
-            $response = $this->parser->parse($socket);
+            $response = $this->parser->parse($socket, $blocking);
         } catch (ParseErrorException $e) {
             $e->setRequest($request);
 
             throw $e;
-        }
-
-        if (!$response instanceof StreamedResponse && $response->headers->get('Connection') === 'close') {
-            fclose($socket);
         }
 
         return $response;

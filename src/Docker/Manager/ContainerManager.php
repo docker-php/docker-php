@@ -110,24 +110,42 @@ class ContainerManager
 
     /**
      * @param Docker\Container  $container
-     * @param array             $hostConfig
+     * @param callable          $attachCallback Callback to read the attach response
      *
-     * @return Docker\Manager\ContainerManager
+     * If set to null no attach call will be made, otherwise callback must respect the format for the readAttach
+     * method in Docker\Http\Response class
+     *
+     * @param array             $hostConfig     Config when starting the container (for port binding e.g.)
+     * @param boolean           $daemon         Do not wait for run to finish
+     * @param integer           $timeout        Timeout pass to the attach call
+     *
+     * @return boolean Return true when the process want well, false if an error append during the run process, or null when daemon is set to true
      */
-    public function run(Container $container, array $hostConfig = array())
+    public function run(Container $container, callable $attachCallback = null, array $hostConfig = array(), $daemon = false, $timeout = null)
     {
-        $this
-            ->create($container)
-            ->start($container, $hostConfig);
+        $this->create($container);
 
-        return $this;
+        if (null !== $attachCallback) {
+            $attachResponse = $this->attach($container, true, true, true, true, true, $timeout);
+        }
+
+        $this->start($container, $hostConfig);
+
+        if (null !== $attachCallback) {
+            $attachResponse->readAttach($attachCallback);
+        }
+
+        if (!$daemon) {
+            $this->wait($container);
+
+            return ($container->getExitCode() == 0);
+        }
+
+        return null;
     }
 
     /**
      * @param Docker\Container  $container Container to attach
-     * @param callable          $callback  Callback to call when retrieving logs/stdin/stdout/stderr
-     *
-     * The callback need to respect this format : function($streamType, $output)
      *
      * Where $streamType will be 0 for STDIN, 1 for STDOUT, 2 for STDERR and $output will be the string of log
      *
@@ -136,10 +154,11 @@ class ContainerManager
      * @param boolean           $stdin     Get stdin log
      * @param boolean           $stdout    Get stdout log
      * @param boolean           $stderr    Get stderr log
+     * @param integer           $timeout   Timeout when
      *
-     * @return Docker\Manager\ContainerManager
+     * @return Docker\Http\Response Re
      */
-    public function attach(Container $container, $callback, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true)
+    public function attach(Container $container, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true, $timeout = null)
     {
         $request = $this->client->post(['/containers/{id}/attach{?data*}', [
             'id'     => $container->getId(),
@@ -152,24 +171,16 @@ class ContainerManager
             ]
         ]]);
 
-        $response = $this->client->send($request);
+        $request->setProtocolVersion('1.1');
+        $request->setTimeout($timeout);
+
+        $response = $this->client->send($request, false);
 
         if ($response->getStatusCode() !== 200) {
             throw new UnexpectedStatusCodeException($response->getStatusCode());
         }
 
-        $response->read(function ($payload) use($response, $callback) {
-            while (!empty($payload)) {
-                $header  = substr($payload, 0, 8);
-                $decoded = unpack('C1stream_type/C3/N1size', $header);
-                $content = substr($payload, 8, $decoded['size']);
-                $payload = substr($payload, 8 + $decoded['size']);
-
-                $callback($decoded['stream_type'], $content);
-            }
-        });
-
-        return $this;
+        return $response;
     }
 
     /**

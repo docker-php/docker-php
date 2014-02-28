@@ -83,10 +83,11 @@ class Docker
      * @param string                             $name
      * @param boolean                            $quiet
      * @param boolean                            $rm       Remove intermediate container during build
+     * @param boolean                            $wait     Wait for build to finish before returning response (default to true)
      *
      * @return Docker\Http\Response
      */
-    public function build(ContextInterface $context, $name, $quiet = false, $cache = true, $rm = false)
+    public function build(ContextInterface $context, $name, $quiet = false, $cache = true, $rm = false, $wait = true)
     {
         $request = $this->httpClient->post(['/build{?data*}', ['data' => [
             'q' => (integer) $quiet,
@@ -100,7 +101,7 @@ class Docker
         $request->setProtocolVersion('1.1');
         $request->setContent($context->read(), 'application/tar');
 
-        $response = $this->httpClient->send($request);
+        $response = $this->httpClient->send($request, $wait);
 
         return $response;
     }

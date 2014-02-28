@@ -21,7 +21,8 @@ class DockerTest extends TestCase
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
 
         $docker->getContainerManager()
-            ->run($container)
+            ->create($container)
+            ->start($container)
             ->wait($container);
     }
 

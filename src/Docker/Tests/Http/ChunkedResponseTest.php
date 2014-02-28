@@ -1,9 +1,11 @@
 <?php
 
+namespace Docker\Tests\Http;
+
 use Docker\Http\ChunkedResponse;
 use Docker\Http\ResponseParser;
 
-class ChunkedResponseTest extends PHPUnit_Framework_TestCase
+class ChunkedResponseTest extends \PHPUnit_Framework_TestCase
 {
     public function testRead()
     {

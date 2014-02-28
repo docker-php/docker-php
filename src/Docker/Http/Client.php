@@ -2,7 +2,7 @@
 
 namespace Docker\Http;
 
-use Docker\Http\Exception\ParseErrorException;
+use Docker\Http\Exception as HttpException;
 
 /**
  * Docker\Http\Client
@@ -108,7 +108,7 @@ class Client
 
         try {
             $response = $this->parser->parse($socket, $blocking);
-        } catch (ParseErrorException $e) {
+        } catch (HttpException $e) {
             $e->setRequest($request);
 
             throw $e;

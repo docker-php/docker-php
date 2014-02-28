@@ -4,6 +4,8 @@ namespace Docker\Http;
 
 use Docker\Http\Exception\TimeoutException;
 use Docker\Http\Exception\ParseErrorException;
+use Docker\Http\Request;
+
 use Guzzle\Parser\Message\MessageParser;
 
 /**
@@ -37,7 +39,7 @@ class ResponseParser
         $metadata = stream_get_meta_data($stream);
 
         if ($metadata['timed_out']) {
-            throw new TimeoutException();
+            throw new TimeoutException('Timed out while reading socket');
         }
 
         $infos = $parser->parseResponse($content);

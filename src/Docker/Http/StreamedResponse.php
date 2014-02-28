@@ -5,54 +5,36 @@ namespace Docker\Http;
 class StreamedResponse extends Response
 {
     /**
-     * Stream ressource to fetch new data of incoming response
-     *
-     * @var ressource
-     */
-    private $stream;
-
-    /**
-     * Stream ressource to set
-     *
-     * @param ressource $stream
-     */
-    public function setStream($stream)
-    {
-        $this->stream = $stream;
-    }
-
-    /**
      * Fetch rest of incoming response
      *
      * @param callable $callback Callback to call, this
      */
     public function read(callable $callback = null)
     {
-        if ($this->stream === null) {
+        if ($this->getSocket() === null) {
             return parent::read($callback);
         }
 
         do {
-            $sizeLine    = fgets($this->stream);
+            $sizeLine    = fgets($this->getSocket());
             $chunkedSize = hexdec(trim($sizeLine));
 
             if ($chunkedSize <= 0) {
                 break;
             }
 
-            $content = fread($this->stream, $chunkedSize);
+            $content = fread($this->getSocket(), $chunkedSize);
             $this->addContent($content);
 
             if ($callback !== null) {
                 $callback($content);
             }
 
-            fgets($this->stream);
-        } while (!feof($this->stream));
+            fgets($this->getSocket());
+        } while (!feof($this->getSocket()));
 
         if ($this->headers->get('Connection') == 'close') {
-            fclose($this->stream);
-            $this->stream = null;
+            $this->close();
         }
     }
 }

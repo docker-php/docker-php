@@ -21,6 +21,17 @@ class DockerTest extends TestCase
         $this->assertRegExp('/Successfully built/', (string) $stream->getContent());
     }
 
+    /**
+     * @expectedException Docker\Exception\BuildErrorException
+     */
+    public function testBuildFail()
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->run('false');
+
+        $this->getDocker()->build($contextBuilder->getContext(), 'foo');
+    }
+
     public function testCommit()
     {
         $container = new Container();

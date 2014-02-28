@@ -7,6 +7,7 @@ use Docker\Http\Client;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
+use Docker\Exception\BuildErrorException;
 use Docker\Context\ContextInterface;
 
 /**
@@ -75,7 +76,7 @@ class Docker
      * @param boolean                            $quiet
      * @param boolean                            $rm       Remove intermediate container during build
      *
-     * @return Docker\Http\Response
+     * @return array
      */
     public function build(ContextInterface $context, $name, $quiet = false, $cache = true, $rm = false)
     {
@@ -88,13 +89,24 @@ class Docker
             'Content-Type' => 'application/tar'
         ]);
 
-        # http client does not support chunked responses yet
         $request->setProtocolVersion('1.1');
         $request->setContent($context->toStream(), 'application/tar');
 
         $response = $this->client->send($request);
 
-        return $response;
+        $output = [];
+
+        $response->read(function($line) use (&$output) {
+            $message = json_decode($line, true);
+            
+            if (isset($message['error'])) {
+                throw new BuildErrorException($message['error']);
+            }
+
+            $output[] = $message;
+        });
+
+        return $output;
     }
 
     /**

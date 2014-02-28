@@ -33,11 +33,47 @@ class Response
     private $content;
 
     /**
+     * @var resource
+     */
+    private $socket;
+
+    /**
      * constructor
      */
     public function __construct()
     {
         $this->headers = new HeaderBag();
+    }
+
+    /**
+     * @return Docker\Http\Response
+     */
+    public function close()
+    {
+        fclose($this->socket);
+        $this->socket = null;
+
+        return $this;
+    }
+
+    /**
+     * @param resource $socket
+     * 
+     * @return Docker\Http\Response
+     */
+    public function setSocket($socket)
+    {
+        $this->socket = $socket;
+
+        return $socket;
+    }
+
+    /**
+     * @return resource
+     */
+    public function getSocket()
+    {
+        return $this->socket;
     }
 
     /**

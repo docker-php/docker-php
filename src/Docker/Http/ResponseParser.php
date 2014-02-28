@@ -45,11 +45,11 @@ class ResponseParser
 
         if (isset($infos['headers']['Transfer-Encoding']) && $infos['headers']['Transfer-Encoding'] == 'chunked') {
             $response = new StreamedResponse();
-            $response->setStream($stream);
         } else {
             $response = new Response();
         }
 
+        $response->setSocket($stream);
         $response->setStatusCode($infos['code']);
         $response->setStatusText($infos['reason_phrase']);
         $response->setProtocolVersion($infos['version']);

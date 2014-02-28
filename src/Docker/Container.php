@@ -4,6 +4,8 @@ namespace Docker;
 
 use Docker\Exception\PortNotFoundException;
 
+use LogicException;
+
 /**
  * Docker\Container
  */
@@ -184,7 +186,15 @@ class Container
      */
     public function getExitCode()
     {
-        return $this->exitCode;
+        if (null !== $this->exitCode) {
+            return $this->exitCode;
+        }
+
+        if (is_array($this->runtimeInformations)) {
+            return $this->runtimeInformations['State']['ExitCode'];
+        }
+
+        throw new LogicException('Could not find an exit code');
     }
 
     /**

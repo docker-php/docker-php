@@ -43,6 +43,11 @@ class Container
     private $image;
 
     /**
+     * @var array
+     */
+    private $data = array();
+
+    /**
      * @param array $config
      */
     public function __construct(array $config = array())
@@ -297,6 +302,19 @@ class Container
     }
 
     /**
+     * @return Docker\Image
+     */
+    public function getImage()
+    {
+        if (!$this->image instanceof Image) {
+            $this->image = new Image();
+            $this->image->setName($this->config['Image']);
+        }
+
+        return $this->image;
+    }
+
+    /**
      * @param array $cmd
      *
      * @return Docker\Container
@@ -306,5 +324,25 @@ class Container
         $this->config['Cmd'] = $cmd;
 
         return $this;
+    }
+
+    /**
+     * @param array $data
+     * 
+     * @return Docker\Container
+     */
+    public function setData(array $data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
     }
 }

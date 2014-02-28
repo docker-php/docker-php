@@ -28,6 +28,38 @@ class ContainerManager
         $this->client = $client;
     }
 
+    public function findAll()
+    {
+        $request = $this->client->get('/containers/json');
+        $response = $this->client->send($request);
+        $response->read();
+
+        if ($response->getStatusCode() !== 200) {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        $coll = [];
+
+        $containers = $response->json(true);
+
+        if (!is_array($containers)) {
+            return [];
+        }
+
+        foreach ($containers as $data) {
+            $container = new Container();
+            $container->setId($data['Id']);
+            $container->setImage($data['Image']);
+            $container->setCmd((array) $data['Command']);
+
+            $container->setData($data);
+
+            $coll[] = $container;
+        }
+
+        return $coll;
+    }
+
     /**
      * @param string $id
      *

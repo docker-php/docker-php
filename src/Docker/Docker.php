@@ -3,7 +3,7 @@
 namespace Docker;
 
 use Docker\Context\Context;
-use Docker\Http\Client;
+use Docker\Http\Client as HttpClient;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
@@ -36,11 +36,20 @@ class Docker
     private $imageManager;
 
     /**
-     * @param Docker\Http\Client $client
+     * @param Docker\Http\Client    $client
+     * @param array                 $array
      */
-    public function __construct(Client $client = null)
+    public function __construct(HttpClient $httpClient = null)
     {
-        $this->client = $client ?: new Client('tcp://127.0.0.1:4243');
+        $this->httpClient = $httpClient ?: new HttpClient('tcp://127.0.0.1:4243');
+    }
+
+    /**
+     * @return Docker\Http\Client
+     */
+    public function getHttpClient()
+    {
+        return $this->httpClient;
     }
 
     /**
@@ -49,7 +58,7 @@ class Docker
     public function getContainerManager()
     {
         if (null === $this->containerManager) {
-            $this->containerManager = new ContainerManager($this->client);
+            $this->containerManager = new ContainerManager($this->httpClient);
         }
 
         return $this->containerManager;
@@ -61,7 +70,7 @@ class Docker
     public function getImageManager()
     {
         if (null === $this->imageManager) {
-            $this->imageManager = new ImageManager($this->client);
+            $this->imageManager = new ImageManager($this->httpClient);
         }
 
         return $this->imageManager;
@@ -79,7 +88,7 @@ class Docker
      */
     public function build(ContextInterface $context, $name, $quiet = false, $cache = true, $rm = false)
     {
-        $request = $this->client->post(['/build{?data*}', ['data' => [
+        $request = $this->httpClient->post(['/build{?data*}', ['data' => [
             'q' => (integer) $quiet,
             't' => $name,
             'nocache' => (integer) !$cache,
@@ -92,7 +101,7 @@ class Docker
         $request->setProtocolVersion('1.1');
         $request->setContent($context->toStream(), 'application/tar');
 
-        $response = $this->client->send($request);
+        $response = $this->httpClient->send($request);
 
         return $response;
     }
@@ -113,8 +122,8 @@ class Docker
 
         $config['container'] = $container->getId();
 
-        $request = $this->client->post(['/commit{?config*}', ['config' => $config]]);
-        $response = $this->client->send($request);
+        $request = $this->httpClient->post(['/commit{?config*}', ['config' => $config]]);
+        $response = $this->httpClient->send($request);
 
         if ($response->getStatusCode() !== 201) {
             throw new UnexpectedStatusCodeException($response->getStatusCode(), (string) $response->getContent());

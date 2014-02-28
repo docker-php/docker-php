@@ -57,9 +57,6 @@ class Request
         $this->expander = $expander ?: new UriTemplate();
         $this->headers = new HeaderBag($headers);
 
-        # default timeout
-        $this->setTimeout();
-
         # this is to make sure protocol specific headers are set/unset
         $this->setProtocolVersion($this->protocolVersion);
     }
@@ -91,7 +88,7 @@ class Request
      */
     public function setTimeout($timeout = null)
     {
-        $this->timeout = $timeout ?: ini_get('default_socket_timeout');
+        $this->timeout = $timeout;
 
         return $this;
     }

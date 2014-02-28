@@ -27,12 +27,38 @@ class Client
     private $userAgent = 'Docker-PHP';
 
     /**
+     * @var integer
+     */
+    private $timeout;
+
+    /**
      * @param string $spec
+     * @param integer $timeout
      */
     public function __construct($spec)
     {
         $this->spec = $spec;
         $this->parser = new ResponseParser();
+    }
+
+    /**
+     * @param integer $timeout
+     *
+     * @return Docker\Http\Request
+     */
+    public function setTimeout($timeout = null)
+    {
+        $this->timeout = $timeout;
+
+        return $this;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
     }
 
     /**
@@ -74,7 +100,11 @@ class Client
             fwrite($socket, $content);
         }
 
-        stream_set_timeout($socket, $request->getTimeout());
+        $timeout = $request->getTimeout() ?: $this->timeout;
+
+        if (null !== $timeout) {
+            stream_set_timeout($socket, $request->getTimeout() ?: $this->timeout);
+        }
 
         try {
             $response = $this->parser->parse($socket, $blocking);

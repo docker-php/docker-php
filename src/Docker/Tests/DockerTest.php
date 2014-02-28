@@ -2,12 +2,30 @@
 
 namespace Docker\Tests;
 
+use Docker\Docker;
 use Docker\Context;
 use Docker\Container;
 use Docker\Context\ContextBuilder;
+use Docker\Http\Client;
 
 class DockerTest extends TestCase
 {
+    /**
+     * @expectedException Docker\Http\Exception\TimeoutException
+     */
+    public function testGlobalHttpTimeout()
+    {
+        $docker = new Docker(['http_timeout' => 1], new Client('tcp://127.0.0.1:4243'));
+
+        $this->assertEquals(1, $docker->getHttpClient()->getTimeout());
+
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
+
+        $docker->getContainerManager()
+            ->run($container)
+            ->wait($container);
+    }
+
     public function testBuild()
     {
         $contextBuilder = new ContextBuilder();

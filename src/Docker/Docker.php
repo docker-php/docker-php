@@ -97,9 +97,8 @@ class Docker
             'Content-Type' => 'application/tar'
         ]);
 
-        # http client does not support chunked responses yet
         $request->setProtocolVersion('1.1');
-        $request->setContent($context->toStream(), 'application/tar');
+        $request->setContent($context->read(), 'application/tar');
 
         $response = $this->httpClient->send($request);
 

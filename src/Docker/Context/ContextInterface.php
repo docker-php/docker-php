@@ -8,9 +8,17 @@ namespace Docker\Context;
 interface ContextInterface
 {
     /**
-     * Get context as a stream
-     *
-     * @return ressource Return a stream ressource
+     * Whether the Context should be streamed or not.
+     * 
+     * @return boolean
      */
-    public function toStream();
+    public function isStreamed();
+
+    /**
+     * If `isStreamed()` is `true`, then `read()` should return a resource.
+     * Else it should return the plain content.
+     * 
+     * @return ressource|string
+     */
+    public function read();
 }

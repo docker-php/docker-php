@@ -25,7 +25,7 @@ class ContainerManagerTest extends TestCase
         $manager = $this->getManager();
         $manager->run($container);
 
-        $this->assertCount(1, $manager->findAll());
+        $this->assertInternalType('array', $manager->findAll());
     }
 
     public function testCreate()

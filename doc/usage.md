@@ -24,7 +24,7 @@ $docker = new Docker\Docker($client);
 
 ## Running a container
 
-Use the `Docker\Manager\ContainerManager#run()` method to run a container.
+Use `Docker\Manager\ContainerManager#run()` to run a container.
 
 ```php
 <?php
@@ -33,11 +33,12 @@ $container = new Container(['Image' => 'ubuntu:precise']);
 $docker->run($container);
 ```
 
-The `run()` method provides with a few options to handle the workflow of your container.
+The `run()` method provides a few options to handle the workflow of your container.
 
 ### Streaming a running container's output
 
-It can automatically attach the created container for you and read its output, using a callback that you provide. The callback will be passed two arguments: the type of stream, and a piece of content. The type can be either `0`, `1` or `2`, denoting respectively `stdin`, `stdout` and `stderr` (as per [Docker's Attach multiplexing protocol](http://docs.docker.io/en/latest/reference/api/docker_remote_api_v1.9/#attach-to-a-container)).
+You can automatically attach a created container and read its output by using a callback.
+The callback function receives two arguments: the type of stream, and a piece of content. The type can be either `0`, `1` or `2`, denoting respectively `stdin`, `stdout` and `stderr` (as per [Docker's Attach multiplexing protocol](http://docs.docker.io/en/latest/reference/api/docker_remote_api_v1.9/#attach-to-a-container)).
 
 ```php
 <?php

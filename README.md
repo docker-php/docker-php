@@ -25,22 +25,7 @@ The recommended way to install Docker PHP is of course to use [Composer](http://
 Usage
 -----
 
-In a nutshell, this will connect to Docker at `http://127.0.0.1:4243`:
-
-```php
-<?php
-
-$docker = new Docker\Docker();
-
-$container = new Docker\Container([
-    'Image' => 'ubuntu:precise',
-    'Cmd' => ['/bin/true']
-]);
-
-$docker->getContainerManager()->run($container);
-```
-
-You could also pass in your own instance of `Docker\Http\Client` to `Docker`'s constructor.
+See [the documentation](doc/usage.md).
 
 Unit Tests
 ----------

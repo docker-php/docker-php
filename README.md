@@ -23,7 +23,7 @@ The recommended way to install Docker PHP is of course to use [Composer](http://
 Usage
 -----
 
-See [the documentation](doc/usage.md).
+See [the documentation](https://github.com/stage1/docker-php/blob/master/doc/usage.md).
 
 Unit Tests
 ----------

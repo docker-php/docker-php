@@ -18,7 +18,7 @@ By default, Docker-PHP tries to connect to a running `dockerd` instance at `127.
 ```php
 <?php
 
-$client = new Docker\Http\Client('/var/run/docker.sock');
+$client = new Docker\Http\Client('unix:///var/run/docker.sock');
 $docker = new Docker\Docker($client);
 ```
 

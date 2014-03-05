@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Docker-php : A Docker client in PHP" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Docker-php</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/stage1/docker-php">View on GitHub</a>
+
+          <h1 id="project_title">Docker-php</h1>
+          <h2 id="project_tagline">A Docker client in PHP</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/stage1/docker-php/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/stage1/docker-php/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="docker-php" class="anchor" href="#docker-php"><span class="octicon octicon-link"></span></a>Docker PHP</h1>
+
+<p><strong>Docker PHP</strong> (for lack of a better name) is a <a href="http://docker.io/">Docker</a> client written in PHP. This library is still a work in progress. Not much is supported yet, but the goal is to reach 100% API support.</p>
+
+<p>The test suite currently passes against the <a href="http://docs.docker.io/en/latest/api/docker_remote_api_v1.9/">Docker Remote API v1.9</a>.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>The recommended way to install Docker PHP is of course to use <a href="http://getcomposer.org/">Composer</a>:</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"require"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">"stage1/docker-php"</span><span class="p">:</span> <span class="s2">"@dev"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p><strong>Note</strong>: there is no stable version of Docker PHP yet.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>See <a href="doc/usage.md">the documentation</a>.</p>
+
+<h2>
+<a name="unit-tests" class="anchor" href="#unit-tests"><span class="octicon octicon-link"></span></a>Unit Tests</h2>
+
+<p>Setup the test suite using <a href="http://getcomposer.org/">Composer</a>:</p>
+
+<pre><code>$ composer install --dev
+</code></pre>
+
+<p>Run it using <a href="http://phpunit.de/">PHPUnit</a>:</p>
+
+<pre><code>$ bin/phpunit
+</code></pre>
+
+<h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>Here are a few rules to follow in order to ease code reviews, and discussions before maintainers accept and merge your work.</p>
+
+<ul>
+<li>You <strong>MUST</strong> follow the <a href="http://www.php-fig.org/psr/1/">PSR-1</a> and <a href="http://www.php-fig.org/psr/2/">PSR-2</a>.</li>
+<li>You <strong>MUST</strong> run the test suite.</li>
+<li>You <strong>MUST</strong> write (or update) unit tests.</li>
+<li>You <strong>SHOULD</strong> write documentation.</li>
+</ul><p>Please, write <a href="http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html">commit messages that make sense</a>, and <a href="http://git-scm.com/book/en/Git-Branching-Rebasing">rebase your branch</a> before submitting your Pull Request.</p>
+
+<p>One may ask you to <a href="http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html">squash your commits</a> too. This is used to "clean" your Pull Request before merging it (we don't want commits such as <code>fix tests</code>, <code>fix 2</code>, <code>fix 3</code>, etc.).</p>
+
+<p>Also, when creating your Pull Request on GitHub, you <strong>MUST</strong> write a description which gives the context and/or explains why you are creating it.</p>
+
+<p>Thank you!</p>
+
+<h2>
+<a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h2>
+
+<p>This README heavily inspired by <a href="https://github.com/willdurand/Negotiation">willdurand/Negotiation</a> by <a href="https://github.com/willdurand" class="user-mention">@willdurand</a>. This guy is pretty awesome.</p>
+
+<h2>
+<a name="projects" class="anchor" href="#projects"><span class="octicon octicon-link"></span></a>Projects</h2>
+
+<p>Projects known to be using docker-php:</p>
+
+<ul>
+<li>
+<a href="https://github.com/jolicode/JoliCi">JoliCi</a>, Run your tests on different and isolated stacks</li>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>The MIT License (MIT)</p>
+
+<p>Copyright (c) 2013 Geoffrey Bachelet <a href="mailto:geoffrey@stage1.io">geoffrey@stage1.io</a></p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Docker-php maintained by <a href="https://github.com/stage1">stage1</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>

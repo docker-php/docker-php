@@ -170,9 +170,10 @@ class Response
                 break;
             }
 
+
             $this->addContent($content);
 
-            if ($callback !== null) {
+            if (!empty($content) && $callback !== null) {
                 $callback($content, $type);
             }
         } while (!feof($this->stream));

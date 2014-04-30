@@ -47,7 +47,7 @@ class ContainerManagerTest extends TestCase
         try {
             $manager->create($container);
         } catch (\Docker\Exception\UnexpectedStatusCodeException $e) {
-            $this->assertEquals('create: No such image: non-existent (tag: latest)', $e->getMessage());
+            $this->assertContains('No such image: non-existent (tag: latest)', $e->getMessage());
         }
     }
 
@@ -105,7 +105,7 @@ class ContainerManagerTest extends TestCase
         $response = $this->getMock('\Docker\Http\Response');
 
         $container->setExitCode(0);
-        $callback = function ($type, $output) {};
+        $callback = function ($output, $type) {};
 
         $manager->expects($this->once())
             ->method('create')
@@ -123,7 +123,7 @@ class ContainerManagerTest extends TestCase
             ->will($this->returnSelf());
 
         $response->expects($this->once())
-            ->method('readAttach')
+            ->method('read')
             ->with($this->equalTo($callback));
 
         $manager->expects($this->once())
@@ -173,11 +173,12 @@ class ContainerManagerTest extends TestCase
         $response = $manager->attach($container);
         $manager->start($container);
 
-        $response->readAttach(function ($stdtype, $log) use(&$type, &$output) {
+        $response->read(function ($log, $stdtype) use(&$type, &$output) {
             $type   = $stdtype;
             $output = $log;
         });
 
+        $this->assertInstanceOf('\Docker\Http\AttachResponse', $response);
         $this->assertEquals(1, $type);
         $this->assertEquals('output', $output);
     }
@@ -194,11 +195,12 @@ class ContainerManagerTest extends TestCase
         $response = $manager->attach($container);
         $manager->start($container);
 
-        $response->readAttach(function ($stdtype, $log) use(&$type, &$output) {
+        $response->read(function ($log, $stdtype) use(&$type, &$output) {
             $type   = $stdtype;
             $output = $log;
         });
 
+        $this->assertInstanceOf('\Docker\Http\AttachResponse', $response);
         $this->assertEquals(2, $type);
         $this->assertEquals('error', $output);
     }

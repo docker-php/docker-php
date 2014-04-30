@@ -149,14 +149,14 @@ class Response
      * @param callable $callback Callback to call
      *
      * Callback must be of the following format :
-     * funtion ($output) {
+     * funtion ($output, $type) {
      *
      * }
      */
     public function read(callable $callback = null)
     {
         if (!empty($this->content) && $callback !== null) {
-            $callback($this->getContent());
+            $callback($this->getContent(), null);
         }
 
         if ($this->stream === null) {
@@ -164,7 +164,7 @@ class Response
         }
 
         do {
-            $content = $this->readLine($this->stream);
+            list($content, $type) = $this->readLine($this->stream);
 
             if (false === $content) {
                 break;
@@ -173,7 +173,7 @@ class Response
             $this->addContent($content);
 
             if ($callback !== null) {
-                $callback($content);
+                $callback($content, $type);
             }
         } while (!feof($this->stream));
 
@@ -187,25 +187,6 @@ class Response
         if ($metadata['timed_out']) {
             throw new TimeoutException();
         }
-    }
-
-    /**
-     * Fetch response with docker protocol to handle terminal like response
-     *
-     * @param callable $callback Callback to call
-     */
-    public function readAttach(callable $callback = null)
-    {
-        $this->read(function ($payload) use($callback) {
-            while (!empty($payload)) {
-                $header  = substr($payload, 0, 8);
-                $decoded = unpack('C1stream_type/C3/N1size', $header);
-                $content = substr($payload, 8, $decoded['size']);
-                $payload = substr($payload, 8 + $decoded['size']);
-
-                $callback($decoded['stream_type'], $content);
-            }
-        });
     }
 
     /**
@@ -239,6 +220,6 @@ class Response
     {
         $content = fgets($stream);
 
-        return $content;
+        return array($content, null);
     }
 }

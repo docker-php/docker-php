@@ -22,6 +22,6 @@ class ChunkedResponse extends Response
 
         fgets($stream);
 
-        return $content;
+        return array($content, null);
     }
 }

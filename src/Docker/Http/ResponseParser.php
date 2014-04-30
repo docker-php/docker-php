@@ -44,10 +44,14 @@ class ResponseParser
 
         $infos = $parser->parseResponse($content);
 
+        $response = new Response();
+
         if (isset($infos['headers']['Transfer-Encoding']) && $infos['headers']['Transfer-Encoding'] == 'chunked') {
             $response = new ChunkedResponse();
-        } else {
-            $response = new Response();
+        }
+
+        if (isset($infos['headers']['Content-Type']) && $infos['headers']['Content-Type'] == "application/vnd.docker.raw-stream") {
+            $response = new AttachResponse();
         }
 
         $response->setStream($stream, $blocking);

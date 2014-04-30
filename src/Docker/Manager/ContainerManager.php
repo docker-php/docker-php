@@ -164,7 +164,7 @@ class ContainerManager
         $this->start($container, $hostConfig);
 
         if (null !== $attachCallback) {
-            $attachResponse->readAttach($attachCallback);
+            $attachResponse->read($attachCallback);
         }
 
         if (!$daemon) {

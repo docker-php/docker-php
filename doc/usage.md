@@ -44,7 +44,7 @@ The callback function receives two arguments: the type of stream, and a piece of
 <?php
 
 $manager = $docker->getContainerManager();
-$manager->run($container, function($type, $chunk) {
+$manager->run($container, function($chunk, $type) {
     fputs($type === 1 ? STDOUT : STDERR, $chunk);
 });
 ```
@@ -75,13 +75,18 @@ $manager->create($container);
 
 printf('Created container with Id "%s"', $container->getId());
 
-$manager->attach($container)->readAttach(function($type, $chunk) {
-    print($chunk);
-});
+$attachResponse = $manager->attach($container);
 
 $manager->start($container);
+
+$attachResponse->read(function($chunk, $type) {
+    print($chunk);
+})
+
 $manager->wait($container);
 ```
+
+You need to attach the container before starting it in order to avoid missing log. Reading the attach before starting the container will always throw a TimeoutException as there is nothing to read.
 
 The `attach()` method can also retrieve logs from a stopped container.
 

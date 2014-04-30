@@ -3,9 +3,9 @@
 namespace Docker\Exception;
 
 use Docker\Exception;
-use Docker\Http\Response;
 
 use Exception as BaseException;
+use GuzzleHttp\Message\Response;
 
 /**
  * Docker\Exception\UnexpectedStatusCodeException
@@ -28,6 +28,6 @@ class UnexpectedStatusCodeException extends BaseException
      */
     public static function fromResponse(Response $response)
     {
-        return new self($response->getStatusCode(), trim((string) $response->getContent()));
+        return new self($response->getStatusCode(), trim((string) $response->getBody()));
     }
 }

@@ -18,25 +18,8 @@ class DockerTest extends TestCase
 
         $docker = $this->getDocker();
         $stream = $docker->build($contextBuilder->getContext(), 'foo');
-        $stream->read();
 
-        $this->assertRegExp('/Successfully built/', (string) $stream->getContent());
-    }
-
-    /**
-     * @expectedException Docker\Http\Exception\TimeoutException
-     */
-    public function testGlobalHttpTimeout()
-    {
-        $docker = $this->getDocker();
-
-        $docker->getHttpClient()->setTimeout(1);
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
-
-        $docker->getContainerManager()
-            ->create($container)
-            ->start($container)
-            ->wait($container);
+        $this->assertRegExp('/Successfully built/', (string) $stream->getBody());
     }
 
     public function testCommit()

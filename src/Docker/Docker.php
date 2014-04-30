@@ -3,11 +3,11 @@
 namespace Docker;
 
 use Docker\Context\Context;
-use Docker\Http\Client as HttpClient;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Context\ContextInterface;
+use GuzzleHttp\Client as HttpClient;
 
 /**
  * Docker\Docker
@@ -41,7 +41,7 @@ class Docker
      */
     public function __construct(HttpClient $httpClient = null)
     {
-        $this->httpClient = $httpClient ?: new HttpClient('tcp://127.0.0.1:4243');
+        $this->httpClient = $httpClient ?: new HttpClient('http://127.0.0.1:4243');
     }
 
     /**
@@ -89,19 +89,17 @@ class Docker
      */
     public function build(ContextInterface $context, $name, $quiet = false, $cache = true, $rm = false, $wait = true)
     {
-        $request = $this->httpClient->post(['/build{?data*}', ['data' => [
+        $content = is_resource($context->read()) ? stream_get_contents($context->read()) : $context->read();
+
+        $response = $this->httpClient->post(['/build{?data*}', ['data' => [
             'q' => (integer) $quiet,
             't' => $name,
             'nocache' => (integer) !$cache,
             'rm' => (integer) $rm
         ]]], [
-            'Content-Type' => 'application/tar'
+            'headers' => array('Content-Type' => 'application/tar'),
+            'body' => $content
         ]);
-
-        $request->setProtocolVersion('1.1');
-        $request->setContent($context->read(), 'application/tar');
-
-        $response = $this->httpClient->send($request, $wait);
 
         return $response;
     }
@@ -122,15 +120,14 @@ class Docker
 
         $config['container'] = $container->getId();
 
-        $request = $this->httpClient->post(['/commit{?config*}', ['config' => $config]]);
-        $response = $this->httpClient->send($request);
+        $response = $this->httpClient->post(['/commit{?config*}', ['config' => $config]]);
 
-        if ($response->getStatusCode() !== 201) {
-            throw new UnexpectedStatusCodeException($response->getStatusCode(), (string) $response->getContent());
+        if ($response->getStatusCode() !== "201") {
+            throw new UnexpectedStatusCodeException($response->getStatusCode(), (string) $response->getBody());
         }
 
         $image = new Image();
-        $image->setId($response->json(true)['Id']);
+        $image->setId($response->json()['Id']);
 
         if (array_key_exists('repo', $config)) {
             $image->setRepository($config['repo']);

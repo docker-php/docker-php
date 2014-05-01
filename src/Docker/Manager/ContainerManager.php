@@ -158,13 +158,13 @@ class ContainerManager
         $this->create($container);
 
         if (null !== $attachCallback) {
-            //$attachResponse = $this->attach($container, true, true, true, true, true, $timeout);
+            $attachResponse = $this->attach($container, true, true, true, true, true, $timeout);
         }
 
         $this->start($container, $hostConfig);
 
         if (null !== $attachCallback) {
-            //$attachResponse->readAttach($attachCallback);
+            $attachResponse->getBody()->readWithCallback($attachCallback);
         }
 
         if (!$daemon) {
@@ -192,7 +192,7 @@ class ContainerManager
      */
     public function attach(Container $container, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true, $timeout = null)
     {
-        $request = $this->client->post(['/containers/{id}/attach{?data*}', [
+        $response = $this->client->post(['/containers/{id}/attach{?data*}', [
             'id'     => $container->getId(),
             'data' => [
                 'logs'   => $logs,
@@ -201,14 +201,11 @@ class ContainerManager
                 'stdout' => $stdout,
                 'stderr' => $stderr
             ]
-        ]]);
+        ]], array(
+            'timeout' => $timeout !== null ? $timeout : $this->client->getDefaultOption('timeout')
+        ));
 
-        $request->setProtocolVersion('1.1');
-        $request->setTimeout($timeout);
-
-        $response = $this->client->send($request, false);
-
-        if ($response->getStatusCode() !== 200) {
+        if ($response->getStatusCode() !== "200") {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -222,16 +219,9 @@ class ContainerManager
      */
     public function wait(Container $container, $timeout = null)
     {
-        if (null !== $timeout) {
-            $oldTimeout = $this->client->getDefaultOption('timeout');
-            $this->client->setDefaultOption('timeout', $timeout);
-        }
-
-        $response = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]]);
-
-        if (null !== $timeout) {
-            $this->client->setDefaultOption('timeout', $oldTimeout);
-        }
+        $response = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]], array(
+            'timeout' => null === $timeout ?  $this->client->getDefaultOption('timeout') : $timeout
+        ));
 
         if ($response->getStatusCode() !== "200") {
             throw UnexpectedStatusCodeException::fromResponse($response);

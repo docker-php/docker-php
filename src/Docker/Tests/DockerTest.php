@@ -17,9 +17,12 @@ class DockerTest extends TestCase
         $contextBuilder->add('/test', 'test file content');
 
         $docker = $this->getDocker();
-        $stream = $docker->build($contextBuilder->getContext(), 'foo');
 
-        $this->assertRegExp('/Successfully built/', (string) $stream->getBody());
+        $docker->build($contextBuilder->getContext(), 'foo', function($output, $type) use(&$content) {
+            $content .= $output;
+        });
+
+        $this->assertRegExp('/Successfully built/', $content);
     }
 
     public function testCommit()

@@ -2,12 +2,15 @@
 
 namespace Docker\Http\Adapter;
 
+use Docker\Http\Stream\AttachStream;
+use Docker\Http\Stream\ChunkedStream;
 use GuzzleHttp\Adapter\AdapterInterface;
 use GuzzleHttp\Adapter\TransactionInterface;
 use GuzzleHttp\Event\RequestEvents;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\MessageFactoryInterface;
 use GuzzleHttp\Message\RequestInterface;
+use GuzzleHttp\Message\Response;
 use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Stream\Stream;
 
@@ -123,7 +126,7 @@ class DockerAdapter implements  AdapterInterface
         return $headers;
     }
 
-    private function createResponseObject(array $headers, TransactionInterface $transaction, $stream)
+    private function createResponseObject(array $headers, TransactionInterface $transaction, $socket)
     {
         $parts = explode(' ', array_shift($headers), 3);
         $options = ['protocol_version' => substr($parts[0], -3)];
@@ -135,20 +138,22 @@ class DockerAdapter implements  AdapterInterface
         $responseHeaders = [];
         foreach ($headers as $header) {
             $headerParts = explode(':', $header, 2);
-            $responseHeaders[$headerParts[0]] = isset($headerParts[1])
-                ? $headerParts[1]
+            $responseHeaders[trim($headerParts[0])] = isset($headerParts[1])
+                ? trim($headerParts[1])
                 : '';
         }
 
-        $response = $this->messageFactory->createResponse(
-            $parts[1],
-            $responseHeaders,
-            $stream,
-            $options
-        );
+        if (isset($responseHeaders['Transfer-Encoding']) && $responseHeaders['Transfer-Encoding'] == 'chunked') {
+            $stream = new ChunkedStream($socket);
+        } elseif (isset($responseHeaders['Content-Type']) && $responseHeaders['Content-Type'] == "application/vnd.docker.raw-stream") {
+            $stream = new AttachStream($socket);
+        } else {
+            $stream = new Stream($socket);
+        }
+
+        $response = new Response($parts[1], $responseHeaders, $stream, $options);
 
         $transaction->setResponse($response);
-        RequestEvents::emitHeaders($transaction);
 
         return $response;
     }
@@ -174,7 +179,7 @@ class DockerAdapter implements  AdapterInterface
     {
         $message  = vsprintf('%s %s HTTP/%s', [
                 strtoupper($request->getMethod()),
-                $request->getPath(),
+                $request->getUrl(),
                 $request->getProtocolVersion()
             ])."\r\n";
 

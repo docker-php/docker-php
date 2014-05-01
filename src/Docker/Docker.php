@@ -3,11 +3,13 @@
 namespace Docker;
 
 use Docker\Context\Context;
+use Docker\Http\Stream\StreamCallbackInterface;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Context\ContextInterface;
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Stream;
 
 /**
  * Docker\Docker
@@ -84,13 +86,10 @@ class Docker
      * @param boolean                            $quiet
      * @param boolean                            $rm       Remove intermediate container during build
      * @param boolean                            $wait     Wait for build to finish before returning response (default to true)
-     *
-     * @return Docker\Http\Response
      */
-    public function build(ContextInterface $context, $name, $quiet = false, $cache = true, $rm = false, $wait = true)
+    public function build(ContextInterface $context, $name, callable $callback = null, $quiet = false, $cache = true, $rm = false, $wait = true)
     {
-        $content = is_resource($context->read()) ? stream_get_contents($context->read()) : $context->read();
-
+        $content  = is_resource($context->read()) ? new Stream($context->read()) : $context->read();
         $response = $this->httpClient->post(['/build{?data*}', ['data' => [
             'q' => (integer) $quiet,
             't' => $name,
@@ -98,10 +97,21 @@ class Docker
             'rm' => (integer) $rm
         ]]], [
             'headers' => array('Content-Type' => 'application/tar'),
-            'body' => $content
+            'body'    => $content,
+            'stream'  => true
         ]);
 
-        return $response;
+        if (null === $callback) {
+            $callback = function($output, $type) {};
+        }
+
+        $stream = $response->getBody();
+
+        if ($stream instanceof StreamCallbackInterface) {
+            $stream->readWithCallback($callback);
+        } else {
+            $callback($stream->__toString(), null);
+        }
     }
 
     /**

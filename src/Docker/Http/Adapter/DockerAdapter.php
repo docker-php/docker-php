@@ -71,7 +71,6 @@ class DockerAdapter implements  AdapterInterface
             $request->setHeader('Content-Length', $request->getBody()->getSize());
         }
 
-        // Connect to entrypoint
         $socket = stream_socket_client($this->entrypoint, $errorNo, $errorMsg, $this->getDefaultTimeout($transaction));
 
         // Write headers
@@ -96,6 +95,8 @@ class DockerAdapter implements  AdapterInterface
                 fwrite($socket, $request->getBody()->__toString());
             }
         }
+
+        stream_set_timeout($socket, $this->getDefaultTimeout($transaction));
 
         // Response should be available, extract headers
         $headers = $this->getHttpResponseHeaders($socket);
@@ -160,10 +161,10 @@ class DockerAdapter implements  AdapterInterface
 
     private function getDefaultTimeout(TransactionInterface $transaction)
     {
-        $config = $transaction->getRequest()->getConfig();
+        $timeout = $transaction->getRequest()->getConfig()->get('timeout');
 
-        if (isset($config['timeout'])) {
-            return $config['timeout'];
+        if ($timeout !== null) {
+            return $timeout;
         }
 
         $timeout = $transaction->getClient()->getDefaultOption('timeout');

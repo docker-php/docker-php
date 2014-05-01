@@ -220,7 +220,7 @@ class ContainerManager
     public function wait(Container $container, $timeout = null)
     {
         $response = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]], array(
-            'timeout' => null === $timeout ?  $this->client->getDefaultOption('timeout') : $timeout
+            'timeout' => null === $timeout ? $this->client->getDefaultOption('timeout') : $timeout
         ));
 
         if ($response->getStatusCode() !== "200") {

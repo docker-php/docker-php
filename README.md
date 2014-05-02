@@ -14,7 +14,7 @@ There is no *stable* version yet and the API is rapidly evolving, but we still t
 * **MINOR** version number is incremented when a backward incompatible change is made
 * **PATCH** version number is incremented when a new feature is added
 
-So basically, if you want the `0.5` version set, use a version constraint of `~0.5` and you should be fine.
+So basically, if you want the `0.5` version set, use a version constraint of `~0.5.0` and you should be fine.
 
 We are **NOT** documenting upgrade procedures until we reach a stable API, please read the code and PRs to keep up with what's going on. You can also ask us for help, we're nice people!
 

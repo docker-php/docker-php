@@ -47,7 +47,7 @@ class ContainerManagerTest extends TestCase
         try {
             $manager->create($container);
         } catch (\Docker\Exception\UnexpectedStatusCodeException $e) {
-            $this->assertEquals('create: No such image: non-existent (tag: latest)', $e->getMessage());
+            $this->assertEquals('No such image: non-existent (tag: latest)', $e->getMessage());
         }
     }
 

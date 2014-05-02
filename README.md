@@ -5,6 +5,19 @@ Docker PHP
 
 The test suite currently passes against the [Docker Remote API v1.9](http://docs.docker.io/en/latest/api/docker_remote_api_v1.9/).
 
+Versionning
+-----------
+
+There is no *stable* version yet and the API is rapidly evolving, but we still try to semantically version the library according to [semver](http://semver.org/), but shifted a little bit:
+
+* **MAJOR** version number stays to 0 until API freeze
+* **MINOR** version number is incremented when a backward incompatible change is made
+* **PATCH** version number is incremented when a new feature is added
+
+So basically, if you want the `0.5` version set, use a version constraint of `~0.5` and you should be fine.
+
+We are **NOT** documenting upgrade procedures until we reach a stable API, please read the code and PRs to keep up with what's going on. You can also ask us for help, we're nice people!
+
 Installation
 ------------
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+export PATH=$PATH:/home/travis/.phpenv/bin
+eval "$(phpenv init -)"
+phpenv rehash 2>/dev/null
+
 # Exit on first error
 set -e
 
@@ -11,4 +15,4 @@ docker -d -H 0.0.0.0:4243 -H unix:///var/run/docker.sock 2>> /dev/null >> /dev/n
 sleep 2
 
 # $init is set by sekexe
-cd $(dirname $init)/.. && /home/travis/.phpenv/shims/php bin/phpunit -c phpunit.xml.dist
+cd $(dirname $init)/.. && php bin/phpunit -c phpunit.xml.dist

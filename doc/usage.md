@@ -13,14 +13,17 @@
 
 ## Connecting to Docker
 
-By default, Docker-PHP tries to connect to a running `dockerd` instance at `127.0.0.1:43`. You can, however, connect to an arbitrary server by passing an instance of the `Docker\Http\Client`:
+By default, Docker-PHP uses the `DOCKER_HOST` environment variable to connect to a running `dockerd`, if not set it will use `unix:///var/run/docker.sock`.
+You can, however, connect to an arbitrary server by passing an instance of the transport entrypoint `Docker\Http\Client`:
 
 ```php
 <?php
 
-$client = new Docker\Http\Client('unix:///var/run/docker.sock');
+$client = new Docker\Http\DockerClient(array(), 'tcp://127.0.0.1');
 $docker = new Docker\Docker($client);
 ```
+
+`DockerClient` is in fact a Guzzle Client with some default options.
 
 ## Running a container
 
@@ -44,8 +47,8 @@ The callback function receives two arguments: the type of stream, and a piece of
 <?php
 
 $manager = $docker->getContainerManager();
-$manager->run($container, function($type, $chunk) {
-    fputs($type === 1 ? STDOUT : STDERR, $chunk);
+$manager->run($container, function($output, $type) {
+    fputs($type === 1 ? STDOUT : STDERR, $output);
 });
 ```
 
@@ -65,6 +68,8 @@ $docker->run($container, $printCallback, true);
 
 The `run()` command is actually a composite of `create()`, `start()`, `attach` and `wait`, just like the `docker run` CLI command that you might be used to. You can use these methods to gain more fine-grained control over your containers' workflow.
 
+It's important to attach before starting the container, otherwise you may miss some commands output.
+
 ```php
 <?php
 
@@ -75,8 +80,8 @@ $manager->create($container);
 
 printf('Created container with Id "%s"', $container->getId());
 
-$manager->attach($container)->readAttach(function($type, $chunk) {
-    print($chunk);
+$manager->attach($container)->getBody()->readWithCallBack(function($output, $type) {
+    print($output);
 });
 
 $manager->start($container);
@@ -88,7 +93,7 @@ The `attach()` method can also retrieve logs from a stopped container.
 ```php
 <?php
 
-$manager->attach($container, $printCallback, true);
+$manager->attach($container, true)->getBody()->__toString();
 ```
 
 ### Mapping a container's ports
@@ -118,7 +123,7 @@ The `PortCollection` class understands the complete "Docker format" for specifyi
 5678/udp                ->            | 5678      | 5678           | udp
 ```
 
-Once the container is running, you can retrive the mapped ports using the `getMappedPorts()` and `getMappedPort()` methods.
+Once the container is running, you can retrieve the mapped ports using the `getMappedPorts()` and `getMappedPort()` methods.
 
 ```php
 <?php

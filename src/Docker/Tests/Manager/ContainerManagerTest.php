@@ -46,8 +46,9 @@ class ContainerManagerTest extends TestCase
 
         try {
             $manager->create($container);
-        } catch (\Docker\Exception\UnexpectedStatusCodeException $e) {
-            $this->assertEquals('No such image: non-existent (tag: latest)', $e->getMessage());
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $this->assertEquals("404", $e->getResponse()->getStatusCode());
+            $this->assertContains('No such image: non-existent (tag: latest)', $e->getResponse()->getBody()->__toString());
         }
     }
 
@@ -102,7 +103,8 @@ class ContainerManagerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $response = $this->getMock('\Docker\Http\Response');
+        $response = $this->getMockBuilder('\GuzzleHttp\Message\Response')->disableOriginalConstructor()->getMock();
+        $stream   = $this->getMockBuilder('\Docker\Http\Stream\AttachStream')->disableOriginalConstructor()->getMock();
 
         $container->setExitCode(0);
         $callback = function ($type, $output) {};
@@ -123,8 +125,12 @@ class ContainerManagerTest extends TestCase
             ->will($this->returnSelf());
 
         $response->expects($this->once())
-            ->method('readAttach')
-            ->with($this->equalTo($callback));
+            ->method('getBody')
+            ->will($this->returnValue($stream));
+
+        $stream->expects($this->once())
+            ->method('readWithCallback')
+            ->with($callback);
 
         $manager->expects($this->once())
             ->method('wait')
@@ -173,7 +179,7 @@ class ContainerManagerTest extends TestCase
         $response = $manager->attach($container);
         $manager->start($container);
 
-        $response->readAttach(function ($stdtype, $log) use(&$type, &$output) {
+        $response->getBody()->readWithCallback(function ($log, $stdtype) use(&$type, &$output) {
             $type   = $stdtype;
             $output = $log;
         });
@@ -194,7 +200,7 @@ class ContainerManagerTest extends TestCase
         $response = $manager->attach($container);
         $manager->start($container);
 
-        $response->readAttach(function ($stdtype, $log) use(&$type, &$output) {
+        $response->getBody()->readWithCallback(function ($log, $stdtype) use(&$type, &$output) {
             $type   = $stdtype;
             $output = $log;
         });
@@ -221,7 +227,7 @@ class ContainerManagerTest extends TestCase
     }
 
     /**
-     * @expectedException Docker\Http\Exception\TimeoutException
+     * @expectedException GuzzleHttp\Exception\RequestException
      */
     public function testWaitWithTimeout()
     {

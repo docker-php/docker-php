@@ -12,7 +12,7 @@ class TestCase extends PHPUnit_Framework_TestCase
 
     public function getDocker()
     {
-        $client = new Client(array(), 'tcp://127.0.0.1:4243');
+        $client = new Client();
 
         if (null === $this->docker) {
             $this->docker = new Docker($client);

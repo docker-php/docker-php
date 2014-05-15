@@ -7,6 +7,9 @@ phpenv rehash 2>/dev/null
 # Exit on first error
 set -e
 
+# Mount rount
+mount -t tmpfs none /root
+
 # Kill background processes on exit
 trap 'kill $(jobs -p)' SIGINT SIGTERM EXIT
 

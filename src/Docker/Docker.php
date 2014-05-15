@@ -39,7 +39,7 @@ class Docker
     private $imageManager;
 
     /**
-     * @param HttpClient|null $client Http client to use with Docker
+     * @param HttpClient $httpClient Http client to use with Docker
      */
     public function __construct(HttpClient $httpClient = null)
     {
@@ -81,13 +81,14 @@ class Docker
     /**
      * Build an image with docker
      *
-     * @param Docker\Context\ContextInterface    $context
-     * @param string                             $name
-     * @param boolean                            $quiet
+     * @param \Docker\Context\ContextInterface   $context  Context to build
+     * @param string                             $name     Name of the wanted image
+     * @param callable                           $callback A callback to be called for having log of build
+     * @param boolean                            $quiet    Quiet build (doest not output commands during build)
+     * @param boolean                            $cache    Use docker cache
      * @param boolean                            $rm       Remove intermediate container during build
-     * @param boolean                            $wait     Wait for build to finish before returning response (default to true)
      */
-    public function build(ContextInterface $context, $name, callable $callback = null, $quiet = false, $cache = true, $rm = false, $wait = true)
+    public function build(ContextInterface $context, $name, callable $callback = null, $quiet = false, $cache = true, $rm = false)
     {
         $content  = is_resource($context->read()) ? new Stream($context->read()) : $context->read();
         $response = $this->httpClient->post(['/build{?data*}', ['data' => [
@@ -115,10 +116,14 @@ class Docker
     }
 
     /**
-     * @param Docker\Container $container
+     * Commit a container into an image
+     *
+     * @param \Docker\Container $container
      * @param array $config
      *
-     * @return Docker\Image
+     * @throws Exception\UnexpectedStatusCodeException
+     *
+     * @return \Docker\Image
      *
      * @see http://docs.docker.io/en/latest/api/docker_remote_api_v1.7/#create-a-new-image-from-a-container-s-changes
      */

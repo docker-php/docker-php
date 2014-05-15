@@ -5,6 +5,8 @@ Docker PHP
 
 The test suite currently passes against the [Docker Remote API v1.9](http://docs.docker.io/en/latest/api/docker_remote_api_v1.9/).
 
+[![Travis-CI](https://travis-ci.org/stage1/docker-php.svg?branch=master)](https://travis-ci.org/stage1/docker-php) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stage1/docker-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/stage1/docker-php/?branch=master)
+
 Versioning
 ----------
 

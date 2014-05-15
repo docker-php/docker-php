@@ -3,7 +3,7 @@
 namespace Docker\Tests;
 
 use Docker\Docker;
-use Docker\Context;
+use Docker\Context\Context;
 use Docker\Container;
 use Docker\Context\ContextBuilder;
 use Docker\Http\Client;
@@ -23,6 +23,26 @@ class DockerTest extends TestCase
         });
 
         $this->assertRegExp('/Successfully built/', $content);
+    }
+
+    public function testBuildWithExistingDirectory()
+    {
+        if (!file_exists('/bin/tar')) {
+            $this->markTestSkipped('No /bin/tar on host');
+        }
+
+        $docker     = $this->getDocker();
+        $directory  = __DIR__.DIRECTORY_SEPARATOR."Context".DIRECTORY_SEPARATOR."context-test";
+        $context    = new Context($directory);
+        $timecalled = 0;
+
+        $docker->build($context, 'foo', function($output, $type) use(&$content, &$timecalled) {
+            $content .= $output;
+            $timecalled++;
+        });
+
+        $this->assertRegExp('/Successfully built/', $content);
+        $this->assertGreaterThan(1, $timecalled);
     }
 
     public function testCommit()

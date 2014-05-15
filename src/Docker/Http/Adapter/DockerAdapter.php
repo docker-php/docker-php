@@ -99,7 +99,9 @@ class DockerAdapter implements  AdapterInterface
         stream_set_timeout($socket, $this->getDefaultTimeout($transaction));
 
         // Response should be available, extract headers
-        $headers = $this->getHttpResponseHeaders($socket);
+        do {
+            $response = $this->getResponseWithHeaders($socket);
+        } while($response->getStatusCode() == 100);
 
         //Check timeout
         $metadata = stream_get_meta_data($socket);
@@ -108,10 +110,14 @@ class DockerAdapter implements  AdapterInterface
             throw new RequestException('Timed out while reading socket');
         }
 
-        $this->createResponseObject($headers, $transaction, $socket);
+        $this->setResponseStream($response, $transaction, $socket);
+
+        $transaction->setResponse($response);
+
+        return $response;
     }
 
-    private function getHttpResponseHeaders($stream)
+    private function getResponseWithHeaders($stream)
     {
         $headers = array();
 
@@ -124,11 +130,6 @@ class DockerAdapter implements  AdapterInterface
             $headers[] = trim($line);
         }
 
-        return $headers;
-    }
-
-    private function createResponseObject(array $headers, TransactionInterface $transaction, $socket)
-    {
         $parts = explode(' ', array_shift($headers), 3);
         $options = ['protocol_version' => substr($parts[0], -3)];
         if (isset($parts[2])) {
@@ -144,19 +145,22 @@ class DockerAdapter implements  AdapterInterface
                 : '';
         }
 
-        if (isset($responseHeaders['Transfer-Encoding']) && $responseHeaders['Transfer-Encoding'] == 'chunked') {
+        $response = new Response($parts[1], $responseHeaders, null, $options);
+
+        return $response;
+    }
+
+    private function setResponseStream(Response $response, TransactionInterface $transaction, $socket)
+    {
+        if ($response->getHeader('Transfer-Encoding') == "chunked") {
             $stream = new ChunkedStream($socket);
-        } elseif (isset($responseHeaders['Content-Type']) && $responseHeaders['Content-Type'] == "application/vnd.docker.raw-stream") {
+        } elseif ($response->getHeader('Content-Type') == "application/vnd.docker.raw-stream") {
             $stream = new AttachStream($socket);
         } else {
             $stream = new Stream($socket);
         }
 
-        $response = new Response($parts[1], $responseHeaders, $stream, $options);
-
-        $transaction->setResponse($response);
-
-        return $response;
+        $response->setBody($stream);
     }
 
     private function getDefaultTimeout(TransactionInterface $transaction)

@@ -5,6 +5,7 @@ namespace Docker\Tests\Manager;
 use Docker\Container;
 use Docker\Port;
 use Docker\Tests\TestCase;
+use GuzzleHttp\Exception\RequestException;
 
 class ContainerManagerTest extends TestCase
 {
@@ -107,7 +108,7 @@ class ContainerManagerTest extends TestCase
         $stream   = $this->getMockBuilder('\Docker\Http\Stream\AttachStream')->disableOriginalConstructor()->getMock();
 
         $container->setExitCode(0);
-        $callback = function ($type, $output) {};
+        $callback = function () {};
 
         $manager->expects($this->once())
             ->method('create')
@@ -248,7 +249,7 @@ class ContainerManagerTest extends TestCase
 
         try {
             $manager->wait($container, 1);
-        } catch (\Docker\Http\Exception\TimeoutException $e) {
+        } catch (RequestException $e) {
             $this->assertInstanceOf('Docker\\Http\\Request', $e->getRequest());
         }
     }

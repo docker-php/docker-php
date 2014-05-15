@@ -15,18 +15,25 @@ use GuzzleHttp\Exception\ClientException;
 class ContainerManager
 {
     /**
-     * @var Docker\Http\Client
+     * @var \Docker\Http\Client
      */
     private $client;
 
     /**
-     * @param Docker\Http\Client
+     * @param \Docker\Http\Client
      */
     public function __construct(HttpClient $client)
     {
         $this->client = $client;
     }
 
+    /**
+     * Get all container in docker daemon
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return Container[]
+     */
     public function findAll()
     {
         $response = $this->client->get('/containers/json');
@@ -58,9 +65,11 @@ class ContainerManager
     }
 
     /**
+     * Find a container by its id
+     *
      * @param string $id
      *
-     * @return Docker\Container|null
+     * @return \Docker\Container|null
      */
     public function find($id)
     {
@@ -77,9 +86,13 @@ class ContainerManager
     }
 
     /**
-     * @param Docker\Container $container
+     * Inspect a container
      *
-     * @return Docker\ContainerManager
+     * @param \Docker\Container $container
+     *
+     * @throws \Docker\Exception\ContainerNotFoundException
+     *
+     * @return \Docker\ContainerManager
      */
     public function inspect(Container $container)
     {
@@ -99,9 +112,13 @@ class ContainerManager
     }
 
     /**
-     * @param Docker\Container $container
+     * Create a container (do not start it)
      *
-     * @return Docker\Manager\ContainerManager
+     * @param \Docker\Container $container
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return \Docker\Manager\ContainerManager
      */
     public function create(Container $container)
     {
@@ -120,9 +137,12 @@ class ContainerManager
     }
 
     /**
-     * @param Docker\Container $container
+     * @param \Docker\Container $container
+     * @param array             $hostConfig     Config when starting the container (for port binding e.g.)
      *
-     * @return Docker\Manager\ContainerManager
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return \Docker\Manager\ContainerManager
      */
     public function start(Container $container, array $hostConfig = array())
     {
@@ -141,11 +161,12 @@ class ContainerManager
     }
 
     /**
-     * @param Docker\Container  $container
-     * @param callable          $attachCallback Callback to read the attach response
+     * Run a container (create, attach, start and wait)
      *
-     * If set to null no attach call will be made, otherwise callback must respect the format for the readAttach
-     * method in Docker\Http\Response class
+     * @param \Docker\Container  $container
+     * @param callable          $attachCallback Callback to read the attach response
+     *   If set to null no attach call will be made, otherwise callback must respect the format for the readAttach
+     *   method in Docker\Http\Response class
      *
      * @param array             $hostConfig     Config when starting the container (for port binding e.g.)
      * @param boolean           $daemon         Do not wait for run to finish
@@ -163,7 +184,7 @@ class ContainerManager
 
         $this->start($container, $hostConfig);
 
-        if (null !== $attachCallback) {
+        if (null !== $attachCallback && $attachResponse) {
             $attachResponse->getBody()->readWithCallback($attachCallback);
         }
 
@@ -177,7 +198,7 @@ class ContainerManager
     }
 
     /**
-     * @param Docker\Container  $container Container to attach
+     * @param \Docker\Container  $container Container to attach
      *
      * Where $streamType will be 0 for STDIN, 1 for STDOUT, 2 for STDERR and $output will be the string of log
      *
@@ -188,7 +209,9 @@ class ContainerManager
      * @param boolean           $stderr    Get stderr log
      * @param integer           $timeout   Timeout when
      *
-     * @return Docker\Http\Response Re
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return \Docker\Http\Response Re
      */
     public function attach(Container $container, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true, $timeout = null)
     {
@@ -213,9 +236,13 @@ class ContainerManager
     }
 
     /**
-     * @param Docker\Container $container
+     * Wait for a container to finish
      *
-     * @return Docker\Manager\ContainerManager
+     * @param \Docker\Container $container
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return \Docker\Manager\ContainerManager
      */
     public function wait(Container $container, $timeout = null)
     {
@@ -235,10 +262,14 @@ class ContainerManager
     }
 
     /**
-     * @param Docker\Container $container
+     * Stop a running container
+     *
+     * @param \Docker\Container $container
      * @param integer          $timeout
      *
-     * @return Docker\Manager\ContainerManager
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return \Docker\Manager\ContainerManager
      */
     public function stop(Container $container, $timeout = 5)
     {
@@ -249,7 +280,7 @@ class ContainerManager
 
         $response = $this->client->send($request);
 
-        if ($response->getStatusCode() !== 204) {
+        if ($response->getStatusCode() !== "204") {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -259,10 +290,12 @@ class ContainerManager
     }
 
     /**
-     * @param Docker\Container  $container
+     * Delete a container from docker server
+     *
+     * @param \Docker\Container  $container
      * @param boolean           $volumes
      *
-     * @return Docker\Manager\ContainerManager
+     * @return \Docker\Manager\ContainerManager
      */
     public function remove(Container $container, $volumes = false)
     {
@@ -273,7 +306,7 @@ class ContainerManager
 
         $response = $this->client->send($request);
 
-        if ($response->getStatusCode() !== 204) {
+        if ($response->getStatusCode() !== "204") {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 

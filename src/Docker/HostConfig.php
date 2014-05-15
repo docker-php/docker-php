@@ -8,9 +8,14 @@ namespace Docker;
 class HostConfig
 {
     /**
+     * @var array
+     */
+    private $env;
+
+    /**
      * @param array $env
      * 
-     * @return Docker\HostConfig
+     * @return \Docker\HostConfig
      */
     public function setEnv(array $env)
     {

@@ -27,7 +27,7 @@ class ContextBuilder
     private $files = array();
 
     /**
-     * @var Symfony\Component\Filesystem\Filesystem
+     * @var \Symfony\Component\Filesystem\Filesystem
      */
     private $fs;
 
@@ -37,7 +37,7 @@ class ContextBuilder
     private $format;
 
     /**
-     * @param Symfony\Component\Filesystem\Filesystem
+     * @param \Symfony\Component\Filesystem\Filesystem
      */
     public function __construct(Filesystem $fs = null)
     {
@@ -49,7 +49,7 @@ class ContextBuilder
      * 
      * @param string $format
      * 
-     * @return Docker\Context\ContextBuilder
+     * @return \Docker\Context\ContextBuilder
      */
     public function setFormat($format)
     {
@@ -63,7 +63,7 @@ class ContextBuilder
      *
      * @param string $from From which image we start
      *
-     * @return Docker\Context\ContextBuilder
+     * @return \Docker\Context\ContextBuilder
      */
     public function from($from)
     {
@@ -78,7 +78,7 @@ class ContextBuilder
      * @param string $path    Path wanted on the image
      * @param string $content Content of file
      *
-     * @return Docker\Context\ContextBuilder
+     * @return \Docker\Context\ContextBuilder
      */
     public function add($path, $content)
     {
@@ -92,7 +92,7 @@ class ContextBuilder
      *
      * @param string $command Command to run
      *
-     * @return Docker\Context\ContextBuilder
+     * @return \Docker\Context\ContextBuilder
      */
     public function run($command)
     {

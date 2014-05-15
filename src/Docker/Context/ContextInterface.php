@@ -18,7 +18,7 @@ interface ContextInterface
      * If `isStreamed()` is `true`, then `read()` should return a resource.
      * Else it should return the plain content.
      * 
-     * @return ressource|string
+     * @return resource|string
      */
     public function read();
 }

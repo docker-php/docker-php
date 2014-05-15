@@ -25,6 +25,6 @@ class DockerClient extends Client
             $config['adapter']         = new DockerAdapter($messageFactory, $entrypoint);
         }
 
-        parent::__construct($config, $entrypoint);
+        parent::__construct($config);
     }
 } 

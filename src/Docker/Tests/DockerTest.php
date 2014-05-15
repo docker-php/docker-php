@@ -18,7 +18,7 @@ class DockerTest extends TestCase
 
         $docker = $this->getDocker();
 
-        $docker->build($contextBuilder->getContext(), 'foo', function($output, $type) use(&$content) {
+        $docker->build($contextBuilder->getContext(), 'foo', function($output) use(&$content) {
             $content .= $output;
         });
 
@@ -36,7 +36,7 @@ class DockerTest extends TestCase
         $context    = new Context($directory);
         $timecalled = 0;
 
-        $docker->build($context, 'foo', function($output, $type) use(&$content, &$timecalled) {
+        $docker->build($context, 'foo', function($output) use(&$content, &$timecalled) {
             $content .= $output;
             $timecalled++;
         });

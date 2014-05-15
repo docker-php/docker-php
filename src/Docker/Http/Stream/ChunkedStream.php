@@ -52,7 +52,7 @@ class ChunkedStream extends Stream implements StreamCallbackInterface
             $part = "";
         }
 
-        while($read = $this->read(1) != "\n") {
+        while($this->read(1) != "\n") {
             if ($this->eof()) {
                 return null;
             }

@@ -3,6 +3,7 @@
 namespace Docker;
 
 use Docker\Context\Context;
+use Docker\Http\DockerClient;
 use Docker\Http\Stream\StreamCallbackInterface;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
@@ -23,9 +24,9 @@ class Docker
     const BUILD_NO_CACHE = false;
 
     /**
-     * @var Docker\Http\Client
+     * @var \GuzzleHttp\Client
      */
-    private $client;
+    private $httpClient;
 
     /**
      * @var array
@@ -38,16 +39,15 @@ class Docker
     private $imageManager;
 
     /**
-     * @param Docker\Http\Client    $client
-     * @param array                 $array
+     * @param HttpClient|null $client Http client to use with Docker
      */
     public function __construct(HttpClient $httpClient = null)
     {
-        $this->httpClient = $httpClient ?: new HttpClient('http://127.0.0.1:4243');
+        $this->httpClient = $httpClient ?: new DockerClient();
     }
 
     /**
-     * @return Docker\Http\Client
+     * @return \GuzzleHttp\Client
      */
     public function getHttpClient()
     {
@@ -55,7 +55,7 @@ class Docker
     }
 
     /**
-     * @return Docker\Manager\ContainerManager
+     * @return \Docker\Manager\ContainerManager
      */
     public function getContainerManager()
     {
@@ -67,7 +67,7 @@ class Docker
     }
 
     /**
-     * @return Docker\Manager\ImageManager
+     * @return \Docker\Manager\ImageManager
      */
     public function getImageManager()
     {
@@ -102,7 +102,7 @@ class Docker
         ]);
 
         if (null === $callback) {
-            $callback = function($output, $type) {};
+            $callback = function() {};
         }
 
         $stream = $response->getBody();

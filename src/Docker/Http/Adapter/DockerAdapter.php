@@ -107,11 +107,10 @@ class DockerAdapter implements  AdapterInterface
         $metadata = stream_get_meta_data($socket);
 
         if ($metadata['timed_out']) {
-            throw new RequestException('Timed out while reading socket');
+            throw new RequestException('Timed out while reading socket', $request, $response);
         }
 
-        $this->setResponseStream($response, $transaction, $socket);
-
+        $this->setResponseStream($response, $socket);
         $transaction->setResponse($response);
 
         return $response;
@@ -150,7 +149,7 @@ class DockerAdapter implements  AdapterInterface
         return $response;
     }
 
-    private function setResponseStream(Response $response, TransactionInterface $transaction, $socket)
+    private function setResponseStream(Response $response, $socket)
     {
         if ($response->getHeader('Transfer-Encoding') == "chunked") {
             $stream = new ChunkedStream($socket);

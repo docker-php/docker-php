@@ -141,7 +141,7 @@ class ContainerManagerTest extends TestCase
         $this->assertTrue($manager->run($container, $callback));
     }
 
-    public function testRunDeamon()
+    public function testRunDaemon()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
         $manager = $this

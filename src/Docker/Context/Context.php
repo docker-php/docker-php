@@ -91,7 +91,7 @@ class Context implements ContextInterface
     }
 
     /**
-     * @return ressource|string
+     * @return resource|string
      */
     public function read()
     {
@@ -118,7 +118,7 @@ class Context implements ContextInterface
     /**
      * Return a stream for this context
      *
-     * @return stream Stream ressource in memory
+     * @return stream Stream resource in memory
      */
     public function toStream()
     {

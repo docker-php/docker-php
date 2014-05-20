@@ -17,7 +17,7 @@ class ChunkedStream extends Stream implements StreamCallbackInterface
      *
      * @param callable $callback
      *
-     * @return sring
+     * @return string
      */
     public function readWithCallback(callable $callback)
     {

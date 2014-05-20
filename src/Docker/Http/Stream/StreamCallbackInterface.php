@@ -18,7 +18,7 @@ interface StreamCallbackInterface
     /**
      * Read a stream by block
      *
-     * @return sring
+     * @return string
      */
     public function readWithCallback(callable $callback);
 } 

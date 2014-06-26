@@ -71,7 +71,10 @@ class DockerAdapter implements  AdapterInterface
             $request->setHeader('Content-Length', $request->getBody()->getSize());
         }
 
-        $socket = stream_socket_client($this->entrypoint, $errorNo, $errorMsg, $this->getDefaultTimeout($transaction));
+        $socket = @stream_socket_client($this->entrypoint, $errorNo, $errorMsg, $this->getDefaultTimeout($transaction));
+        if(!$socket) {
+            throw new RequestException(sprintf('Cannot open socket connection: %s [code %d]', $errorMsg, $errorNo), $request);
+        }
 
         // Write headers
         fwrite($socket, $this->getRequestHeaderAsString($request));

@@ -3,7 +3,6 @@
 namespace Docker;
 
 use Docker\Exception\PortNotFoundException;
-
 use LogicException;
 
 /**
@@ -74,7 +73,7 @@ class Container
     /**
      * @param array $runtimeInformations
      *
-     * @return Docker\Container
+     * @return Container
      */
     public function setRuntimeInformations($runtimeInformations)
     {
@@ -95,7 +94,7 @@ class Container
      * @param integer $port
      * @param string  $protocol
      *
-     * @return Docker\Port
+     * @return Port
      */
     public function getMappedPort($port, $protocol = 'tcp')
     {
@@ -149,7 +148,7 @@ class Container
     /**
      * @param string $id
      *
-     * @return Docker\Container
+     * @return Container
      */
     public function setId($id)
     {
@@ -177,7 +176,7 @@ class Container
     /**
      * @param integer $exitCode
      *
-     * @return Docker\Container
+     * @return Container
      */
     public function setExitCode($exitCode)
     {
@@ -203,9 +202,9 @@ class Container
     }
 
     /**
-     * @param array|PortSpecInterface $ports
+     * @param Port $ports
      *
-     * @return Docker\Container
+     * @return Container
      */
     public function setExposedPorts($ports)
     {
@@ -231,9 +230,9 @@ class Container
     }
 
     /**
-     * @param array $env
+     * @param string[] $env
      *
-     * @return Docker\Container
+     * @return Container
      */
     public function addEnv(array $env)
     {
@@ -245,7 +244,7 @@ class Container
     /**
      * @param array $env
      *
-     * @return Docker\Container
+     * @return Container
      */
     public function setEnv(array $env)
     {
@@ -288,7 +287,7 @@ class Container
     /**
      * @param string|Docker\Image $image
      *
-     * @return Docker\Container
+     * @return Container
      */
     public function setImage($image)
     {
@@ -302,7 +301,7 @@ class Container
     }
 
     /**
-     * @return Docker\Image
+     * @return Image
      */
     public function getImage()
     {
@@ -317,7 +316,7 @@ class Container
     /**
      * @param array $cmd
      *
-     * @return Docker\Container
+     * @return Container
      */
     public function setCmd(array $cmd)
     {
@@ -329,7 +328,7 @@ class Container
     /**
      * @param array $data
      * 
-     * @return Docker\Container
+     * @return Container
      */
     public function setData(array $data)
     {

@@ -3,8 +3,6 @@
 namespace Docker\Tests\Context;
 
 use Docker\Context\ContextBuilder;
-use Symfony\Component\Process\Process;
-
 use Docker\Tests\TestCase;
 
 class ContextBuilderTest extends TestCase

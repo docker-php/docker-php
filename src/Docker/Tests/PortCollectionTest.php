@@ -3,7 +3,6 @@
 namespace Docker\Tests;
 
 use Docker\PortCollection;
-
 use PHPUnit_Framework_TestCase;
 
 class PortCollectionTest extends PHPUnit_Framework_TestCase

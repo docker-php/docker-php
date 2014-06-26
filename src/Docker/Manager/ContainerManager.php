@@ -92,7 +92,7 @@ class ContainerManager
      *
      * @throws \Docker\Exception\ContainerNotFoundException
      *
-     * @return \Docker\ContainerManager
+     * @return ContainerManager
      */
     public function inspect(Container $container)
     {
@@ -172,7 +172,7 @@ class ContainerManager
      * @param boolean           $daemon         Do not wait for run to finish
      * @param integer           $timeout        Timeout pass to the attach call
      *
-     * @return boolean Return true when the process want well, false if an error append during the run process, or null when daemon is set to true
+     * @return boolean|null Return true when the process want well, false if an error append during the run process, or null when daemon is set to true
      */
     public function run(Container $container, callable $attachCallback = null, array $hostConfig = array(), $daemon = false, $timeout = null)
     {

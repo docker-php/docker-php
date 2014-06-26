@@ -55,7 +55,7 @@ class Image
     /**
      * @param string $name
      * 
-     * @return Docker\Image
+     * @return Image
      */
     public function setName($name)
     {
@@ -74,7 +74,7 @@ class Image
     /**
      * @param string $id
      * 
-     * @return Docker\Image
+     * @return Image
      */
     public function setId($id)
     {
@@ -94,7 +94,7 @@ class Image
     /**
      * @param string $repository
      * 
-     * @return Docker\Image
+     * @return Image
      */
     public function setRepository($repository)
     {
@@ -114,7 +114,7 @@ class Image
     /**
      * @param string $tag
      * 
-     * @return Docker\Image
+     * @return Image
      */
     public function setTag($tag)
     {

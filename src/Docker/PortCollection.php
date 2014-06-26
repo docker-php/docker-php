@@ -63,7 +63,7 @@ class PortCollection implements PortSpecInterface
     /**
      * @param Docker\Port
      * 
-     * @return Docker\PortCollection
+     * @return PortCollection
      */
     public function add(Port $port)
     {

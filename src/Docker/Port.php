@@ -59,7 +59,7 @@ class Port implements PortSpecInterface
     }
 
     /**
-     * @return integer|null
+     * @return integer
      */
     public function getHostPort()
     {
@@ -67,7 +67,7 @@ class Port implements PortSpecInterface
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getHostIp()
     {

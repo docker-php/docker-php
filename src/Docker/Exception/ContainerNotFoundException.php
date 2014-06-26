@@ -3,7 +3,6 @@
 namespace Docker\Exception;
 
 use Docker\Exception;
-
 use Exception as BaseException;
 
 /**
@@ -13,7 +12,7 @@ class ContainerNotFoundException extends BaseException
 {
     /**
      * @param string         $containerId
-     * @param Exception|null $previous
+     * @param null|BaseException $previous
      */
     public function __construct($containerId, BaseException $previous = null)
     {

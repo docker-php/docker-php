@@ -122,7 +122,12 @@ class ContainerManager
      */
     public function create(Container $container)
     {
-        $response = $this->client->post('/containers/create', array(
+        $response = $this->client->post(['/containers/create{?data*}', [
+            'data' => [
+                'name' => $container->getName(),
+            ],
+        ]],
+        array(
             'body'         => Json::encode($container->getConfig()),
             'headers'      => array('content-type' => 'application/json')
         ));

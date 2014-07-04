@@ -304,12 +304,10 @@ class ContainerManager
      */
     public function remove(Container $container, $volumes = false)
     {
-        $request = $this->client->delete(['/containers/{id}?v={volumes}', [
+        $response = $this->client->delete(['/containers/{id}?v={volumes}', [
             'id' => $container->getId(),
             'v' => $volumes
         ]]);
-
-        $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== "204") {
             throw UnexpectedStatusCodeException::fromResponse($response);

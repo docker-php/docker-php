@@ -294,4 +294,20 @@ class ContainerManagerTest extends TestCase
 
         $this->assertInstanceOf('Docker\\Container', $manager->find($container->getId()));
     }
+
+
+    public function testRemove()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['date']]);
+
+        $manager = $this->getManager();
+        $manager->create($container);
+        $manager->start($container);
+        $manager->wait($container);
+        $manager->remove($container);
+
+        $this->setExpectedException('\\Docker\\Exception\\ContainerNotFoundException', 'Container not found');
+        $manager->inspect($container);
+    }
+
 }

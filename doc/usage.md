@@ -32,8 +32,8 @@ Use `Docker\Manager\ContainerManager#run()` to run a container.
 ```php
 <?php
 
-$container = new Container(['Image' => 'ubuntu:precise']);
-$docker->run($container);
+$container = new Docker\Container(['Image' => 'ubuntu:precise']);
+$docker->getContainerManager()->run($container);
 ```
 
 The `run()` method provides a few options to handle the workflow of your container.

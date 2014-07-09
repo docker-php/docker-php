@@ -22,6 +22,11 @@ class Container
     private $id;
 
     /**
+     * @var string
+     */
+    private $name;
+
+    /**
      * @var array
      */
     private $config = array();
@@ -170,7 +175,29 @@ class Container
      */
     public function getName()
     {
-        return array_key_exists('Name', $this->runtimeInformations) ? $this->runtimeInformations['Name'] : null;
+        if (array_key_exists('Name', $this->runtimeInformations)) {
+            return $this->runtimeInformations['Name'];
+        }
+
+        if (isset($this->name)) {
+            return $this->name;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return Container
+     */
+    public function setName($name)
+    {
+        if (!preg_match("/^([a-zA-Z0-9_-]+\/)?[a-zA-Z0-9_-]+$/", $name)) { throw new \Exception("Name was not correctly formatted.", 1); }
+
+        $this->name = $name;
+
+        return $this;
     }
 
     /**

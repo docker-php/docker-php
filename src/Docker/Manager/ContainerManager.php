@@ -122,7 +122,12 @@ class ContainerManager
      */
     public function create(Container $container)
     {
-        $response = $this->client->post('/containers/create', array(
+        $response = $this->client->post(['/containers/create{?data*}', [
+            'data' => [
+                'name' => $container->getName(),
+            ],
+        ]],
+        array(
             'body'         => Json::encode($container->getConfig()),
             'headers'      => array('content-type' => 'application/json')
         ));
@@ -299,12 +304,10 @@ class ContainerManager
      */
     public function remove(Container $container, $volumes = false)
     {
-        $request = $this->client->delete(['/containers/{id}?v={volumes}', [
+        $response = $this->client->delete(['/containers/{id}?v={volumes}', [
             'id' => $container->getId(),
             'v' => $volumes
         ]]);
-
-        $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== "204") {
             throw UnexpectedStatusCodeException::fromResponse($response);

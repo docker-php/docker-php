@@ -22,4 +22,34 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(['FOO=BAR', 'BAR=FOO'], $container->getEnv());
     }
+
+    public function testContainerName()
+    {
+        $container = new Container();
+        $container->setName('Foobar');
+
+        $this->assertEquals('Foobar', $container->getName());
+    }
+
+    public function testValidContainerName()
+    {
+        $container = new Container();
+        $container->setName('Foo/Bar');
+        $this->assertEquals('Foo/Bar', $container->getName());
+    }
+
+    public function testInvalidContainerNameOne()
+    {
+        $container = new Container();
+        $this->setExpectedException('Exception', 'Name was not correctly formatted.');
+        $container->setName('Foo/Bar/Baz');
+    }
+
+    public function testInvalidContainerNameTwo()
+    {
+        $container = new Container();
+        $this->setExpectedException('Exception', 'Name was not correctly formatted.');
+        $container->setName('Foo!');
+    }
+
 }

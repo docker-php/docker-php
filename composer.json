@@ -13,7 +13,7 @@
         "symfony/filesystem": "~2.3",
         "symfony/process": "~2.3",
         "guzzlehttp/guzzle": "~4.0",
-        "guzzlehttp/streams": "dev-master"
+        "guzzlehttp/streams": "~1.2"
     },
     "require-dev": {
         "phpunit/phpunit": "~3.7"

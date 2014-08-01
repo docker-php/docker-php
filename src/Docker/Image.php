@@ -66,6 +66,7 @@ class Image
             $this->setTag($tag);
         } else {
             $this->setRepository($name);
+            $this->setTag('latest');
         }
 
         return $this;

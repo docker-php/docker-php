@@ -105,7 +105,7 @@ class Context implements ContextInterface
      */
     public function toTar()
     {
-        $process = new Process('/bin/tar c .', $this->directory);
+        $process = new Process('/usr/bin/env tar c .', $this->directory);
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -123,7 +123,7 @@ class Context implements ContextInterface
     public function toStream()
     {
         if (!is_resource($this->process)) {
-            $this->process = proc_open("tar c .", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, $this->directory);
+            $this->process = proc_open("/usr/bin/envtar c .", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, $this->directory);
             $this->stream  = $pipes[1];
         }
 

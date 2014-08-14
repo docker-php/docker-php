@@ -32,6 +32,52 @@ class ChunkedStream extends Stream implements StreamCallbackInterface
         }
     }
 
+
+    /**
+     * Cast stream to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getContents();
+    }
+
+
+    /**
+     * Gets the string contents of the stream
+     *
+     * @param integer $maxlength  Returns contents truncated to supplied length (-1 for max)
+     *
+     * @return string
+     */
+    public function getContents($maxlength = -1)
+    {
+        $contents = '';
+
+        while (!$this->eof()) {
+            $part = $this->readPart();
+
+            if ($part == null) {
+                break;
+            }
+
+            $contents .= $part;
+
+            if ($maxlength > -1 && strlen($contents) > $maxlength) {
+                return substr($contents, 0, $maxlength);
+            }
+        }
+
+        return $contents;
+    }
+
+
+    /**
+     * Read a chunk from the stream
+     *
+     * @return string
+     */
     protected function readPart()
     {
         $tmpSize = "";
@@ -60,4 +106,4 @@ class ChunkedStream extends Stream implements StreamCallbackInterface
 
         return $part;
     }
-} 
+}

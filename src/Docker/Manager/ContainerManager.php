@@ -28,15 +28,19 @@ class ContainerManager
     }
 
     /**
-     * Get all container in docker daemon
+     * Get all containers from the docker daemon
+     *
+     * @param array $params an array of query parameters
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return Container[]
      */
-    public function findAll()
+    public function findAll(array $params = array())
     {
-        $response = $this->client->get('/containers/json');
+        $response = $this->client->get('/containers/json', [
+            'query' => $params
+        ]);
 
         if ($response->getStatusCode() !== "200") {
             throw UnexpectedStatusCodeException::fromResponse($response);

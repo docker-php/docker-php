@@ -34,8 +34,8 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     public function testValidContainerName()
     {
         $container = new Container();
-        $container->setName('Foo/Bar');
-        $this->assertEquals('Foo/Bar', $container->getName());
+        $container->setName('/Foobar');
+        $this->assertEquals('/Foobar', $container->getName());
     }
 
     public function testInvalidContainerNameOne()

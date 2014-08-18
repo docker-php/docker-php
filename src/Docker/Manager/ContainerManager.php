@@ -278,12 +278,10 @@ class ContainerManager
      */
     public function stop(Container $container, $timeout = 5)
     {
-        $request = $this->client->post(['/containers/{id}/stop?t={timeout}', [
+        $response = $this->client->post(['/containers/{id}/stop?t={timeout}', [
             'id' => $container->getId(),
             'timeout' => $timeout
         ]]);
-
-        $response = $this->client->send($request);
 
         if ($response->getStatusCode() !== "204") {
             throw UnexpectedStatusCodeException::fromResponse($response);

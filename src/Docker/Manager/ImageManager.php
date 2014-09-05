@@ -3,6 +3,7 @@
 namespace Docker\Manager;
 
 use Docker\Exception\ImageNotFoundException;
+use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Http\Stream\StreamCallbackInterface;
 use Docker\Image;
 use GuzzleHttp\Client;
@@ -63,9 +64,12 @@ class ImageManager
             $image = new Image();
             $image->setId($data['Id']);
 
-            foreach ($data['RepoTags'] as $tag) {
+            foreach ($data['RepoTags'] as $repoTag) {
+                list($repository, $tag) = explode(':', $repoTag);
+
                 $tagImage = clone $image;
-                $tagImage->setName($tag);
+                $tagImage->setRepository($repository);
+                $tagImage->setTag($tag);
 
                 $coll[] = $tagImage;
             }
@@ -77,14 +81,14 @@ class ImageManager
     /**
      * Get an image from docker daemon
      *
-     * @param  string $id Name of image to get
+     * @param  string $repository Name of image to get
+     * @param  string $tag        Tag of the image to get (default to latest)
      *
      * @return Image
      */
-    public function find($id)
+    public function find($repository, $tag = 'latest')
     {
-        $image = new Image();
-        $image->setName($id);
+        $image = new Image($repository, $tag);
 
         $this->inspect($image);
 
@@ -97,6 +101,7 @@ class ImageManager
      * @param \Docker\Image $image
      *
      * @throws \Docker\Exception\ImageNotFoundException
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
      * @throws \GuzzleHttp\Exception\ClientException
      *
      * @return ImageManager
@@ -104,10 +109,10 @@ class ImageManager
     public function inspect(Image $image)
     {
         try {
-            $response = $this->client->get(['/images/{id}/json', ['id' => $image->getName()]]);
+            $response = $this->client->get(['/images/{id}/json', ['id' => $image->__toString()]]);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() == "404") {
-                throw new ImageNotFoundException($image->getName(), $e);
+                throw new ImageNotFoundException($image->__toString(), $e);
             }
 
             throw $e;
@@ -130,6 +135,7 @@ class ImageManager
      *
      * @param  string $name Name of image to pull
      * @param  string $tag  Tag of image
+     *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return Image
@@ -150,9 +156,7 @@ class ImageManager
             $stream->__toString();
         }
 
-        $image = new Image();
-        $image->setRepository($name);
-        $image->setTag($tag);
+        $image = new Image($name, $tag);
 
         $this->inspect($image);
 
@@ -166,12 +170,14 @@ class ImageManager
      * @param boolean $force   Force deletion of image (default false)
      * @param boolean $noprune Do not delete parent images (default false)
      *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
      * @return ImageManager
      */
     public function delete(Image $image, $force = false, $noprune = false)
     {
         $response = $this->client->delete(['/images/{image}?force={force}&noprune={noprune}', [
-            'image'   => $image->getName(),
+            'image'   => $image->__toString(),
             'force'   => $force,
             'noprune' => $noprune
         ]]);

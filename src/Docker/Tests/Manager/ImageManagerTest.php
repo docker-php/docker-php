@@ -19,7 +19,7 @@ class ImageManagerTest extends TestCase
     public function testFind()
     {
         $manager = $this->getManager();
-        $image   = $manager->find('test:foo');
+        $image   = $manager->find('test', 'foo');
 
         $this->assertEquals('test', $image->getRepository());
         $this->assertEquals('foo', $image->getTag());
@@ -56,7 +56,7 @@ class ImageManagerTest extends TestCase
     {
         $manager = $this->getManager();
 
-        $image = $manager->find('ubuntu:precise');
+        $image = $manager->find('ubuntu', 'precise');
         $manager->delete($image);
 
         $this->setExpectedException('\\Docker\\Exception\\ImageNotFoundException', 'Image not found');

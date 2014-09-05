@@ -25,49 +25,47 @@ class Image
     private $tag;
 
     /**
+     * @param string $repository Name of the image
+     * @param string $tag        Tag (version) of the image, default to latest
+     */
+    public function __construct($repository = null, $tag = 'latest')
+    {
+        $this->repository = $repository;
+        $this->tag        = $tag;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
     {
-        try {
-            return $this->getName();
-        } catch (Exception $e) {
-            return 'ERROR: '.$e->getMessage();
+        if (strlen($this->getRepository()) === 0) {
+            return $this->getId();
         }
+
+        if (strlen($this->getTag()) === 0) {
+            return $this->getRepository();
+        }
+
+        return sprintf('%s:%s', $this->getRepository(), $this->getTag());
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getRepository()
     {
-        if (strlen($this->getRepository()) === 0) {
-            throw new Exception('This image does not have a repository');
-        }
-
-        if (strlen($this->getTag()) > 0) {
-            return $this->getRepository().':'.$this->getTag();
-        }
-
-        return $this->getRepository();
+        return $this->repository;
     }
 
     /**
-     * @param string $name
+     * @param string $repository
      * 
      * @return Image
      */
-    public function setName($name)
+    public function setRepository($repository)
     {
-        if (false !== strpos($name, ':')) {
-            list($repository, $tag) = explode(':', $name);
-            
-            $this->setRepository($repository);
-            $this->setTag($tag);
-        } else {
-            $this->setRepository($name);
-            $this->setTag('latest');
-        }
+        $this->repository = $repository;
 
         return $this;
     }
@@ -93,31 +91,11 @@ class Image
     }
 
     /**
-     * @param string $repository
-     * 
-     * @return Image
-     */
-    public function setRepository($repository)
-    {
-        $this->repository = $repository;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRepository()
-    {
-        return $this->repository;
-    }
-
-    /**
      * @param string $tag
      * 
      * @return Image
      */
-    public function setTag($tag)
+    public function setTag($tag = 'latest')
     {
         $this->tag = $tag;
 

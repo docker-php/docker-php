@@ -101,6 +101,8 @@ class Context implements ContextInterface
     /**
      * Return the context as a tar archive
      *
+     * @throws \Symfony\Component\Process\Exception\ProcessFailedException
+     *
      * @return string Tar content
      */
     public function toTar()
@@ -123,7 +125,7 @@ class Context implements ContextInterface
     public function toStream()
     {
         if (!is_resource($this->process)) {
-            $this->process = proc_open("/usr/bin/envtar c .", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, $this->directory);
+            $this->process = proc_open("/usr/bin/env tar c .", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, $this->directory);
             $this->stream  = $pipes[1];
         }
 

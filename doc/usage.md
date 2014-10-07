@@ -196,7 +196,7 @@ $manager->run($container);
 
 
 printf('Container\'s id is %s', $container->getId());
-printf('Container\'s name is $s', $container->getName();
+printf('Container\'s name is $s', $container->getName());
 printf('Container\'s exit code is %d', $container->getExitCode());
 ```
 

@@ -51,19 +51,15 @@ $manager->run($container, function($output, $type) {
     fputs($type === 1 ? STDOUT : STDERR, $output);
 });
 ```
-
 ### Running a container as a daemon
 
 You can run a container as a daemon (effectively making the `run()` method non-blocking) by passing `true` as its fourth argument.
 
 ```php
-
 <?php
 
-$docker->run($container, $printCallback, true);
+$manager->run($container, $callback, [], true);
 ```
-
-
 ## Creating, starting, attaching and waiting for containers
 
 The `run()` command is actually a composite of `create()`, `start()`, `attach` and `wait`, just like the `docker run` CLI command that you might be used to. You can use these methods to gain more fine-grained control over your containers' workflow.

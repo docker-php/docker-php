@@ -5,7 +5,13 @@ php:
   - 5.5
   - 5.6
   - hhvm
-  
+
+env:
+  - $SYMFONY_VERSION='2.3.*'
+  - $SYMFONY_VERSION='2.4.*'
+  - $SYMFONY_VERSION='2.5.*'
+  - $SYMFONY_VERSION='2.6.*@dev'
+
 matrix:
     allow_failures:
         - php: hhvm
@@ -18,7 +24,9 @@ before_script:
   - sudo chmod +x /usr/sbin/policy-rc.d
   - sudo apt-get install -qy slirp lxc lxc-docker
   - git clone git://github.com/jpetazzo/sekexe
-  - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source --dev install
+  - composer require --no-update symfony/filesystem=$SYMFONY_VERSION
+  - composer require --no-update symfony/process=$SYMFONY_VERSION
+  - COMPOSER_ROOT_VERSION=dev-master composer install --dev --prefer-source --no-interaction --no-progress
 
 script:
   - sekexe/run "`pwd`/docker.sh"

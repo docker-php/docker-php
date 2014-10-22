@@ -10,10 +10,10 @@
     },
     "require": {
         "php": ">=5.4",
-        "symfony/filesystem": "~2.5.0",
-        "symfony/process": "~2.5.0",
-        "guzzlehttp/guzzle": "~4.1.0",
-        "guzzlehttp/streams": "~1.3.0"
+        "symfony/filesystem": "~2.3",
+        "symfony/process": "~2.3",
+        "guzzlehttp/guzzle": "~4.1",
+        "guzzlehttp/streams": "~1.3"
     },
     "require-dev": {
         "phpunit/phpunit": "~3.7"

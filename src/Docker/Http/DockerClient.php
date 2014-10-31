@@ -27,4 +27,4 @@ class DockerClient extends Client
 
         parent::__construct($config);
     }
-} 
+}

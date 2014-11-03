@@ -2,6 +2,7 @@
 
 namespace Docker\Http\Adapter;
 
+use Docker\Exception\APIException;
 use Docker\Http\Stream\AttachStream;
 use Docker\Http\Stream\ChunkedStream;
 
@@ -51,13 +52,21 @@ class DockerAdapter implements AdapterInterface
             $transaction->getRequest()->setHeader('Connection', 'close');
         }
 
-        RequestEvents::emitBefore($transaction);
-        if (!$transaction->getResponse()) {
-            $this->createResponse($transaction);
-            RequestEvents::emitComplete($transaction);
-        }
+        try {
+            RequestEvents::emitBefore($transaction);
+            if (!$transaction->getResponse()) {
+                $this->createResponse($transaction);
+                RequestEvents::emitComplete($transaction);
+            }
 
-        return $transaction->getResponse();
+            return $transaction->getResponse();
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
+                throw new APIException($e->getResponse()->getBody()->__toString(), $e->getRequest(), $e->getResponse(), $e);
+            }
+
+            throw $e;
+        }
     }
 
     private function createResponse(TransactionInterface $transaction)

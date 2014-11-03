@@ -12,7 +12,7 @@ class ContainerManagerTest extends TestCase
     /**
      * Return a container manager
      *
-     * @return Docker\Docker\Manager\ContainerManager
+     * @return \Docker\Manager\ContainerManager
      */
     private function getManager()
     {
@@ -47,9 +47,9 @@ class ContainerManagerTest extends TestCase
 
         try {
             $manager->create($container);
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
             $this->assertEquals("404", $e->getResponse()->getStatusCode());
-            $this->assertContains('No such image: non-existent (tag: latest)', $e->getResponse()->getBody()->__toString());
+            $this->assertContains('No such image: non-existent (tag: latest)', $e->getMessage());
         }
     }
 

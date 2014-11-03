@@ -19,4 +19,4 @@ class Chunk extends \php_user_filter
 
         return PSFS_PASS_ON;
     }
-} 
+}

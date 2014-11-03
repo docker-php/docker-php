@@ -8,6 +8,7 @@ use Docker\Http\Stream\StreamCallbackInterface;
 use Docker\Image;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Docker\ImageManager
@@ -102,7 +103,7 @@ class ImageManager
      *
      * @throws \Docker\Exception\ImageNotFoundException
      * @throws \Docker\Exception\UnexpectedStatusCodeException
-     * @throws \GuzzleHttp\Exception\ClientException
+     * @throws \GuzzleHttp\Exception\RequestException
      *
      * @return ImageManager
      */
@@ -110,7 +111,7 @@ class ImageManager
     {
         try {
             $response = $this->client->get(['/images/{id}/json', ['id' => $image->__toString()]]);
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             if ($e->getResponse()->getStatusCode() == "404") {
                 throw new ImageNotFoundException($image->__toString(), $e);
             }

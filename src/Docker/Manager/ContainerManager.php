@@ -8,6 +8,7 @@ use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Exception\ContainerNotFoundException;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Docker\Manager\ContainerManager
@@ -94,6 +95,7 @@ class ContainerManager
      *
      * @param \Docker\Container $container
      *
+     * @throws \GuzzleHttp\Exception\RequestException
      * @throws \Docker\Exception\ContainerNotFoundException
      *
      * @return ContainerManager
@@ -102,7 +104,7 @@ class ContainerManager
     {
         try {
             $response = $this->client->get(['/containers/{id}/json', ['id' => $container->getId()]]);
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             if ($e->getResponse()->getStatusCode() == "404") {
                 throw new ContainerNotFoundException($container->getId(), $e);
             }

@@ -57,7 +57,7 @@ class ImageManagerTest extends TestCase
         $manager = $this->getManager();
 
         $image = $manager->find('ubuntu', 'precise');
-        $manager->delete($image);
+        $manager->delete($image, true);
 
         $this->setExpectedException('\\Docker\\Exception\\ImageNotFoundException', 'Image not found');
         $manager->inspect($image);

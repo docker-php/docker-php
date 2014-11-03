@@ -27,10 +27,6 @@ class DockerTest extends TestCase
 
     public function testBuildWithExistingDirectory()
     {
-        if (!file_exists('/bin/tar')) {
-            $this->markTestSkipped('No /bin/tar on host');
-        }
-
         $docker     = $this->getDocker();
         $directory  = __DIR__.DIRECTORY_SEPARATOR."Context".DIRECTORY_SEPARATOR."context-test";
         $context    = new Context($directory);

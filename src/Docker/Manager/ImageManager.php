@@ -112,7 +112,7 @@ class ImageManager
         try {
             $response = $this->client->get(['/images/{id}/json', ['id' => $image->__toString()]]);
         } catch (RequestException $e) {
-            if ($e->getResponse()->getStatusCode() == "404") {
+            if ($e->hasResponse() && $e->getResponse()->getStatusCode() == "404") {
                 throw new ImageNotFoundException($image->__toString(), $e);
             }
 

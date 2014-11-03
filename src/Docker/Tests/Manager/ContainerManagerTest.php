@@ -48,6 +48,7 @@ class ContainerManagerTest extends TestCase
         try {
             $manager->create($container);
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $this->assertTrue($e->hasResponse());
             $this->assertEquals("404", $e->getResponse()->getStatusCode());
             $this->assertContains('No such image: non-existent (tag: latest)', $e->getMessage());
         }

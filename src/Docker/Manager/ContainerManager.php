@@ -105,7 +105,7 @@ class ContainerManager
         try {
             $response = $this->client->get(['/containers/{id}/json', ['id' => $container->getId()]]);
         } catch (RequestException $e) {
-            if ($e->getResponse()->getStatusCode() == "404") {
+            if ($e->hasResponse() && $e->getResponse()->getStatusCode() == "404") {
                 throw new ContainerNotFoundException($container->getId(), $e);
             }
 

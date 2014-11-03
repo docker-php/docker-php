@@ -11,6 +11,11 @@ class DockerClient extends Client
     public function __construct(array $config = [], $entrypoint = null)
     {
         if (null === $entrypoint) {
+            // @TODO Force entrypoint in stable version
+            if (!getenv('DOCKER_HOST')) {
+                trigger_error('Not specified entrypoint is deprecated and will throw an exception in the stable version', E_USER_DEPRECATED);
+            }
+
             $entrypoint = getenv('DOCKER_HOST') ? getenv('DOCKER_HOST') : 'unix:///var/run/docker.sock';
         }
 

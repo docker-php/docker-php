@@ -12,7 +12,7 @@ class TestCase extends PHPUnit_Framework_TestCase
 
     public function getDocker()
     {
-        $client = new Client(array(), getenv('DOCKER_HOST') ? getenv('DOCKER_HOST') : 'unix://var/run/docker.sock');
+        $client = Client::createWithEnv();
 
         if (null === $this->docker) {
             $this->docker = new Docker($client);

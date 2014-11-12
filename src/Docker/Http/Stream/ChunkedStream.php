@@ -91,11 +91,10 @@ class ChunkedStream extends Stream implements StreamCallbackInterface
         }
 
         $size = hexdec(trim($tmpSize));
+        $part = "";
 
-        if ($size > 0) {
-            $part = $this->read($size);
-        } else {
-            $part = "";
+        while (strlen($part) < $size) {
+            $part .= $this->read($size - strlen($part));
         }
 
         while($this->read(1) != "\n") {

@@ -233,6 +233,10 @@ class ContainerManagerTest extends TestCase
      */
     public function testWaitWithTimeout()
     {
+        if (getenv('DOCKER_TLS_VERIFY')) {
+            $this->markTestSkipped('This test failed when using ssl due to this bug : https://bugs.php.net/bug.php?id=41631');
+        }
+
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
 
         $manager = $this->getManager();
@@ -243,6 +247,10 @@ class ContainerManagerTest extends TestCase
 
     public function testTimeoutExceptionHasRequest()
     {
+        if (getenv('DOCKER_TLS_VERIFY')) {
+            $this->markTestSkipped('This test failed when using ssl due to this bug : https://bugs.php.net/bug.php?id=41631');
+        }
+
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '2']]);
 
         $manager = $this->getManager();

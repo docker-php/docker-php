@@ -25,10 +25,22 @@ class DockerAdapter implements AdapterInterface
     /** @var MessageFactoryInterface */
     private $messageFactory;
 
-    public function __construct(MessageFactoryInterface $messageFactory, $entrypoint)
+    /** @var resource A stream context resource */
+    private $context;
+
+    /** @var boolean Whether stream is encrypted with TLS */
+    private $useTls;
+
+    public function __construct(MessageFactoryInterface $messageFactory, $entrypoint, $context = null, $useTls = null)
     {
+        if ($context === null) {
+            $context = stream_context_create();
+        }
+
         $this->entrypoint     = $entrypoint;
         $this->messageFactory = $messageFactory;
+        $this->context        = $context;
+        $this->useTls         = $useTls;
 
         stream_filter_register('chunk', '\Docker\Http\Stream\Filter\Chunk');
     }
@@ -82,9 +94,17 @@ class DockerAdapter implements AdapterInterface
             $request->setHeader('Content-Length', $request->getBody()->getSize());
         }
 
-        $socket = @stream_socket_client($this->entrypoint, $errorNo, $errorMsg, $this->getDefaultTimeout($transaction));
-        if(!$socket) {
+        $socket = @stream_socket_client($this->entrypoint, $errorNo, $errorMsg, $this->getDefaultTimeout($transaction), STREAM_CLIENT_CONNECT, $this->context);
+
+        if (!$socket) {
             throw new RequestException(sprintf('Cannot open socket connection: %s [code %d]', $errorMsg, $errorNo), $request);
+        }
+
+        // CHeck if tls is needed
+        if ($this->useTls) {
+            if (!@stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+                throw new RequestException(sprintf('Cannot enable tls: %s', error_get_last()['message']), $request);
+            }
         }
 
         // Write headers

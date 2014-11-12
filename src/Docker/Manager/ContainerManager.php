@@ -16,12 +16,12 @@ use GuzzleHttp\Exception\RequestException;
 class ContainerManager
 {
     /**
-     * @var \Docker\Http\Client
+     * @var \GuzzleHttp\Client
      */
     private $client;
 
     /**
-     * @param \Docker\Http\Client
+     * @param \GuzzleHttp\Client
      */
     public function __construct(HttpClient $client)
     {

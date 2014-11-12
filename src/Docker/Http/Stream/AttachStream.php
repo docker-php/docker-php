@@ -28,12 +28,21 @@ class AttachStream extends Stream implements StreamCallbackInterface
     {
         $header = $this->read(8);
 
-        if (strlen($header) < 8) {
-            return array(null, null);
+        while (strlen($header) < 8) {
+            if ($this->eof()) {
+                return array(null, null);
+            }
+
+            $header .= $this->read(8 - strlen($header));
         }
 
         $decoded = unpack('C1stream_type/C3/N1size', $header);
+        $read    = "";
 
-        return array($this->read($decoded['size']), $decoded['stream_type']);
+        do {
+            $read .= $this->read($decoded['size'] - strlen($read));
+        } while(strlen($read) != $decoded['size']);
+
+        return array($read, $decoded['stream_type']);
     }
 }

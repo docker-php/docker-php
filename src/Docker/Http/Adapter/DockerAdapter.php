@@ -88,10 +88,10 @@ class DockerAdapter implements AdapterInterface
         }
 
         // Write headers
-        fwrite($socket, $this->getRequestHeaderAsString($request));
+        $isWrite = $this->fwrite($socket, $this->getRequestHeaderAsString($request));
 
         // Write body if set
-        if ($request->getBody() !== null) {
+        if ($request->getBody() !== null && $isWrite !== false) {
             $stream = $request->getBody();
             $filter = null;
 
@@ -99,13 +99,16 @@ class DockerAdapter implements AdapterInterface
                 $filter = stream_filter_prepend($socket, 'chunk', STREAM_FILTER_WRITE);
             }
 
-            while (!$stream->eof()) {
-                fwrite($socket, $stream->read(self::CHUNK_SIZE));
+            while (!$stream->eof() && $isWrite) {
+                $isWrite = $this->fwrite($socket, $stream->read(self::CHUNK_SIZE));
             }
 
             if ($request->getHeader('Transfer-Encoding') == 'chunked') {
                 stream_filter_remove($filter);
-                fwrite($socket, "0\r\n\r\n");
+
+                if (false !== $isWrite) {
+                    $isWrite = $this->fwrite($socket, "0\r\n\r\n");
+                }
             }
         }
 
@@ -114,13 +117,26 @@ class DockerAdapter implements AdapterInterface
         // Response should be available, extract headers
         do {
             $response = $this->getResponseWithHeaders($socket);
-        } while($response->getStatusCode() == 100);
+        } while($response !== null && $response->getStatusCode() == 100);
 
         //Check timeout
         $metadata = stream_get_meta_data($socket);
 
         if ($metadata['timed_out']) {
             throw new RequestException('Timed out while reading socket', $request, $response);
+        }
+
+        if (false === $isWrite) {
+            // When an error happen and no response it is most probably due to TLS configuration
+            if ($response === null) {
+                throw new RequestException('Error while sending request (Broken Pipe), check your TLS configuration and logs in docker daemon for more information ', $request);
+            }
+
+            throw new RequestException('Error while sending request (Broken Pipe)', $request, $response);
+        }
+
+        if (null == $response) {
+            throw new RequestException('No response could be parsed: check server log', $request);
         }
 
         $this->setResponseStream($response, $socket);
@@ -143,6 +159,11 @@ class DockerAdapter implements AdapterInterface
         }
 
         $parts = explode(' ', array_shift($headers), 3);
+
+        if (count($parts) <= 1) {
+            return null;
+        }
+
         $options = ['protocol_version' => substr($parts[0], -3)];
         if (isset($parts[2])) {
             $options['reason_phrase'] = $parts[2];
@@ -207,5 +228,62 @@ class DockerAdapter implements AdapterInterface
         $message .= "\r\n";
 
         return $message;
+    }
+
+    /**
+     * Replace fwrite behavior as api is broken in PHP
+     *
+     * @see https://secure.phabricator.com/rPHU69490c53c9c2ef2002bc2dd4cecfe9a4b080b497
+     *
+     * @param resource $stream The stream resource
+     * @param string   $bytes  Bytes written in the stream
+     *
+     * @return bool|int false if pipe is broken, number of bytes written otherwise
+     */
+    private function fwrite($stream, $bytes)
+    {
+        if (!strlen($bytes)) {
+            return 0;
+        }
+
+        $result = @fwrite($stream, $bytes);
+        if ($result !== 0) {
+            // In cases where some bytes are witten (`$result > 0`) or
+            // an error occurs (`$result === false`), the behavior of fwrite() is
+            // correct. We can return the value as-is.
+            return $result;
+        }
+
+        // If we make it here, we performed a 0-length write. Try to distinguish
+        // between EAGAIN and EPIPE. To do this, we're going to `stream_select()`
+        // the stream, write to it again if PHP claims that it's writable, and
+        // consider the pipe broken if the write fails.
+
+        $read = array();
+        $write = array($stream);
+        $except = array();
+
+        @stream_select($read, $write, $except, 0);
+
+        if (!$write) {
+            // The stream isn't writable, so we conclude that it probably really is
+            // blocked and the underlying error was EAGAIN. Return 0 to indicate that
+            // no data could be written yet.
+            return 0;
+        }
+
+        // If we make it here, PHP **just** claimed that this stream is writable, so
+        // perform a write. If the write also fails, conclude that these failures are
+        // EPIPE or some other permanent failure.
+        $result = @fwrite($stream, $bytes);
+        if ($result !== 0) {
+            // The write worked or failed explicitly. This value is fine to return.
+            return $result;
+        }
+
+        // We performed a 0-length write, were told that the stream was writable, and
+        // then immediately performed another 0-length write. Conclude that the pipe
+        // is broken and return `false`.
+        return false;
     }
 }

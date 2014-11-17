@@ -159,7 +159,8 @@ class ContainerManager
     {
         $response = $this->client->post(['/containers/{id}/start', ['id' => $container->getId()]], array(
             'body'         => Json::encode($hostConfig),
-            'headers'      => array('content-type' => 'application/json')
+            'headers'      => array('content-type' => 'application/json'),
+            'wait'         => true
         ));
 
         if ($response->getStatusCode() !== "204") {
@@ -190,16 +191,16 @@ class ContainerManager
         $this->create($container);
 
         if (null !== $attachCallback) {
-            $attachResponse = $this->attach($container, true, true, true, true, true, $timeout);
+            $attachResponse = $this->attach($container, $attachCallback, true, true, true, true, true, $timeout);
         }
 
         $this->start($container, $hostConfig);
 
-        if (null !== $attachCallback && $attachResponse) {
-            $attachResponse->getBody()->readWithCallback($attachCallback);
-        }
-
         if (!$daemon) {
+            if (isset($attachResponse)) {
+                $attachResponse->getBody()->getContents();
+            }
+
             $this->wait($container);
 
             return ($container->getExitCode() == 0);
@@ -214,6 +215,7 @@ class ContainerManager
      * Where $streamType will be 0 for STDIN, 1 for STDOUT, 2 for STDERR and $output will be the string of log
      *
      * @param boolean           $logs      Get the backlog of this container
+     * @param callable          $callback  Callback to attach
      * @param boolean           $stream    Stream the response
      * @param boolean           $stdin     Get stdin log
      * @param boolean           $stdout    Get stdout log
@@ -224,7 +226,7 @@ class ContainerManager
      *
      * @return \Docker\Http\Response Re
      */
-    public function attach(Container $container, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true, $timeout = null)
+    public function attach(Container $container, callable $callback, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true, $timeout = null)
     {
         $response = $this->client->post(['/containers/{id}/attach{?data*}', [
             'id'     => $container->getId(),
@@ -236,7 +238,8 @@ class ContainerManager
                 'stderr' => $stderr
             ]
         ]], array(
-            'timeout' => $timeout !== null ? $timeout : $this->client->getDefaultOption('timeout')
+            'timeout'  => $timeout !== null ? $timeout : $this->client->getDefaultOption('timeout'),
+            'callback' => $callback
         ));
 
         if ($response->getStatusCode() !== "200") {

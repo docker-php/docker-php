@@ -6,8 +6,10 @@ use Docker\Exception\APIException;
 use Docker\Http\Stream\AttachStream;
 use Docker\Http\Stream\ChunkedStream;
 
+use Docker\Http\Stream\Filter\Event;
 use GuzzleHttp\Adapter\AdapterInterface;
 use GuzzleHttp\Adapter\TransactionInterface;
+use GuzzleHttp\Event\EmitterInterface;
 use GuzzleHttp\Event\RequestEvents;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\MessageFactoryInterface;
@@ -43,6 +45,7 @@ class DockerAdapter implements AdapterInterface
         $this->useTls         = $useTls;
 
         stream_filter_register('chunk', '\Docker\Http\Stream\Filter\Chunk');
+        stream_filter_register('event', '\Docker\Http\Stream\Filter\Event');
     }
 
     /**
@@ -159,8 +162,13 @@ class DockerAdapter implements AdapterInterface
             throw new RequestException('No response could be parsed: check server log', $request);
         }
 
-        $this->setResponseStream($response, $socket);
+        $this->setResponseStream($response, $socket, $request->getEmitter());
         $transaction->setResponse($response);
+
+        // If wait read all contents
+        if ($request->getConfig()->hasKey('wait') && $request->getConfig()->get('wait')) {
+            $response->getBody()->getContents();
+        }
 
         return $response;
     }
@@ -203,16 +211,19 @@ class DockerAdapter implements AdapterInterface
         return $response;
     }
 
-    private function setResponseStream(Response $response, $socket)
+    private function setResponseStream(Response $response, $socket, EmitterInterface $emitter)
     {
         if ($response->getHeader('Transfer-Encoding') == "chunked") {
-            $stream = new ChunkedStream($socket);
-        } elseif ($response->getHeader('Content-Type') == "application/vnd.docker.raw-stream") {
-            $stream = new AttachStream($socket);
-        } else {
-            $stream = new Stream($socket);
+            stream_filter_append($socket, 'dechunk');
         }
 
+        // Attach filter
+        stream_filter_append($socket, 'event', STREAM_FILTER_READ, array(
+            'emitter'      => $emitter,
+            'content_type' => $response->getHeader('Content-Type')
+        ));
+
+        $stream = new Stream($socket);
         $response->setBody($stream);
     }
 

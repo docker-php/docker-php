@@ -76,7 +76,7 @@ class DockerAdapter implements AdapterInterface
 
             return $transaction->getResponse();
         } catch (RequestException $e) {
-            if ($e->hasResponse()) {
+            if ($e->hasResponse() && $e->getResponse()->getBody()) {
                 throw new APIException($e->getResponse()->getBody()->__toString(), $e->getRequest(), $e->getResponse(), $e);
             }
 
@@ -162,7 +162,7 @@ class DockerAdapter implements AdapterInterface
             throw new RequestException('No response could be parsed: check server log', $request);
         }
 
-        $this->setResponseStream($response, $socket, $request->getEmitter());
+        $this->setResponseStream($response, $socket, $request->getEmitter(), ($request->getConfig()->hasKey('attach_filter') && $request->getConfig()->get('attach_filter')));
         $transaction->setResponse($response);
 
         // If wait read all contents
@@ -211,17 +211,19 @@ class DockerAdapter implements AdapterInterface
         return $response;
     }
 
-    private function setResponseStream(Response $response, $socket, EmitterInterface $emitter)
+    private function setResponseStream(Response $response, $socket, EmitterInterface $emitter, $useFilter = false)
     {
         if ($response->getHeader('Transfer-Encoding') == "chunked") {
             stream_filter_append($socket, 'dechunk');
         }
 
         // Attach filter
-        stream_filter_append($socket, 'event', STREAM_FILTER_READ, array(
-            'emitter'      => $emitter,
-            'content_type' => $response->getHeader('Content-Type')
-        ));
+        if ($useFilter) {
+            stream_filter_append($socket, 'event', STREAM_FILTER_READ, array(
+                'emitter' => $emitter,
+                'content_type' => $response->getHeader('Content-Type')
+            ));
+        }
 
         $stream = new Stream($socket);
         $response->setBody($stream);

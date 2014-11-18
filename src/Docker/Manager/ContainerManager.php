@@ -3,6 +3,7 @@
 namespace Docker\Manager;
 
 use Docker\Container;
+use Docker\Http\Stream\InteractiveStream;
 use Docker\Json;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Exception\ContainerNotFoundException;
@@ -210,12 +211,14 @@ class ContainerManager
     }
 
     /**
+     * Attach a container to a callback to read logs
+     *
      * @param \Docker\Container  $container Container to attach
      *
      * Where $streamType will be 0 for STDIN, 1 for STDOUT, 2 for STDERR and $output will be the string of log
      *
+     * @param callable $callback Callback to attach
      * @param boolean           $logs      Get the backlog of this container
-     * @param callable          $callback  Callback to attach
      * @param boolean           $stream    Stream the response
      * @param boolean           $stdin     Get stdin log
      * @param boolean           $stdout    Get stdout log
@@ -247,6 +250,44 @@ class ContainerManager
         }
 
         return $response;
+    }
+
+    /**
+     * Interact with a container
+     *
+     * Create a websocket connection which allows to send data on stdin
+     *
+     * @param Container $container
+     * @param boolean $logs Get the backlog of this container
+     * @param boolean $stream Stream the response
+     * @param boolean $stdin Get stdin log
+     * @param boolean $stdout Get stdout log
+     * @param boolean $stderr Get stderr log
+     *
+     * @return InteractiveStream
+     */
+    public function interact(Container $container, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true)
+    {
+        $response = $this->client->get(['/containers/{id}/attach/ws{?data*}', [
+            'id' => $container->getId(),
+            'data' => [
+                'logs'   => $logs,
+                'stream' => $stream,
+                'stdin'  => $stdin,
+                'stdout' => $stdout,
+                'stderr' => $stderr
+            ]
+        ]], array(
+            'headers' => array(
+                'Origin' => 'php://docker-php',
+                'Upgrade' => 'websocket',
+                'Connection' => 'Upgrade',
+                'Sec-WebSocket-Version' => '13',
+                'Sec-WebSocket-Key' => base64_encode(uniqid()),
+            )
+        ));
+
+        return new InteractiveStream($response->getBody());
     }
 
     /**

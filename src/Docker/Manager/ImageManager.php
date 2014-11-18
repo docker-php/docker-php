@@ -7,7 +7,6 @@ use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Http\Stream\StreamCallbackInterface;
 use Docker\Image;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 
 /**
@@ -48,7 +47,7 @@ class ImageManager
         $imageString = "";
 
         if ($stream instanceof StreamCallbackInterface) {
-            $stream->readWithCallback(function ($output) use(&$imageString) {
+            $stream->readWithCallback(function ($output) use (&$imageString) {
                 $imageString .= $output;
             });
         } else {
@@ -82,8 +81,8 @@ class ImageManager
     /**
      * Get an image from docker daemon
      *
-     * @param  string $repository Name of image to get
-     * @param  string $tag        Tag of the image to get (default to latest)
+     * @param string $repository Name of image to get
+     * @param string $tag        Tag of the image to get (default to latest)
      *
      * @return Image
      */
@@ -134,31 +133,30 @@ class ImageManager
     /**
      * Pull an image from registry
      *
-     * @param  string $name Name of image to pull
-     * @param  string $tag  Tag of image
+     * @param string   $name     Name of image to pull
+     * @param string   $tag      Tag of image
+     * @param callable $callback Callback to retrieve log of pull
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return Image
      */
-    public function pull($name, $tag = 'latest')
+    public function pull($name, $tag = 'latest', callable $callback = null)
     {
-        $response = $this->client->post(['/images/create?fromImage={image}&tag={tag}', ['image' => $name, 'tag' => $tag]]);
+        if (null === $callback) {
+            $callback = function () {};
+        }
+
+        $response = $this->client->post(['/images/create?fromImage={image}&tag={tag}', ['image' => $name, 'tag' => $tag]], [
+            'callback' => $callback,
+            'wait'     => true,
+        ]);
 
         if ($response->getStatusCode() !== "200") {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
-        $stream = $response->getBody();
-
-        if ($stream instanceof StreamCallbackInterface) {
-            $stream->readWithCallback(function () {});
-        } else {
-            $stream->__toString();
-        }
-
         $image = new Image($name, $tag);
-
         $this->inspect($image);
 
         return $image;
@@ -180,7 +178,8 @@ class ImageManager
         $response = $this->client->delete(['/images/{image}?force={force}&noprune={noprune}', [
             'image'   => $image->__toString(),
             'force'   => $force,
-            'noprune' => $noprune
+            'noprune' => $noprune,
+            'wait'    => true
         ]]);
 
         if ($response->getStatusCode() !== "200") {

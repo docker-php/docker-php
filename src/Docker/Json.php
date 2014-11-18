@@ -9,7 +9,7 @@ class Json
 {
     /**
      * @param array $struct
-     * 
+     *
      * @return string
      */
     public static function encode(array $struct)

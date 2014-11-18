@@ -40,12 +40,13 @@ class InteractiveStream
             'mask'     => 1,
             'len'      => strlen($data),
             'mask_key' => substr(md5(uniqid()), $rand, 4),
-            'data'     => $data
+            'data'     => $data,
         );
 
         if ($frame['mask'] == 1) {
             for ($i = 0; $i < $frame['len']; $i++) {
-                $frame['data']{$i} = chr(ord($frame['data']{$i}) ^ ord($frame['mask_key']{$i % 4}));
+                $frame['data']{$i}
+                = chr(ord($frame['data']{$i}) ^ ord($frame['mask_key']{$i % 4}));
             }
         }
 
@@ -130,7 +131,8 @@ class InteractiveStream
 
         if ($frame['mask'] == 1) {
             for ($i = 0; $i < $frame['len']; $i++) {
-                $frame['data']{$i} = chr(ord($frame['data']{$i}) ^ ord($frame['mask_key']{$i % 4}));
+                $frame['data']{$i}
+                = chr(ord($frame['data']{$i}) ^ ord($frame['mask_key']{$i % 4}));
             }
         }
 
@@ -160,7 +162,7 @@ class InteractiveStream
 
         do {
             $read .= $this->stream->read($length - strlen($read));
-        } while(strlen($read) < $length);
+        } while (strlen($read) < $length);
 
         return $read;
     }

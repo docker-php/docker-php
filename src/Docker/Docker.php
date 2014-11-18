@@ -4,7 +4,6 @@ namespace Docker;
 
 use Docker\Context\Context;
 use Docker\Http\DockerClient;
-use Docker\Http\Stream\StreamCallbackInterface;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
@@ -81,13 +80,13 @@ class Docker
     /**
      * Build an image with docker
      *
-     * @param \Docker\Context\ContextInterface   $context  Context to build
-     * @param string                             $name     Name of the wanted image
-     * @param callable                           $callback A callback to be called for having log of build
-     * @param boolean                            $quiet    Quiet build (doest not output commands during build)
-     * @param boolean                            $cache    Use docker cache
-     * @param boolean                            $rm       Remove intermediate container during build
-     * @param boolean                            $wait     Whether to wait for build to finish
+     * @param \Docker\Context\ContextInterface $context  Context to build
+     * @param string                           $name     Name of the wanted image
+     * @param callable                         $callback A callback to be called for having log of build
+     * @param boolean                          $quiet    Quiet build (doest not output commands during build)
+     * @param boolean                          $cache    Use docker cache
+     * @param boolean                          $rm       Remove intermediate container during build
+     * @param boolean                          $wait     Whether to wait for build to finish
      *
      * @return \GuzzleHttp\Message\ResponseInterface
      */
@@ -103,7 +102,7 @@ class Docker
             'q' => (integer) $quiet,
             't' => $name,
             'nocache' => (integer) !$cache,
-            'rm' => (integer) $rm
+            'rm' => (integer) $rm,
         ]]], [
             'headers'  => array('Content-Type' => 'application/tar'),
             'body'     => $content,
@@ -117,7 +116,7 @@ class Docker
      * Commit a container into an image
      *
      * @param \Docker\Container $container
-     * @param array $config
+     * @param array             $config
      *
      * @throws Exception\UnexpectedStatusCodeException
      *

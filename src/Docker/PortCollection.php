@@ -2,8 +2,6 @@
 
 namespace Docker;
 
-use Docker\Exception;
-
 /**
  * Docker\PortCollection
  */
@@ -16,6 +14,8 @@ class PortCollection implements PortSpecInterface
 
     /**
      * @param integer|string ...$ports
+     *
+     * @throws \Exception When a port definition is invalid
      */
     public function __construct()
     {
@@ -61,8 +61,10 @@ class PortCollection implements PortSpecInterface
     }
 
     /**
-     * @param Docker\Port
-     * 
+     * Add a port
+     *
+     * @param \Docker\Port $port Port to add
+     *
      * @return PortCollection
      */
     public function add(Port $port)

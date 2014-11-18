@@ -10,5 +10,4 @@ use Exception as BaseException;
  */
 class ServerErrorException extends BaseException
 {
-
 }

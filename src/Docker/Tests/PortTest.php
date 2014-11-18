@@ -21,7 +21,7 @@ class PortTest extends PHPUnit_Framework_TestCase
     public function testToSpec($parsed, $spec, $exposed, $input)
     {
         $port = new Port($input);
-        
+
         $this->assertEquals($spec, $port->toSpec());
     }
 
@@ -42,7 +42,7 @@ class PortTest extends PHPUnit_Framework_TestCase
                 ['protocol' => 'tcp', 'port' => 80, 'hostIp' => '127.0.0.1', 'hostPort' => 8080],
                 ['80/tcp' => [['HostIp' => '127.0.0.1', 'HostPort' => 8080]]],
                 ['80/tcp' => []],
-                '127.0.0.1:8080:80/tcp'
+                '127.0.0.1:8080:80/tcp',
             ],
             [
                 ['protocol' => null, 'port' => 80, 'hostIp' => '127.0.0.1', 'hostPort' => 8080],

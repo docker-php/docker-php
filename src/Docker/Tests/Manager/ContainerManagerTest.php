@@ -48,7 +48,7 @@ class ContainerManagerTest extends TestCase
             'AttachStdout' => true,
             'AttachStderr' => true,
             'OpenStdin'    => true,
-            'Tty'          => true
+            'Tty'          => true,
         ]);
 
         $manager = $this->getManager();
@@ -338,7 +338,6 @@ class ContainerManagerTest extends TestCase
         $this->assertInstanceOf('Docker\\Container', $manager->find($container->getId()));
     }
 
-
     public function testRemove()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['date']]);
@@ -352,5 +351,4 @@ class ContainerManagerTest extends TestCase
         $this->setExpectedException('\\Docker\\Exception\\ContainerNotFoundException', 'Container not found');
         $manager->inspect($container);
     }
-
 }

@@ -14,7 +14,7 @@ class HostConfig
 
     /**
      * @param array $env
-     * 
+     *
      * @return \Docker\HostConfig
      */
     public function setEnv(array $env)

@@ -2,8 +2,6 @@
 
 namespace Docker;
 
-use Docker\Exception;
-
 /**
  * Docker\Port
  */
@@ -83,8 +81,8 @@ class Port implements PortSpecInterface
             $this->port.'/'.$this->protocol => [
                 [
                     'HostIp' => $this->hostIp,
-                    'HostPort' => (string) $this->hostPort
-                ]
+                    'HostPort' => (string) $this->hostPort,
+                ],
             ]
         ];
     }
@@ -99,12 +97,14 @@ class Port implements PortSpecInterface
 
     /**
      * [[hostIp:][hostPort]:]port[/protocol]
-     * 
+     *
      * @param string $raw
-     * 
+     *
+     * @throws \Docker\Exception When port specification is invalid
+     *
      * @return array
      */
-    static public function parse($raw)
+    public static function parse($raw)
     {
         if (!preg_match('/(?:(?<hostIp>[0-9\.]{7,15}):)?(?:(?<hostPort>\d{1,5}|):)?(?<port>\d{1,5})(?:\/(?<protocol>\w+))?/', $raw, $matches)) {
             throw new Exception('Invalid port specification "'.$raw.'"');

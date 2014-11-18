@@ -6,7 +6,6 @@ use Docker\Docker;
 use Docker\Context\Context;
 use Docker\Container;
 use Docker\Context\ContextBuilder;
-use Docker\Http\Client;
 
 class DockerTest extends TestCase
 {
@@ -18,7 +17,7 @@ class DockerTest extends TestCase
 
         $docker = $this->getDocker();
 
-        $docker->build($contextBuilder->getContext(), 'foo', function($output) use(&$content) {
+        $docker->build($contextBuilder->getContext(), 'foo', function ($output) use (&$content) {
             if (isset($output['stream'])) {
                 $content .= $output['stream'];
             }
@@ -34,7 +33,7 @@ class DockerTest extends TestCase
         $context    = new Context($directory);
         $timecalled = 0;
 
-        $docker->build($context, 'foo', function($output) use(&$content, &$timecalled) {
+        $docker->build($context, 'foo', function ($output) use (&$content, &$timecalled) {
             if (isset($output['stream'])) {
                 $content .= $output['stream'];
             }

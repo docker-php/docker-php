@@ -51,5 +51,4 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Exception', 'Name was not correctly formatted.');
         $container->setName('Foo!');
     }
-
 }

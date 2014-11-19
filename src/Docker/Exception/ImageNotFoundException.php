@@ -11,7 +11,7 @@ use Exception as BaseException;
 class ImageNotFoundException extends BaseException
 {
     /**
-     * @param string         $imageId
+     * @param string             $imageId
      * @param null|BaseException $previous
      */
     public function __construct($imageId, BaseException $previous = null)

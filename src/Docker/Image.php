@@ -2,8 +2,6 @@
 
 namespace Docker;
 
-use Docker\Exception;
-
 /**
  * Docker\Image
  */
@@ -60,7 +58,7 @@ class Image
 
     /**
      * @param string $repository
-     * 
+     *
      * @return Image
      */
     public function setRepository($repository)
@@ -72,7 +70,7 @@ class Image
 
     /**
      * @param string $id
-     * 
+     *
      * @return Image
      */
     public function setId($id)
@@ -92,7 +90,7 @@ class Image
 
     /**
      * @param string $tag
-     * 
+     *
      * @return Image
      */
     public function setTag($tag = 'latest')

@@ -3,9 +3,6 @@
 namespace Docker\Http\Adapter;
 
 use Docker\Exception\APIException;
-use Docker\Http\Stream\AttachStream;
-use Docker\Http\Stream\ChunkedStream;
-
 use Docker\Http\Stream\Filter\Event;
 use GuzzleHttp\Adapter\AdapterInterface;
 use GuzzleHttp\Adapter\TransactionInterface;
@@ -76,7 +73,7 @@ class DockerAdapter implements AdapterInterface
 
             return $transaction->getResponse();
         } catch (RequestException $e) {
-            if ($e->hasResponse()) {
+            if ($e->hasResponse() && $e->getResponse()->getBody()) {
                 throw new APIException($e->getResponse()->getBody()->__toString(), $e->getRequest(), $e->getResponse(), $e);
             }
 
@@ -140,7 +137,7 @@ class DockerAdapter implements AdapterInterface
         // Response should be available, extract headers
         do {
             $response = $this->getResponseWithHeaders($socket);
-        } while($response !== null && $response->getStatusCode() == 100);
+        } while ($response !== null && $response->getStatusCode() == 100);
 
         //Check timeout
         $metadata = stream_get_meta_data($socket);
@@ -162,7 +159,7 @@ class DockerAdapter implements AdapterInterface
             throw new RequestException('No response could be parsed: check server log', $request);
         }
 
-        $this->setResponseStream($response, $socket, $request->getEmitter());
+        $this->setResponseStream($response, $socket, $request->getEmitter(), ($request->getConfig()->hasKey('attach_filter') && $request->getConfig()->get('attach_filter')));
         $transaction->setResponse($response);
 
         // If wait read all contents
@@ -178,7 +175,6 @@ class DockerAdapter implements AdapterInterface
         $headers = array();
 
         while (($line = fgets($stream)) !== false) {
-
             if (rtrim($line) === '') {
                 break;
             }
@@ -211,17 +207,19 @@ class DockerAdapter implements AdapterInterface
         return $response;
     }
 
-    private function setResponseStream(Response $response, $socket, EmitterInterface $emitter)
+    private function setResponseStream(Response $response, $socket, EmitterInterface $emitter, $useFilter = false)
     {
         if ($response->getHeader('Transfer-Encoding') == "chunked") {
             stream_filter_append($socket, 'dechunk');
         }
 
         // Attach filter
-        stream_filter_append($socket, 'event', STREAM_FILTER_READ, array(
-            'emitter'      => $emitter,
-            'content_type' => $response->getHeader('Content-Type')
-        ));
+        if ($useFilter) {
+            stream_filter_append($socket, 'event', STREAM_FILTER_READ, array(
+                'emitter' => $emitter,
+                'content_type' => $response->getHeader('Content-Type'),
+            ));
+        }
 
         $stream = new Stream($socket);
         $response->setBody($stream);
@@ -253,7 +251,7 @@ class DockerAdapter implements AdapterInterface
             ])."\r\n";
 
         foreach ($request->getHeaders() as $name => $values) {
-            $message .= $name . ': ' . implode(', ', $values) . "\r\n";
+            $message .= $name.': '.implode(', ', $values)."\r\n";
         }
 
         $message .= "\r\n";

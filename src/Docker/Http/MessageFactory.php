@@ -13,6 +13,8 @@ class MessageFactory extends BaseMessageFactory
         $request->getEmitter()->on('response.output', function (OutputEvent $event) use ($callback) {
             $callback($event->getContent(), $event->getType());
         });
+
+        $request->getConfig()->set('attach_filter', true);
     }
 
     protected function add_wait(RequestInterface $request, $wait)

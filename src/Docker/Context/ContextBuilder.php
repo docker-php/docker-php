@@ -46,9 +46,9 @@ class ContextBuilder
 
     /**
      * Sets the format of the Context output
-     * 
+     *
      * @param string $format
-     * 
+     *
      * @return \Docker\Context\ContextBuilder
      */
     public function setFormat($format)
@@ -140,7 +140,7 @@ class ContextBuilder
         $dockerfile[] = 'FROM '.$this->from;
 
         foreach ($this->commands as $command) {
-            switch($command['type']) {
+            switch ($command['type']) {
                 case 'RUN':
                     $dockerfile[] = 'RUN '.$command['command'];
                     break;

@@ -3,11 +3,11 @@
 namespace Docker\Manager;
 
 use Docker\Container;
+use Docker\Http\Stream\InteractiveStream;
 use Docker\Json;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Exception\ContainerNotFoundException;
 use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 
 /**
@@ -135,7 +135,7 @@ class ContainerManager
         ]],
         array(
             'body'         => Json::encode($container->getConfig()),
-            'headers'      => array('content-type' => 'application/json')
+            'headers'      => array('content-type' => 'application/json'),
         ));
 
         if ($response->getStatusCode() !== "201") {
@@ -149,7 +149,7 @@ class ContainerManager
 
     /**
      * @param \Docker\Container $container
-     * @param array             $hostConfig     Config when starting the container (for port binding e.g.)
+     * @param array             $hostConfig Config when starting the container (for port binding e.g.)
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
@@ -160,7 +160,7 @@ class ContainerManager
         $response = $this->client->post(['/containers/{id}/start', ['id' => $container->getId()]], array(
             'body'         => Json::encode($hostConfig),
             'headers'      => array('content-type' => 'application/json'),
-            'wait'         => true
+            'wait'         => true,
         ));
 
         if ($response->getStatusCode() !== "204") {
@@ -175,14 +175,14 @@ class ContainerManager
     /**
      * Run a container (create, attach, start and wait)
      *
-     * @param \Docker\Container  $container
+     * @param \Docker\Container $container
      * @param callable          $attachCallback Callback to read the attach response
-     *   If set to null no attach call will be made, otherwise callback must respect the format for the readAttach
-     *   method in Docker\Http\Response class
+     *                                          If set to null no attach call will be made, otherwise callback must respect the format for the readAttach
+     *                                          method in Docker\Http\Response class
      *
-     * @param array             $hostConfig     Config when starting the container (for port binding e.g.)
-     * @param boolean           $daemon         Do not wait for run to finish
-     * @param integer           $timeout        Timeout pass to the attach call
+     * @param array   $hostConfig Config when starting the container (for port binding e.g.)
+     * @param boolean $daemon     Do not wait for run to finish
+     * @param integer $timeout    Timeout pass to the attach call
      *
      * @return boolean|null Return true when the process want well, false if an error append during the run process, or null when daemon is set to true
      */
@@ -210,17 +210,19 @@ class ContainerManager
     }
 
     /**
-     * @param \Docker\Container  $container Container to attach
+     * Attach a container to a callback to read logs
+     *
+     * @param \Docker\Container $container Container to attach
      *
      * Where $streamType will be 0 for STDIN, 1 for STDOUT, 2 for STDERR and $output will be the string of log
      *
-     * @param boolean           $logs      Get the backlog of this container
-     * @param callable          $callback  Callback to attach
-     * @param boolean           $stream    Stream the response
-     * @param boolean           $stdin     Get stdin log
-     * @param boolean           $stdout    Get stdout log
-     * @param boolean           $stderr    Get stderr log
-     * @param integer           $timeout   Timeout when
+     * @param callable $callback Callback to attach
+     * @param boolean  $logs     Get the backlog of this container
+     * @param boolean  $stream   Stream the response
+     * @param boolean  $stdin    Get stdin log
+     * @param boolean  $stdout   Get stdout log
+     * @param boolean  $stderr   Get stderr log
+     * @param integer  $timeout  Timeout when
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
@@ -235,11 +237,11 @@ class ContainerManager
                 'stream' => $stream,
                 'stdin'  => $stdin,
                 'stdout' => $stdout,
-                'stderr' => $stderr
+                'stderr' => $stderr,
             ]
         ]], array(
             'timeout'  => $timeout !== null ? $timeout : $this->client->getDefaultOption('timeout'),
-            'callback' => $callback
+            'callback' => $callback,
         ));
 
         if ($response->getStatusCode() !== "200") {
@@ -250,9 +252,48 @@ class ContainerManager
     }
 
     /**
+     * Interact with a container
+     *
+     * Create a websocket connection which allows to send data on stdin
+     *
+     * @param Container $container
+     * @param boolean   $logs      Get the backlog of this container
+     * @param boolean   $stream    Stream the response
+     * @param boolean   $stdin     Get stdin log
+     * @param boolean   $stdout    Get stdout log
+     * @param boolean   $stderr    Get stderr log
+     *
+     * @return InteractiveStream
+     */
+    public function interact(Container $container, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true)
+    {
+        $response = $this->client->get(['/containers/{id}/attach/ws{?data*}', [
+            'id' => $container->getId(),
+            'data' => [
+                'logs'   => $logs,
+                'stream' => $stream,
+                'stdin'  => $stdin,
+                'stdout' => $stdout,
+                'stderr' => $stderr,
+            ]
+        ]], array(
+            'headers' => array(
+                'Origin' => 'php://docker-php',
+                'Upgrade' => 'websocket',
+                'Connection' => 'Upgrade',
+                'Sec-WebSocket-Version' => '13',
+                'Sec-WebSocket-Key' => base64_encode(uniqid()),
+            ),
+        ));
+
+        return new InteractiveStream($response->getBody());
+    }
+
+    /**
      * Wait for a container to finish
      *
      * @param \Docker\Container $container
+     * @param integer|null      $timeout
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
@@ -261,7 +302,7 @@ class ContainerManager
     public function wait(Container $container, $timeout = null)
     {
         $response = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]], array(
-            'timeout' => null === $timeout ? $this->client->getDefaultOption('timeout') : $timeout
+            'timeout' => null === $timeout ? $this->client->getDefaultOption('timeout') : $timeout,
         ));
 
         if ($response->getStatusCode() !== "200") {
@@ -279,7 +320,7 @@ class ContainerManager
      * Stop a running container
      *
      * @param \Docker\Container $container
-     * @param integer          $timeout
+     * @param integer           $timeout
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
@@ -289,7 +330,8 @@ class ContainerManager
     {
         $response = $this->client->post(['/containers/{id}/stop?t={timeout}', [
             'id' => $container->getId(),
-            'timeout' => $timeout
+            'timeout' => $timeout,
+            'wait' => true,
         ]]);
 
         if ($response->getStatusCode() !== "204") {
@@ -304,8 +346,10 @@ class ContainerManager
     /**
      * Delete a container from docker server
      *
-     * @param \Docker\Container  $container
+     * @param \Docker\Container $container
      * @param boolean           $volumes
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return \Docker\Manager\ContainerManager
      */
@@ -313,7 +357,8 @@ class ContainerManager
     {
         $response = $this->client->delete(['/containers/{id}?v={volumes}', [
             'id' => $container->getId(),
-            'v' => $volumes
+            'v' => $volumes,
+            'wait' => true
         ]]);
 
         if ($response->getStatusCode() !== "204") {

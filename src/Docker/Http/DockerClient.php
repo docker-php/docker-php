@@ -65,9 +65,9 @@ class DockerClient extends Client
             }
 
             $useTls = true;
-            $cafile = getenv('DOCKER_CERT_PATH') . DIRECTORY_SEPARATOR . 'ca.pem';
-            $certfile = getenv('DOCKER_CERT_PATH') . DIRECTORY_SEPARATOR . 'cert.pem';
-            $keyfile = getenv('DOCKER_CERT_PATH') . DIRECTORY_SEPARATOR . 'key.pem';
+            $cafile = getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'ca.pem';
+            $certfile = getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'cert.pem';
+            $keyfile = getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'key.pem';
             $peername = getenv('DOCKER_PEER_NAME') ? getenv('DOCKER_PEER_NAME') : 'boot2docker';
             $fullcert = tempnam(sys_get_temp_dir(), 'docker-certfile');
 
@@ -79,7 +79,7 @@ class DockerClient extends Client
                     'cafile' => $cafile,
                     'local_cert' => $fullcert,
                     'peer_name' => $peername,
-                )
+                ),
             ));
         }
 

@@ -39,6 +39,44 @@ class ContainerManagerTest extends TestCase
         $this->assertNotEmpty($container->getId());
     }
 
+    public function testInteract()
+    {
+        $container = new Container([
+            'Image' => 'ubuntu:precise',
+            'Cmd'   => ['/bin/bash'],
+            'AttachStdin'  => false,
+            'AttachStdout' => true,
+            'AttachStderr' => true,
+            'OpenStdin'    => true,
+            'Tty'          => true,
+        ]);
+
+        $manager = $this->getManager();
+        $manager->create($container);
+        $stream = $manager->interact($container);
+        $manager->start($container);
+
+        $this->assertNotEmpty($container->getId());
+        $this->assertInstanceOf('\Docker\Http\Stream\InteractiveStream', $stream);
+
+        stream_set_blocking($stream->getSocket(), 0);
+
+        $read   = array($stream->getSocket());
+        $write  = null;
+        $expect = null;
+
+        $stream->write("echo test\n");
+        $data = "";
+        do {
+            $frame = $stream->receive(true);
+            $data .= $frame['data'];
+        } while (stream_select($read, $write, $expect, 1) > 0);
+
+        $manager->stop($container, 1);
+
+        $this->assertRegExp('#root@'.substr($container->getId(), 0, 12).':/\# echo test#', $data, $data);
+    }
+
     public function testCreateThrowsRightFormedException()
     {
         $container = new Container(['Image' => 'non-existent']);
@@ -300,7 +338,6 @@ class ContainerManagerTest extends TestCase
         $this->assertInstanceOf('Docker\\Container', $manager->find($container->getId()));
     }
 
-
     public function testRemove()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['date']]);
@@ -314,5 +351,4 @@ class ContainerManagerTest extends TestCase
         $this->setExpectedException('\\Docker\\Exception\\ContainerNotFoundException', 'Container not found');
         $manager->inspect($container);
     }
-
 }

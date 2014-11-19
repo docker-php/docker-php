@@ -11,7 +11,7 @@ use Exception as BaseException;
 class ContainerNotFoundException extends BaseException
 {
     /**
-     * @param string         $containerId
+     * @param string             $containerId
      * @param null|BaseException $previous
      */
     public function __construct($containerId, BaseException $previous = null)

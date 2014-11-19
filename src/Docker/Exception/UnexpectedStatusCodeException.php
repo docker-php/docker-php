@@ -13,7 +13,7 @@ class UnexpectedStatusCodeException extends BaseException
 {
     /**
      * @param integer $statusCode
-     * @param string $message
+     * @param string  $message
      */
     public function __construct($statusCode, $message = null)
     {
@@ -23,7 +23,7 @@ class UnexpectedStatusCodeException extends BaseException
 
     /**
      * @param Response $response
-     * 
+     *
      * @return UnexpectedStatusCodeException
      */
     public static function fromResponse(Response $response)

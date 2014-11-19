@@ -32,10 +32,10 @@ class Event extends \php_user_filter implements HasEmitterInterface
     /**
      * Function call when stream is filtered
      *
-     * @param resource $in        Input stream
-     * @param resource $out       Output stream
-     * @param integer  $consumed  Data consumed
-     * @param boolean  $closing   Whether the stream is closing
+     * @param resource $in       Input stream
+     * @param resource $out      Output stream
+     * @param integer  $consumed Data consumed
+     * @param boolean  $closing  Whether the stream is closing
      *
      * @return int
      */
@@ -49,7 +49,6 @@ class Event extends \php_user_filter implements HasEmitterInterface
 
         $consumed = $bucket->datalen;
         stream_bucket_append($out, $bucket);
-
 
         $this->buffer .= $bucket->data;
 

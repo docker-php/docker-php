@@ -356,7 +356,7 @@ class Container
 
     /**
      * @param array $data
-     * 
+     *
      * @return Container
      */
     public function setData(array $data)

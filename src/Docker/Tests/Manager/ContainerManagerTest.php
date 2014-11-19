@@ -106,7 +106,7 @@ class ContainerManagerTest extends TestCase
             ->getMock();
 
         $response = $this->getMockBuilder('\GuzzleHttp\Message\Response')->disableOriginalConstructor()->getMock();
-        $stream   = $this->getMockBuilder('\Docker\Http\Stream\AttachStream')->disableOriginalConstructor()->getMock();
+        $stream   = $this->getMockBuilder('\GuzzleHttp\Stream\Stream')->disableOriginalConstructor()->getMock();
 
         $container->setExitCode(0);
         $callback = function () {};
@@ -118,7 +118,7 @@ class ContainerManagerTest extends TestCase
 
         $manager->expects($this->once())
             ->method('attach')
-            ->with($this->isInstanceOf('\Docker\Container'), $this->equalTo(true), $this->equalTo(true), $this->equalTo(true), $this->equalTo(true), $this->equalTo(true), $this->equalTo(null))
+            ->with($this->isInstanceOf('\Docker\Container'), $this->equalTo($callback), $this->equalTo(true), $this->equalTo(true), $this->equalTo(true), $this->equalTo(true), $this->equalTo(true), $this->equalTo(null))
             ->will($this->returnValue($response));
 
         $manager->expects($this->once())
@@ -129,10 +129,6 @@ class ContainerManagerTest extends TestCase
         $response->expects($this->once())
             ->method('getBody')
             ->will($this->returnValue($stream));
-
-        $stream->expects($this->once())
-            ->method('readWithCallback')
-            ->with($callback);
 
         $manager->expects($this->once())
             ->method('wait')
@@ -178,13 +174,13 @@ class ContainerManagerTest extends TestCase
         $output = "";
 
         $manager->create($container);
-        $response = $manager->attach($container);
-        $manager->start($container);
-
-        $response->getBody()->readWithCallback(function ($log, $stdtype) use(&$type, &$output) {
-            $type   = $stdtype;
+        $response = $manager->attach($container, function ($log, $stdtype) use (&$type, &$output) {
+            $type = $stdtype;
             $output = $log;
         });
+        $manager->start($container);
+
+        $response->getBody()->getContents();
 
         $this->assertEquals(1, $type);
         $this->assertEquals('output', $output);
@@ -199,13 +195,13 @@ class ContainerManagerTest extends TestCase
         $output = "";
 
         $manager->create($container);
-        $response = $manager->attach($container);
-        $manager->start($container);
-
-        $response->getBody()->readWithCallback(function ($log, $stdtype) use(&$type, &$output) {
-            $type   = $stdtype;
+        $response = $manager->attach($container, function ($log, $stdtype) use (&$type, &$output) {
+            $type = $stdtype;
             $output = $log;
         });
+        $manager->start($container);
+
+        $response->getBody()->getContents();
 
         $this->assertEquals(2, $type);
         $this->assertEquals('error', $output);

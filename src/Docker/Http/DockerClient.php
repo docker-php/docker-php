@@ -4,7 +4,6 @@ namespace Docker\Http;
 
 use Docker\Http\Adapter\DockerAdapter;
 use GuzzleHttp\Client;
-use GuzzleHttp\Message\MessageFactory;
 
 class DockerClient extends Client
 {

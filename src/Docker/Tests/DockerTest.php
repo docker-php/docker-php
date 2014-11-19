@@ -19,7 +19,9 @@ class DockerTest extends TestCase
         $docker = $this->getDocker();
 
         $docker->build($contextBuilder->getContext(), 'foo', function($output) use(&$content) {
-            $content .= $output;
+            if (isset($output['stream'])) {
+                $content .= $output['stream'];
+            }
         });
 
         $this->assertRegExp('/Successfully built/', $content);
@@ -33,7 +35,9 @@ class DockerTest extends TestCase
         $timecalled = 0;
 
         $docker->build($context, 'foo', function($output) use(&$content, &$timecalled) {
-            $content .= $output;
+            if (isset($output['stream'])) {
+                $content .= $output['stream'];
+            }
             $timecalled++;
         });
 

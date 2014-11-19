@@ -87,32 +87,30 @@ class Docker
      * @param boolean                            $quiet    Quiet build (doest not output commands during build)
      * @param boolean                            $cache    Use docker cache
      * @param boolean                            $rm       Remove intermediate container during build
+     * @param boolean                            $wait     Whether to wait for build to finish
+     *
+     * @return \GuzzleHttp\Message\ResponseInterface
      */
-    public function build(ContextInterface $context, $name, callable $callback = null, $quiet = false, $cache = true, $rm = false)
+    public function build(ContextInterface $context, $name, callable $callback = null, $quiet = false, $cache = true, $rm = false, $wait = true)
     {
+        if (null === $callback) {
+            $callback = function () {};
+        }
+
         $content  = is_resource($context->read()) ? new Stream($context->read()) : $context->read();
-        $response = $this->httpClient->post(['/build{?data*}', ['data' => [
+
+        return $this->httpClient->post(['/build{?data*}', ['data' => [
             'q' => (integer) $quiet,
             't' => $name,
             'nocache' => (integer) !$cache,
             'rm' => (integer) $rm
         ]]], [
-            'headers' => array('Content-Type' => 'application/tar'),
-            'body'    => $content,
-            'stream'  => true
+            'headers'  => array('Content-Type' => 'application/tar'),
+            'body'     => $content,
+            'stream'   => true,
+            'callback' => $callback,
+            'wait'     => $wait
         ]);
-
-        if (null === $callback) {
-            $callback = function() {};
-        }
-
-        $stream = $response->getBody();
-
-        if ($stream instanceof StreamCallbackInterface) {
-            $stream->readWithCallback($callback);
-        } else {
-            $callback($stream->__toString(), null);
-        }
     }
 
     /**

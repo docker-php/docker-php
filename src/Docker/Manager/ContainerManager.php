@@ -422,4 +422,26 @@ class ContainerManager
 
         return $response->json();
     }
+
+    /**
+     * Export a container to a tar
+     *
+     * @param Container $container
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return \GuzzleHttp\Stream\Stream
+     */
+    public function export(Container $container)
+    {
+        $response = $this->client->get(['/containers/{id}/export', [
+            'id' => $container->getId()
+        ]]);
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $response->getBody();
+    }
 }

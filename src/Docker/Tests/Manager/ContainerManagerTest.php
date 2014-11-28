@@ -383,4 +383,30 @@ class ContainerManagerTest extends TestCase
         $this->assertEquals('/docker-php-test', $changes[0]['Path']);
         $this->assertEquals(1, $changes[0]['Kind']);
     }
+
+    public function testExport()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['touch', '/docker-php-test']]);
+        $manager = $this->getManager();
+        $manager->run($container);
+        $manager->wait($container);
+
+        $exportStream = $manager->export($container);
+
+        $this->assertInstanceOf('\GuzzleHttp\Stream\Stream', $exportStream);
+
+        $tarFileName  = tempnam(sys_get_temp_dir(), 'docker-php-export-test-');
+        $tarFile      = fopen($tarFileName, 'w+');
+
+        stream_copy_to_stream($exportStream->detach(), $tarFile);
+        fclose($tarFile);
+
+        exec('/usr/bin/env tar -tf '.$tarFileName, $output);
+
+        $this->assertContains('docker-php-test', $output);
+        $this->assertContains('.dockerinit', $output);
+
+        unlink($tarFileName);
+        $manager->remove($container);
+    }
 }

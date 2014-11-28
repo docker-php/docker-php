@@ -367,4 +367,20 @@ class ContainerManagerTest extends TestCase
         $manager->wait($container);
         $manager->remove($container);
     }
+
+    public function testChanges()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['touch', '/docker-php-test']]);
+        $manager = $this->getManager();
+        $manager->run($container);
+        $manager->wait($container);
+
+        $changes = $manager->changes($container);
+
+        $manager->remove($container);
+
+        $this->assertCount(1, $changes);
+        $this->assertEquals('/docker-php-test', $changes[0]['Path']);
+        $this->assertEquals(1, $changes[0]['Kind']);
+    }
 }

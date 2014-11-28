@@ -400,4 +400,26 @@ class ContainerManager
 
         return $processes;
     }
+
+    /**
+     * Get changes on a container filesystem
+     *
+     * @param Container $container
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return array
+     */
+    public function changes(Container $container)
+    {
+        $response = $this->client->get(['/containers/{id}/changes', [
+            'id' => $container->getId()
+        ]]);
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $response->json();
+    }
 }

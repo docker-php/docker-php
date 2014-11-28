@@ -367,4 +367,37 @@ class ContainerManager
 
         return $this;
     }
+
+    /**
+     * List process running inside a container
+     *
+     * @param Container $container
+     * @param string    $psArgs
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return array
+     */
+    public function top(Container $container, $psArgs = "aux")
+    {
+        $response = $this->client->get(['/containers/{id}/top?ps_args={ps_args}', [
+            'id' => $container->getId(),
+            'ps_args' => $psArgs
+        ]]);
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        $processes = array();
+        $data      = $response->json();
+
+        $keys = $data['Titles'];
+
+        foreach ($data['Processes'] as $values) {
+            $processes[] = array_combine($keys, $values);
+        }
+
+        return $processes;
+    }
 }

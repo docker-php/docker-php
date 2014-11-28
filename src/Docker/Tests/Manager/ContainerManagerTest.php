@@ -351,4 +351,20 @@ class ContainerManagerTest extends TestCase
         $this->setExpectedException('\\Docker\\Exception\\ContainerNotFoundException', 'Container not found');
         $manager->inspect($container);
     }
+
+    public function testTop()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['sleep', '2']]);
+        $manager = $this->getManager();
+        $manager->run($container, null, array(), true);
+
+        $processes = $manager->top($container);
+
+        $this->assertCount(1, $processes);
+        $this->assertArrayHasKey('COMMAND', $processes[0]);
+        $this->assertEquals('sleep 2', $processes[0]['COMMAND']);
+
+        $manager->wait($container);
+        $manager->remove($container);
+    }
 }

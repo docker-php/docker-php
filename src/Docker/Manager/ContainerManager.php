@@ -334,7 +334,7 @@ class ContainerManager
             'wait' => true,
         ]]);
 
-        if ($response->getStatusCode() !== "204") {
+        if ($response->getStatusCode() !== "204" && $response->getStatusCode() !== "304") {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -443,5 +443,62 @@ class ContainerManager
         }
 
         return $response->getBody();
+    }
+
+    /**
+     * Get logs from a container
+     *
+     * @param Container $container
+     * @param bool $follow
+     * @param bool $stdout
+     * @param bool $stderr
+     * @param bool $timestamp
+     * @param string $tail
+     *
+     * @return array
+     */
+    public function logs(Container $container, $follow = false, $stdout = false, $stderr = false, $timestamp = false, $tail = "all")
+    {
+        $logs = array();
+
+        $callback = function ($output, $type) use(&$logs) {
+            $logs[] = array('type' => $type, 'output' => $output);
+        };
+
+        $this->client->get(['/containers/{id}/logs{?data*}', [
+            'id' => $container->getId(),
+            'data' => [
+                'follow' => (int)$follow,
+                'stdout' => (int)$stdout,
+                'stderr' => (int)$stderr,
+                'timestamps' => (int)$timestamp,
+                'tail' => $tail,
+            ],
+        ]], [
+            'callback' => $callback,
+            'wait'     => true,
+        ]);
+
+        return $logs;
+    }
+
+    /**
+     * Restart a container
+     *
+     * @param Container $container
+     * @param integer   $timeBeforeKill number of seconds to wait before killing the container
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     */
+    public function restart(Container $container, $timeBeforeKill = 5)
+    {
+        $response = $this->client->post(['/containers/{id}/restart?t={time}', [
+            'id' => $container->getId(),
+            'time' => $timeBeforeKill
+        ]]);
+
+        if ($response->getStatusCode() !== "204") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
     }
 }

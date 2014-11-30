@@ -335,8 +335,14 @@ class Container
     public function getImage()
     {
         if (!$this->image instanceof Image) {
-            $this->image = new Image();
-            $this->image->setName($this->config['Image']);
+            $repository = $this->config['Image'];
+            $tag        = 'latest';
+
+            if (preg_match('/:/', $this->config['Image'])) {
+                list($repository, $tag) = explode(':', $this->config['Image']);
+            }
+
+            $this->image = new Image($repository, $tag);
         }
 
         return $this->image;

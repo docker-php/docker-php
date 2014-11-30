@@ -3,6 +3,7 @@
 namespace Docker\Tests\Manager;
 
 use Docker\Container;
+use Docker\Context\ContextBuilder;
 use Docker\Port;
 use Docker\Tests\TestCase;
 use GuzzleHttp\Exception\RequestException;
@@ -408,5 +409,53 @@ class ContainerManagerTest extends TestCase
 
         unlink($tarFileName);
         $manager->remove($container);
+    }
+
+    public function testLogs()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['echo', 'test']]);
+        $manager = $this->getManager();
+        $manager->run($container);
+        $manager->stop($container);
+        $logs = $manager->logs($container, false, true);
+        $manager->remove($container);
+
+        $this->assertGreaterThanOrEqual(1, count($logs));
+
+        $logs = array_map(function ($value) {
+            return $value['output'];
+        }, $logs);
+
+        $this->assertContains("test", implode("", $logs));
+    }
+
+    public function testRestart()
+    {
+        $manager = $this->getManager();
+        $dockerFileBuilder = new ContextBuilder();
+        $dockerFileBuilder->from('ubuntu:precise');
+        $dockerFileBuilder->add('/daemon.sh', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'script' . DIRECTORY_SEPARATOR . 'daemon.sh'));
+        $dockerFileBuilder->run('chmod +x /daemon.sh');
+
+        $this->getDocker()->build($dockerFileBuilder->getContext(), 'docker-php-restart-test', null, true, false, true);
+
+        $container = new Container(['Image' => 'docker-php-restart-test', 'Cmd' => ['/daemon.sh']]);
+        $manager->create($container);
+        $manager->start($container);
+        $manager->restart($container);
+
+        $logs = $manager->logs($container, false, true);
+        $logs = array_map(function ($value) {
+            return $value['output'];
+        }, $logs);
+        $processes = $manager->top($container);
+
+        $manager->stop($container);
+        $manager->remove($container);
+
+        $this->getDocker()->getImageManager()->delete($container->getImage());
+
+        $this->assertCount(2, $processes);
+        $this->assertContains('test', implode("", $logs));
     }
 }

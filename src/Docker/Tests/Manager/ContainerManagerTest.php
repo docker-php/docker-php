@@ -458,4 +458,32 @@ class ContainerManagerTest extends TestCase
         $this->assertCount(2, $processes);
         $this->assertContains('test', implode("", $logs));
     }
+
+    public function testKill()
+    {
+        $manager = $this->getManager();
+        $dockerFileBuilder = new ContextBuilder();
+        $dockerFileBuilder->from('ubuntu:precise');
+        $dockerFileBuilder->add('/kill.sh', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'script' . DIRECTORY_SEPARATOR . 'kill.sh'));
+        $dockerFileBuilder->run('chmod +x /kill.sh');
+
+        $this->getDocker()->build($dockerFileBuilder->getContext(), 'docker-php-kill-test', null, true, false, true);
+
+        $container = new Container(['Image' => 'docker-php-kill-test', 'Cmd' => ['/kill.sh']]);
+        $manager->create($container);
+        $manager->start($container);
+        $manager->kill($container, "SIGHUP");
+
+        $logs = $manager->logs($container, false, true);
+        $logs = array_map(function ($value) {
+            return $value['output'];
+        }, $logs);
+
+        $manager->stop($container);
+        $manager->remove($container);
+
+        $this->getDocker()->getImageManager()->delete($container->getImage());
+
+        $this->assertContains('HUP', implode("", $logs));
+    }
 }

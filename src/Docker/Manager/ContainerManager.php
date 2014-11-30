@@ -501,4 +501,24 @@ class ContainerManager
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
     }
+
+    /**
+     * Send a signal to container
+     *
+     * @param Container $container
+     * @param string $signal
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     */
+    public function kill(Container $container, $signal = "SIGKILL")
+    {
+        $response = $this->client->post(['/containers/{id}/kill?signal={signal}', [
+            'id' => $container->getId(),
+            'signal' => $signal
+        ]]);
+
+        if ($response->getStatusCode() !== "204") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+    }
 }

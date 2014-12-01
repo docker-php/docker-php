@@ -56,25 +56,28 @@ class Event extends \php_user_filter implements HasEmitterInterface
         if ($this->contentType == "application/vnd.docker.raw-stream") {
             $data = $this->buffer . $data;
 
-            if (strlen($this->buffer) < 8) {
-                return PSFS_FEED_ME;
-            }
-
-            $header  = substr($this->buffer, 0, 8);
-            $decoded = unpack('C1stream_type/C3/N1size', $header);
-
-            if (strlen($this->buffer) < (8 + $decoded['size'])) {
+            if (strlen($data) < 8) {
                 $this->buffer = $data;
 
                 return PSFS_FEED_ME;
             }
 
-            $data         = substr($this->buffer, 8, $decoded['size']);
-            $type         = $decoded['stream_type'];
-            $this->buffer = substr($this->buffer, 8 + $decoded['size']);
+            $header  = substr($data, 0, 8);
+            $decoded = unpack('C1stream_type/C3/N1size', $header);
 
-            $this->getEmitter()->emit('response.output', new OutputEvent($data, $type));
-            $this->buffer = "";
+            if (strlen($data) < (8 + $decoded['size'])) {
+                $this->buffer = $data;
+
+                return PSFS_FEED_ME;
+            }
+
+            $data         = substr($data, 8, $decoded['size']);
+            $type         = $decoded['stream_type'];
+            $this->buffer = substr($data, 8 + $decoded['size']);
+
+            if (!empty($data)) {
+                $this->getEmitter()->emit('response.output', new OutputEvent($data, $type));
+            }
 
             return PSFS_PASS_ON;
         }
@@ -92,7 +95,6 @@ class Event extends \php_user_filter implements HasEmitterInterface
         }
 
         return PSFS_PASS_ON;
-
     }
 
     /**

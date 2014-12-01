@@ -50,12 +50,12 @@ class Event extends \php_user_filter implements HasEmitterInterface
         $consumed = $bucket->datalen;
         stream_bucket_append($out, $bucket);
 
-        $this->buffer .= $bucket->data;
-
-        $data = $this->buffer;
+        $data = $this->buffer . $bucket->data;
         $type = null;
 
         if ($this->contentType == "application/vnd.docker.raw-stream") {
+            $data = $this->buffer . $data;
+
             if (strlen($this->buffer) < 8) {
                 return PSFS_FEED_ME;
             }
@@ -64,18 +64,27 @@ class Event extends \php_user_filter implements HasEmitterInterface
             $decoded = unpack('C1stream_type/C3/N1size', $header);
 
             if (strlen($this->buffer) < (8 + $decoded['size'])) {
+                $this->buffer = $data;
+
                 return PSFS_FEED_ME;
             }
 
             $data         = substr($this->buffer, 8, $decoded['size']);
             $type         = $decoded['stream_type'];
             $this->buffer = substr($this->buffer, 8 + $decoded['size']);
-        } else {
+
+            $this->getEmitter()->emit('response.output', new OutputEvent($data, $type));
             $this->buffer = "";
+
+            return PSFS_PASS_ON;
         }
 
         if ($this->contentType == "application/json") {
-            $data = json_decode($data, true);
+            foreach ($this->jsonSplitDecode($data) as $data) {
+                $this->getEmitter()->emit('response.output', new OutputEvent($data, $type));
+            }
+
+            return PSFS_PASS_ON;
         }
 
         if (!empty($data)) {
@@ -83,6 +92,7 @@ class Event extends \php_user_filter implements HasEmitterInterface
         }
 
         return PSFS_PASS_ON;
+
     }
 
     /**
@@ -94,5 +104,48 @@ class Event extends \php_user_filter implements HasEmitterInterface
     {
         $this->emitter = $this->params['emitter'];
         $this->contentType = $this->params['content_type'];
+    }
+
+    private function jsonSplitDecode($json)
+    {
+        $splited = array();
+        $size    = strlen($json);
+        $inquote = false;
+
+        for ($level = 0, $objects = 0, $i =0; $i < $size; $i++) {
+            if ((boolean)($json[$i] == '"' && ($i > 0 ? $json[$i-1] : '') != '\\')) {
+                $inquote = !$inquote;
+            }
+
+            if (!$inquote && in_array($json[$i], array(" ", "\r", "\n", "\t"))) {
+                continue;
+            }
+
+            if (!$inquote && in_array($json[$i], array('{', '['))) {
+                $level++;
+            }
+
+            if (!$inquote && in_array($json[$i], array('}', ']'))) {
+                $level--;
+
+                if ($level == 0) {
+                    $splited[$objects] .= $json[$i];
+                    $objects++;
+                    continue;
+                }
+            }
+
+            if (!isset($splited[$objects])) {
+                $splited[$objects] = "";
+            }
+
+            $splited[$objects] .= $json[$i];
+        }
+
+        foreach ($splited as $key => $jsonString) {
+           $splited[$key] = json_decode($jsonString, true);
+        }
+
+        return $splited;
     }
 }

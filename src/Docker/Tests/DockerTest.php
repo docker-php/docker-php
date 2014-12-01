@@ -15,9 +15,10 @@ class DockerTest extends TestCase
         $contextBuilder->from('ubuntu:precise');
         $contextBuilder->add('/test', 'test file content');
 
-        $docker = $this->getDocker();
+        $docker  = $this->getDocker();
+        $content = "";
 
-        $docker->build($contextBuilder->getContext(), 'foo', function ($output) use (&$content) {
+        $response = $docker->build($contextBuilder->getContext(), 'foo', function ($output) use (&$content) {
             if (isset($output['stream'])) {
                 $content .= $output['stream'];
             }

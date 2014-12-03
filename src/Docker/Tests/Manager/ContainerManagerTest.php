@@ -473,13 +473,13 @@ class ContainerManagerTest extends TestCase
         $manager->create($container);
         $manager->start($container);
         $manager->kill($container, "SIGHUP");
+        $manager->wait($container);
 
         $logs = $manager->logs($container, false, true);
         $logs = array_map(function ($value) {
             return $value['output'];
         }, $logs);
 
-        $manager->wait($container);
         $manager->remove($container);
         $this->getDocker()->getImageManager()->delete($container->getImage());
 

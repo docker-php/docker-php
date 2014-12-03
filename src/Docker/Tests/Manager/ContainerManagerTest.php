@@ -479,9 +479,8 @@ class ContainerManagerTest extends TestCase
             return $value['output'];
         }, $logs);
 
-        $manager->stop($container);
+        $manager->wait($container);
         $manager->remove($container);
-
         $this->getDocker()->getImageManager()->delete($container->getImage());
 
         $this->assertContains('HUP', implode("", $logs));

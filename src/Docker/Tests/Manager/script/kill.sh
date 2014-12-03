@@ -9,6 +9,7 @@ trap_with_arg() {
 
 func_trap() {
     echo $1
+    exit 0
 }
 
 trap_with_arg func_trap HUP INT TERM EXIT

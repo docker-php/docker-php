@@ -87,8 +87,9 @@ class DockerAdapter implements AdapterInterface
         $errorMsg = null;
 
         $request = $transaction->getRequest();
+        $config  = $request->getConfig();
 
-        if ($request->getConfig()['stream']) {
+        if (isset($config['stream']) && $config['stream']) {
             $request->setHeader('Transfer-Encoding', 'chunked');
         } elseif ($request->getBody() !== null) {
             $request->setHeader('Content-Length', $request->getBody()->getSize());
@@ -159,11 +160,11 @@ class DockerAdapter implements AdapterInterface
             throw new RequestException('No response could be parsed: check server log', $request);
         }
 
-        $this->setResponseStream($response, $socket, $request->getEmitter(), ($request->getConfig()->hasKey('attach_filter') && $request->getConfig()->get('attach_filter')));
+        $this->setResponseStream($response, $socket, $request->getEmitter(), ($config->hasKey('attach_filter') && $config->get('attach_filter')));
         $transaction->setResponse($response);
 
         // If wait read all contents
-        if ($request->getConfig()->hasKey('wait') && $request->getConfig()->get('wait')) {
+        if ($config->hasKey('wait') && $config->get('wait')) {
             $response->getBody()->getContents();
         }
 

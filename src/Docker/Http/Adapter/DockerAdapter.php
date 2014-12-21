@@ -98,7 +98,7 @@ class DockerAdapter implements AdapterInterface
         $socket = @stream_socket_client($this->entrypoint, $errorNo, $errorMsg, $this->getDefaultTimeout($transaction), STREAM_CLIENT_CONNECT, $this->context);
 
         if (!$socket) {
-            throw new RequestException(sprintf('Cannot open socket connection: %s [code %d]', $errorMsg, $errorNo), $request);
+            throw new RequestException(sprintf('Cannot open socket connection: %s [code %d] [%s]', $errorMsg, $errorNo, $this->entrypoint), $request);
         }
 
         // CHeck if tls is needed

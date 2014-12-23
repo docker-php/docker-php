@@ -77,6 +77,19 @@ class Docker
         return $this->imageManager;
     }
 
+   /**
+     * @return json object with version values
+     */
+    public function getVersion()
+    {
+        try {
+            $response = $this->httpClient->get(['/version', []]);
+        } catch (RequestException $e) {
+            throw $e;
+        }
+        return $response->json();
+    }
+
     /**
      * Build an image with docker
      *

@@ -78,6 +78,7 @@ class Docker
     }
 
    /**
+     * Show the docker components version information
      * @return json object with version values
      */
     public function getVersion()
@@ -89,6 +90,22 @@ class Docker
         }
         return $response->json();
     }
+
+   /**
+     * Docker info: Display system-wide information
+     * api_v1.16
+     * @return json object with version values
+     */
+    public function getInfo()
+    {
+        try {
+            $response = $this->httpClient->get(['/info', []]);
+        } catch (RequestException $e) {
+            throw $e;
+        }
+        return $response->json();
+    }
+
 
     /**
      * Build an image with docker

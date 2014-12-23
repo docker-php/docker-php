@@ -127,7 +127,7 @@ class ImageManager
         $image->setId($data['Id']);
         // @TODO Add extra info on image
 
-        return $this;
+        return $data;
     }
 
     /**

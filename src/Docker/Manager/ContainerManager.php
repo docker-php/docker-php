@@ -114,7 +114,7 @@ class ContainerManager
 
         $container->setRuntimeInformations($response->json());
 
-        return $this;
+        return $response->json();
     }
 
     /**

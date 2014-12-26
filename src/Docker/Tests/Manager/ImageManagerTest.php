@@ -62,4 +62,15 @@ class ImageManagerTest extends TestCase
         $this->setExpectedException('\\Docker\\Exception\\ImageNotFoundException', 'Image not found');
         $manager->inspect($image);
     }
+
+    public function testSearch()
+    {
+        $manager = $this->getManager();
+
+        $result = $manager->search('test-image-not-exist');
+        $this->assertEmpty($result);
+
+        $this->setExpectedException('\\Docker\\Exception\\APIException', 'Invalid namespace name (a), only [a-z0-9_] are allowed, size between 4 and 30');
+        $manager->search('a/test');
+    }
 }

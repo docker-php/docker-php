@@ -188,4 +188,31 @@ class ImageManager
 
         return $this;
     }
+
+    /**
+     * Search for an image on Docker Hub.
+     *
+     * @param string $term term to search
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return array
+     */
+    public function search($term)
+    {
+        $response = $this->client->get(
+            [
+                '/images/search?term={term}',
+                [
+                    'term' => $term,
+                ]
+            ]
+        );
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $response->json();
+    }
 }

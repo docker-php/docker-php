@@ -22,7 +22,7 @@ class Event extends \php_user_filter implements HasEmitterInterface
     private $buffer = "";
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getEmitter()
     {
@@ -98,7 +98,7 @@ class Event extends \php_user_filter implements HasEmitterInterface
     }
 
     /**
-     * Call when filter is created (attache to a socket)
+     * Call when filter is created (attach to a socket)
      *
      * Here we set parameters to this instance
      */

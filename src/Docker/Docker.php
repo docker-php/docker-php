@@ -9,6 +9,7 @@ use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Context\ContextInterface;
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\Stream;
 
 /**

@@ -226,7 +226,7 @@ class ContainerManager
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
-     * @return \Docker\Http\Response Re
+     * @return \GuzzleHttp\Message\ResponseInterface
      */
     public function attach(Container $container, callable $callback, $logs = true, $stream = true, $stdin = true, $stdout = true, $stderr = true, $timeout = null)
     {

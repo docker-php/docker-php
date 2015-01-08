@@ -6,12 +6,11 @@ use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Stream\StreamInterface;
 
 /**
- * An interactive stream is used when communicating with docker container attached
+ * An interactive stream is used when communicating with an attached docker container
  *
- * It helps dealing with encoding and decoding frame from websocket protcol (hybi 10)
+ * It helps dealing with encoding and decoding frame from websocket protocol (hybi 10)
  *
  * @see https://tools.ietf.org/html/rfc6455#section-5.2
- *
  */
 class InteractiveStream
 {
@@ -84,6 +83,8 @@ class InteractiveStream
     /**
      * Block until it receive a frame from websocket or return null if no more connexion
      *
+     * @param bool $block
+     * @return array
      */
     public function receive($block = true)
     {
@@ -150,7 +151,7 @@ class InteractiveStream
     }
 
     /**
-     * Force to have something of the exepcted size (block)
+     * Force to have something of the expected size (block)
      *
      * @param $length
      *

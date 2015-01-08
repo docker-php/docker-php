@@ -8,7 +8,7 @@ namespace Docker;
 class PortCollection implements PortSpecInterface
 {
     /**
-     * @var array
+     * @var Port[]
      */
     private $ports;
 
@@ -75,7 +75,7 @@ class PortCollection implements PortSpecInterface
     }
 
     /**
-     * @return array
+     * @return Port[]
      */
     public function all()
     {

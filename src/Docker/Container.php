@@ -42,7 +42,7 @@ class Container
     private $exitCode = null;
 
     /**
-     * @var Docker\Image
+     * @var Image
      */
     private $image;
 
@@ -249,7 +249,7 @@ class Container
     /**
      * @param integer $memory
      *
-     * @return Docker\Container;
+     * @return Container;
      */
     public function setMemory($memory)
     {
@@ -314,7 +314,7 @@ class Container
     }
 
     /**
-     * @param string|Docker\Image $image
+     * @param string|Image $image
      *
      * @return Container
      */

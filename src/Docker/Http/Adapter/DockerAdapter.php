@@ -3,7 +3,6 @@
 namespace Docker\Http\Adapter;
 
 use Docker\Exception\APIException;
-use Docker\Http\Stream\Filter\Event;
 use GuzzleHttp\Adapter\AdapterInterface;
 use GuzzleHttp\Adapter\TransactionInterface;
 use GuzzleHttp\Event\EmitterInterface;
@@ -12,6 +11,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\MessageFactoryInterface;
 use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\Response;
+use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Stream\Stream;
 
 class DockerAdapter implements AdapterInterface
@@ -101,7 +101,7 @@ class DockerAdapter implements AdapterInterface
             throw new RequestException(sprintf('Cannot open socket connection: %s [code %d] [%s]', $errorMsg, $errorNo, $this->entrypoint), $request);
         }
 
-        // CHeck if tls is needed
+        // Check if tls is needed
         if ($this->useTls) {
             if (!@stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
                 throw new RequestException(sprintf('Cannot enable tls: %s', error_get_last()['message']), $request);
@@ -140,7 +140,7 @@ class DockerAdapter implements AdapterInterface
             $response = $this->getResponseWithHeaders($socket);
         } while ($response !== null && $response->getStatusCode() == 100);
 
-        //Check timeout
+        // Check timeout
         $metadata = stream_get_meta_data($socket);
 
         if ($metadata['timed_out']) {

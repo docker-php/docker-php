@@ -7,7 +7,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Docker\Context
+ * Docker\Context\Context
  */
 class Context implements ContextInterface
 {
@@ -31,7 +31,7 @@ class Context implements ContextInterface
     private $process;
 
     /**
-     * @var stream Tar stream
+     * @var resouce Tar stream
      */
     private $stream;
 
@@ -120,7 +120,7 @@ class Context implements ContextInterface
     /**
      * Return a stream for this context
      *
-     * @return stream Stream resource in memory
+     * @return resouce Stream resource in memory
      */
     public function toStream()
     {

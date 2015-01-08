@@ -29,12 +29,12 @@ class Container
     /**
      * @var array
      */
-    private $config = array();
+    private $config = [];
 
     /**
      * @var array
      */
-    private $runtimeInformations = array();
+    private $runtimeInformations = [];
 
     /**
      * @var null|integer
@@ -49,12 +49,12 @@ class Container
     /**
      * @var array
      */
-    private $data = array();
+    private $data = [];
 
     /**
      * @param array $config
      */
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
         $this->config = $config;
     }

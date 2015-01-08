@@ -62,7 +62,7 @@ class ContainerManagerTest extends TestCase
 
         stream_set_blocking($stream->getSocket(), 0);
 
-        $read   = array($stream->getSocket());
+        $read   = [$stream->getSocket()];
         $write  = null;
         $expect = null;
 
@@ -111,7 +111,7 @@ class ContainerManagerTest extends TestCase
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
         $manager = $this
             ->getMockBuilder('\Docker\Manager\ContainerManager')
-            ->setMethods(array('create', 'start', 'wait'))
+            ->setMethods(['create', 'start', 'wait'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -140,7 +140,7 @@ class ContainerManagerTest extends TestCase
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
         $manager = $this
             ->getMockBuilder('\Docker\Manager\ContainerManager')
-            ->setMethods(array('create', 'start', 'wait', 'attach'))
+            ->setMethods(['create', 'start', 'wait', 'attach'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -182,7 +182,7 @@ class ContainerManagerTest extends TestCase
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
         $manager = $this
             ->getMockBuilder('\Docker\Manager\ContainerManager')
-            ->setMethods(array('create', 'start', 'wait'))
+            ->setMethods(['create', 'start', 'wait'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -201,7 +201,7 @@ class ContainerManagerTest extends TestCase
         $manager->expects($this->never())
             ->method('wait');
 
-        $this->assertNull($manager->run($container, null, array(), true));
+        $this->assertNull($manager->run($container, null, [], true));
     }
 
     public function testAttach()
@@ -357,7 +357,7 @@ class ContainerManagerTest extends TestCase
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['sleep', '2']]);
         $manager = $this->getManager();
-        $manager->run($container, null, array(), true);
+        $manager->run($container, null, [], true);
 
         $processes = $manager->top($container);
 

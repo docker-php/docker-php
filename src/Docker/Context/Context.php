@@ -125,7 +125,7 @@ class Context implements ContextInterface
     public function toStream()
     {
         if (!is_resource($this->process)) {
-            $this->process = proc_open("/usr/bin/env tar c .", array(array("pipe", "r"), array("pipe", "w"), array("pipe", "w")), $pipes, $this->directory);
+            $this->process = proc_open("/usr/bin/env tar c .", [["pipe", "r"], ["pipe", "w"], ["pipe", "w"]], $pipes, $this->directory);
             $this->stream  = $pipes[1];
         }
 

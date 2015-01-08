@@ -37,7 +37,7 @@ class ContainerManager
      *
      * @return Container[]
      */
-    public function findAll(array $params = array())
+    public function findAll(array $params = [])
     {
         $response = $this->client->get('/containers/json', [
             'query' => $params
@@ -133,10 +133,10 @@ class ContainerManager
                 'name' => $container->getName(),
             ],
         ]],
-        array(
+        [
             'body'         => Json::encode($container->getConfig()),
-            'headers'      => array('content-type' => 'application/json'),
-        ));
+            'headers'      => ['content-type' => 'application/json'],
+        ]);
 
         if ($response->getStatusCode() !== "201") {
             throw UnexpectedStatusCodeException::fromResponse($response);
@@ -155,13 +155,13 @@ class ContainerManager
      *
      * @return \Docker\Manager\ContainerManager
      */
-    public function start(Container $container, array $hostConfig = array())
+    public function start(Container $container, array $hostConfig = [])
     {
-        $response = $this->client->post(['/containers/{id}/start', ['id' => $container->getId()]], array(
+        $response = $this->client->post(['/containers/{id}/start', ['id' => $container->getId()]], [
             'body'         => Json::encode($hostConfig),
-            'headers'      => array('content-type' => 'application/json'),
+            'headers'      => ['content-type' => 'application/json'],
             'wait'         => true,
-        ));
+        ]);
 
         if ($response->getStatusCode() !== "204") {
             throw UnexpectedStatusCodeException::fromResponse($response);
@@ -186,7 +186,7 @@ class ContainerManager
      *
      * @return boolean|null Return true when the process want well, false if an error append during the run process, or null when daemon is set to true
      */
-    public function run(Container $container, callable $attachCallback = null, array $hostConfig = array(), $daemon = false, $timeout = null)
+    public function run(Container $container, callable $attachCallback = null, array $hostConfig = [], $daemon = false, $timeout = null)
     {
         $this->create($container);
 
@@ -239,10 +239,10 @@ class ContainerManager
                 'stdout' => $stdout,
                 'stderr' => $stderr,
             ]
-        ]], array(
+        ]], [
             'timeout'  => $timeout !== null ? $timeout : $this->client->getDefaultOption('timeout'),
             'callback' => $callback,
-        ));
+        ]);
 
         if ($response->getStatusCode() !== "200") {
             throw UnexpectedStatusCodeException::fromResponse($response);
@@ -276,15 +276,15 @@ class ContainerManager
                 'stdout' => $stdout,
                 'stderr' => $stderr,
             ]
-        ]], array(
-            'headers' => array(
+        ]], [
+            'headers' => [
                 'Origin' => 'php://docker-php',
                 'Upgrade' => 'websocket',
                 'Connection' => 'Upgrade',
                 'Sec-WebSocket-Version' => '13',
                 'Sec-WebSocket-Key' => base64_encode(uniqid()),
-            ),
-        ));
+            ],
+        ]);
 
         return new InteractiveStream($response->getBody());
     }
@@ -301,9 +301,9 @@ class ContainerManager
      */
     public function wait(Container $container, $timeout = null)
     {
-        $response = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]], array(
+        $response = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]], [
             'timeout' => null === $timeout ? $this->client->getDefaultOption('timeout') : $timeout,
-        ));
+        ]);
 
         if ($response->getStatusCode() !== "200") {
             throw UnexpectedStatusCodeException::fromResponse($response);
@@ -389,7 +389,7 @@ class ContainerManager
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
-        $processes = array();
+        $processes = [];
         $data      = $response->json();
 
         $keys = $data['Titles'];
@@ -459,10 +459,10 @@ class ContainerManager
      */
     public function logs(Container $container, $follow = false, $stdout = false, $stderr = false, $timestamp = false, $tail = "all")
     {
-        $logs = array();
+        $logs = [];
 
         $callback = function ($output, $type) use(&$logs) {
-            $logs[] = array('type' => $type, 'output' => $output);
+            $logs[] = ['type' => $type, 'output' => $output];
         };
 
         $this->client->get(['/containers/{id}/logs{?data*}', [

@@ -30,7 +30,7 @@ class InteractiveStream
     public function write($data)
     {
         $rand  = rand(0, 28);
-        $frame = array(
+        $frame = [
             'fin'      => 1,
             'rsv1'     => 0,
             'rsv2'     => 0,
@@ -40,7 +40,7 @@ class InteractiveStream
             'len'      => strlen($data),
             'mask_key' => substr(md5(uniqid()), $rand, 4),
             'data'     => $data,
-        );
+        ];
 
         if ($frame['mask'] == 1) {
             for ($i = 0; $i < $frame['len']; $i++) {
@@ -102,7 +102,7 @@ class InteractiveStream
             $firstByte = $this->read(1);
         }
 
-        $frame      = array();
+        $frame      = [];
         $firstByte  = ord($firstByte);
         $secondByte = ord($this->read(1));
 

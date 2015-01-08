@@ -173,7 +173,7 @@ class DockerAdapter implements AdapterInterface
 
     private function getResponseWithHeaders($stream)
     {
-        $headers = array();
+        $headers = [];
 
         while (($line = fgets($stream)) !== false) {
             if (rtrim($line) === '') {
@@ -216,10 +216,10 @@ class DockerAdapter implements AdapterInterface
 
         // Attach filter
         if ($useFilter) {
-            stream_filter_append($socket, 'event', STREAM_FILTER_READ, array(
+            stream_filter_append($socket, 'event', STREAM_FILTER_READ, [
                 'emitter' => $emitter,
                 'content_type' => $response->getHeader('Content-Type'),
-            ));
+            ]);
         }
 
         $stream = new Stream($socket);
@@ -289,9 +289,9 @@ class DockerAdapter implements AdapterInterface
         // the stream, write to it again if PHP claims that it's writable, and
         // consider the pipe broken if the write fails.
 
-        $read = array();
-        $write = array($stream);
-        $except = array();
+        $read = [];
+        $write = [$stream];
+        $except = [];
 
         @stream_select($read, $write, $except, 0);
 

@@ -29,12 +29,12 @@ class Container
     /**
      * @var array
      */
-    private $config = array();
+    private $config = [];
 
     /**
      * @var array
      */
-    private $runtimeInformations = array();
+    private $runtimeInformations = [];
 
     /**
      * @var null|integer
@@ -42,19 +42,19 @@ class Container
     private $exitCode = null;
 
     /**
-     * @var Docker\Image
+     * @var Image
      */
     private $image;
 
     /**
      * @var array
      */
-    private $data = array();
+    private $data = [];
 
     /**
      * @param array $config
      */
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
         $this->config = $config;
     }
@@ -249,7 +249,7 @@ class Container
     /**
      * @param integer $memory
      *
-     * @return Docker\Container;
+     * @return Container;
      */
     public function setMemory($memory)
     {
@@ -314,7 +314,7 @@ class Container
     }
 
     /**
-     * @param string|Docker\Image $image
+     * @param string|Image $image
      *
      * @return Container
      */

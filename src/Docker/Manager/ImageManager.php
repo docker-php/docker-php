@@ -28,7 +28,7 @@ class ImageManager
     }
 
     /**
-     * Get all images in docker daemon
+     * Get all images from docker daemon
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
@@ -82,7 +82,7 @@ class ImageManager
      * Get an image from docker daemon
      *
      * @param string $repository Name of image to get
-     * @param string $tag        Tag of the image to get (default to latest)
+     * @param string $tag        Tag of the image to get (default "latest")
      *
      * @return Image
      */
@@ -96,7 +96,7 @@ class ImageManager
     }
 
     /**
-     * Inspect a image
+     * Inspect an image
      *
      * @param \Docker\Image $image
      *

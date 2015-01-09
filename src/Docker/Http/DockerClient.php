@@ -74,13 +74,13 @@ class DockerClient extends Client
             file_put_contents($fullcert, file_get_contents($certfile));
             file_put_contents($fullcert, file_get_contents($keyfile), FILE_APPEND);
 
-            $context = stream_context_create(array(
-                'ssl' => array(
+            $context = stream_context_create([
+                'ssl' => [
                     'cafile' => $cafile,
                     'local_cert' => $fullcert,
                     'peer_name' => $peername,
-                ),
-            ));
+                ],
+            ]);
         }
 
         return new self($config, $entrypoint, $context, $useTls);

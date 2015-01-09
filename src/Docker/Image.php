@@ -24,7 +24,7 @@ class Image
 
     /**
      * @param string $repository Name of the image
-     * @param string $tag        Tag (version) of the image, default to latest
+     * @param string $tag        Tag (version) of the image, default "latest"
      */
     public function __construct($repository = null, $tag = 'latest')
     {

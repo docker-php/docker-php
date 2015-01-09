@@ -9,6 +9,7 @@ use Docker\Manager\ImageManager;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Context\ContextInterface;
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\Stream;
 
 /**
@@ -134,7 +135,7 @@ class Docker
             'nocache' => (integer) !$cache,
             'rm' => (integer) $rm,
         ]]], [
-            'headers'  => array('Content-Type' => 'application/tar'),
+            'headers'  => ['Content-Type' => 'application/tar'],
             'body'     => $content,
             'stream'   => true,
             'callback' => $callback,
@@ -154,7 +155,7 @@ class Docker
      *
      * @see http://docs.docker.io/en/latest/api/docker_remote_api_v1.7/#create-a-new-image-from-a-container-s-changes
      */
-    public function commit(Container $container, $config = array())
+    public function commit(Container $container, $config = [])
     {
         if (isset($config['run'])) {
             $config['run'] = json_encode($config['run']);

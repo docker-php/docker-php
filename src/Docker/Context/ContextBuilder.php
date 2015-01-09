@@ -19,12 +19,12 @@ class ContextBuilder
     /**
      * @var array
      */
-    private $commands = array();
+    private $commands = [];
 
     /**
      * @var array
      */
-    private $files = array();
+    private $files = [];
 
     /**
      * @var \Symfony\Component\Filesystem\Filesystem

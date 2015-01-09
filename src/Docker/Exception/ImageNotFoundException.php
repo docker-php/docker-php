@@ -16,6 +16,6 @@ class ImageNotFoundException extends BaseException
      */
     public function __construct($imageId, BaseException $previous = null)
     {
-        parent::__construct(sprintf('Image not found: "'.$imageId.'"'), 404, $previous);
+        parent::__construct(sprintf('Image not found: "%s"', $imageId), 404, $previous);
     }
 }

@@ -23,7 +23,7 @@ class OutputEvent implements EventInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isPropagationStopped()
     {
@@ -31,7 +31,7 @@ class OutputEvent implements EventInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function stopPropagation()
     {

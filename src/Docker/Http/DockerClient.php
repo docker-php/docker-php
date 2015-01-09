@@ -24,6 +24,10 @@ class DockerClient extends Client
             $entrypoint = getenv('DOCKER_HOST') ? getenv('DOCKER_HOST') : 'unix:///var/run/docker.sock';
         }
 
+        if (is_array($context)) {
+            $context = stream_context_create($context);
+        }
+
         if (!isset($config['adapter'])) {
             if (isset($config['message_factory'])) {
                 $messageFactory = $config['message_factory'];
@@ -87,26 +91,6 @@ class DockerClient extends Client
                     'peer_name' => $peername,
                 ),
             ));
-        }
-
-        return new self($config, $entrypoint, $context, $useTls);
-    }
-
-    /**
-     * Create a docker client with context configuration
-     *
-     * @param array  $config     Config for http client (guzzle)
-     * @param string $entrypoint Docker entrypoint
-     * @param array  $context    Stream context options
-     * @param bool   $useTls     Use tls
-     *
-     * @return DockerClient
-     *
-     */
-    public static function createWithContext(array $config = [], $entrypoint = null, $context = null, $useTls = false)
-    {
-        if ($context) {
-            $context = stream_context_create($context);
         }
 
         return new self($config, $entrypoint, $context, $useTls);

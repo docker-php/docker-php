@@ -104,15 +104,15 @@ class ImageManager
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      * @throws \GuzzleHttp\Exception\RequestException
      *
-     * @return ImageManager
+     * @return @return json data from docker inspect
      */
     public function inspect(Image $image)
     {
         try {
-            $response = $this->client->get(['/images/{id}/json', ['id' => $image->__toString()]]);
+            $response = $this->client->get(['/images/{id}/json', ['id' => $image->getID()]]);
         } catch (RequestException $e) {
             if ($e->hasResponse() && $e->getResponse()->getStatusCode() == "404") {
-                throw new ImageNotFoundException($image->__toString(), $e);
+                throw new ImageNotFoundException('repo:tag=' . $image->__toString() . 'id=' . $image->getID(), $e);
             }
 
             throw $e;

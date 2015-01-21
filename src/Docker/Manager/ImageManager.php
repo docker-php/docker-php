@@ -109,10 +109,17 @@ class ImageManager
     public function inspect(Image $image)
     {
         try {
-            $response = $this->client->get(['/images/{id}/json', ['id' => $image->getID()]]);
+            # Prefer the unique hash id for searching
+            if (null != $image->getID()) {
+              $id=$image->getID();
+            }
+            else {
+              $id=$image->__toString();
+            }
+            $response = $this->client->get(['/images/{id}/json', ['id' => $id]]);
         } catch (RequestException $e) {
             if ($e->hasResponse() && $e->getResponse()->getStatusCode() == "404") {
-                throw new ImageNotFoundException('repo:tag=' . $image->__toString() . 'id=' . $image->getID(), $e);
+                throw new ImageNotFoundException($id, $e);
             }
 
             throw $e;

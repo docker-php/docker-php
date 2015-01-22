@@ -109,12 +109,12 @@ class ImageManager
     public function inspect(Image $image)
     {
         try {
-            # Prefer the unique hash id for searching
-            if (null != $image->getID()) {
-              $id=$image->getID();
-            }
-            else {
-              $id=$image->__toString();
+            # Images need not have a name and tag,(__toString() may return ':')
+            # so prefer an id hash as the key
+            if (null != $image->getId()) {
+              $id = $image->getId();
+            } else {
+              $id = $image->__toString();
             }
             $response = $this->client->get(['/images/{id}/json', ['id' => $id]]);
         } catch (RequestException $e) {

@@ -104,7 +104,7 @@ class ImageManager
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      * @throws \GuzzleHttp\Exception\RequestException
      *
-     * @return @return json data from docker inspect
+     * @return json data from docker inspect
      */
     public function inspect(Image $image)
     {

@@ -90,7 +90,8 @@ class ImageManager
     {
         $image = new Image($repository, $tag);
 
-        $this->inspect($image);
+        $data = $this->inspect($image);
+        $image->setId($data['Id']);
 
         return $image;
     }
@@ -129,12 +130,7 @@ class ImageManager
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
-        $data = $response->json();
-
-        $image->setId($data['Id']);
-        // @TODO Add extra info on image
-
-        return $data;
+        return $response->json();
     }
 
     /**

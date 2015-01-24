@@ -98,7 +98,7 @@ class ContainerManager
      * @throws \GuzzleHttp\Exception\RequestException
      * @throws \Docker\Exception\ContainerNotFoundException
      *
-     * @return ContainerManager
+     * @return return json data from docker inspect
      */
     public function inspect(Container $container)
     {

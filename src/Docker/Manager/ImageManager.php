@@ -90,7 +90,8 @@ class ImageManager
     {
         $image = new Image($repository, $tag);
 
-        $this->inspect($image);
+        $data = $this->inspect($image);
+        $image->setId($data['Id']);
 
         return $image;
     }
@@ -104,15 +105,24 @@ class ImageManager
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      * @throws \GuzzleHttp\Exception\RequestException
      *
-     * @return ImageManager
+     * @return json data from docker inspect
      */
     public function inspect(Image $image)
     {
         try {
-            $response = $this->client->get(['/images/{id}/json', ['id' => $image->__toString()]]);
+            # Images need not have a name and tag,(__toString() may return ':')
+            # so prefer an id hash as the key
+            if (null != $image->getId()) {
+              $id = $image->getId();
+            } else {
+              $id = $image->__toString();
+            }
+
+            $response = $this->client->get(['/images/{id}/json', ['id' => $id]]);
+
         } catch (RequestException $e) {
             if ($e->hasResponse() && $e->getResponse()->getStatusCode() == "404") {
-                throw new ImageNotFoundException($image->__toString(), $e);
+                throw new ImageNotFoundException($id, $e);
             }
 
             throw $e;
@@ -122,12 +132,7 @@ class ImageManager
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
-        $data = $response->json();
-
-        $image->setId($data['Id']);
-        // @TODO Add extra info on image
-
-        return $data;
+        return $response->json();
     }
 
     /**

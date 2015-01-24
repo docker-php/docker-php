@@ -7,6 +7,12 @@ use GuzzleHttp\Client;
 
 class DockerClient extends Client
 {
+    /**
+     * @param array  $config     Config for http client (guzzle)
+     * @param string $entrypoint Docker entrypoint
+     * @param array  $context    Stream context options
+     * @param bool   $useTls     Use tls
+     */
     public function __construct(array $config = [], $entrypoint = null, $context = null, $useTls = false)
     {
         if (null === $entrypoint) {
@@ -16,6 +22,10 @@ class DockerClient extends Client
             }
 
             $entrypoint = getenv('DOCKER_HOST') ? getenv('DOCKER_HOST') : 'unix:///var/run/docker.sock';
+        }
+
+        if (is_array($context)) {
+            $context = stream_context_create($context);
         }
 
         if (!isset($config['adapter'])) {

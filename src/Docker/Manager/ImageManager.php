@@ -4,10 +4,10 @@ namespace Docker\Manager;
 
 use Docker\Exception\ImageNotFoundException;
 use Docker\Exception\UnexpectedStatusCodeException;
-use Docker\Http\Stream\StreamCallbackInterface;
 use Docker\Image;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Message\Response;
 
 /**
  * Docker\ImageManager
@@ -36,29 +36,20 @@ class ImageManager
      */
     public function findAll()
     {
+        /** @var Response $response */
         $response = $this->client->get('/images/json');
 
         if ($response->getStatusCode() !== "200") {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
-        $coll   = [];
-        $stream = $response->getBody();
-        $imageString = "";
-
-        if ($stream instanceof StreamCallbackInterface) {
-            $stream->readWithCallback(function ($output) use (&$imageString) {
-                $imageString .= $output;
-            });
-        } else {
-            $imageString = $response->getBody()->__toString();
-        }
-
-        $images = json_decode($imageString, true);
+        $images = $response->json();
 
         if (!is_array($images)) {
             return [];
         }
+
+        $coll = [];
 
         foreach ($images as $data) {
             $image = new Image();
@@ -105,7 +96,7 @@ class ImageManager
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      * @throws \GuzzleHttp\Exception\RequestException
      *
-     * @return json data from docker inspect
+     * @return array json data from docker inspect
      */
     public function inspect(Image $image)
     {

@@ -1,0 +1,13 @@
+site_name: Docker PHP
+site_url:  http://docker-php.readthedocs.org/
+site_description: A Docker client in PHP
+repo_url: https://github.com/stage1/docker-php
+
+pages:
+  - [index.md, Home]
+  - [installation.md, 'Docker PHP', Installation]
+  - [basic.md, 'Docker PHP', Basic Usage]
+  - [image/build.md, Images, Build an image]
+  - [image/pull.md, Images, Pulling an image]
+  - [image/find.md, Images, Find an image]
+  - [container.md, Containers]

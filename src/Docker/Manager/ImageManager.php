@@ -163,17 +163,17 @@ class ImageManager
     }
 
     /**
-     * Delete an image from docker daemon
+     * Remove an image from docker daemon
      *
-     * @param Image   $image   Image to delete
-     * @param boolean $force   Force deletion of image (default false)
-     * @param boolean $noprune Do not delete parent images (default false)
+     * @param Image   $image   Image to remove
+     * @param boolean $force   Force removal of image (default false)
+     * @param boolean $noprune Do not remove parent images (default false)
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return ImageManager
      */
-    public function delete(Image $image, $force = false, $noprune = false)
+    public function remove(Image $image, $force = false, $noprune = false)
     {
         $response = $this->client->delete(['/images/{image}?force={force}&noprune={noprune}', [
             'image'   => $image->__toString(),

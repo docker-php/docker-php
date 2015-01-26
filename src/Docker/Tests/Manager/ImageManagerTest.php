@@ -37,10 +37,10 @@ class ImageManagerTest extends TestCase
     public function testPull()
     {
         $manager = $this->getManager();
-        $image = $manager->pull('ubuntu', 'precise');
+        $image = $manager->pull('ubuntu', 'vivid');
 
         $this->assertEquals('ubuntu', $image->getRepository());
-        $this->assertEquals('precise', $image->getTag());
+        $this->assertEquals('vivid', $image->getTag());
         $this->assertNotNull($image->getId());
     }
 
@@ -56,7 +56,7 @@ class ImageManagerTest extends TestCase
     {
         $manager = $this->getManager();
 
-        $image = $manager->find('ubuntu', 'precise');
+        $image = $manager->find('ubuntu', 'vivid');
         $manager->delete($image, true);
 
         $this->setExpectedException('\\Docker\\Exception\\ImageNotFoundException', 'Image not found');

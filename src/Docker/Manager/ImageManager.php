@@ -153,7 +153,11 @@ class ImageManager
         }
 
         $image = new Image($name, $tag);
-        $this->inspect($image);
+        $data = $this->inspect($image);
+
+        if (!$image->getId()) {
+            $image->setId($data['Id']);
+        }
 
         return $image;
     }

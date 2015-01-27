@@ -42,6 +42,41 @@ services:
 
 ```
 
+**Example configuration:** connecting to your local boot2docker machine with TLS enabled (default)
+
+Create a combined key file first:
+
+```sh
+cd ~/.boot2docker/certs/boot2docker-vm/
+cat key.pem > comb.pem
+cat cert.pem >> comb.pem
+cat ca.pem >> comb.pem
+```
+
+
+```yml
+parameters:
+    docker_entrypoint: 'tcp://192.168.59.103:2376'
+    docker_cert_path: '/Users/username/.boot2docker/certs/boot2docker-vm'
+
+services:
+    docker.client:
+        class: Docker\Http\DockerClient
+        arguments:
+            - []
+            - %docker_entrypoint%
+            -
+                ssl:
+                    local_cert: '%docker_cert_path%/comb.pem'
+            - true
+    docker:
+        class: Docker\Docker
+        arguments:
+            - @docker.client
+
+```
+
+
 Docker-PHP is now available as `docker`. If you extend the default Controller from the Symfony FrameworkBundle you can write:
 
 ```php

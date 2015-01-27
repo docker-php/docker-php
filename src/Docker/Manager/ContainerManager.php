@@ -10,6 +10,13 @@ use Docker\Exception\ContainerNotFoundException;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 
+# https://github.com/guzzle/log-subscriber
+use GuzzleHttp\Subscriber\Log\LogSubscriber;
+use GuzzleHttp\Subscriber\Log\Formatter;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+
 /**
  * Docker\Manager\ContainerManager
  */
@@ -208,6 +215,72 @@ class ContainerManager
 
         return null;
     }
+
+// XX
+    /**
+     * Execute a command in a running container
+     *
+     * @param \Docker\Container $container
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return InteractiveStream
+     */
+    public function exec(Container $container)
+    {
+      $log = new Logger('log');
+      // todo: Log the full request and response messages to stdout
+      $subscriber = new LogSubscriber(null, Formatter::DEBUG);
+      #$log->pushHandler(new StreamHandler('/tmp/requests.log'));
+      #$subscriber = new LogSubscriber($log);
+      $this->client->getEmitter()->attach($subscriber);
+
+        $body = [
+            'AttachStdin'  => false,
+            'AttachStdout' => true,
+            'AttachStderr' => true,
+            'Tty'          => false,
+            'Cmd' => [ '/bin/date' ]
+            #'Cmd' => [ '/bin/bash', '-c', "ls /var/www/html" ]
+        ];
+        $response = $this->client->post(['/containers/{id}/exec', ['id' => $container->getId()]], [
+            'body'         => Json::encode($body),
+            'headers'      => ['content-type' => 'application/json'],
+            'wait'         => true,
+        ]);
+
+        if ($response->getStatusCode() !== "201") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+// why is the body empty at this point? Status code of 203 is fine, and content length is 74
+print_r('Status code=' . $response->getStatusCode(). "\n");
+
+// why does the follwoing fila with:
+// PHP Fatal error:  Call to undefined method GuzzleHttp\Message\Response::getContentLength() 
+// see also http://api.guzzlephp.org/class-Guzzle.Http.Message.Response.html
+//print_r('getContentLength=' . $response->getContentLength(). "\n");
+
+print_r('Response string=' . $response->__toString() . "\n");
+$body = json_decode($response->getBody(true));
+print_r('Body=' . $body . "\n");
+print_r('>>>> ');
+#$json=$response->json();
+#var_dump($json);
+/*
+        $execid = $response->json()['Id'];
+   print_r($execid);
+        $config = ['Detach' => false, 'Tty' => false, ];
+        $response = $this->client->post(['/containers/exec/{id}/start', ['id' => $execid]], [
+            'body'         => Json::encode($config),
+            'headers'      => ['content-type' => 'application/json'],
+            'wait'         => true,
+        ]);
+        print_r($response->getBody()->getContents());
+
+        return new InteractiveStream($response->getBody());
+*/
+    }
+
 
     /**
      * Attach a container to a callback to read logs

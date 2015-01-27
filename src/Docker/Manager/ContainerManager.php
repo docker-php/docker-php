@@ -10,12 +10,6 @@ use Docker\Exception\ContainerNotFoundException;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 
-# https://github.com/guzzle/log-subscriber
-use GuzzleHttp\Subscriber\Log\LogSubscriber;
-use GuzzleHttp\Subscriber\Log\Formatter;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-
 
 /**
  * Docker\Manager\ContainerManager
@@ -228,13 +222,6 @@ class ContainerManager
      */
     public function exec(Container $container)
     {
-      $log = new Logger('log');
-      // todo: Log the full request and response messages to stdout
-      $subscriber = new LogSubscriber(null, Formatter::DEBUG);
-      #$log->pushHandler(new StreamHandler('/tmp/requests.log'));
-      #$subscriber = new LogSubscriber($log);
-      $this->client->getEmitter()->attach($subscriber);
-
         $body = [
             'AttachStdin'  => false,
             'AttachStdout' => true,

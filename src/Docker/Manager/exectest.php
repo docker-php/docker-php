@@ -5,11 +5,6 @@
 chdir('/var/www/html/sites/all/libraries/composer/');
 require_once 'autoload.php';
 
-# (why do these not autoload)
-require_once "/var/www/html/sites/all/libraries/composer/guzzlehttp/log-subscriber/src/LogSubscriber.php";
-require_once "/var/www/html/sites/all/libraries/composer/guzzlehttp/log-subscriber/src/Formatter.php";
-require_once "/var/www/html/sites/all/libraries/composer/guzzlehttp/log-subscriber/src/SimpleLogger.php";
-
 $client = new Docker\Http\DockerClient(array(), 'unix:////tmp/socat.sock'); # /var/run/docker.sock
 $docker = new Docker\Docker($client);
 $manager = $docker->getContainerManager();

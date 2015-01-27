@@ -242,7 +242,7 @@ class ContainerManager
 // why is the body empty at this point? Status code of 203 is fine, and content length is 74
 print_r('Status code=' . $response->getStatusCode(). "\n");
 
-// why does the follwoing fila with:
+// why does the following fail with:
 // PHP Fatal error:  Call to undefined method GuzzleHttp\Message\Response::getContentLength() 
 // see also http://api.guzzlephp.org/class-Guzzle.Http.Message.Response.html
 //print_r('getContentLength=' . $response->getContentLength(). "\n");
@@ -251,6 +251,7 @@ print_r('Response string=' . $response->__toString() . "\n");
 $body = json_decode($response->getBody(true));
 print_r('Body=' . $body . "\n");
 print_r('>>>> ');
+
 #$json=$response->json();
 #var_dump($json);
 /*

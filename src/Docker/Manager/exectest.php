@@ -12,12 +12,19 @@ $manager = $docker->getContainerManager();
 try {
   $lookfor='vanilla2';
   $container = $manager->find($lookfor);
-  $response = $manager->exec($container);
+  $foo = $manager->exec($container);
+#print_r($foo);
 
 } catch (Exception $e) {
-  #echo $e->getMessage();
+  echo $e->getMessage();
   #print_r($e->getResponse()->info);
   #print_r($e->getResponse()->__toString());
+  
+  #echo $e->getRequest();
+  #if ($e->hasResponse()) {
+  #  print_r($e->getResponse()->getStatusCode() . ' ' . $e->getResponse()->getReasonPhrase());
+  # echo $e->getResponse();
+  #}
 }
 
 print_r("\n");

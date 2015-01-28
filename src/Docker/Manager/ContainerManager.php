@@ -172,6 +172,32 @@ class ContainerManager
         return $this;
     }
 
+
+    /**
+     * Copy files or folders from a container
+     *
+     * @param \Docker\Container $container
+     * @param                   $resource file or folder name
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return tarfile stream
+     */
+    public function copy(Container $container, $resource)
+    {
+        $response = $this->client->post(['/containers/{id}/copy', ['id' => $container->getId()]], [
+            'body'         => Json::encode(["Resource" => "$resource"]),
+            'headers'      => ['content-type' => 'application/json'],
+        ]);
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $response->getBody();
+    }
+
+
     /**
      * Run a container (create, attach, start and wait)
      *

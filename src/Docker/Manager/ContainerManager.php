@@ -10,7 +10,6 @@ use Docker\Exception\ContainerNotFoundException;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 
-
 /**
  * Docker\Manager\ContainerManager
  */
@@ -212,6 +211,7 @@ class ContainerManager
 
     /**
      * Execute a command in a running container
+     * i.e. create an executive, which will be run by execstart()
      *
      * @param \Docker\Container     $container
      * @param array    $cmd          command to run
@@ -242,11 +242,14 @@ class ContainerManager
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
-       return $response->json()['Id'];
+      return $response->json()['Id'];
     }
 
     /**
-     * Start an executive  defined from exec()
+     * Start an executive defined from exec()
+     * This can be resude several times, so if the command /bin/date in defined in exec()
+     * execstart() on that ID will return a different value each time.
+     * todo: how are instances created by exec() and used by execstart() removed/cleanedup?
      *
      * @param string   $id       identifier from exec()
      * @param boolean  $detach
@@ -255,7 +258,6 @@ class ContainerManager
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return Guzzle Stream
-     * todo: how are instances created by exec() and used by execstart() removed/cleanedup?
      */
 
     public function execstart($execid, $detach = false, $tty = false)  

@@ -10,6 +10,7 @@ use Docker\Exception\ContainerNotFoundException;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 
+
 /**
  * Docker\Manager\ContainerManager
  */
@@ -208,6 +209,88 @@ class ContainerManager
 
         return null;
     }
+
+// XX
+    /**
+     * Execute a command in a running container
+     *
+     * @param \Docker\Container $container
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return InteractiveStream
+     */
+    public function exec(Container $container)
+    {
+
+
+        $body = [
+            'AttachStdin'  => false,
+            'AttachStdout' => true,
+            'AttachStderr' => true,
+            'Tty'          => false,
+            'Cmd' => [ '/bin/date' ]
+            #'Cmd' => [ '/bin/bash', '-c', "ls /var/www/html" ]
+        ];
+/*
+        $response = $this->client->post(['/containers/{id}/exec', ['id' => $container->getId()]], [
+            'body'         => Json::encode($body),
+            #'json'         => $body,
+            'headers'      => ['content-type' => 'application/json'],
+            'wait'         => true,
+        ]);
+*/
+// test: do it directly with guzzle
+$client = new HttpClient();
+#$response = $client->post(['unix:////tmp/socat.sock/containers/{id}/exec', ['id' => $container->getId()]], [
+$response = $client->post(['http://195.176.209.22:2375/containers/{id}/exec', ['id' => $container->getId()]], [
+            'body'         => Json::encode($body),
+            'headers'      => ['content-type' => 'application/json'],
+        ]);
+
+        if ($response->getStatusCode() !== "201") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+// why is the body empty at this point? Status code of 201 is fine, and content length is 74
+print_r('Status code=' . $response->getStatusCode(). "\n");
+print_r('Content-Length=' . $response->getHeader('Content-Length'). "\n");
+#$body = json_decode($response->getBody(true));
+$body = $response->getBody();
+print_r('Body=<' . $body . ">\n");
+print_r($response->json()['Id']);
+
+#print_r('Response string=<' . $response->__toString() . ">\n");
+print_r('>>>> ');
+
+// why does the following fail, maybe a guzzle 4 limitation but doc is for 5?
+// PHP Fatal error:  Call to undefined method GuzzleHttp\Message\Response::getContentLength() 
+// see also http://api.guzzlephp.org/class-Guzzle.Http.Message.Response.html
+//print_r('getContentLength=' . $response->getContentLength(). "\n");
+
+
+/*
+        //$execid = $response->json()['Id'];
+#lets manually give an ID to test. Turns out that the body is empty too!
+# (event those sniffing with "socat" shows Content-Length: 28 and the date string.
+$execid = "2f0c0dd8b9d91ec8b7ca4bfe06b4ce3cee667017c520f701f5bfc761b44895a1";
+#print_r($execid);
+        $body = ['Detach' => false, 'Tty' => false ];
+        $response = $this->client->post(['/exec/{id}/start', ['id' => $execid]], [
+            'body'         => Json::encode($body),
+            'headers'      => ['content-type' => 'application/json'],
+            'wait'         => true,
+        ]);
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+        print_r('Body=<' . $response->getBody(true) . ">\n");
+        print_r('Response string=<' . $response->__toString() . ">\n");
+
+        #return new InteractiveStream($response->getBody());
+        return new $response->getBody();
+*/
+    }
+
 
     /**
      * Attach a container to a callback to read logs

@@ -204,3 +204,41 @@ $ports->add(42);
 
 $container->setExposedPorts($ports);
 ```
+
+## Exec: Run a process within an existing running container.
+
+Running a process inside a running container is done in two steps: create an exec instance (identified by a hash value) and starting that instance (and then reading the returned data).
+Example: connect to the container called 'vanilla2', create an exec for 'ls /var/www/html' (within a bash shell) and run it:
+
+```php
+<?php
+
+$containerName = 'vanilla2';
+$container = $manager->find($containerName);
+$execid = $manager->exec($container, ["/bin/bash", "-c", "ls /var/www/html"]);
+$response = $manager->execstart($execid);
+
+print_r("Result= <" . $response->getBody()->__toString() . ">\n");
+```
+
+Note that after an exec has been created it can be run several times, e.g. an exec for '/bin/date' would return a different value each time execstart() is called.
+
+You can also stream the result by using a callback during the execstart call :
+
+```php
+<?php
+
+$logger = new Psr\Log();
+
+$containerName = 'vanilla2';
+$container = $manager->find($containerName);
+$execid = $manager->exec($container, ["/bin/bash", "-c", "ls /var/www/html"]);
+
+$response = $manager->execstart($execid, function ($log, $type) use($logger) {
+	// Log output in real time
+	$logger->info($log, array('type' => $type));
+});
+
+//Response stream is never read you need to simulate a wait in order to get output
+$response->getBody()->getContents();
+```

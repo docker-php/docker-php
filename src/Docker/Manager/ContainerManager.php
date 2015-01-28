@@ -10,6 +10,7 @@ use Docker\Exception\ContainerNotFoundException;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 
+
 /**
  * Docker\Manager\ContainerManager
  */
@@ -208,6 +209,69 @@ class ContainerManager
 
         return null;
     }
+
+    /**
+     * Execute a command in a running container
+     *
+     * @param \Docker\Container     $container
+     * @param array    $cmd          command to run
+     * @param boolean  $attachstdin  
+     * @param boolean  $attachstdout 
+     * @param boolean  $attachstderr 
+     * @param integer  $tty  
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return ID of the executive
+     */
+    public function exec(Container $container, array $cmd = [], $attachstdin = false, $attachstdout = true, $attachstderr = true, $tty = false)
+    {
+        $body = [
+            'AttachStdin'  => $attachstdin,
+            'AttachStdout' => $attachstdout,
+            'AttachStderr' => $attachstderr,
+            'Tty'          => $tty,
+            'Cmd' => $cmd
+        ];
+        $response = $this->client->post(['/containers/{id}/exec', ['id' => $container->getId()]], [
+            'body'         => Json::encode($body),
+            'headers'      => ['content-type' => 'application/json'],
+        ]);
+
+        if ($response->getStatusCode() !== "201") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+       return $response->json()['Id'];
+    }
+
+    /**
+     * Start an executive  defined from exec()
+     *
+     * @param string   $id       identifier from exec()
+     * @param boolean  $detach
+     * @param boolean  $tty  
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return Guzzle Stream
+     * todo: how are instances created by exec() and used by execstart() removed/cleanedup?
+     */
+
+    public function execstart($execid, $detach = false, $tty = false)  
+    {
+        $body = ['Detach' => $detach, 'Tty' => $tty ];
+        $response = $this->client->post(['/exec/{id}/start', ['id' => $execid]], [
+            'body'         => Json::encode($body),
+            'headers'      => ['content-type' => 'application/json'],
+        ]);
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $response->getBody();
+    }
+
 
     /**
      * Attach a container to a callback to read logs

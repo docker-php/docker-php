@@ -190,17 +190,17 @@ class ImageManager
     }
 
     /**
-     * Delete multiple images from docker daemon
+     * Remove multiple images from docker daemon
      *
-     * @param Image[]|array $images  Images to delete
-     * @param boolean       $force   Force deletion of image (default false)
-     * @param boolean       $noprune Do not delete parent images (default false)
+     * @param Image[]|array $images  Images to remove
+     * @param boolean       $force   Force removal of image (default false)
+     * @param boolean       $noprune Do not remove parent images (default false)
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return ImageManager
      */
-    public function deleteImages(array $images, $force = false, $noprune = false)
+    public function removeImages(array $images, $force = false, $noprune = false)
     {
         foreach ($images as $image) {
             if (!$image instanceof Image) {
@@ -210,7 +210,7 @@ class ImageManager
                 $image->setId($imageId);
             }
 
-            $this->delete($image, $force, $noprune);
+            $this->remove($image, $force, $noprune);
         }
 
         return $this;

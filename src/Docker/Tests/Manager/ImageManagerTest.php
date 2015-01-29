@@ -63,6 +63,23 @@ class ImageManagerTest extends TestCase
         $manager->inspect($image);
     }
 
+    public function testRemoveImages()
+    {
+        $containers = ['ubuntu:precise', '69c02692b0c1'];
+        $manager = $this
+            ->getMockBuilder('\Docker\Manager\ImageManager')
+            ->setMethods(['remove'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $manager->expects($this->exactly(2))
+            ->method('remove')
+            ->with($this->isInstanceOf('\Docker\Image'), false, false)
+            ->will($this->returnSelf());
+
+        $manager->removeImages($containers);
+    }
+
     public function testSearch()
     {
         $manager = $this->getManager();

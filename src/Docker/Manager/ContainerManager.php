@@ -369,7 +369,7 @@ class ContainerManager
     }
 
     /**
-     * Delete multiple containers from docker server
+     * Remove multiple containers from docker server
      *
      * @param \Docker\Container[]|array $containers
      * @param boolean                   $volumes

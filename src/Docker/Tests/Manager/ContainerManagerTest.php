@@ -453,7 +453,7 @@ class ContainerManagerTest extends TestCase
         $manager->stop($container);
         $manager->remove($container);
 
-        $this->getDocker()->getImageManager()->delete($container->getImage());
+        $this->getDocker()->getImageManager()->remove($container->getImage());
 
         $this->assertCount(2, $processes);
         $this->assertContains('test', implode("", $logs));
@@ -481,7 +481,7 @@ class ContainerManagerTest extends TestCase
         }, $logs);
 
         $manager->remove($container);
-        $this->getDocker()->getImageManager()->delete($container->getImage());
+        $this->getDocker()->getImageManager()->remove($container->getImage());
 
         $this->assertContains('HUP', implode("", $logs));
     }

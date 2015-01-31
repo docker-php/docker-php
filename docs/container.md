@@ -186,8 +186,8 @@ $container->setExposedPorts($ports);
 
 ## Exec: running command within an existing running container.
 
-Running a command inside an running container is done in two steps: create an exec instance (identified by a hash value) and starting that instance and reading the returned data.
-Example: connect to the contained called 'vanilla2', create an exec for 'ls /var/www/html' (within a bash shell) and run it:
+Running a command inside a running container is done in two steps: create an exec instance (identified by a hash value) and starting that instance (and then reading the returned data).
+Example: connect to the container called 'vanilla2', create an exec for 'ls /var/www/html' (within a bash shell) and run it:
 ```php
 <?php
 

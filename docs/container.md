@@ -35,6 +35,7 @@ You can run a container as a daemon (effectively making the `run()` method non-b
 
 $manager->run($container, $callback, [], true);
 ```
+
 ## Creating, starting, attaching and waiting for containers
 
 The `run()` command is actually a composite of `create()`, `start()`, `attach` and `wait`, just like the `docker run` CLI command that you might be used to. You can use these methods to gain more fine-grained control over your containers' workflow.
@@ -150,6 +151,27 @@ $manager
     ->remove($container);
 ```
 
+The `remove` method has a second argument (defaults to `false`) `$volumes` which allows you to remove the volumes associated with the container by setting it to `true`.
+
+
+```php
+$manager->remove($container, true);
+```
+
+
+## Removing multiple containers
+
+You can remove multiple containers at once by passing an array of `Docker\Container` instances or strings (container id or container name) to the `removeContainers()` method.
+
+```php
+$manager->removeContainers([$container, '889ceddbb88e', 'angry_goodall']);
+```
+
+Same as the `remove` method it has a second argument (defaults to `false`) `$volumes` which allows you to remove the volumes associated with the containers by setting it to `true`.
+
+Keep in mind that all of the containers have to be stopped before they can be removed.
+
+
 ## The Docker\Container class
 
 The `Docker\Container` class is designed to help you manipulate containers. It has a few helper methods to set common runtime options.
@@ -164,7 +186,6 @@ $container->setEnv(['SYMFONY_ENV=prod', 'FOO=bar']);
 $container->setCmd(['/bin/echo', 'Hello Docker!']);
 
 $manager->run($container);
-
 
 printf('Container\'s id is %s', $container->getId());
 printf('Container\'s name is $s', $container->getName());

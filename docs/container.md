@@ -1,29 +1,4 @@
-# Docker-PHP
-
-* [Connecting to Docker](#connecting-to-docker)
-* [Running a container](#running-a-container)
- * [Streaming a running container's output](#streaming-a-running-containers-output)
- * [Running a container as a daemon](#running-a-container-as-a-daemon)
-* [Creating, starting, attaching and waiting for containers](#creating-starting-attaching-and-waiting-for-containers)
-* [Mapping a container's ports](#mapping-a-containers-ports)
-* [Finding and inspecting Containers](#finding-and-inspecting-containers)
-* [Stopping and removing containers](#stopping-and-removing-containers)
-* [The Docker\Container class](#the-dockercontainer-class)
- * [Configuring exposed ports](#configuring-exposed-ports)
-
-## Connecting to Docker
-
-By default, Docker-PHP uses the `DOCKER_HOST` environment variable to connect to a running `dockerd`, if not set it will use `unix:///var/run/docker.sock`.
-You can, however, connect to an arbitrary server by passing an instance of the transport entrypoint `Docker\Http\Client`:
-
-```php
-<?php
-
-$client = new Docker\Http\DockerClient(array(), 'tcp://127.0.0.1');
-$docker = new Docker\Docker($client);
-```
-
-`DockerClient` is in fact a Guzzle Client with some default options.
+# Dealing with containers
 
 ## Running a container
 

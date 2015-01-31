@@ -395,7 +395,7 @@ class ContainerManager
     }
 
     /**
-     * Delete a container from docker server
+     * Remove a container from docker server
      *
      * @param \Docker\Container $container
      * @param boolean           $volumes

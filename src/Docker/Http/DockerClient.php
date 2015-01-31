@@ -65,7 +65,7 @@ class DockerClient extends Client
      */
     public static function createWithEnv(array $config = [])
     {
-        $entrypoint = getenv('DOCKER_HOST') ? getenv('DOCKER_HOST') : 'unix:///var/run/docker/sock';
+        $entrypoint = getenv('DOCKER_HOST') ? getenv('DOCKER_HOST') : 'unix:///var/run/docker.sock';
         $context    = null;
         $useTls     = false;
 

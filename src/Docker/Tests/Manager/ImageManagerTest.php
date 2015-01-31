@@ -52,12 +52,12 @@ class ImageManagerTest extends TestCase
         $this->assertGreaterThanOrEqual(1, count($manager->findAll()));
     }
 
-    public function testDelete()
+    public function testRemove()
     {
         $manager = $this->getManager();
 
         $image = $manager->find('ubuntu', 'vivid');
-        $manager->delete($image, true);
+        $manager->remove($image, true);
 
         $this->setExpectedException('\\Docker\\Exception\\ImageNotFoundException', 'Image not found');
         $manager->inspect($image);

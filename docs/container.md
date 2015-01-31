@@ -1,4 +1,4 @@
-# Dealing with containers
+## Dealing with containers
 
 ## Running a container
 
@@ -171,6 +171,23 @@ printf('Container\'s name is $s', $container->getName());
 printf('Container\'s exit code is %d', $container->getExitCode());
 ```
 
+## Copy files or folders from a container
+
+File and folders can be downloaded as a tar file from the container. The copy() function allows a folder/file to be downloaded as tar stream and copyToDisk() saves the result as a tar file.
+In the following example the /etc/default folder from a ubuntu container called vanilla2 is downloaded to /tmp/resource.tar.
+
+```php
+<?php
+
+$lookfor = 'vanilla2';      
+$resource = '/etc/default'; 
+$tarFileName  = "/tmp/resource.tar";  
+
+$container = $manager->find($lookfor);
+$manager->copyToDisk($container, $resource, $tarFileName);
+```
+
+
 ### Configuring exposed ports
 
 Use the `Docker\PortCollection` class to manage exposed ports:
@@ -183,3 +200,4 @@ $ports->add(42);
 
 $container->setExposedPorts($ports);
 ```
+

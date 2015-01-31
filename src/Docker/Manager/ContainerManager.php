@@ -222,7 +222,7 @@ class ContainerManager
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
-     * @return ID of the executive
+     * @return string ID of the executive
      */
     public function exec(Container $container, array $cmd = [], $attachstdin = false, $attachstdout = true, $attachstderr = true, $tty = false)
     {
@@ -242,7 +242,7 @@ class ContainerManager
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
-      return $response->json()['Id'];
+        return $response->json()['Id'];
     }
 
     /**
@@ -251,13 +251,13 @@ class ContainerManager
      * execstart() on that ID will return a different value each time.
      * todo: how are instances created by exec() and used by execstart() removed/cleanedup?
      *
-     * @param string   $id       identifier from exec()
+     * @param string   $execid       identifier from exec()
      * @param boolean  $detach
      * @param boolean  $tty  
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
-     * @return Guzzle Stream
+     * @return \GuzzleHttp\Stream\Stream
      */
 
     public function execstart($execid, $detach = false, $tty = false)  

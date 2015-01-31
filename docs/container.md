@@ -1,4 +1,4 @@
-## Dealing with containers
+# Dealing with containers
 
 ## Running a container
 
@@ -200,4 +200,3 @@ $ports->add(42);
 
 $container->setExposedPorts($ports);
 ```
-

@@ -411,7 +411,7 @@ class ContainerManagerTest extends TestCase
         $manager->remove($container);
     }
 
-    public function testcopyToDisk()
+    public function testCopyToDisk()
     {
        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['touch', '/etc/default/docker-php-test']]);
        $manager = $this->getManager();

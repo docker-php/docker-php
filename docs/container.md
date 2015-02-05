@@ -173,18 +173,14 @@ printf('Container\'s exit code is %d', $container->getExitCode());
 
 ## Copy files or folders from a container
 
-File and folders can be downloaded as a tar file from the container. The copy() function allows a folder/file to be downloaded as tar stream and copyToDisk() saves the result as a tar file.
-In the following example the /etc/default folder from a ubuntu container called vanilla is downloaded to /tmp/resource.tar.
+Files and folders can be downloaded as a tar file from the container. The `copy()` function allows a folder/file to be downloaded as tar stream and `copyToDisk()` saves the result as a tar file.
+In the following example the `/etc/default` folder from an Ubuntu container called vanilla is downloaded to `/tmp/file.tar`.
 
 ```php
 <?php
 
-$lookfor = 'vanilla';
-$source = '/etc/default'; 
-$tarFileName  = "/tmp/resource.tar";  
-
-$container = $manager->find($lookfor);
-$manager->copyToDisk($container, $source, $tarFileName);
+$container = $manager->find('vanilla');
+$manager->copyToDisk($container, '/etc/default', '/tmp/file.tar');
 ```
 
 

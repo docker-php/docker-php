@@ -21,11 +21,6 @@ class Context implements ContextInterface
     private $directory;
 
     /**
-     * @var \Symfony\Component\Filesystem\Filesystem
-     */
-    private $fs;
-
-    /**
      * @var process Tar process
      */
     private $process;
@@ -42,13 +37,11 @@ class Context implements ContextInterface
 
     /**
      * @param string     $directory Directory of context
-     * @param Filesystem $fs        Filesystem to use
      * @param string     $format    Format to use when sending the call (stream or tar: string)
      */
-    public function __construct($directory, Filesystem $fs = null, $format = self::FORMAT_STREAM)
+    public function __construct($directory, $format = self::FORMAT_STREAM)
     {
         $this->directory = $directory;
-        $this->fs = $fs ?: new Filesystem();
         $this->format = $format;
     }
 

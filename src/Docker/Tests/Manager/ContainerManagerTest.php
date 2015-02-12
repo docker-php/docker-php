@@ -353,6 +353,23 @@ class ContainerManagerTest extends TestCase
         $manager->inspect($container);
     }
 
+    public function testRemoveContainers()
+    {
+        $containers = ['3360ea744df2', 'a412d121d015'];
+        $manager = $this
+            ->getMockBuilder('\Docker\Manager\ContainerManager')
+            ->setMethods(['remove'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $manager->expects($this->exactly(2))
+            ->method('remove')
+            ->with($this->isInstanceOf('\Docker\Container'), false)
+            ->will($this->returnSelf());
+
+        $manager->removeContainers($containers);
+    }
+
     public function testTop()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['sleep', '2']]);

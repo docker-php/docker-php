@@ -369,6 +369,32 @@ class ContainerManager
     }
 
     /**
+     * Remove multiple containers from docker server
+     *
+     * @param \Docker\Container[]|array $containers
+     * @param boolean                   $volumes
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return \Docker\Manager\ContainerManager
+     */
+    public function removeContainers(array $containers, $volumes = false)
+    {
+        foreach ($containers as $container) {
+            if (!$container instanceof Container) {
+                $containerId = $container;
+
+                $container = new Container();
+                $container->setId($containerId);
+            }
+
+            $this->remove($container, $volumes);
+        }
+
+        return $this;
+    }
+
+    /**
      * List process running inside a container
      *
      * @param Container $container

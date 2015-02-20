@@ -172,6 +172,57 @@ class ContainerManager
         return $this;
     }
 
+
+    /**
+     * Copy files or folders from a container
+     *
+     * @param \Docker\Container $container
+     * @param string            $source file or folder name
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return Guzzle\Stream\Stream Tarfile stream
+     */
+    public function copy(Container $container, $source)
+    {
+        $response = $this->client->post(['/containers/{id}/copy', ['id' => $container->getId()]], [
+            'body'         => Json::encode(["Resource" => $source]),
+            'headers'      => ['content-type' => 'application/json'],
+        ]);
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $response->getBody();
+    }
+
+
+    /**
+     * Save files pulled by copy() to disk 
+     *
+     * @param \Docker\Container $container
+     * @param string            $source file or folder name
+     * @param string            $destination file
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return \Docker\Manager\ContainerManager
+     */
+
+    public function copyToDisk(Container $container, $source, $destination)
+    {
+        $stream = $this->copy($container, $source);
+
+        $output = fopen($destination, 'w+');
+        stream_copy_to_stream($stream->detach(), $output);
+        fclose($output);
+
+        return $this;
+    }
+
+
+
     /**
      * Run a container (create, attach, start and wait)
      *

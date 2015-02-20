@@ -204,3 +204,20 @@ $ports->add(42);
 
 $container->setExposedPorts($ports);
 ```
+
+## Exec: running command within an existing running container.
+
+Running a command inside a running container is done in two steps: create an exec instance (identified by a hash value) and starting that instance (and then reading the returned data).
+Example: connect to the container called 'vanilla2', create an exec for 'ls /var/www/html' (within a bash shell) and run it:
+```php
+<?php
+
+  $lookfor='vanilla2';
+  $container = $manager->find($lookfor);
+  $execid = $manager->exec($container, ["/bin/bash", "-c", "ls /var/www/html"]);
+  $result=$manager->execstart($execid);
+  print_r("Result= <" . $result->__toString() . ">\n");
+```
+Note that after an exec has been created it can be run several times, e.g. an exec for '/bin/date' would return a different value each time execstart() is called.
+ 
+

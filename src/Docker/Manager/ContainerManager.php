@@ -210,6 +210,74 @@ class ContainerManager
     }
 
     /**
+     * Execute a command in a running container
+     * i.e. create an executive, which will be run by execstart()
+     *
+     * @param \Docker\Container     $container
+     * @param array    $cmd          command to run
+     * @param boolean  $attachstdin  
+     * @param boolean  $attachstdout 
+     * @param boolean  $attachstderr 
+     * @param boolean  $tty
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return string ID of the executive
+     */
+    public function exec(Container $container, array $cmd = [], $attachstdin = false, $attachstdout = true, $attachstderr = true, $tty = false)
+    {
+        $body = [
+            'AttachStdin'  => $attachstdin,
+            'AttachStdout' => $attachstdout,
+            'AttachStderr' => $attachstderr,
+            'Tty'          => $tty,
+            'Cmd' => $cmd
+        ];
+        $response = $this->client->post(['/containers/{id}/exec', ['id' => $container->getId()]], [
+            'body'         => Json::encode($body),
+            'headers'      => ['content-type' => 'application/json'],
+        ]);
+
+        if ($response->getStatusCode() !== "201") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $response->json()['Id'];
+    }
+
+    /**
+     * Start an executive defined from exec()
+     * This can be resude several times, so if the command /bin/date in defined in exec()
+     * execstart() on that ID will return a different value each time.
+     * todo: how are instances created by exec() and used by execstart() removed/cleanedup?
+     *
+     * @param string   $execid       identifier from exec()
+     * @param callable $callback
+     * @param boolean  $detach
+     * @param boolean  $tty  
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return \GuzzleHttp\Message\ResponseInterface
+     */
+    public function execstart($execid, callable $callback = null, $detach = false, $tty = false)
+    {
+        $body = ['Detach' => $detach, 'Tty' => $tty ];
+        $callback = $callback === null ? function() {} : $callback;
+        $response = $this->client->post(['/exec/{id}/start', ['id' => $execid]], [
+            'body'         => Json::encode($body),
+            'headers'      => ['content-type' => 'application/json'],
+            'callback'     => $callback,
+        ]);
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $response;
+    }
+
+    /**
      * Attach a container to a callback to read logs
      *
      * @param \Docker\Container $container Container to attach

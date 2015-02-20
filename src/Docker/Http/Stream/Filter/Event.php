@@ -54,8 +54,6 @@ class Event extends \php_user_filter implements HasEmitterInterface
         $type = null;
 
         if ($this->contentType == "application/vnd.docker.raw-stream") {
-            $data = $this->buffer . $data;
-
             if (strlen($data) < 8) {
                 $this->buffer = $data;
 

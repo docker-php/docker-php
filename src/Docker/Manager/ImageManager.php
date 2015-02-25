@@ -275,4 +275,26 @@ class ImageManager
 
         return $this;
     }
+
+    /**
+     * Get history of an image
+     *
+     * @param Image $image
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return array
+     */
+    public function history(Image $image)
+    {
+        $response = $this->client->get(['/images/{name}/history', [
+            'name' => $image->__toString()
+        ]]);
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $response->json();
+    }
 }

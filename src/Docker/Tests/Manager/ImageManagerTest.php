@@ -90,4 +90,19 @@ class ImageManagerTest extends TestCase
         $this->setExpectedException('\\Docker\\Exception\\APIException', 'Invalid namespace name');
         $manager->search('a/test');
     }
+
+    public function testTag()
+    {
+        $image = $this->getManager()->find('test', 'foo');
+
+        $this->getManager()->tag($image, 'docker-php/unit-test', 'latest');
+
+        $this->assertEquals('docker-php/unit-test', $image->getRepository());
+        $this->assertEquals('latest', $image->getTag());
+
+        $newImage = $this->getManager()->find('docker-php/unit-test', 'latest');
+        $this->assertEquals($image->getId(), $newImage->getId());
+
+        $this->getManager()->removeImages(array($newImage));
+    }
 }

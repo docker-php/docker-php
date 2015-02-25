@@ -105,4 +105,13 @@ class ImageManagerTest extends TestCase
 
         $this->getManager()->removeImages(array($newImage));
     }
+
+    public function testHistory()
+    {
+        $image = $this->getManager()->find('test', 'foo');
+        $history = $this->getManager()->history($image);
+
+        $this->assertGreaterThan(1, count($history));
+        $this->assertEquals('/bin/true', $history[0]['CreatedBy']);
+    }
 }

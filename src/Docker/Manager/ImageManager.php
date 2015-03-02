@@ -30,14 +30,18 @@ class ImageManager
     /**
      * Get all images from docker daemon
      *
+     * @param array $params an array of query parameters
+     *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return Image[]
      */
-    public function findAll()
+    public function findAll(array $params = [])
     {
         /** @var Response $response */
-        $response = $this->client->get('/images/json');
+        $response = $this->client->get('/images/json', [
+            'query' => $params
+        ]);
 
         if ($response->getStatusCode() !== "200") {
             throw UnexpectedStatusCodeException::fromResponse($response);

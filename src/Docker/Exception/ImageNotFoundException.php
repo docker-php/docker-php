@@ -2,8 +2,8 @@
 
 namespace Docker\Exception;
 
-use Docker\Exception;
-use Exception as BaseException;
+use Docker\Exception as BaseException;
+use Exception;
 
 /**
  * Docker\Exception\ImageNotFoundException
@@ -11,10 +11,10 @@ use Exception as BaseException;
 class ImageNotFoundException extends BaseException
 {
     /**
-     * @param string             $imageId
-     * @param null|BaseException $previous
+     * @param string         $imageId
+     * @param null|Exception $previous
      */
-    public function __construct($imageId, BaseException $previous = null)
+    public function __construct($imageId, Exception $previous = null)
     {
         parent::__construct(sprintf('Image not found: "%s"', $imageId), 404, $previous);
     }

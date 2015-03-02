@@ -2,8 +2,7 @@
 
 namespace Docker\Exception;
 
-use Docker\Exception;
-use Exception as BaseException;
+use Docker\Exception as BaseException;
 
 /**
  * Docker\Exception\ServerErrorException

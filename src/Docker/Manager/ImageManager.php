@@ -5,12 +5,12 @@ namespace Docker\Manager;
 use Docker\Exception\ImageNotFoundException;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Image;
-use GuzzleHttp\Client;
+use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\Response;
 
 /**
- * Docker\ImageManager
+ * Docker\Manager\ImageManager
  */
 class ImageManager
 {
@@ -20,9 +20,9 @@ class ImageManager
     private $client;
 
     /**
-     * @param \GuzzleHttp\Client $client
+     * @param \GuzzleHttp\Client
      */
-    public function __construct(Client $client)
+    public function __construct(HttpClient $client)
     {
         $this->client = $client;
     }

@@ -2,12 +2,11 @@
 
 namespace Docker;
 
-use Docker\Context\Context;
+use Docker\Context\ContextInterface;
+use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Http\DockerClient;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
-use Docker\Exception\UnexpectedStatusCodeException;
-use Docker\Context\ContextInterface;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\Stream;
@@ -17,12 +16,6 @@ use GuzzleHttp\Stream\Stream;
  */
 class Docker
 {
-    const BUILD_VERBOSE = false;
-    const BUILD_QUIET = true;
-
-    const BUILD_CACHE = true;
-    const BUILD_NO_CACHE = false;
-
     /**
      * @var \GuzzleHttp\Client
      */

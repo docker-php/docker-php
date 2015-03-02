@@ -4,7 +4,6 @@ namespace Docker\Context;
 
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Docker\Context\Context

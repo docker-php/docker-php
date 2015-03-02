@@ -22,12 +22,12 @@ class Docker
     private $httpClient;
 
     /**
-     * @var array
+     * @var \Docker\Manager\ContainerManager
      */
     private $containerManager;
 
     /**
-     * @var array
+     * @var \Docker\Manager\ImageManager
      */
     private $imageManager;
 
@@ -73,7 +73,7 @@ class Docker
 
    /**
      * Show the docker components version information
-     * @return json object with version values
+     * @return array json object with version values
      */
     public function getVersion()
     {
@@ -82,13 +82,14 @@ class Docker
         } catch (RequestException $e) {
             throw $e;
         }
+
         return $response->json();
     }
 
    /**
      * Docker info: Display system-wide information
      * api_v1.16
-     * @return json object with version values
+     * @return array json object with version values
      */
     public function getInfo()
     {
@@ -97,6 +98,7 @@ class Docker
         } catch (RequestException $e) {
             throw $e;
         }
+
         return $response->json();
     }
 
@@ -146,7 +148,7 @@ class Docker
      *
      * @return \Docker\Image
      *
-     * @see http://docs.docker.io/en/latest/api/docker_remote_api_v1.7/#create-a-new-image-from-a-container-s-changes
+     * @see http://docs.docker.com/reference/api/docker_remote_api_v1.7/#create-a-new-image-from-a-containers-changes
      */
     public function commit(Container $container, $config = [])
     {

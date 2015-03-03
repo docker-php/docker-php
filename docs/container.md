@@ -172,6 +172,19 @@ Same as the `remove` method it has a second argument (defaults to `false`) `$vol
 Keep in mind that all of the containers have to be stopped before they can be removed.
 
 
+## Copy files or folders from a container
+
+Files and folders can be downloaded as a tar file from the container. The `copy()` function allows a folder/file to be downloaded as tar stream and `copyToDisk()` saves the result as a tar file.
+In the following example the `/etc/default` folder from an Ubuntu container called vanilla is downloaded to `/tmp/file.tar`.
+
+```php
+<?php
+
+$container = $manager->find('vanilla');
+$manager->copyToDisk($container, '/etc/default', '/tmp/file.tar');
+```
+
+
 ## The Docker\Container class
 
 The `Docker\Container` class is designed to help you manipulate containers. It has a few helper methods to set common runtime options.

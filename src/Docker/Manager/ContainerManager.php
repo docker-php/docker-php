@@ -214,9 +214,14 @@ class ContainerManager
     {
         $stream = $this->copy($container, $source);
 
-        $output = fopen($destination, 'w+');
-        stream_copy_to_stream($stream->detach(), $output);
-        fclose($output);
+        $fd = @fopen($destination, 'w+');
+        if ($fd) {
+          stream_copy_to_stream($stream->detach(), $fd);
+          fclose($fd);
+
+        } else {
+          throw new \Exception('file open failed: ' . $destination);
+        }
 
         return $this;
     }

@@ -242,3 +242,23 @@ $response = $manager->execstart($execid, function ($log, $type) use($logger) {
 //Response stream is never read you need to simulate a wait in order to get output
 $response->getBody()->getContents();
 ```
+
+
+### Get container stats based on resource usage
+
+(only works with the libcontainer exec-driver)
+
+Returns some resource (cpu, memory, network & io) stats from a running container
+
+```php
+$container = new Container();
+$container->setId($someContainerId);
+
+$stats = $manager->stats($container);
+
+var_dump($stats);
+```
+
+There is an optional second argument `$wait` which is `false` by default. If you set it to `true` it doesn’t return the stats right away but collects them until the container is stopped and the stream stops. In most cases this should not be enabled.
+
+

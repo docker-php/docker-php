@@ -7,8 +7,9 @@ php:
 #  - hhvm
 
 env:
-#  - $SYMFONY_VERSION='2.3.*'
-  - $SYMFONY_VERSION='2.6.*'
+  matrix:
+    - SYMFONY_VERSION='2.3.*'
+    - SYMFONY_VERSION='2.6.*'
 
 matrix:
     allow_failures:
@@ -26,6 +27,8 @@ install:
   - sudo dpkg -i lxc-docker_amd64.deb
   - curl -sLo linux https://github.com/jpetazzo/sekexe/raw/master/uml
   - chmod +x linux
+  - composer require --no-update symfony/filesystem:${SYMFONY_VERSION}
+  - composer require --no-update symfony/process:${SYMFONY_VERSION}
   - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source --dev install
 
 script:

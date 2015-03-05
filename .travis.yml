@@ -8,12 +8,12 @@ php:
 
 env:
   matrix:
-    - SYMFONY_VERSION='2.3.*'
-    - SYMFONY_VERSION='2.6.*'
+    - SYMFONY_VERSION="2.3.*"
+    - SYMFONY_VERSION="2.6.*"
 
 matrix:
-    allow_failures:
-        - php: hhvm
+  allow_failures:
+    - php: hhvm
 
 install:
   - echo exit 101 | sudo tee /usr/sbin/policy-rc.d

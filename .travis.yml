@@ -29,7 +29,7 @@ install:
   - chmod +x linux
   - composer require --no-update symfony/filesystem:${SYMFONY_VERSION}
   - composer require --no-update symfony/process:${SYMFONY_VERSION}
-  - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source --dev install
+  - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source install
 
 script:
   - sudo ./linux quiet mem=2G rootfstype=hostfs rw eth0=slirp,,/usr/bin/slirp-fullbolt init=$(pwd)/docker.sh WORKDIR=$(pwd) HOME=$(pwd) PATH=$PATH

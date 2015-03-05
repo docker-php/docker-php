@@ -448,6 +448,12 @@ class ContainerManagerTest extends TestCase
 
     public function testStats()
     {
+        $dockerVersion = $this->getDocker()->getVersion();
+
+        if (!version_compare($dockerVersion['ApiVersion'], '1.17', '>=')) {
+            $this->markTestSkipped('Container stats requires at least Docker Remote API version 1.17');
+        }
+
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['sleep', '15']]);
         $manager = $this->getManager();
         $manager->create($container);
@@ -473,6 +479,12 @@ class ContainerManagerTest extends TestCase
 
     public function testStatsWait()
     {
+        $dockerVersion = $this->getDocker()->getVersion();
+
+        if (!version_compare($dockerVersion['ApiVersion'], '1.17', '>=')) {
+            $this->markTestSkipped('Container stats requires at least Docker Remote API version 1.17');
+        }
+
         $this->markTestSkipped('Stats stream doesn’t stop with PHPUnit after container stops');
 
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['sleep', '5']]);

@@ -52,6 +52,27 @@ class ImageManagerTest extends TestCase
         $this->assertGreaterThanOrEqual(1, count($manager->findAll()));
     }
 
+    public function testFindAllAll()
+    {
+        $manager = $this->getManager();
+
+        $images1 = $manager->findAll();
+        $images2 = $manager->findAll(['all' => 1]);
+
+        $this->assertInternalType('array', $images2);
+        $this->assertGreaterThan(count($images1), count($images2));
+    }
+
+    public function testFindAllDangling()
+    {
+        $manager = $this->getManager();
+
+        $images = $manager->findAll(['dangling' => 1]);
+
+        $this->assertInternalType('array', $images);
+        $this->assertGreaterThanOrEqual(1, count($images));
+    }
+
     public function testRemove()
     {
         $manager = $this->getManager();

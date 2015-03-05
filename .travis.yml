@@ -20,8 +20,9 @@ install:
   - sudo apt-get update -qq
   - sudo apt-get install -y slirp lxc aufs-tools cgroup-lite
   - sudo mkdir -p /var/lib/docker
-#  - curl -sLo lxc-docker_amd64.deb http://get.docker.io/ubuntu/pool/main/l/lxc-docker-1.4.1/lxc-docker-1.4.1_1.4.1_amd64.deb
-  - curl -sLo lxc-docker_amd64.deb http://get.docker.io/ubuntu/pool/main/l/lxc-docker-1.5.0/lxc-docker-1.5.0_1.5.0_amd64.deb
+  - curl -sLo lxc-docker_amd64.deb http://get.docker.io/ubuntu/pool/main/l/lxc-docker-1.4.1/lxc-docker-1.4.1_1.4.1_amd64.deb
+# The Docker 1.5.0 deb package seems faulty..let’s use 1.4.1 until there is a fix
+#  - curl -sLo lxc-docker_amd64.deb http://get.docker.io/ubuntu/pool/main/l/lxc-docker-1.5.0/lxc-docker-1.5.0_1.5.0_amd64.deb
   - sudo dpkg -i lxc-docker_amd64.deb
   - curl -sLo linux https://github.com/jpetazzo/sekexe/raw/master/uml
   - chmod +x linux

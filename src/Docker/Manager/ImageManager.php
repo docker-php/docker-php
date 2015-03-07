@@ -30,14 +30,25 @@ class ImageManager
     /**
      * Get all images from docker daemon
      *
-     * @param array $params an array of query parameters
+     * @param boolean $dangling Filter dangling images
+     * @param boolean $all      List all images including untagged
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return Image[]
      */
-    public function findAll(array $params = [])
+    public function findAll($dangling = false, $all = false)
     {
+        $params = [];
+
+        if ($all) {
+            $params['all'] = 1;
+        }
+
+        if ($dangling) {
+            $params['dangling'] = 1;
+        }
+
         /** @var Response $response */
         $response = $this->client->get('/images/json', [
             'query' => $params

@@ -5,7 +5,7 @@ Docker PHP
 
 The test suite currently passes against the [Docker Remote API v1.17](http://docs.docker.com/reference/api/docker_remote_api_v1.17/).
 
-[![Travis-CI](https://travis-ci.org/stage1/docker-php.svg?branch=master)](https://travis-ci.org/stage1/docker-php) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stage1/docker-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/stage1/docker-php/?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/docker-php/badge/?version=latest)](http://docker-php.readthedocs.org/en/latest/) [![Travis-CI](https://travis-ci.org/stage1/docker-php.svg?branch=master)](https://travis-ci.org/stage1/docker-php) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stage1/docker-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/stage1/docker-php/?branch=master)
 
 Versioning
 ----------
@@ -38,7 +38,7 @@ The recommended way to install Docker PHP is of course to use [Composer](http://
 Usage
 -----
 
-See [the documentation](https://github.com/stage1/docker-php/tree/master/docs).
+See [the documentation](http://docker-php.readthedocs.org/en/latest/).
 
 Unit Tests
 ----------

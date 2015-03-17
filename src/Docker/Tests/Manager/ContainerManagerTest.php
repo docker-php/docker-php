@@ -547,5 +547,7 @@ class ContainerManagerTest extends TestCase
         $runtimeInformations = $container->getRuntimeInformations();
 		
         $this->assertInstanceOf('Docker\\Container', $manager->find('FoobarRenamed'));
+        $manager->stop($container);   // cleanup
+        $manager->remove($container);
     }
 }

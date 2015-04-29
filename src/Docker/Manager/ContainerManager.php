@@ -3,6 +3,7 @@
 namespace Docker\Manager;
 
 use Docker\Container;
+use Docker\Event;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Exception\ContainerNotFoundException;
 use Docker\Http\Stream\InteractiveStream;
@@ -615,4 +616,25 @@ class ContainerManager
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
     }
+
+    /**
+     * Get recent containers events
+     *
+     * @param $since
+     * @param $until
+     *
+     * @return array
+     */
+    public function getEvents($since, $until)
+    {
+        try {
+            $url = '/events?since='.$since.'&until='.$until;
+            $response = $this->client->get([$url, []]);
+            $contents = (string) $response->getBody();
+            return Event::splitEvents($contents);
+        } catch (RequestException $e) {
+            throw $e;
+        }
+    }
+
 }

@@ -102,7 +102,6 @@ class Docker
         return $response->json();
     }
 
-
     /**
      * Build an image with docker
      *
@@ -177,4 +176,5 @@ class Docker
 
         return $image;
     }
+
 }

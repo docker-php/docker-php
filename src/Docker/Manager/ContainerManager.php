@@ -209,12 +209,12 @@ class ContainerManager
      *
      * @return \Docker\Manager\ContainerManager
      */
-
     public function copyToDisk(Container $container, $source, $destination)
     {
         $stream = $this->copy($container, $source);
 
         $fd = @fopen($destination, 'w+');
+
         if ($fd) {
           stream_copy_to_stream($stream->detach(), $fd);
           fclose($fd);

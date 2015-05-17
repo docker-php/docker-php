@@ -617,24 +617,4 @@ class ContainerManager
         }
     }
 
-    /**
-     * Get recent containers events
-     *
-     * @param $since
-     * @param $until
-     *
-     * @return array
-     */
-    public function getEvents($since, $until)
-    {
-        try {
-            $url = '/events?since='.$since.'&until='.$until;
-            $response = $this->client->get([$url, []]);
-            $contents = (string) $response->getBody();
-            return Event::splitEvents($contents);
-        } catch (RequestException $e) {
-            throw $e;
-        }
-    }
-
 }

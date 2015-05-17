@@ -70,33 +70,4 @@ class Event
         return $this->time;
     }
 
-    /**
-     * Split json events text to array
-     *
-     * @param $contents
-     * @return array
-     */
-    public static function splitEvents($contents)
-    {
-        $retVal = [];
-        $numOfBrackets = 0;
-        $currentString = '';
-        for ($i = 0; $i < strlen($contents); $i++) {
-            if ($contents{$i} == '{') {
-                $numOfBrackets++;
-            }
-            if ($contents{$i} == '}') {
-                $numOfBrackets--;
-            }
-            $currentString .= $contents{$i};
-            if ($numOfBrackets == 0 ) {
-                if (!empty($currentString)) {
-                    $retVal[] = new Event(json_decode($currentString, true));
-                }
-                $currentString = '';
-            }
-        }
-
-        return $retVal;
-    }
 }

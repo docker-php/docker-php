@@ -617,4 +617,26 @@ class ContainerManager
         }
     }
 
+    /**
+     * Rename a container (API v1.17)
+     *
+     * @param Container $container
+     * @param string $newname
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     */
+    public function rename(Container $container, $newname)
+    {
+        $response = $this->client->post(['/containers/{id}/rename?name={newname}', [
+            'id'      => $container->getId(),
+            'newname' => $newname
+        ]]);
+
+        if ($response->getStatusCode() !== "204") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $this;
+    }
+
 }

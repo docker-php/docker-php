@@ -69,6 +69,7 @@ class ImageManager
         foreach ($images as $data) {
             $image = new Image();
             $image->setId($data['Id']);
+            $image->setCreated($data['Created']);
 
             foreach ($data['RepoTags'] as $repoTag) {
                 list($repository, $tag) = explode(':', $repoTag);
@@ -98,6 +99,7 @@ class ImageManager
 
         $data = $this->inspect($image);
         $image->setId($data['Id']);
+        $image->setCreated($data['Created']);
 
         return $image;
     }
@@ -172,6 +174,7 @@ class ImageManager
 
         if (!$image->getId()) {
             $image->setId($data['Id']);
+            $image->setCreated($data['Created']);
         }
 
         return $image;

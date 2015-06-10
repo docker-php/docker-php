@@ -23,13 +23,20 @@ class Image
     private $tag;
 
     /**
-     * @param string $repository Name of the image
-     * @param string $tag        Tag (version) of the image, default "latest"
+     * @var int
      */
-    public function __construct($repository = null, $tag = 'latest')
+    private $created;
+
+    /**
+     * @param string $repository Name of the image
+     * @param string $tag Tag (version) of the image, default "latest"
+     * @param int $created unix timestamp
+     */
+    public function __construct($repository = null, $tag = 'latest', $created = null)
     {
         $this->repository = $repository;
         $this->tag        = $tag;
+        $this->created    = $created;
     }
 
     /**
@@ -107,4 +114,26 @@ class Image
     {
         return $this->tag;
     }
+
+    /**
+     * @return int
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * @param int $created
+     * @return $this
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+
+
 }

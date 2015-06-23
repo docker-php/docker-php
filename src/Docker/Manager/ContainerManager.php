@@ -103,7 +103,9 @@ class ContainerManager
     public function inspect(Container $container)
     {
         try {
-            $response = $this->client->get(['/containers/{id}/json', ['id' => $container->getId()]]);
+            $response = $this->client->get(['/containers/{id}/json', [
+                'id' => $container->getId()
+            ]]);
         } catch (RequestException $e) {
             if ($e->hasResponse() && $e->getResponse()->getStatusCode() == "404") {
                 throw new ContainerNotFoundException($container->getId(), $e);
@@ -132,8 +134,7 @@ class ContainerManager
             'data' => [
                 'name' => $container->getName(),
             ],
-        ]],
-        [
+        ]],[
             'body'         => Json::encode($container->getConfig()),
             'headers'      => ['content-type' => 'application/json'],
         ]);
@@ -157,7 +158,9 @@ class ContainerManager
      */
     public function start(Container $container, array $hostConfig = [])
     {
-        $response = $this->client->post(['/containers/{id}/start', ['id' => $container->getId()]], [
+        $response = $this->client->post(['/containers/{id}/start', [
+            'id' => $container->getId()
+        ]],[
             'body'         => Json::encode($hostConfig),
             'headers'      => ['content-type' => 'application/json'],
             'wait'         => true,
@@ -233,7 +236,9 @@ class ContainerManager
             'Tty'          => $tty,
             'Cmd' => $cmd
         ];
-        $response = $this->client->post(['/containers/{id}/exec', ['id' => $container->getId()]], [
+        $response = $this->client->post(['/containers/{id}/exec', [
+            'id' => $container->getId()
+        ]], [
             'body'         => Json::encode($body),
             'headers'      => ['content-type' => 'application/json'],
         ]);
@@ -264,7 +269,9 @@ class ContainerManager
     {
         $body = ['Detach' => $detach, 'Tty' => $tty ];
         $callback = $callback === null ? function() {} : $callback;
-        $response = $this->client->post(['/exec/{id}/start', ['id' => $execid]], [
+        $response = $this->client->post(['/exec/{id}/start', [
+            'id' => $execid
+        ]], [
             'body'         => Json::encode($body),
             'headers'      => ['content-type' => 'application/json'],
             'callback'     => $callback,
@@ -369,7 +376,9 @@ class ContainerManager
      */
     public function wait(Container $container, $timeout = null)
     {
-        $response = $this->client->post(['/containers/{id}/wait', ['id' => $container->getId()]], [
+        $response = $this->client->post(['/containers/{id}/wait', [
+            'id' => $container->getId()
+        ]], [
             'timeout' => null === $timeout ? $this->client->getDefaultOption('timeout') : $timeout,
         ]);
 
@@ -399,8 +408,9 @@ class ContainerManager
         $response = $this->client->post(['/containers/{id}/stop?t={timeout}', [
             'id' => $container->getId(),
             'timeout' => $timeout,
+        ]],[
             'wait' => true,
-        ]]);
+        ]);
 
         if ($response->getStatusCode() !== "204" && $response->getStatusCode() !== "304") {
             throw UnexpectedStatusCodeException::fromResponse($response);
@@ -425,9 +435,11 @@ class ContainerManager
     {
         $response = $this->client->delete(['/containers/{id}?v={volumes}', [
             'id' => $container->getId(),
-            'v' => $volumes,
+            'volumes' => (integer)$volumes,
+            // TODO: implement force option
+        ]],[
             'wait' => true
-        ]]);
+        ]);
 
         if ($response->getStatusCode() !== "204") {
             throw UnexpectedStatusCodeException::fromResponse($response);

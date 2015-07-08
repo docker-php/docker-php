@@ -178,6 +178,39 @@ class ImageManager
     }
 
     /**
+     * Push an image.
+     *
+     * @param string   $name
+     * @param string   $tag
+     * @param string   $registryAuth
+     * @param callable $callback
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return Image
+     */
+    public function push($name, $tag, $registryAuth, callable $callback = null)
+    {
+        if (null === $callback) {
+            $callback = function () {};
+        }
+
+        $response = $this->client->post(['/images/{image}/push', ['image' => $name, 'tag' => $tag]], [
+            'headers' => [
+                'X-Registry-Auth' => $registryAuth
+            ],
+            'callback' => $callback,
+            'wait'     => true,
+        ]);
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return new Image($name, $tag);
+    }
+
+    /**
      * Remove an image from docker daemon
      *
      * @param Image   $image   Image to remove

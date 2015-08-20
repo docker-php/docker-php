@@ -446,6 +446,69 @@ class ContainerManagerTest extends TestCase
         $this->assertContains("test", implode("", $logs));
     }
 
+    public function testStats()
+    {
+        $dockerVersion = $this->getDocker()->getVersion();
+
+        if (!version_compare($dockerVersion['ApiVersion'], '1.17', '>=')) {
+            $this->markTestSkipped('Container stats requires at least Docker Remote API version 1.17');
+        }
+
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['sleep', '15']]);
+        $manager = $this->getManager();
+        $manager->create($container);
+        $manager->start($container);
+
+        $stats = $manager->stats($container);
+
+        $manager->stop($container);
+        $manager->remove($container, 1);
+
+        $this->assertGreaterThanOrEqual(1, count($stats));
+
+        $statOutputKeys = array_flip([
+            'read',
+            'network',
+            'cpu_stats',
+            'memory_stats',
+            'blkio_stats',
+        ]);
+
+        $this->assertEmpty(array_diff_key($stats[0], $statOutputKeys));
+    }
+
+    public function testStatsWait()
+    {
+        $dockerVersion = $this->getDocker()->getVersion();
+
+        if (!version_compare($dockerVersion['ApiVersion'], '1.17', '>=')) {
+            $this->markTestSkipped('Container stats requires at least Docker Remote API version 1.17');
+        }
+
+        $this->markTestSkipped('Stats stream doesn’t stop with PHPUnit after container stops');
+
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['sleep', '5']]);
+        $manager = $this->getManager();
+        $manager->create($container);
+        $manager->start($container);
+
+        $stats = $manager->stats($container, true);
+
+        $manager->remove($container, 1);
+
+        $this->assertGreaterThan(1, count($stats));
+
+        $statOutputKeys = array_flip([
+            'read',
+            'network',
+            'cpu_stats',
+            'memory_stats',
+            'blkio_stats',
+        ]);
+
+        $this->assertEmpty(array_diff_key($stats[1], $statOutputKeys));
+    }
+
     public function testRestart()
     {
         $manager = $this->getManager();

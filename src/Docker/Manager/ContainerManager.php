@@ -589,6 +589,32 @@ class ContainerManager
     }
 
     /**
+     * Get container stats
+     *
+     * @param Container $container
+     * @param boolean   $wait
+     *
+     * @return array
+     */
+    public function stats(Container $container, $wait = false)
+    {
+        $stats = [];
+
+        $callback = function ($output) use(&$stats) {
+            $stats[] = $output;
+        };
+
+        $this->client->get(['/containers/{id}/stats', [
+            'id' => $container->getId(),
+        ]], [
+            'callback' => $callback,
+            'wait'     => $wait,
+        ]);
+
+        return $stats;
+    }
+
+    /**
      * Restart a container
      *
      * @param Container $container

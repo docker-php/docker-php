@@ -261,4 +261,3 @@ var_dump($stats);
 
 There is an optional second argument `$wait` which is `false` by default. If you set it to `true` it doesn’t return the stats right away but collects them until the container is stopped and the stream stops. In most cases this should not be enabled.
 
-

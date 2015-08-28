@@ -69,12 +69,12 @@ class Event extends \php_user_filter implements HasEmitterInterface
                 return PSFS_FEED_ME;
             }
 
-            $data         = substr($data, 8, $decoded['size']);
+            $output         = substr($data, 8, $decoded['size']);
             $type         = $decoded['stream_type'];
             $this->buffer = substr($data, 8 + $decoded['size']);
 
-            if (!empty($data)) {
-                $this->getEmitter()->emit('response.output', new OutputEvent($data, $type));
+            if (!empty($output)) {
+                $this->getEmitter()->emit('response.output', new OutputEvent($output, $type));
             }
 
             return PSFS_PASS_ON;

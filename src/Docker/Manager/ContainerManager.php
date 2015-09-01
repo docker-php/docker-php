@@ -285,6 +285,28 @@ class ContainerManager
     }
 
     /**
+     * Get details about an executive
+     *
+     * @param string $execid Identifier from exec()
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     *
+     * @return stdClass
+     */
+    public function execinspect($execid)
+    {
+        $response = $this->client->get(['/exec/{id}/json', [
+            'id' => $execid
+        ]]);
+
+        if ($response->getStatusCode() !== "200") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return json_decode((string) $response->getBody());
+    }
+
+    /**
      * Attach a container to a callback to read logs
      *
      * @param \Docker\Container $container Container to attach

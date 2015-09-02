@@ -529,10 +529,13 @@ class ContainerManagerTest extends TestCase
         });
 
         $response->getBody()->getContents();
+        $inspection = $manager->execinspect($execId);
         $manager->kill($container);
 
         $this->assertEquals(1, $type);
         $this->assertEquals('output', $output);
+        $this->assertEquals(0, $inspection->ExitCode);
+        $this->assertEquals(false, $inspection->Running);
     }
 
     public function testRename()

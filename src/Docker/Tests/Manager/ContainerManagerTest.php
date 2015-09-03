@@ -535,6 +535,27 @@ class ContainerManagerTest extends TestCase
         $this->assertEquals('output', $output);
     }
 
+    public function testExecInspect()
+    {
+        $manager = $this->getManager();
+        $dockerFileBuilder = new ContextBuilder();
+        $dockerFileBuilder->from('ubuntu:precise');
+        $dockerFileBuilder->add('/daemon.sh', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'script' . DIRECTORY_SEPARATOR . 'daemon.sh'));
+        $dockerFileBuilder->run('chmod +x /daemon.sh');
+
+        $this->getDocker()->build($dockerFileBuilder->getContext(), 'docker-php-restart-test', null, true, false, true);
+
+        $container = new Container(['Image' => 'docker-php-restart-test', 'Cmd' => ['/daemon.sh']]);
+        $manager->create($container);
+        $manager->start($container);
+
+        $execId = $manager->exec($container, ['/bin/bash', '-c', 'echo -n "output"']);
+        $inspection = $manager->execinspect($execId);
+
+        $this->assertEquals(0, $inspection->ExitCode);
+        $this->assertEquals(false, $inspection->Running);
+    }
+
     public function testRename()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);

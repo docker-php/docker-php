@@ -253,3 +253,16 @@ $response = $manager->execstart($execid, function ($log, $type) use($logger) {
 //Response stream is never read you need to simulate a wait in order to get output
 $response->getBody()->getContents();
 ```
+
+### Inspect a process
+
+You can get various details about an exec instance and its current state:
+
+```
+$execid = $manager->exec($container, ["/bin/bash", "-c", "ls /var/www/html"]);
+$inspection = $manager->execinspect($execid);
+
+echo $inspection->Running;
+echo $inspection->ExitCode;
+// there's a lot more
+```

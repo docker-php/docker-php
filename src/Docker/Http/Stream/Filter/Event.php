@@ -45,6 +45,7 @@ class Event extends \php_user_filter implements HasEmitterInterface
 
         if (null == $bucket) {
             $remainder = $this->buffer;
+            $this->buffer = '';
             while (strlen($remainder) > 0) {
                 $header  = substr($remainder, 0, 8);
                 $decoded = unpack('C1stream_type/C3/N1size', $header);

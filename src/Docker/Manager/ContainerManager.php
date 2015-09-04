@@ -216,11 +216,10 @@ class ContainerManager
         $fd = @fopen($destination, 'w+');
 
         if ($fd) {
-          stream_copy_to_stream($stream->detach(), $fd);
-          fclose($fd);
-
+            stream_copy_to_stream($stream->detach(), $fd);
+            fclose($fd);
         } else {
-          throw new \Exception('file open failed: ' . $destination);
+            throw new \Exception('file open failed: ' . $destination);
         }
 
         return $this;

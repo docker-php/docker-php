@@ -3,10 +3,10 @@
 namespace Docker\Manager;
 
 use Docker\Container;
-use Docker\Http\Stream\InteractiveStream;
-use Docker\Json;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Exception\ContainerNotFoundException;
+use Docker\Http\Stream\InteractiveStream;
+use Docker\Json;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 
@@ -98,7 +98,7 @@ class ContainerManager
      * @throws \GuzzleHttp\Exception\RequestException
      * @throws \Docker\Exception\ContainerNotFoundException
      *
-     * @return return json data from docker inspect
+     * @return array json data from docker inspect
      */
     public function inspect(Container $container)
     {
@@ -269,9 +269,9 @@ class ContainerManager
      *
      * @param \Docker\Container     $container
      * @param array    $cmd          command to run
-     * @param boolean  $attachstdin  
-     * @param boolean  $attachstdout 
-     * @param boolean  $attachstderr 
+     * @param boolean  $attachstdin
+     * @param boolean  $attachstdout
+     * @param boolean  $attachstderr
      * @param boolean  $tty
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
@@ -308,7 +308,7 @@ class ContainerManager
      * @param string   $execid       identifier from exec()
      * @param callable $callback
      * @param boolean  $detach
-     * @param boolean  $tty  
+     * @param boolean  $tty
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
@@ -669,4 +669,27 @@ class ContainerManager
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
     }
+
+    /**
+     * Rename a container (API v1.17)
+     *
+     * @param Container $container
+     * @param string $newname
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     */
+    public function rename(Container $container, $newname)
+    {
+        $response = $this->client->post(['/containers/{id}/rename?name={newname}', [
+            'id'      => $container->getId(),
+            'newname' => $newname
+        ]]);
+
+        if ($response->getStatusCode() !== "204") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        return $this;
+    }
+
 }

@@ -2,12 +2,11 @@
 
 namespace Docker;
 
-use Docker\Context\Context;
+use Docker\Context\ContextInterface;
+use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Http\DockerClient;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ImageManager;
-use Docker\Exception\UnexpectedStatusCodeException;
-use Docker\Context\ContextInterface;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\Stream;
@@ -17,24 +16,18 @@ use GuzzleHttp\Stream\Stream;
  */
 class Docker
 {
-    const BUILD_VERBOSE = false;
-    const BUILD_QUIET = true;
-
-    const BUILD_CACHE = true;
-    const BUILD_NO_CACHE = false;
-
     /**
      * @var \GuzzleHttp\Client
      */
     private $httpClient;
 
     /**
-     * @var array
+     * @var \Docker\Manager\ContainerManager
      */
     private $containerManager;
 
     /**
-     * @var array
+     * @var \Docker\Manager\ImageManager
      */
     private $imageManager;
 
@@ -80,7 +73,7 @@ class Docker
 
    /**
      * Show the docker components version information
-     * @return json object with version values
+     * @return array json object with version values
      */
     public function getVersion()
     {
@@ -89,13 +82,14 @@ class Docker
         } catch (RequestException $e) {
             throw $e;
         }
+
         return $response->json();
     }
 
    /**
      * Docker info: Display system-wide information
      * api_v1.16
-     * @return json object with version values
+     * @return array json object with version values
      */
     public function getInfo()
     {
@@ -104,6 +98,7 @@ class Docker
         } catch (RequestException $e) {
             throw $e;
         }
+
         return $response->json();
     }
 
@@ -153,7 +148,7 @@ class Docker
      *
      * @return \Docker\Image
      *
-     * @see http://docs.docker.io/en/latest/api/docker_remote_api_v1.7/#create-a-new-image-from-a-container-s-changes
+     * @see http://docs.docker.com/reference/api/docker_remote_api_v1.7/#create-a-new-image-from-a-containers-changes
      */
     public function commit(Container $container, $config = [])
     {

@@ -551,4 +551,20 @@ class ContainerManagerTest extends TestCase
         $this->assertEquals(1, $type);
         $this->assertEquals('output', $output);
     }
+
+    public function testRename()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
+
+        $manager = $this->getManager();
+        $manager->create($container);
+        $manager->start($container);
+        $manager->rename($container, 'FoobarRenamed');
+
+        $runtimeInformations = $container->getRuntimeInformations();
+		
+        $this->assertInstanceOf('Docker\\Container', $manager->find('FoobarRenamed'));
+        $manager->stop($container);   // cleanup
+        $manager->remove($container);
+    }
 }

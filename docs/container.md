@@ -218,6 +218,17 @@ $ports->add(42);
 $container->setExposedPorts($ports);
 ```
 
+## Rename: Changing the human readable name of a container
+
+Rename the container called vanilla1 to vanilla2:
+```php
+<?php
+
+$container = $manager->find('vanilla1');
+$manager->rename($container,'vanilla2');
+```
+
+
 ## Exec: Run a process within an existing running container.
 
 Running a process inside a running container is done in two steps: create an exec instance (identified by a hash value) and starting that instance (and then reading the returned data).

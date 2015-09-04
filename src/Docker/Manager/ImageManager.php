@@ -5,12 +5,12 @@ namespace Docker\Manager;
 use Docker\Exception\ImageNotFoundException;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Image;
-use GuzzleHttp\Client;
+use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\Response;
 
 /**
- * Docker\ImageManager
+ * Docker\Manager\ImageManager
  */
 class ImageManager
 {
@@ -20,9 +20,9 @@ class ImageManager
     private $client;
 
     /**
-     * @param \GuzzleHttp\Client $client
+     * @param \GuzzleHttp\Client
      */
-    public function __construct(Client $client)
+    public function __construct(HttpClient $client)
     {
         $this->client = $client;
     }
@@ -30,14 +30,29 @@ class ImageManager
     /**
      * Get all images from docker daemon
      *
+     * @param boolean $dangling Filter dangling images
+     * @param boolean $all      List all images including untagged
+     *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return Image[]
      */
-    public function findAll()
+    public function findAll($dangling = false, $all = false)
     {
+        $params = [];
+
+        if ($all) {
+            $params['all'] = 1;
+        }
+
+        if ($dangling) {
+            $params['dangling'] = 1;
+        }
+
         /** @var Response $response */
-        $response = $this->client->get('/images/json');
+        $response = $this->client->get('/images/json', [
+            'query' => $params
+        ]);
 
         if ($response->getStatusCode() !== "200") {
             throw UnexpectedStatusCodeException::fromResponse($response);

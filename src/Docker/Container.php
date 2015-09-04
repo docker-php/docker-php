@@ -223,7 +223,7 @@ class Container
             return $this->exitCode;
         }
 
-        if (is_array($this->runtimeInformations)) {
+        if (is_array($this->runtimeInformations) && isset($this->runtimeInformations['State'])) {
             return $this->runtimeInformations['State']['ExitCode'];
         }
 
@@ -249,7 +249,7 @@ class Container
     /**
      * @param integer $memory
      *
-     * @return Container;
+     * @return Container
      */
     public function setMemory($memory)
     {

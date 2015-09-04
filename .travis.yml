@@ -7,27 +7,30 @@ php:
 #  - hhvm
 
 env:
-  - $SYMFONY_VERSION='2.3.*'
-  - $SYMFONY_VERSION='2.4.*'
-  - $SYMFONY_VERSION='2.5.*'
-  - $SYMFONY_VERSION='2.6.*'
+  matrix:
+    - SYMFONY_VERSION="2.3.*"
+    - SYMFONY_VERSION="2.6.*"
 
 matrix:
-    allow_failures:
-        - php: hhvm
+  allow_failures:
+    - php: hhvm
 
 install:
-  - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source --dev install
-  - sudo sh -c "wget -qO- https://get.docker.io/gpg | apt-key add -"
-  - sudo sh -c "echo deb http://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list"
-  - sudo apt-get update
-  - sudo mkdir -p /var/lib/docker
   - echo exit 101 | sudo tee /usr/sbin/policy-rc.d
   - sudo chmod +x /usr/sbin/policy-rc.d
-  - sudo apt-get install -y slirp lxc lxc-docker aufs-tools cgroup-lite
+  - sudo apt-get update -qq
+  - sudo apt-get install -y slirp lxc aufs-tools cgroup-lite
+  - sudo mkdir -p /var/lib/docker
+  - curl -sLo lxc-docker_amd64.deb http://get.docker.io/ubuntu/pool/main/l/lxc-docker-1.4.1/lxc-docker-1.4.1_1.4.1_amd64.deb
+# The Docker 1.5.0 deb package seems faulty..let's use 1.4.1 until there is a fix
+#  - curl -sLo lxc-docker_amd64.deb http://get.docker.io/ubuntu/pool/main/l/lxc-docker-1.5.0/lxc-docker-1.5.0_1.5.0_amd64.deb
+  - sudo dpkg -i lxc-docker_amd64.deb
   - curl -sLo linux https://github.com/jpetazzo/sekexe/raw/master/uml
   - chmod +x linux
+  - composer require --no-update symfony/filesystem:${SYMFONY_VERSION}
+  - composer require --no-update symfony/process:${SYMFONY_VERSION}
+  - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source install
 
 script:
-  - ./linux quiet mem=2G rootfstype=hostfs rw eth0=slirp,,/usr/bin/slirp-fullbolt init=$(pwd)/docker.sh WORKDIR=$(pwd) HOME=$(pwd) PATH=$PATH
+  - sudo ./linux quiet mem=2G rootfstype=hostfs rw eth0=slirp,,/usr/bin/slirp-fullbolt init=$(pwd)/docker.sh WORKDIR=$(pwd) HOME=$(pwd) PATH=$PATH
   - bash -c "exit $(cat /tmp/build.status)"

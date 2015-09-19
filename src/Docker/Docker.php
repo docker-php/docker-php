@@ -6,6 +6,7 @@ use Docker\Context\ContextInterface;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Http\DockerClient;
 use Docker\Manager\ContainerManager;
+use Docker\Manager\EventManager;
 use Docker\Manager\ImageManager;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
@@ -30,6 +31,11 @@ class Docker
      * @var \Docker\Manager\ImageManager
      */
     private $imageManager;
+
+    /**
+     * @var \Docker\Manager\EventManager
+     */
+    private $eventManager;
 
     /**
      * @param HttpClient $httpClient Http client to use with Docker
@@ -71,7 +77,19 @@ class Docker
         return $this->imageManager;
     }
 
-   /**
+    /**
+     * @return \Docker\Manager\EventManager
+     */
+    public function getEventManager()
+    {
+        if (null === $this->eventManager) {
+            $this->eventManager = new EventManager($this->httpClient);
+        }
+
+        return $this->eventManager;
+    }
+
+    /**
      * Show the docker components version information
      * @return array json object with version values
      */
@@ -101,7 +119,6 @@ class Docker
 
         return $response->json();
     }
-
 
     /**
      * Build an image with docker
@@ -177,4 +194,5 @@ class Docker
 
         return $image;
     }
+
 }

@@ -46,7 +46,7 @@ class ImageManager
         }
 
         if ($dangling) {
-            $params['dangling'] = 1;
+            $params['filters'] = ['dangling' => true];
         }
 
         /** @var Response $response */

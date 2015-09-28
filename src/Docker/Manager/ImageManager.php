@@ -71,7 +71,10 @@ class ImageManager
             $image->setId($data['Id']);
 
             foreach ($data['RepoTags'] as $repoTag) {
-                list($repository, $tag) = explode(':', $repoTag);
+                preg_match('/^(.*):(.*?)$/', $repoTag, $matches);
+
+                $repository = $matches[1];
+                $tag = $matches[2];
 
                 $tagImage = clone $image;
                 $tagImage->setRepository($repository);

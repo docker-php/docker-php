@@ -726,4 +726,47 @@ class ContainerManager
         return $this;
     }
 
+    /**
+     * Pause a container
+     *
+     * @param Container $container
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     */
+    public function pause(Container $container)
+    {
+        $response = $this->client->post(['/containers/{id}/pause', [
+            'id' => $container->getId()
+        ]]);
+
+        if ($response->getStatusCode() !== "204") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        $this->inspect($container);
+
+        return $this;
+    }
+
+    /**
+     * Unpause a container
+     *
+     * @param Container $container
+     *
+     * @throws \Docker\Exception\UnexpectedStatusCodeException
+     */
+    public function unpause(Container $container)
+    {
+        $response = $this->client->post(['/containers/{id}/unpause', [
+            'id' => $container->getId()
+        ]]);
+
+        if ($response->getStatusCode() !== "204") {
+            throw UnexpectedStatusCodeException::fromResponse($response);
+        }
+
+        $this->inspect($container);
+
+        return $this;
+    }
 }

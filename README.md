@@ -40,10 +40,21 @@ Usage
 
 See [the documentation](http://docker-php.readthedocs.org/en/latest/).
 
+Using Vagrant
+-------------
+
+The provisioning included does not run the `composer install` bit, so you'll have to do it yourself:
+
+```
+$ vagrant up --provider=virtualbox
+$ vagrant ssh
+$ cd /vagrant; composer install --dev
+```
+
 Unit Tests
 ----------
 
-Setup the test suite using [Composer](http://getcomposer.org/):
+Setup the test suite using [Composer](http://getcomposer.org/) if not already done:
 
 ```
 $ composer install --dev

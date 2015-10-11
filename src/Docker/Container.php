@@ -193,7 +193,7 @@ class Container
      */
     public function setName($name)
     {
-        if (!preg_match("/^\/?[a-zA-Z0-9_-]+$/", $name)) {
+        if (!preg_match("/^\/?[a-zA-Z0-9][a-zA-Z0-9_.-]+$/", $name)) {
             throw new \Exception("Name was not correctly formatted.", 1);
         }
 

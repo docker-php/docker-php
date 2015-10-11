@@ -29,6 +29,12 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $container->setName('Foobar');
 
         $this->assertEquals('Foobar', $container->getName());
+
+        $container->setName('Foo-Bar');
+        $this->assertEquals('Foo-Bar', $container->getName());
+
+        $container->setName('Foo-Bar_1.2.3');
+        $this->assertEquals('Foo-Bar_1.2.3', $container->getName());
     }
 
     public function testValidContainerName()
@@ -51,4 +57,26 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Exception', 'Name was not correctly formatted.');
         $container->setName('Foo!');
     }
+
+    public function testInvalidContainerNameThree()
+    {
+        $container = new Container();
+        $this->setExpectedException('Exception', 'Name was not correctly formatted.');
+        $container->setName('-FooBar');
+    }
+
+    public function testInvalidContainerNameFour()
+    {
+        $container = new Container();
+        $this->setExpectedException('Exception', 'Name was not correctly formatted.');
+        $container->setName('.FooBar');
+    }
+
+    public function testInvalidContainerNameFive()
+    {
+        $container = new Container();
+        $this->setExpectedException('Exception', 'Name was not correctly formatted.');
+        $container->setName('_FooBar');
+    }
+
 }

@@ -46,7 +46,7 @@ class ImageManager
         }
 
         if ($dangling) {
-            $params['dangling'] = 1;
+            $params['filters'] = json_encode(["dangling" => ["true"]]);
         }
 
         /** @var Response $response */

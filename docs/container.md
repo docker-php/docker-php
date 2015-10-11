@@ -228,6 +228,25 @@ $container = $manager->find('vanilla1');
 $manager->rename($container,'vanilla2');
 ```
 
+## Pause: Pause all processes within a container
+
+Pause the container called vanilla1:
+```php
+<?php
+
+$container = $manager->find('vanilla1');
+$manager->pause($container);
+```
+
+## Unause: Unpause all processes within a container
+
+Unpause the container caulled vanilla1:
+```php
+<?php
+
+$container = $manager->find('vanilla1');
+$manager->unpause($container);
+```
 
 ## Exec: Run a process within an existing running container.
 

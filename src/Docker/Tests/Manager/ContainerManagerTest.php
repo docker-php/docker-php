@@ -588,4 +588,34 @@ class ContainerManagerTest extends TestCase
         $manager->stop($container);   // cleanup
         $manager->remove($container);
     }
+
+    public function testPause()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
+
+        $manager = $this->getManager();
+        $manager->create($container);
+        $manager->start($container);
+
+        $runtimeInformations = $container->getRuntimeInformations();
+        $this->assertEquals(false, $runtimeInformations['State']['Paused']);
+        $this->assertEquals(true, $runtimeInformations['State']['Running']);
+
+        $manager->pause($container);
+
+        $runtimeInformations = $container->getRuntimeInformations();
+        $this->assertEquals(true, $runtimeInformations['State']['Paused']);
+        $this->assertEquals(true, $runtimeInformations['State']['Running']);
+
+        $manager->unpause($container);
+
+        $runtimeInformations = $container->getRuntimeInformations();
+        $this->assertEquals(false, $runtimeInformations['State']['Paused']);
+        $this->assertEquals(true, $runtimeInformations['State']['Running']);
+
+        // cleanup
+        $manager->stop($container);
+        $manager->remove($container);
+    }
+
 }

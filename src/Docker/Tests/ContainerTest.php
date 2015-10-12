@@ -79,4 +79,22 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $container->setName('_FooBar');
     }
 
+    public function testConfigImageParsing()
+    {
+        $container = new Container(['Image' => 'postgres:latest']);
+        $image = $container->getImage();
+        $this->assertEquals('postgres', $image->getRepository());
+        $this->assertEquals('latest', $image->getTag());
+
+        $container = new Container(['Image' => 'docker.io/postgres:latest']);
+        $image = $container->getImage();
+        $this->assertEquals('docker.io/postgres', $image->getRepository());
+        $this->assertEquals('latest', $image->getTag());
+
+        $container = new Container(['Image' => 'registry.yourcompany.com:5000/postgres:latest']);
+        $image = $container->getImage();
+        $this->assertEquals('registry.yourcompany.com:5000/postgres', $image->getRepository());
+        $this->assertEquals('latest', $image->getTag());
+
+    }
 }

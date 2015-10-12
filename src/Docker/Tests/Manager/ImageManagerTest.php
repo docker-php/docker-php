@@ -108,8 +108,8 @@ class ImageManagerTest extends TestCase
         $result = $manager->search('test-image-not-exist');
         $this->assertEmpty($result);
 
-        $this->setExpectedException('\\Docker\\Exception\\APIException', 'Invalid namespace name');
-        $manager->search('a/test');
+        $this->setExpectedException('\\Docker\\Exception\\APIException', 'repository name component must match');
+        $manager->search('-a/test');
     }
 
     public function testTag()

@@ -72,11 +72,8 @@ class ImageManager
             $image->setCreated($data['Created']);
 
             foreach ($data['RepoTags'] as $repoTag) {
-                list($repository, $tag) = explode(':', $repoTag);
-
                 $tagImage = clone $image;
-                $tagImage->setRepository($repository);
-                $tagImage->setTag($tag);
+                $tagImage->setRepoTag($repoTag);
 
                 $coll[] = $tagImage;
             }

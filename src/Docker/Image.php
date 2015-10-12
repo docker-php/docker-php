@@ -2,6 +2,8 @@
 
 namespace Docker;
 
+use Docker\Exception\InvalidRepoTagException;
+
 /**
  * Docker\Image
  */
@@ -134,6 +136,41 @@ class Image
         return $this;
     }
 
+    /**
+     * Validate repoTag format.
+     *
+     * @param string $repoTag The repository/tag to validate
+     *
+     * @return Array with repository & tag key sets if valid, FALSE if not.
+     * @throws InvalidRepoTagException if repoTag can not be parsed.
+     */
+    public static function parseRepoTag($repoTag)
+    {
+        if (1 !== preg_match('/^(.*):([^:]*)/', $repoTag, $matches)) {
+            throw new InvalidRepoTagException($repoTag);
+        }
 
+        return array(
+            'repository' => $matches[1],
+            'tag' => $matches[2]
+        );
+    }
 
+    /**
+     * Set repository / tag if repoTag is valid.
+     *
+     * @param string $repoTag The repository/tag to set to the image.
+     *
+     * @return bool TRUE is valid & set, FALSE if not.
+     * @throws InvalidRepoTagException if repoTag can not be parsed.
+     */
+    public function setRepoTag($repoTag)
+    {
+        $parsedRepoTag = $this->parseRepoTag($repoTag);
+
+        $this->setRepository($parsedRepoTag['repository']);
+        $this->setTag($parsedRepoTag['tag']);
+
+        return true;
+    }
 }

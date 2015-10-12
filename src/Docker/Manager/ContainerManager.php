@@ -682,6 +682,8 @@ class ContainerManager
         if ($response->getStatusCode() !== "204") {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
+
+        $this->inspect($container);
     }
 
     /**

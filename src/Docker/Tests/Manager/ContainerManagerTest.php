@@ -466,31 +466,18 @@ class ContainerManagerTest extends TestCase
     public function testRestart()
     {
         $manager = $this->getManager();
-        $dockerFileBuilder = new ContextBuilder();
-        $dockerFileBuilder->from('ubuntu:precise');
-        $dockerFileBuilder->add('/daemon.sh', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'script' . DIRECTORY_SEPARATOR . 'daemon.sh'));
-        $dockerFileBuilder->run('chmod +x /daemon.sh');
 
-        $this->getDocker()->build($dockerFileBuilder->getContext(), 'docker-php-restart-test', null, true, false, true);
+        $container = new Container(['Image' => 'busybox', 'Cmd' => ['sleep', '10']]);
 
-        $container = new Container(['Image' => 'docker-php-restart-test', 'Cmd' => ['/daemon.sh']]);
         $manager->create($container);
         $manager->start($container);
-        $manager->restart($container);
+        $this->assertEquals('0001-01-01T00:00:00Z', $container->getRuntimeInformations()['State']['FinishedAt']);
 
-        $logs = $manager->logs($container, false, true);
-        $logs = array_map(function ($value) {
-            return $value['output'];
-        }, $logs);
-        $processes = $manager->top($container);
+        $manager->restart($container);
+        $this->assertNotEquals('0001-01-01T00:00:00Z', $container->getRuntimeInformations()['State']['FinishedAt']);
 
         $manager->stop($container);
         $manager->remove($container);
-
-        $this->getDocker()->getImageManager()->remove($container->getImage());
-
-        $this->assertCount(2, $processes);
-        $this->assertContains('test', implode("", $logs));
     }
 
     public function testKill()

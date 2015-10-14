@@ -40,7 +40,7 @@ class PortCollection implements PortSpecInterface
         $spec = [];
 
         foreach ($this->ports as $port) {
-            $spec = array_merge($spec, $port->toSpec());
+            $spec = array_merge_recursive($spec, $port->toSpec());
         }
 
         return $spec;

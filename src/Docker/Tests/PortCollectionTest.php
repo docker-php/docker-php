@@ -33,4 +33,14 @@ class PortCollectionTest extends PHPUnit_Framework_TestCase
             '22/tcp' => [],
         ], $ports->toExposedPorts());
     }
+
+    public function testToSpecMerge()
+    {
+        $ports = new PortCollection('80', '22', '127.0.0.1:22:22');
+
+        $this->assertEquals([
+            '80/tcp' => [['HostIp' => '', 'HostPort' => '']],
+            '22/tcp' => [['HostIp' => '', 'HostPort' => ''], ['HostIp' => '127.0.0.1', 'HostPort' => '22']],
+        ], $ports->toSpec());
+    }
 }

@@ -338,9 +338,8 @@ class Container
             $repository = $this->config['Image'];
             $tag        = 'latest';
 
-            if(preg_match('/^(.*):([^:]*)/', $this->config['Image'], $matches)) {
-                $repository = $matches[1];
-                $tag = $matches[2];
+            if (preg_match('/:/', $this->config['Image'])) {
+                list($repository, $tag) = explode(':', $this->config['Image']);
             }
 
             $this->image = new Image($repository, $tag);

@@ -72,13 +72,7 @@ class ImageManager
             $image->setCreated($data['Created']);
 
             foreach ($data['RepoTags'] as $repoTag) {
-                $ret = preg_match('/^(.*):([^:]*)/', $repoTag, $matches);
-                if(1 !== $ret) {
-                    throw new APIException(sprintf('Can not parse repotag %s.', $repoTag));
-                }
-
-                $repository = $matches[1];
-                $tag = $matches[2];
+                list($repository, $tag) = explode(':', $repoTag);
 
                 $tagImage = clone $image;
                 $tagImage->setRepository($repository);

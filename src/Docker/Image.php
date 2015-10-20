@@ -134,6 +134,43 @@ class Image
         return $this;
     }
 
+    /**
+     * Validate repoTag format.
+     *
+     * @param string $repoTag The repository/tag to validate
+     *
+     * @return Array with repository & tag key sets if valid, FALSE if not.
+     */
+    public static function parseRepoTag($repoTag)
+    {
+        $ret = preg_match('/^(.*):([^:]*)/', $repoTag, $matches);
+        if (1 !== $ret) {
+            return false;
+        }
 
+        return array(
+            'repository' => $matches[1],
+            'tag' => $matches[2]
+        );
+    }
 
+    /**
+     * Set repository / tag if repoTag is valid.
+     *
+     * @param string $repoTag The repository/tag to set to the image.
+     *
+     * @return bool TRUE is valid & set, FALSE if not.
+     */
+    public function setRepoTag($repoTag)
+    {
+        $parsedRepoTag = $this->parseRepoTag($repoTag);
+        if (false === $parsedRepoTag) {
+            return false;
+        }
+
+        $this->setRepository($parsedRepoTag['repository']);
+        $this->setTag($parsedRepoTag['tag']);
+
+        return true;
+    }
 }

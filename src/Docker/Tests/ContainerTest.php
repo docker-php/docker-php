@@ -95,6 +95,12 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $image = $container->getImage();
         $this->assertEquals('registry.yourcompany.com:5000/postgres', $image->getRepository());
         $this->assertEquals('latest', $image->getTag());
+    }
 
+    public function testInvalidConfigImageParsing()
+    {
+        $container = new Container(['Image' => 'postgres']);
+        $this->setExpectedException('\Docker\Exception\InvalidRepoTagException', 'Invalid repoTag: postgres');
+        $image = $container->getImage();
     }
 }

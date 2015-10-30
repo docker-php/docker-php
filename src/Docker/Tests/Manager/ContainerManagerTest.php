@@ -352,6 +352,23 @@ class ContainerManagerTest extends TestCase
         $this->setExpectedException('\\Docker\\Exception\\ContainerNotFoundException', 'Container not found');
         $manager->inspect($container);
     }
+    
+    public function testForceRemove()
+    {
+        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['tail', '-f', '/var/log/lastlog']]);
+
+        $manager = $this->getManager();
+        $manager->create($container);
+        $manager->start($container);
+        
+        $this->setExpectedException('\\Docker\\Exception\\APIException');
+        $manager->remove($container);
+        
+        $manager->remove($container, false, true);
+
+        $this->setExpectedException('\\Docker\\Exception\\ContainerNotFoundException', 'Container not found');
+        $manager->inspect($container);
+    }
 
     public function testRemoveContainers()
     {
@@ -368,6 +385,23 @@ class ContainerManagerTest extends TestCase
             ->will($this->returnSelf());
 
         $manager->removeContainers($containers);
+    }
+    
+    public function testForceRemoveContainers()
+    {
+        $containers = ['3360ea744df2', 'a412d121d015'];
+        $manager = $this
+            ->getMockBuilder('\Docker\Manager\ContainerManager')
+            ->setMethods(['remove'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $manager->expects($this->exactly(2))
+            ->method('remove')
+            ->with($this->isInstanceOf('\Docker\Container'), false, true)
+            ->will($this->returnSelf());
+
+        $manager->removeContainers($containers, false, true);
     }
 
     public function testTop()
@@ -490,7 +524,7 @@ class ContainerManagerTest extends TestCase
 
         $this->getDocker()->build($dockerFileBuilder->getContext(), 'docker-php-kill-test', null, true, false, true);
 
-        $container = new Container(['Image' => 'docker-php-kill-test', 'Cmd' => ['/kill.sh']]);
+        $container = new Container(['Image' => 'docker-php-kill-test:latest', 'Cmd' => ['/kill.sh']]);
         $manager->create($container);
         $manager->start($container);
         $manager->kill($container, "SIGHUP");

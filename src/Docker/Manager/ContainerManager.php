@@ -502,17 +502,18 @@ class ContainerManager
      *
      * @param \Docker\Container $container
      * @param boolean           $volumes
+     * @param boolean           $force
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return \Docker\Manager\ContainerManager
      */
-    public function remove(Container $container, $volumes = false)
+    public function remove(Container $container, $volumes = false, $force = false)
     {
-        $response = $this->client->delete(['/containers/{id}?v={volumes}', [
+        $response = $this->client->delete(['/containers/{id}?v={volumes}&force={force}', [
             'id' => $container->getId(),
             'volumes' => (integer)$volumes,
-            // TODO: implement force option
+            'force' => (integer)$force,
         ]],[
             'wait' => true
         ]);
@@ -529,12 +530,13 @@ class ContainerManager
      *
      * @param \Docker\Container[]|array $containers
      * @param boolean                   $volumes
+     * @param boolean                   $force
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
      * @return \Docker\Manager\ContainerManager
      */
-    public function removeContainers(array $containers, $volumes = false)
+    public function removeContainers(array $containers, $volumes = false, $force = false)
     {
         foreach ($containers as $container) {
             if (!$container instanceof Container) {
@@ -544,7 +546,7 @@ class ContainerManager
                 $container->setId($containerId);
             }
 
-            $this->remove($container, $volumes);
+            $this->remove($container, $volumes, $force);
         }
 
         return $this;

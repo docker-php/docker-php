@@ -158,6 +158,13 @@ The `remove` method has a second argument (defaults to `false`) `$volumes` which
 $manager->remove($container, true);
 ```
 
+The `remove` method has a third argument (defaults to `false`) `$force` which allows you to force the removal of a container, even if it is currently running, by setting it to `true`.
+
+
+```php
+$manager->remove($container, false, true);
+```
+
 
 ## Removing multiple containers
 
@@ -169,7 +176,7 @@ $manager->removeContainers([$container, '889ceddbb88e', 'angry_goodall']);
 
 Same as the `remove` method it has a second argument (defaults to `false`) `$volumes` which allows you to remove the volumes associated with the containers by setting it to `true`.
 
-Keep in mind that all of the containers have to be stopped before they can be removed.
+Keep in mind that all of the containers have to be stopped before they can be removed. Alternatively, like with the `remove` method, you can set the third argument (default to `false`) `$force` to `true` to force the removal of containers, even if running.
 
 
 ## Copy files or folders from a container

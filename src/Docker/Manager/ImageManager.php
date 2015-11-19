@@ -54,7 +54,7 @@ class ImageManager
             'query' => $params
         ]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() != 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -133,7 +133,7 @@ class ImageManager
             throw $e;
         }
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -162,7 +162,7 @@ class ImageManager
             'wait'     => true,
         ]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -203,7 +203,7 @@ class ImageManager
             'wait'     => true,
         ]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -230,7 +230,7 @@ class ImageManager
             'wait'    => true
         ]]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -284,7 +284,7 @@ class ImageManager
             ]
         );
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -314,7 +314,7 @@ class ImageManager
             ]
         ]);
 
-        if ($response->getStatusCode() !== "201") {
+        if ($response->getStatusCode() !== 201) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -339,7 +339,7 @@ class ImageManager
             'name' => $image->__toString()
         ]]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 

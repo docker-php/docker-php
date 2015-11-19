@@ -2,8 +2,10 @@
 
 namespace Docker\Http;
 
-use Docker\Http\Adapter\DockerAdapter;
+use Docker\Exception\APIException;
+use Docker\Http\Handler\DockerHandler;
 use GuzzleHttp\Client;
+use GuzzleHttp\Event\ErrorEvent;
 
 class DockerClient extends Client
 {
@@ -36,10 +38,17 @@ class DockerClient extends Client
             }
 
             $config['message_factory'] = $messageFactory;
-            $config['adapter']         = new DockerAdapter($messageFactory, $entrypoint, $context, $useTls);
+            $config['handler'] = new DockerHandler([
+                'entrypoint' => $entrypoint,
+                'context' => $context,
+                'useTls' => $useTls,
+                'emitter' => $this->getEmitter()
+            ]);
         }
 
         parent::__construct($config);
+
+        $this->handleErrors();
     }
 
     /**
@@ -94,5 +103,24 @@ class DockerClient extends Client
         }
 
         return new self($config, $entrypoint, $context, $useTls);
+    }
+
+    private function handleErrors()
+    {
+        $emitter = $this->getEmitter();
+        $emitter->on('error', function (ErrorEvent $e) {
+            if (!$e->getException()) {
+                return;
+            }
+            // Stop other events from firing
+            $e->stopPropagation();
+            $e = new APIException(
+                $e->getException()->getMessage(),
+                $e->getRequest(),
+                $e->getResponse(),
+                $e->getException()
+            );
+            throw $e;
+        });
     }
 }

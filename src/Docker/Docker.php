@@ -160,7 +160,7 @@ class Docker
 
         $response = $this->httpClient->post(['/commit{?config*}', ['config' => $config]]);
 
-        if ($response->getStatusCode() !== "201") {
+        if ($response->getStatusCode() !== 201) {
             throw new UnexpectedStatusCodeException($response->getStatusCode(), (string) $response->getBody());
         }
 

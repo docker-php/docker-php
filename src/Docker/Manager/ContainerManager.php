@@ -43,7 +43,7 @@ class ContainerManager
             'query' => $params
         ]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -139,7 +139,7 @@ class ContainerManager
             'headers'      => ['content-type' => 'application/json'],
         ]);
 
-        if ($response->getStatusCode() !== "201") {
+        if ($response->getStatusCode() !== 201) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -166,7 +166,7 @@ class ContainerManager
             'wait'         => true,
         ]);
 
-        if ($response->getStatusCode() !== "204") {
+        if ($response->getStatusCode() !== 204) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -184,7 +184,7 @@ class ContainerManager
      *
      * @throws \Docker\Exception\UnexpectedStatusCodeException
      *
-     * @return Guzzle\Stream\Stream Tarfile stream
+     * @return \GuzzleHttp\Stream\Stream Tarfile stream
      */
     public function copy(Container $container, $source)
     {
@@ -193,7 +193,7 @@ class ContainerManager
             'headers'      => ['content-type' => 'application/json'],
         ]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -297,7 +297,7 @@ class ContainerManager
             'headers'      => ['content-type' => 'application/json'],
         ]);
 
-        if ($response->getStatusCode() !== "201") {
+        if ($response->getStatusCode() !== 201) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -331,7 +331,7 @@ class ContainerManager
             'callback'     => $callback,
         ]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -353,7 +353,7 @@ class ContainerManager
             'id' => $execid
         ]]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -395,7 +395,7 @@ class ContainerManager
             'callback' => $callback,
         ]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -458,7 +458,7 @@ class ContainerManager
             'timeout' => null === $timeout ? $this->client->getDefaultOption('timeout') : $timeout,
         ]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -488,7 +488,7 @@ class ContainerManager
             'wait' => true,
         ]);
 
-        if ($response->getStatusCode() !== "204" && $response->getStatusCode() !== "304") {
+        if ($response->getStatusCode() !== 204 && $response->getStatusCode() !== 304) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -518,7 +518,7 @@ class ContainerManager
             'wait' => true
         ]);
 
-        if ($response->getStatusCode() !== "204") {
+        if ($response->getStatusCode() !== 204) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -569,7 +569,7 @@ class ContainerManager
             'ps_args' => $psArgs
         ]]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -600,7 +600,7 @@ class ContainerManager
             'id' => $container->getId()
         ]]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -622,7 +622,7 @@ class ContainerManager
             'id' => $container->getId()
         ]]);
 
-        if ($response->getStatusCode() !== "200") {
+        if ($response->getStatusCode() !== 200) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -681,7 +681,7 @@ class ContainerManager
             'time' => $timeBeforeKill
         ]]);
 
-        if ($response->getStatusCode() !== "204") {
+        if ($response->getStatusCode() !== 204) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -703,7 +703,7 @@ class ContainerManager
             'signal' => $signal
         ]]);
 
-        if ($response->getStatusCode() !== "204") {
+        if ($response->getStatusCode() !== 204) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
     }
@@ -723,7 +723,7 @@ class ContainerManager
             'newname' => $newname
         ]]);
 
-        if ($response->getStatusCode() !== "204") {
+        if ($response->getStatusCode() !== 204) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -743,7 +743,7 @@ class ContainerManager
             'id' => $container->getId()
         ]]);
 
-        if ($response->getStatusCode() !== "204") {
+        if ($response->getStatusCode() !== 204) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 
@@ -765,7 +765,7 @@ class ContainerManager
             'id' => $container->getId()
         ]]);
 
-        if ($response->getStatusCode() !== "204") {
+        if ($response->getStatusCode() !== 204) {
             throw UnexpectedStatusCodeException::fromResponse($response);
         }
 

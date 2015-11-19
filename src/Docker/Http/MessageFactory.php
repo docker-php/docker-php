@@ -2,22 +2,31 @@
 
 namespace Docker\Http;
 
-use Docker\Http\Stream\Filter\OutputEvent;
 use GuzzleHttp\Message\MessageFactory as BaseMessageFactory;
 use GuzzleHttp\Message\RequestInterface;
 
 class MessageFactory extends BaseMessageFactory
 {
-    protected function add_callback(RequestInterface $request, callable $callback)
+    /**
+     * @param array $customOptions Associative array of custom request option
+     *                             names mapping to functions used to apply
+     *                             the option. The function accepts the request
+     *                             and the option value to apply.
+     */
+    public function __construct(array $customOptions = [])
     {
-        $request->getEmitter()->on('response.output', function (OutputEvent $event) use ($callback) {
-            $callback($event->getContent(), $event->getType());
-        });
+        $customOptions['callback'] = [$this, 'addCallback'];
+        $customOptions['wait'] = [$this, 'addWait'];
 
-        $request->getConfig()->set('attach_filter', true);
+        parent::__construct($customOptions);
     }
 
-    protected function add_wait(RequestInterface $request, $wait)
+    protected function addCallback(RequestInterface $request, callable $callback)
+    {
+        $request->getConfig()->set('callback', $callback);
+    }
+
+    protected function addWait(RequestInterface $request, $wait)
     {
         $request->getConfig()->set('wait', $wait);
     }

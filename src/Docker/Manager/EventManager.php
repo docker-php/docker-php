@@ -55,25 +55,12 @@ class EventManager
     public function splitEvents($contents)
     {
         $retVal = [];
-        $numOfBrackets = 0;
-        $currentString = '';
-        for ($i = 0; $i < strlen($contents); $i++) {
-            if ($contents{$i} == '{') {
-                $numOfBrackets++;
-            }
-            if ($contents{$i} == '}') {
-                $numOfBrackets--;
-            }
-            $currentString .= $contents{$i};
-            if ($numOfBrackets == 0) {
-                if (!empty($currentString)) {
-                    $retVal[] = new Event(json_decode($currentString, true));
-                }
-                $currentString = '';
+        foreach (explode("\n", $contents) as $eventString) {
+            if ($eventString) {
+                $retVal[] = new Event(json_decode($eventString, true));
             }
         }
-
-        return $retVal;
+       return $retVal;
     }
 
 }

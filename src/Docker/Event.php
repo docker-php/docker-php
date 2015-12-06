@@ -34,7 +34,10 @@ class Event
     {
         $this->status = $raw['status'];
         $this->id = $raw['id'];
-        $this->from = $raw['from'];
+        // eg. pull events do not contain 'from'
+        if (isset($raw['from'])) {
+            $this->from = $raw['from'];
+        }
         $this->time = $raw['time'];
     }
 

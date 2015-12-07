@@ -643,6 +643,10 @@ class ContainerManager
      */
     public function logs(Container $container, $follow = false, $stdout = false, $stderr = false, $timestamp = false, $tail = "all")
     {
+        if (!$stdout && !$stderr) {
+            throw new Exception('Bad parameters: you must choose at least one stream', 500);
+        }
+
         $logs = [];
 
         $callback = function ($output, $type) use(&$logs) {

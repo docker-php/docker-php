@@ -8,6 +8,8 @@ use GuzzleHttp\Exception\RequestException;
 
 /**
  * Docker\Manager\EventManager
+ *
+ * Original code from @ggodlewski, see https://github.com/stage1/docker-php/pull/116
  */
 class EventManager
 {

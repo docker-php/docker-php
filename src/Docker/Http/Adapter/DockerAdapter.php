@@ -74,7 +74,7 @@ class DockerAdapter implements AdapterInterface
             return $transaction->getResponse();
         } catch (RequestException $e) {
             if ($e->hasResponse() && $e->getResponse()->getBody()) {
-                throw new APIException($e->getResponse()->getBody()->__toString(), $e->getRequest(), $e->getResponse(), $e);
+                throw new APIException($e->getMessage(), $e->getRequest(), $e->getResponse(), $e);
             }
 
             throw $e;

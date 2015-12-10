@@ -3,6 +3,7 @@
 namespace Docker\Manager;
 
 use Docker\Container;
+use Docker\Exception;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Exception\ContainerNotFoundException;
 use Docker\Http\Stream\InteractiveStream;
@@ -638,11 +639,16 @@ class ContainerManager
      * @param bool $stderr
      * @param bool $timestamp
      * @param string $tail
+     * @param int $since
      *
      * @return array
      */
-    public function logs(Container $container, $follow = false, $stdout = false, $stderr = false, $timestamp = false, $tail = "all")
+    public function logs(Container $container, $follow = false, $stdout = false, $stderr = false, $timestamp = false, $tail = "all", $since = false)
     {
+        if (!$stdout && !$stderr) {
+            throw new Exception('Bad parameters: you must choose at least one stream', 500);
+        }
+
         $logs = [];
 
         $callback = function ($output, $type) use(&$logs) {
@@ -657,6 +663,7 @@ class ContainerManager
                 'stderr' => (int)$stderr,
                 'timestamps' => (int)$timestamp,
                 'tail' => $tail,
+                'since' => $since,
             ],
         ]], [
             'callback' => $callback,

@@ -45,6 +45,11 @@ Run it using [PHPUnit](http://phpunit.de/):
 $ composer test
 ```
 
+### Running Tests with `docker-compose`
+
+```
+$ docker-compose run test
+```
 
 Contributing
 ------------

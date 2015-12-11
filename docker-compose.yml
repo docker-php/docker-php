@@ -1,0 +1,6 @@
+test:
+  image: phundament/php-one:5.6-fpm-4.6.0-beta1
+  command: sh -c 'composer install && bin/phpunit'
+  volumes:
+    - ./:/app
+    - /var/run/docker.sock:/var/run/docker.sock

@@ -264,7 +264,7 @@ class ContainerManagerTest extends TestCase
     }
 
     /**
-     * @expectedException GuzzleHttp\Exception\RequestException
+     * @expectedException \GuzzleHttp\Exception\RequestException
      */
     public function testWaitWithTimeout()
     {

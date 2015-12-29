@@ -65,7 +65,7 @@ class NetworkResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function inspect($id, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function find($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = sprintf('/v1.21/networks/%s?%s', $id, $queryParam->buildQueryString($parameters));

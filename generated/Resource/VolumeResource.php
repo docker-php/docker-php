@@ -91,7 +91,7 @@ class VolumeResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function inspect($name, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function find($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = sprintf('/v1.21/volumes/%s?%s', $name, $queryParam->buildQueryString($parameters));

@@ -20,14 +20,10 @@ class ContainerManagerTest extends TestCase
 
     public function testFindAll()
     {
-        $container = new Container();
-        $container->setImage('ubuntu:precise');
+        $manager    = $this->getManager();
+        $containers = $manager->findAll();
 
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
-
-        $manager = $this->getManager();
-
-        $this->assertInternalType('array', $manager->findAll());
+        $this->assertInternalType('array', $containers);
     }
 
     public function testCreate()

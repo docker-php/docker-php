@@ -1161,7 +1161,7 @@
             "get": {
                 "summary": "List containers",
                 "description": "List containers",
-                "operationId": "getContainers",
+                "operationId": "findAll",
                 "parameters": [
                     {
                         "name": "all",
@@ -1227,7 +1227,7 @@
             "post": {
                 "summary": "Create a container",
                 "description": "Create a container",
-                "operationId": "createContainer",
+                "operationId": "create",
                 "parameters": [
                     {
                         "name": "name",
@@ -1268,7 +1268,7 @@
             "get": {
                 "summary": "Inspect a container",
                 "description": "Return low-level information on the container id",
-                "operationId": "getContainer",
+                "operationId": "find",
                 "responses": {
                     "200": {
                         "description": "no error",
@@ -1301,7 +1301,7 @@
             "get": {
                 "summary": "List processes running inside a container",
                 "description": "List processes running inside the container id",
-                "operationId": "getContainerTop",
+                "operationId": "listProcesses",
                 "responses": {
                     "200": {
                         "description": "no error",
@@ -1340,7 +1340,7 @@
             "get": {
                 "summary": "Get container logs",
                 "description": "Get stdout and stderr logs from the container id. Note: This endpoint works only for containers with json-file logging driver.",
-                "operationId": "getContainerLogs",
+                "operationId": "logs",
                 "responses": {
                     "101": {
                         "description": "no error, hints proxy about hijacking",
@@ -1420,7 +1420,7 @@
             "get": {
                 "summary": "Inspect changes on a container’s filesystem",
                 "description": "Inspect changes on a container’s filesystem",
-                "operationId": "getContainerChanges",
+                "operationId": "changes",
                 "responses": {
                     "200": {
                         "description": "no error",
@@ -1463,7 +1463,7 @@
             "get": {
                 "summary": "Export a container",
                 "description": "Export the contents of container id",
-                "operationId": "exportContainer",
+                "operationId": "export",
                 "responses": {
                     "200": {
                         "description": "no error",
@@ -1496,7 +1496,7 @@
             "get": {
                 "summary": "Get container stats based on resource usage",
                 "description": "This endpoint returns a live stream of a container’s resource usage statistics.",
-                "operationId": "getContainerStats",
+                "operationId": "stats",
                 "responses": {
                     "200": {
                         "description": "no error",
@@ -1535,7 +1535,7 @@
             "post": {
                 "summary": "Resize a container TTY",
                 "description": "Resize the TTY for container with id. The unit is number of characters. You must restart the container for the resize to take effect.",
-                "operationId": "resizeContainer",
+                "operationId": "resize",
                 "responses": {
                     "200": {
                         "description": "no error"
@@ -1577,7 +1577,7 @@
             "post": {
                 "summary": "Start a container",
                 "description": "Start the container id",
-                "operationId": "startContainer",
+                "operationId": "start",
                 "responses": {
                     "204": {
                         "description": "no error"
@@ -1610,7 +1610,7 @@
             "post": {
                 "summary": "Stop a container",
                 "description": "Stop the container id",
-                "operationId": "stopContainer",
+                "operationId": "stop",
                 "responses": {
                     "204": {
                         "description": "no error"
@@ -1649,7 +1649,7 @@
             "post": {
                 "summary": "Restart a container",
                 "description": "Restart the container id",
-                "operationId": "restartContainer",
+                "operationId": "restart",
                 "responses": {
                     "204": {
                         "description": "no error"
@@ -1685,7 +1685,7 @@
             "post": {
                 "summary": "Kill a container",
                 "description": "Send a posix signal to a container",
-                "operationId": "killContainer",
+                "operationId": "kill",
                 "responses": {
                     "204": {
                         "description": "no error"
@@ -1721,7 +1721,7 @@
             "post": {
                 "summary": "Rename a container",
                 "description": "Rename the container id to a new_name",
-                "operationId": "renameContainer",
+                "operationId": "rename",
                 "responses": {
                     "204": {
                         "description": "no error"
@@ -1761,7 +1761,7 @@
             "post": {
                 "summary": "Pause a container",
                 "description": "Pause the container id",
-                "operationId": "pauseContainer",
+                "operationId": "pause",
                 "responses": {
                     "204": {
                         "description": "no error"
@@ -1791,7 +1791,7 @@
             "post": {
                 "summary": "Unpause a container",
                 "description": "Unpause the container id",
-                "operationId": "unpauseContainer",
+                "operationId": "unpause",
                 "responses": {
                     "204": {
                         "description": "no error"
@@ -1821,7 +1821,7 @@
             "post": {
                 "summary": "Attach to a container",
                 "description": "Attach to the container id",
-                "operationId": "attachContainer",
+                "operationId": "attach",
                 "responses": {
                     "101": {
                         "description": "no error, hints proxy about hijacking"
@@ -1887,7 +1887,7 @@
             "post": {
                 "summary": "Wait a container",
                 "description": "Block until container id stops, then returns the exit code",
-                "operationId": "waitContainer",
+                "operationId": "wait",
                 "responses": {
                     "200": {
                         "description": "no error",
@@ -1920,7 +1920,7 @@
             "delete": {
                 "summary": "Remove a container",
                 "description": "Remove the container id from the filesystem",
-                "operationId": "removeContainer",
+                "operationId": "remove",
                 "responses": {
                     "204": {
                         "description": "no error"
@@ -2096,7 +2096,7 @@
             "get": {
                 "summary": "List Images",
                 "description": "List Images",
-                "operationId": "getImages",
+                "operationId": "findAll",
                 "responses": {
                     "200": {
                         "description": "no error",
@@ -2298,7 +2298,7 @@
             "get": {
                 "summary": "Inspect an image",
                 "description": "Return low-level information on the image name",
-                "operationId": "inspect",
+                "operationId": "find",
                 "responses": {
                     "200": {
                         "description": "No error",
@@ -2691,7 +2691,7 @@
                     }
                 ],
                 "tags": [
-                    "Misc"
+                    "Image"
                 ]
             }
         },
@@ -2946,7 +2946,7 @@
             "post": {
                 "summary": "Exec Inspect",
                 "description": "Return low-level information about the exec command id.",
-                "operationId": "inspect",
+                "operationId": "find",
                 "responses": {
                     "200": {
                         "description": "No error",
@@ -3040,7 +3040,7 @@
             "get": {
                 "summary": "Inspect a volume",
                 "description": "Inspect a volume.",
-                "operationId": "inspect",
+                "operationId": "find",
                 "responses": {
                     "200": {
                         "description": "No error",
@@ -3136,7 +3136,7 @@
             "get": {
                 "summary": "Inspect network",
                 "description": "Inspect network.",
-                "operationId": "inspect",
+                "operationId": "find",
                 "responses": {
                     "200": {
                         "description": "No error",

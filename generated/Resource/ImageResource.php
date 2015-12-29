@@ -15,7 +15,7 @@ class ImageResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getImages($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function findAll($parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('all', false);
@@ -104,7 +104,7 @@ class ImageResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function inspect($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function find($parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = sprintf('/v1.21/images/{name}/json?%s', $queryParam->buildQueryString($parameters));
@@ -240,6 +240,39 @@ class ImageResource extends Resource
         }
         if ('200' == $response->getStatusCode()) {
             return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ImageSearchResult[]', 'json');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Create a new image from a container’s changes.
+     * 
+     * @param mixed  $containerConfig The container configuration
+     * @param array  $parameters      List of parameters
+     * @param string $fetch           Fetch mode (object or response)
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function commit($containerConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
+    {
+        $queryParam = new QueryParam();
+        $queryParam->setDefault('container', null);
+        $queryParam->setDefault('repo', null);
+        $queryParam->setDefault('tag', null);
+        $queryParam->setDefault('comment', null);
+        $queryParam->setDefault('author', null);
+        $queryParam->setDefault('pause', null);
+        $queryParam->setDefault('changes', null);
+        $url      = sprintf('/v1.21/commit?%s', $queryParam->buildQueryString($parameters));
+        $request  = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), $containerConfig);
+        $request  = $request->withHeader('Host', 'localhost');
+        $response = $this->httpClient->sendRequest($request);
+        if (self::FETCH_RESPONSE == $fetch) {
+            return $response;
+        }
+        if ('201' == $response->getStatusCode()) {
+            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\CommitResult', 'json');
         }
 
         return $response;

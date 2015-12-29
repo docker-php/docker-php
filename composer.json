@@ -4,16 +4,25 @@
     "type": "library",
     "description": "A Docker PHP client",
     "autoload": {
-        "psr-0": {
-            "": "src/"
+        "psr-4": {
+            "Docker\\": "src/",
+            "Docker\\API\\": "generated/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Docker\\Tests\\": "tests/"
         }
     },
     "require": {
         "php": ">=5.4",
         "symfony/filesystem": "~2.3",
         "symfony/process": "~2.3",
-        "guzzlehttp/guzzle": "~4.1",
-        "guzzlehttp/streams": "~1.3"
+        "jane/swagger": "dev-master",
+        "php-http/socket-client": "dev-master",
+        "php-http/plugins": "dev-master",
+        "php-http/message": "dev-master",
+        "guzzlehttp/psr7": "^1.2"
     },
     "require-dev": {
         "phpunit/phpunit": "~3.7"
@@ -21,5 +30,6 @@
     "config": {
         "bin-dir": "bin"
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

@@ -9,25 +9,28 @@ class NetworkResource extends Resource
 {
     /**
      * List networks.
-     * 
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param array $parameters List of parameters
+     * 
+     *     (string)filters: JSON encoded value of the filters (a map[string][]string) to process on the networks list.
+     * @param string $fetch Fetch mode (object or response)
+     *
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\Network[]
      */
     public function findAll($parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('filters', null);
-        $url      = sprintf('/v1.21/networks?%s', $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/networks';
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Network[]', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Network[]', 'json');
+            }
         }
 
         return $response;
@@ -35,8 +38,8 @@ class NetworkResource extends Resource
 
     /**
      * Remove a network.
-     * 
-     * @param mixed  $id         Network id or name
+     *
+     * @param string $id         Network id or name
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
@@ -45,38 +48,40 @@ class NetworkResource extends Resource
     public function remove($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/networks/%s?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('DELETE', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/networks/{id}';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('DELETE', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Inspect network.
-     * 
-     * @param mixed  $id         Network id or name
+     *
+     * @param string $id         Network id or name
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\Network
      */
     public function find($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/networks/%s?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/networks/{id}';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Network', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Network', 'json');
+            }
         }
 
         return $response;
@@ -84,25 +89,26 @@ class NetworkResource extends Resource
 
     /**
      * Create network.
-     * 
-     * @param mixed  $networkConfig Network configuration
-     * @param array  $parameters    List of parameters
-     * @param string $fetch         Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param \Docker\API\Model\NetworkCreateConfig $networkConfig Network configuration
+     * @param array                                 $parameters    List of parameters
+     * @param string                                $fetch         Fetch mode (object or response)
+     *
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\NetworkCreateResult
      */
-    public function create($networkConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function create(\Docker\API\Model\NetworkCreateConfig $networkConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/networks/create?%s', $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), $networkConfig);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/networks/create';
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $this->serializer->serialize($networkConfig, 'json');
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('201' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\NetworkCreateResult', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('201' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\NetworkCreateResult', 'json');
+            }
         }
 
         return $response;
@@ -110,46 +116,44 @@ class NetworkResource extends Resource
 
     /**
      * Connect a container to a network.
-     * 
-     * @param mixed  $container  Container
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     *
+     * @param \Docker\API\Model\ContainerConnect $container  Container
+     * @param array                              $parameters List of parameters
+     * @param string                             $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function connect($container, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function connect(\Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/networks/{id}/connect?%s', $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), $container);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/networks/{id}/connect';
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $this->serializer->serialize($container, 'json');
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Disconnect a container to a network.
-     * 
-     * @param mixed  $container  Container
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     *
+     * @param \Docker\API\Model\ContainerConnect $container  Container
+     * @param array                              $parameters List of parameters
+     * @param string                             $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function disconnect($container, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function disconnect(\Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/networks/{id}/disconnect?%s', $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), $container);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/networks/{id}/disconnect';
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $this->serializer->serialize($container, 'json');
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }

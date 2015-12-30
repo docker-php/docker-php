@@ -9,23 +9,22 @@ class MiscResource extends Resource
 {
     /**
      * Check auth configuration.
-     * 
-     * @param mixed  $authConfig Authentication to check
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     *
+     * @param \Docker\API\Model\AuthConfig $authConfig Authentication to check
+     * @param array                        $parameters List of parameters
+     * @param string                       $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function checkAuthentication($authConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function checkAuthentication(\Docker\API\Model\AuthConfig $authConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/auth?%s', $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), $authConfig);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/auth';
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $this->serializer->serialize($authConfig, 'json');
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
@@ -36,20 +35,21 @@ class MiscResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\SystemInformation
      */
     public function getSystemInformation($parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/info?%s', $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/info';
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\SystemInformation', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\SystemInformation', 'json');
+            }
         }
 
         return $response;
@@ -61,20 +61,21 @@ class MiscResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\Version
      */
     public function getVersion($parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/version?%s', $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/version';
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Version', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Version', 'json');
+            }
         }
 
         return $response;
@@ -91,22 +92,25 @@ class MiscResource extends Resource
     public function ping($parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/_ping?%s', $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/_ping';
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Get container events from docker, either in real time via streaming, or via polling (using since).
+     *
+     * @param array $parameters List of parameters
      * 
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     *     (int)since: Timestamp used for polling
+     *     (int)until: Timestamp used for polling
+     *     (string)filters: A json encoded value of the filters (a map[string][]string) to process on the event list.
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -116,13 +120,12 @@ class MiscResource extends Resource
         $queryParam->setDefault('since', null);
         $queryParam->setDefault('until', null);
         $queryParam->setDefault('filters', null);
-        $url      = sprintf('/v1.21/events?%s', $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/events';
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }

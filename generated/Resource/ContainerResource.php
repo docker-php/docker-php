@@ -9,11 +9,18 @@ class ContainerResource extends Resource
 {
     /**
      * List containers.
-     * 
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param array $parameters List of parameters
+     * 
+     *     (bool)all: Show all containers. Only running containers are shown by default (i.e., this defaults to false)
+     *     (int)limit: Show <limit> last created containers, include non-running ones.
+     *     (string)since: Show only containers created since Id, include non-running ones.
+     *     (string)before: Show only containers created before Id, include non-running ones.
+     *     (bool)size: 1/True/true or 0/False/false, Show the containers sizes.
+     *     (array)filters: A JSON encoded value of the filters (a map[string][]string) to process on the containers list
+     * @param string $fetch Fetch mode (object or response)
+     *
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerConfig[]
      */
     public function findAll($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -24,15 +31,16 @@ class ContainerResource extends Resource
         $queryParam->setDefault('before', null);
         $queryParam->setDefault('size', null);
         $queryParam->setDefault('filters', null);
-        $url      = sprintf('/v1.21/containers/json?%s', $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/json';
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerConfig[]', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerConfig[]', 'json');
+            }
         }
 
         return $response;
@@ -40,49 +48,52 @@ class ContainerResource extends Resource
 
     /**
      * Create a container.
+     *
+     * @param \Docker\API\Model\ContainerConfig $container  Container to create
+     * @param array                             $parameters List of parameters
      * 
-     * @param mixed  $container  Container to create
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     *     (string)name: Assign the specified name to the container. Must match /?[a-zA-Z0-9_-]+.
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function create($container, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function create(\Docker\API\Model\ContainerConfig $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('name', null);
-        $url      = sprintf('/v1.21/containers/create?%s', $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), $container);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/create';
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $this->serializer->serialize($container, 'json');
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Return low-level information on the container id.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\Container
      */
     public function find($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/containers/%s/json?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/containers/{id}/json';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Container', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Container', 'json');
+            }
         }
 
         return $response;
@@ -90,26 +101,30 @@ class ContainerResource extends Resource
 
     /**
      * List processes running inside the container id.
-     * 
-     * @param mixed  $id         The container id or name
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param string $id         The container id or name
+     * @param array  $parameters List of parameters
+     * 
+     *     (string)ps_args: ps arguments to use (e.g., aux)
+     * @param string $fetch Fetch mode (object or response)
+     *
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerTop
      */
     public function listProcesses($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('ps_args', null);
-        $url      = sprintf('/v1.21/containers/%s/top?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/top';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerTop', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerTop', 'json');
+            }
         }
 
         return $response;
@@ -117,10 +132,17 @@ class ContainerResource extends Resource
 
     /**
      * Get stdout and stderr logs from the container id. Note: This endpoint works only for containers with json-file logging driver.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (bool)follow: 1/True/true or 0/False/false, return stream. Default false.
+     *     (bool)stdout: 1/True/true or 0/False/false, show stdout log. Default false.
+     *     (bool)stderr: 1/True/true or 0/False/false, show stderr log. Default false.
+     *     (int)since: UNIX timestamp (integer) to filter logs. Specifying a timestamp will only output log-entries since that timestamp. Default: 0 (unfiltered)
+     *     (bool)timestamps: 1/True/true or 0/False/false, print timestamps for every log line. 
+     *     (string)tail: Output specified number of lines at the end of logs: all or <number>. Default all.
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -133,39 +155,43 @@ class ContainerResource extends Resource
         $queryParam->setDefault('since', 0);
         $queryParam->setDefault('timestamps', false);
         $queryParam->setDefault('tail', null);
-        $url      = sprintf('/v1.21/containers/%s/logs?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/logs';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Inspect changes on a container’s filesystem.
-     * 
-     * @param mixed  $id         The container id or name
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param string $id         The container id or name
+     * @param array  $parameters List of parameters
+     * 
+     *     (int)kind: Kind of changes
+     * @param string $fetch Fetch mode (object or response)
+     *
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerChange[]
      */
     public function changes($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('kind', null);
-        $url      = sprintf('/v1.21/containers/%s/changes?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/changes';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerChange[]', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerChange[]', 'json');
+            }
         }
 
         return $response;
@@ -173,8 +199,8 @@ class ContainerResource extends Resource
 
     /**
      * Export the contents of container id.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
@@ -183,23 +209,25 @@ class ContainerResource extends Resource
     public function export($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/containers/%s/export?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/containers/{id}/export';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * This endpoint returns a live stream of a container’s resource usage statistics.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (bool)stream: Stream stats
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -207,23 +235,26 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('stream', null);
-        $url      = sprintf('/v1.21/containers/%s/stats?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/stats';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Resize the TTY for container with id. The unit is number of characters. You must restart the container for the resize to take effect.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (int)h: Height of the tty session
+     *     (int)w: Width of the tty session
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -232,21 +263,21 @@ class ContainerResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setDefault('h', null);
         $queryParam->setDefault('w', null);
-        $url      = sprintf('/v1.21/containers/%s/resize?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/resize';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Start the container id.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
@@ -255,23 +286,25 @@ class ContainerResource extends Resource
     public function start($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/containers/%s/start?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/containers/{id}/start';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Stop the container id.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (int)t: number of seconds to wait before killing the container
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -279,23 +312,25 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('t', null);
-        $url      = sprintf('/v1.21/containers/%s/stop?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/stop';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Restart the container id.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (int)t: number of seconds to wait before killing the container
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -303,21 +338,21 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('t', null);
-        $url      = sprintf('/v1.21/containers/%s/restart?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/restart';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Send a posix signal to a container.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
@@ -326,23 +361,25 @@ class ContainerResource extends Resource
     public function kill($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/containers/%s/kill?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/containers/{id}/kill';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Rename the container id to a new_name.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (string)name: New name for the container
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -350,21 +387,21 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('name');
-        $url      = sprintf('/v1.21/containers/%s/rename?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/rename';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Pause the container id.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
@@ -373,21 +410,21 @@ class ContainerResource extends Resource
     public function pause($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/containers/%s/pause?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/containers/{id}/pause';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Unpause the container id.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
@@ -396,23 +433,29 @@ class ContainerResource extends Resource
     public function unpause($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/containers/%s/unpause?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/containers/{id}/unpause';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Attach to the container id.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (string)logs: 1/True/true or 0/False/false, return logs. Default false
+     *     (string)stream: 1/True/true or 0/False/false, return stream. Default false
+     *     (string)stdin: 1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.
+     *     (string)stdout: 1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.
+     *     (string)stderr: 1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -424,38 +467,40 @@ class ContainerResource extends Resource
         $queryParam->setDefault('stdin', null);
         $queryParam->setDefault('stdout', null);
         $queryParam->setDefault('stderr', null);
-        $url      = sprintf('/v1.21/containers/%s/attach?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/attach';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Block until container id stops, then returns the exit code.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerWait
      */
     public function wait($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/containers/%s/wait?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/containers/{id}/wait';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerWait', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerWait', 'json');
+            }
         }
 
         return $response;
@@ -463,10 +508,13 @@ class ContainerResource extends Resource
 
     /**
      * Remove the container id from the filesystem.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (string)v: 1/True/true or 0/False/false, Remove the volumes associated to the container. Default false.
+     *     (string)force: 1/True/true or 0/False/false, Kill then remove the container. Default false.
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -475,23 +523,25 @@ class ContainerResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setDefault('v', null);
         $queryParam->setDefault('force', null);
-        $url      = sprintf('/v1.21/containers/%s?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('DELETE', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('DELETE', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Get an tar archive of a resource in the filesystem of container id.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (string)path: Resource in the container’s filesystem to archive.
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -499,23 +549,25 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');
-        $url      = sprintf('/v1.21/containers/%s/archive?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('GET', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/archive';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Retrieving information about files and folders in a container.
-     * 
-     * @param mixed  $id         The container id or name
+     *
+     * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (string)path: Resource in the container’s filesystem to archive.
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -523,39 +575,42 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');
-        $url      = sprintf('/v1.21/containers/%s/archive?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('HEAD', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/archive';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('HEAD', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Upload a tar archive to be extracted to a path in the filesystem of container id.
-     * 
-     * @param mixed  $id          The container id or name
-     * @param mixed  $inputStream The input stream must be a tar archive compressed with one of the following algorithms: identity (no compression), gzip, bzip2, xz.
+     *
+     * @param string $id          The container id or name
+     * @param string $inputStream The input stream must be a tar archive compressed with one of the following algorithms: identity (no compression), gzip, bzip2, xz.
      * @param array  $parameters  List of parameters
-     * @param string $fetch       Fetch mode (object or response)
+     * 
+     *     (string)path: Path to a directory in the container to extract the archive’s contents into. 
+     *     (string)noOverwriteDirNonDir: If “1”, “true”, or “True” then it will be an error if unpacking the given content would cause an existing directory to be replaced with a non-directory and vice versa.
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function putArchive($id, $inputStream, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function putArchive($id, string $inputStream, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');
         $queryParam->setDefault('noOverwriteDirNonDir', null);
-        $url      = sprintf('/v1.21/containers/%s/archive?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('PUT', $url, $queryParam->buildHeaders($parameters), $inputStream);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/containers/{id}/archive';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $inputStream;
+        $request  = $this->messageFactory->createRequest('PUT', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }

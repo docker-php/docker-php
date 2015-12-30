@@ -9,25 +9,26 @@ class ExecResource extends Resource
 {
     /**
      * Sets up an exec instance in a running container id.
-     * 
-     * @param mixed  $execConfig Exec configuration
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param \Docker\API\Model\ExecConfig $execConfig Exec configuration
+     * @param array                        $parameters List of parameters
+     * @param string                       $fetch      Fetch mode (object or response)
+     *
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ExecCreateResult
      */
-    public function create($execConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function create(\Docker\API\Model\ExecConfig $execConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/containers/{id}/exec?%s', $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), $execConfig);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/containers/{id}/exec';
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $this->serializer->serialize($execConfig, 'json');
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('201' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ExecCreateResult', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('201' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ExecCreateResult', 'json');
+            }
         }
 
         return $response;
@@ -35,34 +36,36 @@ class ExecResource extends Resource
 
     /**
      * Starts a previously set up exec instance id. If detach is true, this API returns after starting the exec command. Otherwise, this API sets up an interactive session with the exec command.
-     * 
-     * @param mixed  $execStartConfig Exec configuration
-     * @param mixed  $id              Exec instance id
-     * @param array  $parameters      List of parameters
-     * @param string $fetch           Fetch mode (object or response)
+     *
+     * @param string                            $id              Exec instance id
+     * @param \Docker\API\Model\ExecStartConfig $execStartConfig Exec configuration
+     * @param array                             $parameters      List of parameters
+     * @param string                            $fetch           Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function start($execStartConfig, $id, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function start($id, \Docker\API\Model\ExecStartConfig $execStartConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/exec/%s/start?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), $execStartConfig);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/exec/{id}/start';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $this->serializer->serialize($execStartConfig, 'json');
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Resize the tty session used by the exec command id.
-     * 
-     * @param mixed  $id         Exec instance id
+     *
+     * @param string $id         Exec instance id
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (int)w: Width of the tty session
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -70,38 +73,40 @@ class ExecResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('w', null);
-        $url      = sprintf('/v1.21/exec/%s/resize?%s', $id, $queryParam->buildQueryString($parameters));
-        $request  = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request  = $request->withHeader('Host', 'localhost');
+        $url      = '/v1.21/exec/{id}/resize';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
 
         return $response;
     }
 
     /**
      * Return low-level information about the exec command id.
-     * 
-     * @param mixed  $id         Exec instance id
+     *
+     * @param string $id         Exec instance id
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ExecCommand
      */
     public function find($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = sprintf('/v1.21/exec/%s/json?%s', $id, $queryParam->buildQueryString($parameters));
-        $request    = $this->messageFactory->createRequest('POST', $url, $queryParam->buildHeaders($parameters), null);
-        $request    = $request->withHeader('Host', 'localhost');
+        $url        = '/v1.21/exec/{id}/json';
+        $url        = str_replace('{id}', $id, $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $queryParam->buildFormDataString($parameters);
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
-        if (self::FETCH_RESPONSE == $fetch) {
-            return $response;
-        }
-        if ('200' == $response->getStatusCode()) {
-            return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ExecCommand', 'json');
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ExecCommand', 'json');
+            }
         }
 
         return $response;

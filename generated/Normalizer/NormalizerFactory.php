@@ -52,6 +52,7 @@ class NormalizerFactory
         $normalizers[] = new NetworkCreateResultNormalizer();
         $normalizers[] = new NetworkCreateConfigNormalizer();
         $normalizers[] = new ContainerConnectNormalizer();
+        $normalizers[] = new ContainerCreateResultNormalizer();
 
         return $normalizers;
     }

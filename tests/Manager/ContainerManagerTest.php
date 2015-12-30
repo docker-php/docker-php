@@ -2,8 +2,9 @@
 
 namespace Docker\Tests\Manager;
 
-use Docker\API\Model\Container;
-use Docker\Context\ContextBuilder;
+use Docker\API\Model\ContainerConfig;
+use Docker\API\Model\ContainerCreateResult;
+use Docker\Manager\ContainerManager;
 use Docker\Tests\TestCase;
 
 class ContainerManagerTest extends TestCase
@@ -11,7 +12,7 @@ class ContainerManagerTest extends TestCase
     /**
      * Return the container manager
      *
-     * @return \Docker\API\Resource\ContainerResource
+     * @return ContainerManager
      */
     private function getManager()
     {
@@ -28,14 +29,31 @@ class ContainerManagerTest extends TestCase
 
     public function testCreate()
     {
-        $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/true']]);
+        $containerConfig = new ContainerConfig();
+        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setCmd(['echo', '1']);
 
         $manager = $this->getManager();
-        $manager->create($container);
+        $containerCreateResult = $manager->create($containerConfig);
 
-        $this->assertNotEmpty($container->getId());
+        $this->assertInstanceOf(ContainerCreateResult::class ,$containerCreateResult);
+        $this->assertNotEmpty($containerCreateResult->getId());
     }
 
+    public function testStart()
+    {
+        $containerConfig = new ContainerConfig();
+        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setCmd(['/bin/true']);
+
+        $manager = $this->getManager();
+        $containerCreateResult = $manager->create($containerConfig);
+        $manager->start($containerCreateResult->getId());
+        $container = $manager->find($containerCreateResult->getId());
+
+        $this->assertEquals(0, $container->getState()->getExitCode());
+    }
+    /**
     public function testInteract()
     {
         $container = new Container([
@@ -242,10 +260,6 @@ class ContainerManagerTest extends TestCase
         $this->assertEquals('error', $output);
     }
 
-    /**
-     * Not sure how to reliably test that we actually waited for the container
-     * but this should at least ensure no exception is thrown
-     */
     public function testWait()
     {
         $container = new Container(['Image' => 'ubuntu:precise', 'Cmd' => ['/bin/sleep', '1']]);
@@ -259,9 +273,6 @@ class ContainerManagerTest extends TestCase
         $this->assertEquals(0, $runtimeInformations['State']['ExitCode']);
     }
 
-    /**
-     * @expectedException GuzzleHttp\Exception\RequestException
-     */
     public function testWaitWithTimeout()
     {
         if (getenv('DOCKER_TLS_VERIFY')) {
@@ -645,6 +656,6 @@ class ContainerManagerTest extends TestCase
         // cleanup
         $manager->stop($container);
         $manager->remove($container);
-    }
+    }*/
 
 }

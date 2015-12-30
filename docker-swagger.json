@@ -1154,6 +1154,20 @@
                     "type": "string"
                 }
             }
+        },
+        "ContainerCreateResult": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "string"
+                },
+                "Warnings": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
         }
     },
     "paths": {
@@ -1243,11 +1257,22 @@
                         "schema": {
                             "$ref": "#/definitions/ContainerConfig"
                         }
+                    },
+                    {
+                        "name": "Content-Type",
+                        "required": true,
+                        "in": "header",
+                        "type": "string",
+                        "default": "application/json",
+                        "description": "Content Type of input"
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "no error"
+                        "description": "no error",
+                        "schema": {
+                            "$ref": "#/definitions/ContainerCreateResult"
+                        }
                     },
                     "404": {
                         "description": "no such container"

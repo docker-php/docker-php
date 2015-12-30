@@ -53,20 +53,28 @@ class ContainerResource extends Resource
      * @param array                             $parameters List of parameters
      * 
      *     (string)name: Assign the specified name to the container. Must match /?[a-zA-Z0-9_-]+.
+     *     (string)Content-Type: Content Type of input
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerCreateResult
      */
     public function create(\Docker\API\Model\ContainerConfig $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('name', null);
+        $queryParam->setDefault('Content-Type', 'application/json');
+        $queryParam->setHeaderParameters(['Content-Type']);
         $url      = '/v1.21/containers/create';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $this->serializer->serialize($container, 'json');
         $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('201' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerCreateResult', 'json');
+            }
+        }
 
         return $response;
     }

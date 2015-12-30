@@ -2,13 +2,14 @@
 
 namespace Docker;
 
+use Docker\API\Model\Image;
 use Docker\API\Normalizer\NormalizerFactory;
-use Docker\API\Resource\ContainerResource;
-use Docker\API\Resource\ExecResource;
-use Docker\API\Resource\ImageResource;
-use Docker\API\Resource\MiscResource;
-use Docker\API\Resource\NetworkResource;
-use Docker\API\Resource\VolumeResource;
+use Docker\Manager\ContainerManager;
+use Docker\Manager\ExecManager;
+use Docker\Manager\ImageManager;
+use Docker\Manager\MiscManager;
+use Docker\Manager\NetworkManager;
+use Docker\Manager\VolumeManager;
 use Http\Client\HttpClient;
 use Http\Message\MessageFactory;
 use Joli\Jane\Encoder\RawEncoder;
@@ -38,32 +39,32 @@ class Docker
     private $messageFactory;
 
     /**
-     * @var ContainerResource
+     * @var ContainerManager
      */
     private $containerManager;
 
     /**
-     * @var ImageResource
+     * @var ImageManager
      */
     private $imageManager;
 
     /**
-     * @var MiscResource
+     * @var MiscManager
      */
     private $miscManager;
 
     /**
-     * @var VolumeResource
+     * @var VolumeManager
      */
     private $volumeManager;
 
     /**
-     * @var NetworkResource
+     * @var NetworkManager
      */
     private $networkManager;
 
     /**
-     * @var ExecResource
+     * @var ExecManager
      */
     private $execManager;
 
@@ -96,72 +97,72 @@ class Docker
     }
 
     /**
-     * @return ContainerResource
+     * @return ContainerManager
      */
     public function getContainerManager()
     {
         if (null === $this->containerManager) {
-            $this->containerManager = new ContainerResource($this->httpClient, $this->messageFactory, $this->serializer);
+            $this->containerManager = new ContainerManager($this->httpClient, $this->messageFactory, $this->serializer);
         }
 
         return $this->containerManager;
     }
 
     /**
-     * @return ImageResource
+     * @return ImageManager
      */
     public function getImageManager()
     {
         if (null === $this->imageManager) {
-            $this->imageManager = new ImageResource($this->httpClient, $this->messageFactory, $this->serializer);
+            $this->imageManager = new ImageManager($this->httpClient, $this->messageFactory, $this->serializer);
         }
 
         return $this->imageManager;
     }
 
     /**
-     * @return MiscResource
+     * @return MiscManager
      */
     public function getMiscManager()
     {
         if (null === $this->miscManager) {
-            $this->miscManager = new MiscResource($this->httpClient, $this->messageFactory, $this->serializer);
+            $this->miscManager = new MiscManager($this->httpClient, $this->messageFactory, $this->serializer);
         }
 
         return $this->miscManager;
     }
 
     /**
-     * @return ExecResource
+     * @return ExecManager
      */
     public function getExecManager()
     {
         if (null === $this->execManager) {
-            $this->execManager = new ExecResource($this->httpClient, $this->messageFactory, $this->serializer);
+            $this->execManager = new ExecManager($this->httpClient, $this->messageFactory, $this->serializer);
         }
 
         return $this->execManager;
     }
 
     /**
-     * @return VolumeResource
+     * @return VolumeManager
      */
     public function getVolumeManager()
     {
         if (null === $this->volumeManager) {
-            $this->volumeManager = new VolumeResource($this->httpClient, $this->messageFactory, $this->serializer);
+            $this->volumeManager = new VolumeManager($this->httpClient, $this->messageFactory, $this->serializer);
         }
 
         return $this->volumeManager;
     }
 
     /**
-     * @return NetworkResource
+     * @return NetworkManager
      */
     public function getNetworkManager()
     {
         if (null === $this->networkManager) {
-            $this->networkManager = new NetworkResource($this->httpClient, $this->messageFactory, $this->serializer);
+            $this->networkManager = new NetworkManager($this->httpClient, $this->messageFactory, $this->serializer);
         }
 
         return $this->networkManager;

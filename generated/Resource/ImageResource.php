@@ -74,7 +74,9 @@ class ImageResource extends Resource
         $queryParam->setDefault('rm', true);
         $queryParam->setDefault('forcerm', false);
         $queryParam->setDefault('Content-type', 'application/tar');
+        $queryParam->setHeaderParameters(['Content-type']);
         $queryParam->setDefault('X-Registry-Config', null);
+        $queryParam->setHeaderParameters(['X-Registry-Config']);
         $url      = '/v1.21/build';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -107,6 +109,7 @@ class ImageResource extends Resource
         $queryParam->setDefault('repo', null);
         $queryParam->setDefault('tag', null);
         $queryParam->setDefault('X-Registry-Config', null);
+        $queryParam->setHeaderParameters(['X-Registry-Config']);
         $url      = '/v1.21/images/create';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -185,6 +188,7 @@ class ImageResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setDefault('tag', null);
         $queryParam->setDefault('X-Registry-Auth', null);
+        $queryParam->setHeaderParameters(['X-Registry-Auth']);
         $url      = '/v1.21/images/{name}/push';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

@@ -2,6 +2,7 @@
 
 namespace Docker\Tests\Manager;
 
+use Docker\API\Resource\ImageResource;
 use Docker\Tests\TestCase;
 
 class ImageManagerTest extends TestCase
@@ -9,13 +10,22 @@ class ImageManagerTest extends TestCase
     /**
      * Return a container manager
      *
-     * @return \Docker\Manager\ImageManager
+     * @return ImageResource
      */
     private function getManager()
     {
         return $this->getDocker()->getImageManager();
     }
 
+    public function testPull()
+    {
+        $manager = $this->getManager();
+        $image = $manager->create([
+            'fromImage' => 'ubuntu:vivid'
+        ]);
+    }
+
+    /**
     public function testFind()
     {
         $manager = $this->getManager();
@@ -131,5 +141,5 @@ class ImageManagerTest extends TestCase
 
         $this->assertGreaterThan(1, count($history));
         $this->assertEquals('/bin/true', $history[0]['CreatedBy']);
-    }
+    }**/
 }

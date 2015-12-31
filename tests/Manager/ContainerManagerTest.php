@@ -50,7 +50,7 @@ class ContainerManagerTest extends TestCase
         $manager = $this->getManager();
         $containerCreateResult = $manager->create($containerConfig);
 
-        $this->assertInstanceOf(ContainerCreateResult::class ,$containerCreateResult);
+        $this->assertInstanceOf('\Docker\API\Model\ContainerCreateResult', $containerCreateResult);
         $this->assertNotEmpty($containerCreateResult->getId());
     }
 

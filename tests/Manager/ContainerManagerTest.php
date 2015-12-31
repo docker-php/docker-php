@@ -16,7 +16,20 @@ class ContainerManagerTest extends TestCase
      */
     private function getManager()
     {
-        return $this->getDocker()->getContainerManager();
+        return self::getDocker()->getContainerManager();
+    }
+
+    /**
+     * Be sure to have image before doing test
+     */
+    public static function setUpBeforeClass()
+    {
+        $response = self::getDocker()->getImageManager()->create([
+            'fromImage' => 'busybox:latest'
+        ]);
+
+        // Wait for pull complete
+        $response->getBody()->getContents();
     }
 
     public function testFindAll()
@@ -30,13 +43,12 @@ class ContainerManagerTest extends TestCase
     public function testCreate()
     {
         $containerConfig = new ContainerConfig();
-        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['echo', '1']);
+        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
 
         $manager = $this->getManager();
         $containerCreateResult = $manager->create($containerConfig);
-
-        $this->getManager()->remove($containerCreateResult->getId());
 
         $this->assertInstanceOf(ContainerCreateResult::class ,$containerCreateResult);
         $this->assertNotEmpty($containerCreateResult->getId());
@@ -45,32 +57,30 @@ class ContainerManagerTest extends TestCase
     public function testInspect()
     {
         $containerConfig = new ContainerConfig();
-        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['echo', '1']);
+        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
 
         $containerCreateResult = $this->getManager()->create($containerConfig);
         $container = $this->getManager()->find($containerCreateResult->getId());
 
-        $this->getManager()->remove($containerCreateResult->getId());
-
         $this->assertInstanceOf('\Docker\API\Model\Container', $container);
         $this->assertEquals($container->getId(), $containerCreateResult->getId());
-        $this->assertEquals('ubuntu:precise', $container->getConfig()->getImage());
+        $this->assertEquals('busybox:latest', $container->getConfig()->getImage());
         $this->assertEquals(['echo', '1'], $container->getConfig()->getCmd());
     }
 
     public function testStart()
     {
         $containerConfig = new ContainerConfig();
-        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['/bin/true']);
+        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
 
         $manager = $this->getManager();
         $containerCreateResult = $manager->create($containerConfig);
         $manager->start($containerCreateResult->getId());
         $container = $manager->find($containerCreateResult->getId());
-
-        $this->getManager()->remove($containerCreateResult->getId());
 
         $this->assertEquals(0, $container->getState()->getExitCode());
     }
@@ -78,15 +88,15 @@ class ContainerManagerTest extends TestCase
     public function testListProcesses()
     {
         $containerConfig = new ContainerConfig();
-        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['sleep', '10']);
+        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
 
         $manager = $this->getManager();
         $containerCreateResult = $manager->create($containerConfig);
         $manager->start($containerCreateResult->getId());
 
         $processes = $manager->listProcesses($containerCreateResult->getId());
-        $this->getManager()->remove($containerCreateResult->getId());
 
         $this->assertInstanceOf('\Docker\API\Model\ContainerTop', $processes);
         $this->assertCount(1, $processes->getProcesses());

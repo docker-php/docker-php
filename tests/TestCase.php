@@ -7,14 +7,14 @@ use PHPUnit_Framework_TestCase;
 
 class TestCase extends PHPUnit_Framework_TestCase
 {
-    private $docker;
+    private static $docker;
 
-    public function getDocker()
+    public static function getDocker()
     {
-        if (null === $this->docker) {
-            $this->docker = new Docker();
+        if (null === self::$docker) {
+            self::$docker = new Docker();
         }
 
-        return $this->docker;
+        return self::$docker;
     }
 }

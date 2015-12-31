@@ -21,7 +21,7 @@
         "jane/swagger": "dev-master",
         "php-http/socket-client": "dev-master",
         "php-http/plugins": "dev-master",
-        "php-http/message": "dev-master as 0.1.1",
+        "php-http/message": "^0.2@dev",
         "guzzlehttp/psr7": "^1.2"
     },
     "require-dev": {

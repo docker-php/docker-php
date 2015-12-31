@@ -36,8 +36,27 @@ class ContainerManagerTest extends TestCase
         $manager = $this->getManager();
         $containerCreateResult = $manager->create($containerConfig);
 
+        $this->getManager()->remove($containerCreateResult->getId());
+
         $this->assertInstanceOf(ContainerCreateResult::class ,$containerCreateResult);
         $this->assertNotEmpty($containerCreateResult->getId());
+    }
+
+    public function testInspect()
+    {
+        $containerConfig = new ContainerConfig();
+        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setCmd(['echo', '1']);
+
+        $containerCreateResult = $this->getManager()->create($containerConfig);
+        $container = $this->getManager()->find($containerCreateResult->getId());
+
+        $this->getManager()->remove($containerCreateResult->getId());
+
+        $this->assertInstanceOf('\Docker\API\Model\Container', $container);
+        $this->assertEquals($container->getId(), $containerCreateResult->getId());
+        $this->assertEquals('ubuntu:precise', $container->getConfig()->getImage());
+        $this->assertEquals(['echo', '1'], $container->getConfig()->getCmd());
     }
 
     public function testStart()
@@ -51,8 +70,28 @@ class ContainerManagerTest extends TestCase
         $manager->start($containerCreateResult->getId());
         $container = $manager->find($containerCreateResult->getId());
 
+        $this->getManager()->remove($containerCreateResult->getId());
+
         $this->assertEquals(0, $container->getState()->getExitCode());
     }
+
+    public function testListProcesses()
+    {
+        $containerConfig = new ContainerConfig();
+        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setCmd(['sleep', '10']);
+
+        $manager = $this->getManager();
+        $containerCreateResult = $manager->create($containerConfig);
+        $manager->start($containerCreateResult->getId());
+
+        $processes = $manager->listProcesses($containerCreateResult->getId());
+        $this->getManager()->remove($containerCreateResult->getId());
+
+        $this->assertInstanceOf('\Docker\API\Model\ContainerTop', $processes);
+        $this->assertCount(1, $processes->getProcesses());
+    }
+
     /**
     public function testInteract()
     {

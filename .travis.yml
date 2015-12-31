@@ -1,4 +1,4 @@
-language: go
+language: php
 sudo: required
 
 services:

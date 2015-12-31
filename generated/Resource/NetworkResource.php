@@ -21,7 +21,7 @@ class NetworkResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('filters', null);
-        $url      = '/v1.21/networks';
+        $url      = '/networks';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);
@@ -48,7 +48,7 @@ class NetworkResource extends Resource
     public function remove($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/networks/{id}';
+        $url        = '/networks/{id}';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -71,7 +71,7 @@ class NetworkResource extends Resource
     public function find($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/networks/{id}';
+        $url        = '/networks/{id}';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -99,7 +99,7 @@ class NetworkResource extends Resource
     public function create(\Docker\API\Model\NetworkCreateConfig $networkConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/networks/create';
+        $url        = '/networks/create';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($networkConfig, 'json');
@@ -126,7 +126,7 @@ class NetworkResource extends Resource
     public function connect(\Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/networks/{id}/connect';
+        $url        = '/networks/{id}/connect';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($container, 'json');
@@ -148,7 +148,7 @@ class NetworkResource extends Resource
     public function disconnect(\Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/networks/{id}/disconnect';
+        $url        = '/networks/{id}/disconnect';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($container, 'json');

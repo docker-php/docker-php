@@ -19,7 +19,7 @@ class ExecResource extends Resource
     public function create(\Docker\API\Model\ExecConfig $execConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/containers/{id}/exec';
+        $url        = '/containers/{id}/exec';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($execConfig, 'json');
@@ -47,7 +47,7 @@ class ExecResource extends Resource
     public function start($id, \Docker\API\Model\ExecStartConfig $execStartConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/exec/{id}/start';
+        $url        = '/exec/{id}/start';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -73,7 +73,7 @@ class ExecResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('w', null);
-        $url      = '/v1.21/exec/{id}/resize';
+        $url      = '/exec/{id}/resize';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -96,7 +96,7 @@ class ExecResource extends Resource
     public function find($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/exec/{id}/json';
+        $url        = '/exec/{id}/json';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

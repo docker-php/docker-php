@@ -21,7 +21,7 @@ class VolumeResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('filters', null);
-        $url      = '/v1.21/volumes';
+        $url      = '/volumes';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);
@@ -48,7 +48,7 @@ class VolumeResource extends Resource
     public function create(\Docker\API\Model\VolumeConfig $volumeConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/volumes/create';
+        $url        = '/volumes/create';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($volumeConfig, 'json');
@@ -75,7 +75,7 @@ class VolumeResource extends Resource
     public function remove($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/volumes/{name}';
+        $url        = '/volumes/{name}';
         $url        = str_replace('{name}', $name, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -98,7 +98,7 @@ class VolumeResource extends Resource
     public function find($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/volumes/{name}';
+        $url        = '/volumes/{name}';
         $url        = str_replace('{name}', $name, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

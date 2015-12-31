@@ -19,7 +19,7 @@ class MiscResource extends Resource
     public function checkAuthentication(\Docker\API\Model\AuthConfig $authConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/auth';
+        $url        = '/auth';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($authConfig, 'json');
@@ -40,7 +40,7 @@ class MiscResource extends Resource
     public function getSystemInformation($parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/info';
+        $url        = '/info';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
@@ -66,7 +66,7 @@ class MiscResource extends Resource
     public function getVersion($parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/version';
+        $url        = '/version';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
@@ -92,7 +92,7 @@ class MiscResource extends Resource
     public function ping($parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/_ping';
+        $url        = '/_ping';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
@@ -120,7 +120,7 @@ class MiscResource extends Resource
         $queryParam->setDefault('since', null);
         $queryParam->setDefault('until', null);
         $queryParam->setDefault('filters', null);
-        $url      = '/v1.21/events';
+        $url      = '/events';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);

@@ -31,7 +31,7 @@ class ContainerResource extends Resource
         $queryParam->setDefault('before', null);
         $queryParam->setDefault('size', null);
         $queryParam->setDefault('filters', null);
-        $url      = '/v1.21/containers/json';
+        $url      = '/containers/json';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);
@@ -64,7 +64,7 @@ class ContainerResource extends Resource
         $queryParam->setDefault('name', null);
         $queryParam->setDefault('Content-Type', 'application/json');
         $queryParam->setHeaderParameters(['Content-Type']);
-        $url      = '/v1.21/containers/create';
+        $url      = '/containers/create';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $this->serializer->serialize($container, 'json');
@@ -91,7 +91,7 @@ class ContainerResource extends Resource
     public function find($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/containers/{id}/json';
+        $url        = '/containers/{id}/json';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -122,7 +122,7 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('ps_args', null);
-        $url      = '/v1.21/containers/{id}/top';
+        $url      = '/containers/{id}/top';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -163,7 +163,7 @@ class ContainerResource extends Resource
         $queryParam->setDefault('since', 0);
         $queryParam->setDefault('timestamps', false);
         $queryParam->setDefault('tail', null);
-        $url      = '/v1.21/containers/{id}/logs';
+        $url      = '/containers/{id}/logs';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -189,7 +189,7 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('kind', null);
-        $url      = '/v1.21/containers/{id}/changes';
+        $url      = '/containers/{id}/changes';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -217,7 +217,7 @@ class ContainerResource extends Resource
     public function export($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/containers/{id}/export';
+        $url        = '/containers/{id}/export';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -243,7 +243,7 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('stream', null);
-        $url      = '/v1.21/containers/{id}/stats';
+        $url      = '/containers/{id}/stats';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -271,7 +271,7 @@ class ContainerResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setDefault('h', null);
         $queryParam->setDefault('w', null);
-        $url      = '/v1.21/containers/{id}/resize';
+        $url      = '/containers/{id}/resize';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -294,7 +294,7 @@ class ContainerResource extends Resource
     public function start($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/containers/{id}/start';
+        $url        = '/containers/{id}/start';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -320,7 +320,7 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('t', null);
-        $url      = '/v1.21/containers/{id}/stop';
+        $url      = '/containers/{id}/stop';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -346,7 +346,7 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('t', null);
-        $url      = '/v1.21/containers/{id}/restart';
+        $url      = '/containers/{id}/restart';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -369,7 +369,7 @@ class ContainerResource extends Resource
     public function kill($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/containers/{id}/kill';
+        $url        = '/containers/{id}/kill';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -395,7 +395,7 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('name');
-        $url      = '/v1.21/containers/{id}/rename';
+        $url      = '/containers/{id}/rename';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -418,7 +418,7 @@ class ContainerResource extends Resource
     public function pause($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/containers/{id}/pause';
+        $url        = '/containers/{id}/pause';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -441,7 +441,7 @@ class ContainerResource extends Resource
     public function unpause($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/containers/{id}/unpause';
+        $url        = '/containers/{id}/unpause';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -475,7 +475,7 @@ class ContainerResource extends Resource
         $queryParam->setDefault('stdin', null);
         $queryParam->setDefault('stdout', null);
         $queryParam->setDefault('stderr', null);
-        $url      = '/v1.21/containers/{id}/attach';
+        $url      = '/containers/{id}/attach';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -498,7 +498,7 @@ class ContainerResource extends Resource
     public function wait($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/v1.21/containers/{id}/wait';
+        $url        = '/containers/{id}/wait';
         $url        = str_replace('{id}', $id, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -531,7 +531,7 @@ class ContainerResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setDefault('v', null);
         $queryParam->setDefault('force', null);
-        $url      = '/v1.21/containers/{id}';
+        $url      = '/containers/{id}';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -557,7 +557,7 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');
-        $url      = '/v1.21/containers/{id}/archive';
+        $url      = '/containers/{id}/archive';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -583,7 +583,7 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');
-        $url      = '/v1.21/containers/{id}/archive';
+        $url      = '/containers/{id}/archive';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -612,7 +612,7 @@ class ContainerResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');
         $queryParam->setDefault('noOverwriteDirNonDir', null);
-        $url      = '/v1.21/containers/{id}/archive';
+        $url      = '/containers/{id}/archive';
         $url      = str_replace('{id}', $id, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

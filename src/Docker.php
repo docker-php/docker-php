@@ -2,7 +2,6 @@
 
 namespace Docker;
 
-use Docker\API\Model\Image;
 use Docker\API\Normalizer\NormalizerFactory;
 use Docker\Manager\ContainerManager;
 use Docker\Manager\ExecManager;

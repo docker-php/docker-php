@@ -70,14 +70,11 @@ class DockerClient implements HttpClient
             $certfile = getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'cert.pem';
             $keyfile = getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'key.pem';
             $peername = getenv('DOCKER_PEER_NAME') ? getenv('DOCKER_PEER_NAME') : 'boot2docker';
-            $fullcert = tempnam(sys_get_temp_dir(), 'docker-certfile');
-
-            file_put_contents($fullcert, file_get_contents($certfile));
-            file_put_contents($fullcert, file_get_contents($keyfile), FILE_APPEND);
 
             $options['ssl'] = [
                 'cafile' => $cafile,
-                'local_cert' => $fullcert,
+                'local_cert' => $certfile,
+                'local_pk' => $keyfile,
                 'peer_name' => $peername,
             ];
         }

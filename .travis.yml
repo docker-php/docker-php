@@ -21,6 +21,9 @@ matrix:
   fast_finish: true
   include:
     - php: 5.4
+      sudo: required
+      services:
+          - docker
       env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
 
 before_install:

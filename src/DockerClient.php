@@ -7,7 +7,7 @@ use Http\Client\Plugin\ContentLengthPlugin;
 use Http\Client\Plugin\DecoderPlugin;
 use Http\Client\Plugin\PluginClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
-use Http\Socket\SocketHttpClient;
+use Http\Client\Socket\Client as SocketHttpClient;
 use Psr\Http\Message\RequestInterface;
 
 class DockerClient implements HttpClient

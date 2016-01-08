@@ -44,6 +44,21 @@ class ImageManagerTest extends TestCase
         $this->assertNotNull($image->getId());
     }
 
+    public function testBuild()
+    {
+        $manager = $this->getManager();
+        $dockerFileString = <<<DOCKFILE
+FROM ubuntu:precise
+RUN apt-get update
+DOCKFILE;
+
+        $result = $manager->build($dockerFileString, null, ['t' => 'test_build', 'nocache' => 1]);
+        $this->assertTrue($result, 'Cannot build image');
+
+        $image = $manager->find('test_build');
+        $this->assertInstanceOf('\Docker\Image', $image, 'Cannot find created image');
+    }
+
     public function testFindAll()
     {
         $manager = $this->getManager();

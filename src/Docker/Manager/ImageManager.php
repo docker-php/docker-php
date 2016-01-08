@@ -211,6 +211,80 @@ class ImageManager
     }
 
     /**
+     * Build docker image (Docker API v1.20)
+     *
+     * POST /build request returns empty body with different headers so it's not needed to build something
+     * like UnexpectedStatusCodeException. We can get response success or fail only.
+     *
+     * @param array $options
+     *   dockerfile - Path within the build context to the Dockerfile. This is ignored if remote is specified and points to an individual filename.
+     *   t – A repository name (and optionally a tag) to apply to the resulting image in case of success.
+     *   remote – A Git repository URI or HTTP/HTTPS URI build source. If the URI specifies a filename, the file’s contents are placed into a file called Dockerfile.
+     *   q – Suppress verbose build output.
+     *   nocache – Do not use the cache when building the image.
+     *   pull - Attempt to pull the image even if an older image exists locally.
+     *   rm - Remove intermediate containers after a successful build (default behavior).
+     *   forcerm - Always remove intermediate containers (includes rm).
+     *   memory - Set memory limit for build.
+     *   memswap - Total memory (memory + swap), -1 to disable swap.
+     *   cpushares - CPU shares (relative weight).
+     *   cpusetcpus - CPUs in which to allow execution (e.g., 0-3, 0,1).
+     *   cpuperiod - The length of a CPU period in microseconds.
+     *   cpuquota - Microseconds of CPU time that the container can get in a CPU period
+     *
+     * @param $dockerfileString - Dockerfile contents
+     * @param callable|null $callback
+     * @return bool
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public function build($dockerfileString, callable $callback = null, array $options = [])
+    {
+        if (null === $callback) {
+            $callback = function () {};
+        }
+
+        // Create archive with Dockerfile content
+        $phar = new \PharData(sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('docker_php_dockerfile_tmp_', true) . '.tar');
+        $phar['Dockerfile'] = $dockerfileString;
+        $dockerfileCompressed = $phar->compress(\Phar::GZ);
+        $dockerfileResource = fopen($dockerfileCompressed->getPath(), 'r');
+
+        // remove file from cache
+        unlink($phar->getPath());
+        unset($phar);
+
+        $caughtException = null;
+        try {
+            $response = $this->client->post('/build?' . http_build_query($options), [
+                'headers' => [
+                    'Content-Type' => 'application/tar',
+                ],
+                'body' => $dockerfileResource,
+                'callback' => $callback,
+                'wait' => true,
+            ]);
+
+            if ($response->getStatusCode() !== '200') {
+                return false;
+            }
+        } catch(RequestException $e) {
+            /** @var RequestException $caughtException */
+            $caughtException = $e;
+        }
+
+        // remove second archive from cache
+        unlink($dockerfileCompressed->getPath());
+        unset($dockerfileCompressed);
+
+        // this is try-finally replacement for current version php54
+        if ($caughtException) {
+            throw $caughtException;
+        }
+
+        return true;
+    }
+
+    /**
      * Remove an image from docker daemon
      *
      * @param Image   $image   Image to remove

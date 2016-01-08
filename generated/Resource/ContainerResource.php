@@ -607,7 +607,7 @@ class ContainerResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function putArchive($id, string $inputStream, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function putArchive($id, $inputStream, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');

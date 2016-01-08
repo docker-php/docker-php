@@ -55,14 +55,21 @@ class ImageResource extends Resource
      *     (bool)nocache: Do not use the cache when building the image.
      *     (string)pull: Attempt to pull the image even if an older image exists locally
      *     (bool)rm: Remove intermediate containers after a successful build (default behavior).
-     *     (bool)forcerm: always remove intermediate containers (includes rm)Request Headers:
+     *     (bool)forcerm: always remove intermediate containers (includes rm)
+     *     (int)memory: Set memory limit for build.
+     *     (int)memswap: Total memory (memory + swap), -1 to disable swap.
+     *     (int)cpushares: CPU shares (relative weight).
+     *     (string)cpusetcpus: CPUs in which to allow execution (e.g., 0-3, 0,1).
+     *     (int)cpuperiod: The length of a CPU period in microseconds.
+     *     (int)cpuquota: Microseconds of CPU time that the container can get in a CPU period.
+     *     (int)buildargs: Total memory (memory + swap), -1 to disable swap.
      *     (string)Content-type:  Set to 'application/tar'.
      *     (string)X-Registry-Config: A base64-url-safe-encoded Registry Auth Config JSON object
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function build(string $inputStream, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function build($inputStream, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('dockerfile', null);
@@ -73,6 +80,13 @@ class ImageResource extends Resource
         $queryParam->setDefault('pull', null);
         $queryParam->setDefault('rm', true);
         $queryParam->setDefault('forcerm', false);
+        $queryParam->setDefault('memory', null);
+        $queryParam->setDefault('memswap', null);
+        $queryParam->setDefault('cpushares', null);
+        $queryParam->setDefault('cpusetcpus', null);
+        $queryParam->setDefault('cpuperiod', null);
+        $queryParam->setDefault('cpuquota', null);
+        $queryParam->setDefault('buildargs', null);
         $queryParam->setDefault('Content-type', 'application/tar');
         $queryParam->setHeaderParameters(['Content-type']);
         $queryParam->setDefault('X-Registry-Config', null);
@@ -378,7 +392,7 @@ class ImageResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function load(string $imagesTarball, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function load($imagesTarball, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/images/load';

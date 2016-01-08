@@ -179,10 +179,10 @@
                     "type": "integer"
                 },
                 "CpusetCpus": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "CpusetMems": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "BlkioWeight": {
                     "type": "integer"
@@ -2230,9 +2230,51 @@
                     {
                         "name": "forcerm",
                         "in": "query",
-                        "description": "always remove intermediate containers (includes rm)Request Headers:",
+                        "description": "always remove intermediate containers (includes rm)",
                         "type": "boolean",
                         "default": false
+                    },
+                    {
+                        "name": "memory",
+                        "in": "query",
+                        "description": "Set memory limit for build.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "memswap",
+                        "in": "query",
+                        "description": "Total memory (memory + swap), -1 to disable swap.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "cpushares",
+                        "in": "query",
+                        "description": "CPU shares (relative weight).",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "cpusetcpus",
+                        "in": "query",
+                        "description": "CPUs in which to allow execution (e.g., 0-3, 0,1).",
+                        "type": "string"
+                    },
+                    {
+                        "name": "cpuperiod",
+                        "in": "query",
+                        "description": "The length of a CPU period in microseconds.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "cpuquota",
+                        "in": "query",
+                        "description": "Microseconds of CPU time that the container can get in a CPU period.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "buildargs",
+                        "in": "query",
+                        "description": "Total memory (memory + swap), -1 to disable swap.",
+                        "type": "integer"
                     },
                     {
                         "name": "Content-type",

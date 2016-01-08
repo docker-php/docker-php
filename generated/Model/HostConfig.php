@@ -33,11 +33,11 @@ class HostConfig
      */
     protected $cpuPeriod;
     /**
-     * @var float
+     * @var string
      */
     protected $cpusetCpus;
     /**
-     * @var float
+     * @var string
      */
     protected $cpusetMems;
     /**
@@ -262,7 +262,7 @@ class HostConfig
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getCpusetCpus()
     {
@@ -270,7 +270,7 @@ class HostConfig
     }
 
     /**
-     * @param float $cpusetCpus
+     * @param string $cpusetCpus
      *
      * @return self
      */
@@ -282,7 +282,7 @@ class HostConfig
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getCpusetMems()
     {
@@ -290,7 +290,7 @@ class HostConfig
     }
 
     /**
-     * @param float $cpusetMems
+     * @param string $cpusetMems
      *
      * @return self
      */

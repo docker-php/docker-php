@@ -1950,6 +1950,69 @@
                 "description": "Attach to the container id",
                 "operationId": "attach",
                 "responses": {
+                    "200": {
+                        "description": "no error"
+                    },
+                    "400": {
+                        "description": "bad parameter"
+                    },
+                    "404": {
+                        "description": "no such container"
+                    },
+                    "500": {
+                        "description": "server error"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "The container id or name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "logs",
+                        "in": "query",
+                        "description": "1/True/true or 0/False/false, return logs. Default false",
+                        "type": "string"
+                    },
+                    {
+                        "name": "stream",
+                        "in": "query",
+                        "description": "1/True/true or 0/False/false, return stream. Default false",
+                        "type": "string"
+                    },
+                    {
+                        "name": "stdin",
+                        "in": "query",
+                        "description": "1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "stdout",
+                        "in": "query",
+                        "description": "1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "stderr",
+                        "in": "query",
+                        "description": "1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.",
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Container"
+                ]
+            }
+        },
+        "/containers/{id}/attach/ws": {
+            "get": {
+                "summary": "Attach to a container (websocket)",
+                "description": "Attach to the container id with a websocket.",
+                "operationId": "attachWebsocket",
+                "responses": {
                     "101": {
                         "description": "no error, hints proxy about hijacking"
                     },

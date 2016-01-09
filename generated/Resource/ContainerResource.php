@@ -487,6 +487,40 @@ class ContainerResource extends Resource
     }
 
     /**
+     * Attach to the container id with a websocket.
+     *
+     * @param string $id         The container id or name
+     * @param array  $parameters List of parameters
+     * 
+     *     (string)logs: 1/True/true or 0/False/false, return logs. Default false
+     *     (string)stream: 1/True/true or 0/False/false, return stream. Default false
+     *     (string)stdin: 1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.
+     *     (string)stdout: 1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.
+     *     (string)stderr: 1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.
+     * @param string $fetch Fetch mode (object or response)
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function attachWebsocket($id, $parameters = [], $fetch = self::FETCH_OBJECT)
+    {
+        $queryParam = new QueryParam();
+        $queryParam->setDefault('logs', null);
+        $queryParam->setDefault('stream', null);
+        $queryParam->setDefault('stdin', null);
+        $queryParam->setDefault('stdout', null);
+        $queryParam->setDefault('stderr', null);
+        $url      = '/containers/{id}/attach/ws';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
+        $response = $this->httpClient->sendRequest($request);
+
+        return $response;
+    }
+
+    /**
      * Block until container id stops, then returns the exit code.
      *
      * @param string $id         The container id or name

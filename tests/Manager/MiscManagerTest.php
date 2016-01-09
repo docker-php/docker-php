@@ -36,7 +36,6 @@ class MiscManagerTest extends TestCase
         $stream->wait();
 
         $this->assertInstanceOf('Docker\API\Model\Event', $lastEvent);
-
     }
 
     public function testGetEventsObject()

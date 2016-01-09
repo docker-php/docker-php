@@ -41,8 +41,12 @@ abstract class CallbackStream
             $frame = $this->readFrame();
 
             if ($frame !== null) {
+                if (!is_array($frame)) {
+                    $frame = [$frame];
+                }
+
                 foreach ($this->onNewFrameCallables as $newFrameCallable) {
-                    $newFrameCallable($frame);
+                    call_user_func_array($newFrameCallable, $frame);
                 }
             }
         }

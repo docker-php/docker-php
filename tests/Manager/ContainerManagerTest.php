@@ -99,6 +99,77 @@ class ContainerManagerTest extends TestCase
         $this->assertCount(1, $processes->getProcesses());
     }
 
+    public function testAttach()
+    {
+        $containerConfig = new ContainerConfig();
+        $containerConfig->setImage('busybox:latest');
+        $containerConfig->setCmd(['echo', '-n', 'output']);
+        $containerConfig->setAttachStdout(true);
+        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
+
+        $containerCreateResult = $this->getManager()->create($containerConfig);
+        $dockerRawStream = $this->getManager()->attach($containerCreateResult->getId(), [
+            'stream' => true,
+            'stdout' => true,
+        ], ContainerManager::FETCH_STREAM);
+
+        $stdoutFull = "";
+        $dockerRawStream->onStdout(function ($stdout) use (&$stdoutFull) {
+            $stdoutFull .= $stdout;
+        });
+
+        $this->getManager()->start($containerCreateResult->getId());
+        $this->getManager()->wait($containerCreateResult->getId());
+
+        $dockerRawStream->wait();
+
+        $this->assertEquals("output", $stdoutFull);
+    }
+
+    public function testAttachWebsocket()
+    {
+        $containerConfig = new ContainerConfig();
+        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setCmd(['/bin/bash']);
+        $containerConfig->setAttachStdout(true);
+        $containerConfig->setAttachStderr(true);
+        $containerConfig->setAttachStdin(false);
+        $containerConfig->setOpenStdin(true);
+        $containerConfig->setTty(true);
+        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
+
+        $containerCreateResult = $this->getManager()->create($containerConfig);
+        $webSocketStream       = $this->getManager()->attachWebsocket($containerCreateResult->getId(), [
+            'stream' => true,
+            'stdout' => true,
+            'stderr' => true,
+            'stdin'  => true,
+        ], ContainerManager::FETCH_STREAM);
+
+        $this->getManager()->start($containerCreateResult->getId());
+
+        // Read the bash first line
+        $webSocketStream->read();
+
+        // No output after that so it should be false
+        $this->assertFalse($webSocketStream->read());
+
+        // Write something to the container
+        $webSocketStream->write("echo test\n");
+
+        // Test for echo present (stdin)
+        $output = "";
+
+        while (($data = $webSocketStream->read()) != false) {
+            $output .= $data;
+        }
+
+        $this->assertContains("echo", $output);
+
+        // Exit the container
+        $webSocketStream->write("exit\n");
+    }
+
     /**
     public function testInteract()
     {

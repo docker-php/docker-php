@@ -61,6 +61,11 @@ class DockerRawStream
     protected function readFrame()
     {
         $header  = $this->forceRead(8);
+
+        if (strlen($header) < 8) {
+            return;
+        }
+
         $decoded = unpack('C1type/C3/N1size', $header);
         $output  = $this->forceRead($decoded['size']);
         $callbackList = [];

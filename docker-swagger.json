@@ -1836,7 +1836,7 @@
                         "name": "signal",
                         "in": "query",
                         "description": "Signal to send to the container, integer or string like SIGINT, defaults to SIGKILL",
-                        "type": ["integer", "string"]
+                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -3079,13 +3079,23 @@
                         "description": "Exec configuration",
                         "schema": {
                             "$ref": "#/definitions/ExecConfig"
-                        }
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content Type Header",
+                        "required": true,
+                        "type": "string",
+                        "default": "application/json"
                     },
                     {
                         "name": "id",
                         "in": "path",
                         "description": "Container name or id",
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     }
                 ],
                 "tags": [
@@ -3120,6 +3130,14 @@
                         "schema": {
                             "$ref": "#/definitions/ExecStartConfig"
                         }
+                    },
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content Type Header",
+                        "required": true,
+                        "type": "string",
+                        "default": "application/json"
                     },
                     {
                         "name": "id",

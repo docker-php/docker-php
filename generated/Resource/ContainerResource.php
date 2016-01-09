@@ -362,20 +362,23 @@ class ContainerResource extends Resource
      *
      * @param string $id         The container id or name
      * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * 
+     *     (string)signal: Signal to send to the container, integer or string like SIGINT, defaults to SIGKILL
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function kill($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/containers/{id}/kill';
-        $url        = str_replace('{id}', $id, $url);
-        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body       = $queryParam->buildFormDataString($parameters);
-        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $queryParam->setDefault('signal', null);
+        $url      = '/containers/{id}/kill';
+        $url      = str_replace('{id}', $id, $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $response = $this->httpClient->sendRequest($request);
 
         return $response;
     }

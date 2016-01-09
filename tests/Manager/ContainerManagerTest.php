@@ -58,7 +58,7 @@ class ContainerManagerTest extends TestCase
     public function testAttachWebsocket()
     {
         $containerConfig = new ContainerConfig();
-        $containerConfig->setImage('ubuntu:precise');
+        $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['sh']);
         $containerConfig->setAttachStdout(true);
         $containerConfig->setAttachStderr(true);

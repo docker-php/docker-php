@@ -189,7 +189,8 @@ class ImageResource extends Resource
     /**
      * Push the image name on the registry.
      *
-     * @param array $parameters List of parameters
+     * @param string $name       Image name or id
+     * @param array  $parameters List of parameters
      * 
      *     (string)tag: The tag to associate with the image on the registry.
      *     (string)X-Registry-Auth: A base64-encoded AuthConfig object
@@ -197,13 +198,14 @@ class ImageResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function push($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function push($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('tag', null);
-        $queryParam->setDefault('X-Registry-Auth', null);
+        $queryParam->setRequired('X-Registry-Auth');
         $queryParam->setHeaderParameters(['X-Registry-Auth']);
         $url      = '/images/{name}/push';
+        $url      = str_replace('{name}', $name, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);

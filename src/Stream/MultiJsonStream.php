@@ -1,14 +1,24 @@
 <?php
 
 namespace Docker\Stream;
+use Psr\Http\Message\StreamInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Represent a stream that decode a stream with multiple json in it
- *
- * Callable passed to this stream will take a stdClass object as first argument (decoded from the json)
  */
-class MultiJsonStream extends CallbackStream
+abstract class MultiJsonStream extends CallbackStream
 {
+    /** @var SerializerInterface Serializer to decode incoming json object */
+    private $serializer;
+
+    public function __construct(StreamInterface $stream, SerializerInterface $serializer)
+    {
+        parent::__construct($stream);
+
+        $this->serializer = $serializer;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -54,6 +64,13 @@ class MultiJsonStream extends CallbackStream
             return null;
         }
 
-        return json_decode($jsonFrame);
+        return $this->serializer->deserialize($jsonFrame, $this->getDecodeClass(), 'json');
     }
+
+    /**
+     * Get the decode class to pass to serializer
+     *
+     * @return string
+     */
+    abstract protected function getDecodeClass();
 }

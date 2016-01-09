@@ -24,12 +24,9 @@ class ContainerManagerTest extends TestCase
      */
     public static function setUpBeforeClass()
     {
-        $response = self::getDocker()->getImageManager()->create([
+        self::getDocker()->getImageManager()->create([
             'fromImage' => 'busybox:latest'
         ]);
-
-        // Wait for pull complete
-        $response->getBody()->getContents();
     }
 
     public function testFindAll()

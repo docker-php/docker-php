@@ -1168,6 +1168,108 @@
                     }
                 }
             }
+        },
+        "BuildInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "stream": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "errorDetail": {
+                    "$ref": "#/definitions/ErrorDetail"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "string"
+                },
+                "progressDetail": {
+                    "$ref": "#/definitions/ProgressDetail"
+                }
+            }
+        },
+        "CreateImageInfo": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "string"
+                },
+                "progressDetail": {
+                    "$ref": "#/definitions/ProgressDetail"
+                }
+            }
+        },
+        "PushImageInfo": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "string"
+                },
+                "progressDetail": {
+                    "$ref": "#/definitions/ProgressDetail"
+                }
+            }
+        },
+        "ErrorDetail": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "ProgressDetail": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "current": "integer"
+                },
+                "message": {
+                    "total": "integer"
+                }
+            }
+        },
+        "Event": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "from": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "integer"
+                },
+                "timeNano": {
+                    "type": "integer"
+                }
+            }
         }
     },
     "paths": {
@@ -2449,7 +2551,8 @@
                         "name": "name",
                         "in": "path",
                         "description": "Image name or id",
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     },
                     {
                         "name": "tag",
@@ -2461,7 +2564,8 @@
                         "name": "X-Registry-Auth",
                         "in": "header",
                         "description": "A base64-encoded AuthConfig object",
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     }
                 ],
                 "tags": [

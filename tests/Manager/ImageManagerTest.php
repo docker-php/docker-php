@@ -2,7 +2,12 @@
 
 namespace Docker\Tests\Manager;
 
-use Docker\API\Resource\ImageResource;
+use Docker\API\Model\AuthConfig;
+use Docker\API\Model\BuildInfo;
+use Docker\API\Model\CreateImageInfo;
+use Docker\API\Model\PushImageInfo;
+use Docker\Context\ContextBuilder;
+use Docker\Manager\ImageManager;
 use Docker\Tests\TestCase;
 
 class ImageManagerTest extends TestCase
@@ -10,136 +15,118 @@ class ImageManagerTest extends TestCase
     /**
      * Return a container manager
      *
-     * @return ImageResource
+     * @return ImageManager
      */
     private function getManager()
     {
         return $this->getDocker()->getImageManager();
     }
 
-    public function testPull()
+    public function testBuildStream()
     {
-        $manager = $this->getManager();
-        $image = $manager->create([
-            'fromImage' => 'ubuntu:vivid'
-        ]);
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->from('ubuntu:precise');
+        $contextBuilder->add('/test', 'test file content');
+
+        $buildStream = $this->getManager()->build($contextBuilder->getContext()->read(), ['t' => 'test-image'], ImageManager::FETCH_STREAM);
+
+        $this->assertInstanceOf('Docker\Stream\BuildStream', $buildStream);
+
+        $lastMessage = "";
+
+        $buildStream->onFrame(function (BuildInfo $frame) use (&$lastMessage) {
+            $lastMessage = $frame->getStream();
+        });
+        $buildStream->wait();
+
+        $this->assertContains("Successfully built", $lastMessage);
     }
 
-    /**
-    public function testFind()
+    public function testBuildObject()
     {
-        $manager = $this->getManager();
-        $image   = $manager->find('test', 'foo');
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->from('ubuntu:precise');
+        $contextBuilder->add('/test', 'test file content');
 
-        $this->assertEquals('test', $image->getRepository());
-        $this->assertEquals('foo', $image->getTag());
-        $this->assertNotNull($image->getId());
+        $buildInfos = $this->getManager()->build($contextBuilder->getContext()->read(), ['t' => 'test-image'], ImageManager::FETCH_OBJECT);
+
+        $this->assertInternalType('array', $buildInfos);
+        $this->assertContains("Successfully built", $buildInfos[count($buildInfos) - 1]->getStream());
     }
 
-    public function testFindInexistant()
+    public function testCreateStream()
     {
-        $manager = $this->getManager();
+        $createImageStream = $this->getManager()->create([
+            'fromImage' => 'registry:latest'
+        ], ImageManager::FETCH_STREAM);
 
-        $this->setExpectedException('\\Docker\\Exception\\ImageNotFoundException', 'Image not found');
-        $manager->find('test');
+        $this->assertInstanceOf('Docker\Stream\CreateImageStream', $createImageStream);
+
+        $firstMessage = null;
+
+        $createImageStream->onFrame(function (CreateImageInfo $createImageInfo) use (&$firstMessage) {
+            if (null === $firstMessage) {
+                $firstMessage = $createImageInfo->getStatus();
+            }
+        });
+        $createImageStream->wait();
+
+        $this->assertContains("Pulling from library/registry", $firstMessage);
     }
 
-    public function testPull()
+    public function testCreateObject()
     {
-        $manager = $this->getManager();
-        $image = $manager->pull('cogniteev/echo', 'latest');
+        $createImagesInfos = $this->getManager()->create([
+            'fromImage' => 'registry:latest'
+        ], ImageManager::FETCH_OBJECT);
 
-        $this->assertEquals('cogniteev/echo', $image->getRepository());
-        $this->assertEquals('latest', $image->getTag());
-        $this->assertNotNull($image->getId());
+        $this->assertInternalType('array', $createImagesInfos);
+        $this->assertContains("Pulling from library/registry", $createImagesInfos[0]->getStatus());
     }
 
-    public function testFindAll()
+    public function testPushStream()
     {
-        $manager = $this->getManager();
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->from('ubuntu:precise');
+        $contextBuilder->add('/test', 'test file content');
 
-        $this->assertInternalType('array', $manager->findAll());
-        $this->assertGreaterThanOrEqual(1, count($manager->findAll()));
+        $this->getManager()->build($contextBuilder->getContext()->read(), ['t' => 'localhost:5000/test-image'], ImageManager::FETCH_OBJECT);
+
+        $registryConfig = new AuthConfig();
+        $registryConfig->setServeraddress('localhost:5000');
+        $pushImageStream = $this->getManager()->push('localhost:5000/test-image', [
+            'X-Registry-Auth' => $registryConfig
+        ], ImageManager::FETCH_STREAM);
+
+        $this->assertInstanceOf('Docker\Stream\PushStream', $pushImageStream);
+
+        $firstMessage = null;
+
+        $pushImageStream->onFrame(function (PushImageInfo $pushImageInfo) use (&$firstMessage) {
+            if (null === $firstMessage) {
+                $firstMessage = $pushImageInfo->getStatus();
+            }
+        });
+        $pushImageStream->wait();
+
+        $this->assertContains("The push refers to a repository [localhost:5000/test-image]", $firstMessage);
     }
 
-    public function testFindAllAll()
+    public function testPushObject()
     {
-        $manager = $this->getManager();
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->from('ubuntu:precise');
+        $contextBuilder->add('/test', 'test file content');
 
-        $images1 = $manager->findAll();
-        $images2 = $manager->findAll(false, true);
+        $this->getManager()->build($contextBuilder->getContext()->read(), ['t' => 'localhost:5000/test-image'], ImageManager::FETCH_OBJECT);
 
-        $this->assertInternalType('array', $images2);
-        $this->assertGreaterThan(count($images1), count($images2));
+        $registryConfig = new AuthConfig();
+        $registryConfig->setServeraddress('localhost:5000');
+        $pushImageInfos = $this->getManager()->push('localhost:5000/test-image', [
+            'X-Registry-Auth' => $registryConfig
+        ], ImageManager::FETCH_OBJECT);
+
+        $this->assertInternalType('array', $pushImageInfos);
+        $this->assertContains("The push refers to a repository [localhost:5000/test-image]", $pushImageInfos[0]->getStatus());
     }
-
-    public function testFindAllDangling()
-    {
-        $manager = $this->getManager();
-
-        $images = $manager->findAll(true);
-
-        $this->assertInternalType('array', $images);
-        $this->assertGreaterThanOrEqual(1, count($images));
-    }
-
-    public function testRemove()
-    {
-        $manager = $this->getManager();
-
-        $image = $manager->find('ubuntu', 'vivid');
-        $manager->remove($image, true);
-
-        $this->setExpectedException('\\Docker\\Exception\\ImageNotFoundException', 'Image not found');
-        $manager->inspect($image);
-    }
-
-    public function testRemoveImages()
-    {
-        $containers = ['ubuntu:precise', '69c02692b0c1'];
-        $manager = $this
-            ->getMockBuilder('\Docker\Manager\ImageManager')
-            ->setMethods(['remove'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $manager->expects($this->exactly(2))
-            ->method('remove')
-            ->with($this->isInstanceOf('\Docker\Image'), false, false)
-            ->will($this->returnSelf());
-
-        $manager->removeImages($containers);
-    }
-
-    public function testSearch()
-    {
-        $manager = $this->getManager();
-
-        $result = $manager->search('test-image-not-exist');
-        $this->assertEmpty($result);
-    }
-
-    public function testTag()
-    {
-        $image = $this->getManager()->find('test', 'foo');
-
-        $this->getManager()->tag($image, 'docker-php/unit-test', 'latest');
-
-        $this->assertEquals('docker-php/unit-test', $image->getRepository());
-        $this->assertEquals('latest', $image->getTag());
-
-        $newImage = $this->getManager()->find('docker-php/unit-test', 'latest');
-        $this->assertEquals($image->getId(), $newImage->getId());
-
-        $this->getManager()->removeImages(array($newImage));
-    }
-
-    public function testHistory()
-    {
-        $image = $this->getManager()->find('test', 'foo');
-        $history = $this->getManager()->history($image);
-
-        $this->assertGreaterThan(1, count($history));
-        $this->assertEquals('/bin/true', $history[0]['CreatedBy']);
-    }**/
 }

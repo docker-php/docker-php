@@ -53,6 +53,12 @@ class NormalizerFactory
         $normalizers[] = new NetworkCreateConfigNormalizer();
         $normalizers[] = new ContainerConnectNormalizer();
         $normalizers[] = new ContainerCreateResultNormalizer();
+        $normalizers[] = new BuildInfoNormalizer();
+        $normalizers[] = new CreateImageInfoNormalizer();
+        $normalizers[] = new PushImageInfoNormalizer();
+        $normalizers[] = new ErrorDetailNormalizer();
+        $normalizers[] = new ProgressDetailNormalizer();
+        $normalizers[] = new EventNormalizer();
 
         return $normalizers;
     }

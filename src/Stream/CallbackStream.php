@@ -47,4 +47,10 @@ abstract class CallbackStream
             }
         }
     }
+
+    public function closeAndRead()
+    {
+        $this->stream->close();
+        $this->wait();
+    }
 }

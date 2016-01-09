@@ -60,9 +60,9 @@ class DockerRawStream
      */
     protected function readFrame()
     {
-        $header  = $this->stream->read(8);
+        $header  = $this->forceRead(8);
         $decoded = unpack('C1type/C3/N1size', $header);
-        $output  = $this->stream->read($decoded['size']);
+        $output  = $this->forceRead($decoded['size']);
         $callbackList = [];
 
         if ($decoded['type'] == 0) {
@@ -80,6 +80,24 @@ class DockerRawStream
         foreach ($callbackList as $callback) {
             $callback($output);
         }
+    }
+
+    /**
+     * Force to have something of the expected size (block)
+     *
+     * @param $length
+     *
+     * @return string
+     */
+    private function forceRead($length)
+    {
+        $read = "";
+
+        do {
+            $read .= $this->stream->read($length - strlen($read));
+        } while (strlen($read) < $length && !$this->stream->eof());
+
+        return $read;
     }
 
     /**

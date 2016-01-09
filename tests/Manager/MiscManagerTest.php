@@ -36,8 +36,6 @@ class MiscManagerTest extends TestCase
         $stream->wait();
 
         $this->assertInstanceOf('Docker\API\Model\Event', $lastEvent);
-        $this->assertEquals('pull', $lastEvent->getStatus());
-        $this->assertEquals('busybox:latest', $lastEvent->getId());
 
     }
 

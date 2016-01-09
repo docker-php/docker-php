@@ -112,7 +112,7 @@ class Context implements ContextInterface
     /**
      * Return a stream for this context
      *
-     * @return resouce Stream resource in memory
+     * @return resource Stream resource in memory
      */
     public function toStream()
     {

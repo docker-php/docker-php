@@ -15,6 +15,10 @@ php:
   - 7.0
   - hhvm
 
+env:
+  global:
+    - TEST_COMMAND="composer test"
+
 matrix:
   allow_failures:
     - php: hhvm
@@ -24,7 +28,7 @@ matrix:
       sudo: required
       services:
           - docker
-      env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
+      env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true TEST_COMMAND="composer test-ci"
 
 before_install:
   - travis_retry composer self-update
@@ -35,7 +39,11 @@ install:
   - docker run -p 5000:5000 -d registry
 
 script:
-  - bin/phpunit
+  - $TEST_COMMAND
+
+after_success:
+  - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+  - if [[ "$COVERAGE" = true ]]; then php ocular.phar code-coverage:upload --format=php-clover build/coverage.xml; fi
 
 after_script:
   - sudo cat /var/log/upstart/docker.log

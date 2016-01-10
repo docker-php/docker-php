@@ -13,11 +13,6 @@ please be as precise as possible. Here is a little list of required information:
  - Backtrace which might help identifing the bug
 
 
-## Security issues
-
-If you discover any security related issues, please contact us at [security@php-http.org](mailto:security@php-http.org) instead of submitting an issue on Github. This allows us to fix the issue and release a security hotfix without publicly disclosing the vulnerability.
-
-
 ## Feature requests
 
 If you think a feature is missing, please report it or even better: implement it :). If you report it, describe the more

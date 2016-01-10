@@ -62,7 +62,7 @@ $ git rebase -i HEAD~3
 If your branch conflicts with the master branch, you will need to rebase and repush it with the following commands:
 
 ``` bash
-$ git remote add upstream git@github.com:php-http/repo-name.git
+$ git remote add upstream git@github.com:stage1/docker-php.git
 $ git pull --rebase upstream master
 $ git push -f origin feature-or-bug-fix-description
 ```

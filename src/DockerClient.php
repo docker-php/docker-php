@@ -5,6 +5,7 @@ namespace Docker;
 use Http\Client\HttpClient;
 use Http\Client\Plugin\ContentLengthPlugin;
 use Http\Client\Plugin\DecoderPlugin;
+use Http\Client\Plugin\ErrorPlugin;
 use Http\Client\Plugin\PluginClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Client\Socket\Client as SocketHttpClient;
@@ -23,8 +24,10 @@ class DockerClient implements HttpClient
         $socketClient = new SocketHttpClient($messageFactory, $socketClientOptions);
         $lengthPlugin = new ContentLengthPlugin();
         $decodingPlugin = new DecoderPlugin(false);
+        $errorPlugin = new ErrorPlugin();
 
         $this->httpClient = new PluginClient($socketClient, [
+            $errorPlugin,
             $lengthPlugin,
             $decodingPlugin
         ]);

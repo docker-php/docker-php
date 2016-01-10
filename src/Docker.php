@@ -68,7 +68,9 @@ class Docker
     private $execManager;
 
     /**
-     * @param HttpClient $httpClient Http client to use with Docker
+     * @param HttpClient|null     $httpClient     Http client to use with Docker
+     * @param Serializer|null     $serializer     Deserialize docker response into php objects
+     * @param MessageFactory|null $messageFactory How to create docker request (in PSR7)
      */
     public function __construct(HttpClient $httpClient = null, Serializer $serializer = null, MessageFactory $messageFactory = null)
     {

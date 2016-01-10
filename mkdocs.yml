@@ -9,9 +9,11 @@ pages:
       - Installation: installation.md
       - Connecting to Docker: connection.md
       - Basic Usage: basic.md
-  - Containers: container/basic.md
+  - Containers:
+      - Basic Usage: container/basic.md
       - Running a container: container/run.md
-  - Images: image/basic.md
+  - Images:
+      - Basic Usage: image/basic.md
       - Build an image: image/build.md
       - Create (or pull) an image: image/create.md
       - Push an image: image/push.md

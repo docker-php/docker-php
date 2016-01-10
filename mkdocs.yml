@@ -4,17 +4,18 @@ site_description: A Docker client in PHP
 repo_url: https://github.com/stage1/docker-php
 
 pages:
-  - [index.md, Home]
-  - [installation.md, 'Docker PHP', Installation]
-  - [connection.md, 'Docker PHP', Connection]
-  - [basic.md, 'Docker PHP', Basic usage]
-  - [image/basic.md, Images]
-  - [image/build.md, Images, Build an image]
-  - [image/create.md, Images, Create (or pull) an image]
-  - [image/push.md, Images, Push an image]
-  - [container/basic.md, Containers]
-  - [container/run.md, Containers, Running a container]
-  - [exec/basic.md, Exec]
-  - [volume/basic.md, Volumes]
-  - [network/basic.md, Network]
-  - [misc/basic.md, 'Misc (Other actions)']
+  - Home: index.md
+  - Docker PHP:
+      - Installation: installation.md
+      - Connecting to Docker: connection.md
+      - Basic Usage: basic.md
+  - Containers: container/basic.md
+      - Running a container: container/run.md
+  - Images: image/basic.md
+      - Build an image: image/build.md
+      - Create (or pull) an image: image/create.md
+      - Push an image: image/push.md
+  - Exec: exec/basic.md
+  - Volume: volume/basic.md
+  - Network: network/basic.md
+  - Misc: misc/basic.md

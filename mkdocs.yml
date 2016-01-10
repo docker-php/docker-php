@@ -9,15 +9,7 @@ pages:
       - Installation: installation.md
       - Connecting to Docker: connection.md
       - Basic Usage: basic.md
-  - Containers:
-      - Basic Usage: container/basic.md
-      - Running a container: container/run.md
-  - Images:
-      - Basic Usage: image/basic.md
-      - Build an image: image/build.md
-      - Create (or pull) an image: image/create.md
-      - Push an image: image/push.md
-  - Exec: exec/basic.md
-  - Volume: volume/basic.md
-  - Network: network/basic.md
-  - Misc: misc/basic.md
+  - Cookbook:
+      - Running a container: cookbook/container-run.md
+      - Build an image: cookbook/build-image.md
+      - Pull/Push an image: cookbook/pull-and-push-image.md

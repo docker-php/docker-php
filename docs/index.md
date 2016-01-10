@@ -5,17 +5,19 @@ This is the documentation for [docker-php](https://github.com/stage1/docker-php)
 This library aim to reach 100% API support of the Docker Engine, it's built 
 on the [Docker Remote API v1.21](http://docs.docker.com/reference/api/docker_remote_api_v1.21/).
 
+## Basics
+
 First you need to learn the basics of this library :
 
 * [Installation](installation.md)
 * [Connecting to Docker](connection.md)
 * [Basic usage](basic.md)
 
-Then you can switch between our different manager to use the Docker API:
+## Cookbook
 
-* [Containers](container/basic.md)
-* [Images](image/basic.md)
-* [Exec](exec/basic.md)
-* [Volumes](volume/basic.md)
-* [Networks](network/basic.md)
-* [Misc](misc/basic.md)
+The cookbook is a collection of recipes that explain how to solve common 
+problems and advanced usage when using Docker-PHP
+
+* [Running a container](cookbook/container-run.md)
+* [Build an image](cookbook/build-image.md)
+* [Pull/Push an image](cookbook/pull-and-push-image.md)

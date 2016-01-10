@@ -710,12 +710,6 @@
                 }
             }
         },
-        "ImageRemoveResult": {
-            "type": "object",
-            "additionalProperties": {
-                "type": "string"
-            }
-        },
         "ImageSearchResult": {
             "type": "object",
             "properties": {

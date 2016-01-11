@@ -15,7 +15,7 @@
 
     <testsuites>
         <testsuite name="Docker PHP Tests Suite">
-            <directory>src/Docker/Tests/</directory>
+            <directory>tests/</directory>
         </testsuite>
     </testsuites>
 

@@ -1,24 +1,49 @@
-language: go
+language: php
 sudo: required
 
 services:
   - docker
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - hhvm
+
 env:
-  matrix:
-    - SYMFONY_VERSION="2.3.*"
-    - SYMFONY_VERSION="2.7.*"
+  global:
+    - TEST_COMMAND="composer test"
+
+matrix:
+  allow_failures:
+    - php: hhvm
+  fast_finish: true
+  include:
+    - php: 5.4
+      sudo: required
+      services:
+          - docker
+      env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true TEST_COMMAND="composer test-ci"
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y php5-cli
-  - curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+  - travis_retry composer self-update
 
 install:
-  - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source install
+  - travis_retry composer update ${COMPOSER_FLAGS} --prefer-source --no-interaction
+  - docker pull registry:latest
+  - docker run -p 5000:5000 -d registry
 
 script:
-  - bin/phpunit
+  - $TEST_COMMAND
+
+after_success:
+  - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+  - if [[ "$COVERAGE" = true ]]; then php ocular.phar code-coverage:upload --format=php-clover build/coverage.xml; fi
 
 after_script:
   - sudo cat /var/log/upstart/docker.log

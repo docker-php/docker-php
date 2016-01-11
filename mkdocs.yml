@@ -4,10 +4,12 @@ site_description: A Docker client in PHP
 repo_url: https://github.com/stage1/docker-php
 
 pages:
-  - [index.md, Home]
-  - [installation.md, 'Docker PHP', Installation]
-  - [basic.md, 'Docker PHP', Basic Usage]
-  - [image/build.md, Images, Build an image]
-  - [image/pull.md, Images, Pulling an image]
-  - [image/find.md, Images, Find an image]
-  - [container.md, Containers]
+  - Home: index.md
+  - Docker PHP:
+      - Installation: installation.md
+      - Connecting to Docker: connection.md
+      - Basic Usage: basic.md
+  - Cookbook:
+      - Running a container: cookbook/container-run.md
+      - Build an image: cookbook/build-image.md
+      - Pull/Push an image: cookbook/pull-and-push-image.md

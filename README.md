@@ -48,7 +48,7 @@ $ composer test
 ### Running Tests with `docker-compose`
 
 ```
-$ docker-compose run test
+$ docker-compose run php56
 ```
 
 Contributing

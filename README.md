@@ -45,6 +45,17 @@ Run it using [PHPUnit](http://phpunit.de/):
 $ composer test
 ```
 
+### Running Tests with `docker-compose`
+
+```
+$ docker-compose run php54
+$ docker-compose run php55
+$ docker-compose run php56
+$ docker-compose run php70
+```
+
+It is recommended to run only one service during testing, since `composer` requirements may depend on the PHP version and
+we are using a host-volume during local testing.
 
 Contributing
 ------------

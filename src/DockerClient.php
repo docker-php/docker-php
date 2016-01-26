@@ -23,7 +23,7 @@ class DockerClient implements HttpClient
         $messageFactory = new GuzzleMessageFactory();
         $socketClient = new SocketHttpClient($messageFactory, $socketClientOptions);
         $lengthPlugin = new ContentLengthPlugin();
-        $decodingPlugin = new DecoderPlugin(false);
+        $decodingPlugin = new DecoderPlugin();
         $errorPlugin = new ErrorPlugin();
 
         $this->httpClient = new PluginClient($socketClient, [

@@ -2,17 +2,19 @@
 
 namespace Docker\API\Resource;
 
-use Joli\Jane\Swagger\Client\QueryParam;
-use Joli\Jane\Swagger\Client\Resource;
+use Joli\Jane\OpenApi\Client\QueryParam;
+use Joli\Jane\OpenApi\Client\Resource;
 
 class NetworkResource extends Resource
 {
     /**
      * List networks.
      *
-     * @param array $parameters List of parameters
-     * 
-     *     (string)filters: JSON encoded value of the filters (a map[string][]string) to process on the networks list.
+     * @param array $parameters {
+     *
+     *     @var string $filters JSON encoded value of the filters (a map[string][]string) to process on the networks list.
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\Network[]

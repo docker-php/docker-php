@@ -2,8 +2,8 @@
 
 namespace Docker\API\Resource;
 
-use Joli\Jane\Swagger\Client\QueryParam;
-use Joli\Jane\Swagger\Client\Resource;
+use Joli\Jane\OpenApi\Client\QueryParam;
+use Joli\Jane\OpenApi\Client\Resource;
 
 class MiscResource extends Resource
 {
@@ -105,11 +105,13 @@ class MiscResource extends Resource
     /**
      * Get container events from docker, either in real time via streaming, or via polling (using since).
      *
-     * @param array $parameters List of parameters
-     * 
-     *     (int)since: Timestamp used for polling
-     *     (int)until: Timestamp used for polling
-     *     (string)filters: A json encoded value of the filters (a map[string][]string) to process on the event list.
+     * @param array $parameters {
+     *
+     *     @var int $since Timestamp used for polling
+     *     @var int $until Timestamp used for polling
+     *     @var string $filters A json encoded value of the filters (a map[string][]string) to process on the event list.
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface

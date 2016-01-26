@@ -2,22 +2,24 @@
 
 namespace Docker\API\Resource;
 
-use Joli\Jane\Swagger\Client\QueryParam;
-use Joli\Jane\Swagger\Client\Resource;
+use Joli\Jane\OpenApi\Client\QueryParam;
+use Joli\Jane\OpenApi\Client\Resource;
 
 class ContainerResource extends Resource
 {
     /**
      * List containers.
      *
-     * @param array $parameters List of parameters
-     * 
-     *     (bool)all: Show all containers. Only running containers are shown by default (i.e., this defaults to false)
-     *     (int)limit: Show <limit> last created containers, include non-running ones.
-     *     (string)since: Show only containers created since Id, include non-running ones.
-     *     (string)before: Show only containers created before Id, include non-running ones.
-     *     (bool)size: 1/True/true or 0/False/false, Show the containers sizes.
-     *     (array)filters: A JSON encoded value of the filters (a map[string][]string) to process on the containers list
+     * @param array $parameters {
+     *
+     *     @var bool $all Show all containers. Only running containers are shown by default (i.e., this defaults to false)
+     *     @var int $limit Show <limit> last created containers, include non-running ones.
+     *     @var string $since Show only containers created since Id, include non-running ones.
+     *     @var string $before Show only containers created before Id, include non-running ones.
+     *     @var bool $size 1/True/true or 0/False/false, Show the containers sizes.
+     *     @var array $filters A JSON encoded value of the filters (a map[string][]string) to process on the containers list
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerConfig[]
@@ -50,10 +52,12 @@ class ContainerResource extends Resource
      * Create a container.
      *
      * @param \Docker\API\Model\ContainerConfig $container  Container to create
-     * @param array                             $parameters List of parameters
-     * 
-     *     (string)name: Assign the specified name to the container. Must match /?[a-zA-Z0-9_-]+.
-     *     (string)Content-Type: Content Type of input
+     * @param array                             $parameters {
+     *
+     *     @var string $name Assign the specified name to the container. Must match /?[a-zA-Z0-9_-]+.
+     *     @var string $Content-Type Content Type of input
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerCreateResult
@@ -111,9 +115,11 @@ class ContainerResource extends Resource
      * List processes running inside the container id.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (string)ps_args: ps arguments to use (e.g., aux)
+     * @param array  $parameters {
+     *
+     *     @var string $ps_args ps arguments to use (e.g., aux)
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerTop
@@ -142,14 +148,16 @@ class ContainerResource extends Resource
      * Get stdout and stderr logs from the container id. Note: This endpoint works only for containers with json-file logging driver.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (bool)follow: 1/True/true or 0/False/false, return stream. Default false.
-     *     (bool)stdout: 1/True/true or 0/False/false, show stdout log. Default false.
-     *     (bool)stderr: 1/True/true or 0/False/false, show stderr log. Default false.
-     *     (int)since: UNIX timestamp (integer) to filter logs. Specifying a timestamp will only output log-entries since that timestamp. Default: 0 (unfiltered)
-     *     (bool)timestamps: 1/True/true or 0/False/false, print timestamps for every log line. 
-     *     (string)tail: Output specified number of lines at the end of logs: all or <number>. Default all.
+     * @param array  $parameters {
+     *
+     *     @var bool $follow 1/True/true or 0/False/false, return stream. Default false.
+     *     @var bool $stdout 1/True/true or 0/False/false, show stdout log. Default false.
+     *     @var bool $stderr 1/True/true or 0/False/false, show stderr log. Default false.
+     *     @var int $since UNIX timestamp (integer) to filter logs. Specifying a timestamp will only output log-entries since that timestamp. Default: 0 (unfiltered)
+     *     @var bool $timestamps 1/True/true or 0/False/false, print timestamps for every log line. 
+     *     @var string $tail Output specified number of lines at the end of logs: all or <number>. Default all.
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -178,9 +186,11 @@ class ContainerResource extends Resource
      * Inspect changes on a container’s filesystem.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (int)kind: Kind of changes
+     * @param array  $parameters {
+     *
+     *     @var int $kind Kind of changes
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerChange[]
@@ -232,9 +242,11 @@ class ContainerResource extends Resource
      * This endpoint returns a live stream of a container’s resource usage statistics.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (bool)stream: Stream stats
+     * @param array  $parameters {
+     *
+     *     @var bool $stream Stream stats
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -258,10 +270,12 @@ class ContainerResource extends Resource
      * Resize the TTY for container with id. The unit is number of characters. You must restart the container for the resize to take effect.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (int)h: Height of the tty session
-     *     (int)w: Width of the tty session
+     * @param array  $parameters {
+     *
+     *     @var int $h Height of the tty session
+     *     @var int $w Width of the tty session
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -309,9 +323,11 @@ class ContainerResource extends Resource
      * Stop the container id.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (int)t: number of seconds to wait before killing the container
+     * @param array  $parameters {
+     *
+     *     @var int $t number of seconds to wait before killing the container
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -335,9 +351,11 @@ class ContainerResource extends Resource
      * Restart the container id.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (int)t: number of seconds to wait before killing the container
+     * @param array  $parameters {
+     *
+     *     @var int $t number of seconds to wait before killing the container
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -361,9 +379,11 @@ class ContainerResource extends Resource
      * Send a posix signal to a container.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (string)signal: Signal to send to the container, integer or string like SIGINT, defaults to SIGKILL
+     * @param array  $parameters {
+     *
+     *     @var string $signal Signal to send to the container, integer or string like SIGINT, defaults to SIGKILL
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -387,9 +407,11 @@ class ContainerResource extends Resource
      * Rename the container id to a new_name.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (string)name: New name for the container
+     * @param array  $parameters {
+     *
+     *     @var string $name New name for the container
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -459,13 +481,15 @@ class ContainerResource extends Resource
      * Attach to the container id.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (string)logs: 1/True/true or 0/False/false, return logs. Default false
-     *     (string)stream: 1/True/true or 0/False/false, return stream. Default false
-     *     (string)stdin: 1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.
-     *     (string)stdout: 1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.
-     *     (string)stderr: 1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.
+     * @param array  $parameters {
+     *
+     *     @var string $logs 1/True/true or 0/False/false, return logs. Default false
+     *     @var string $stream 1/True/true or 0/False/false, return stream. Default false
+     *     @var string $stdin 1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.
+     *     @var string $stdout 1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.
+     *     @var string $stderr 1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -493,13 +517,15 @@ class ContainerResource extends Resource
      * Attach to the container id with a websocket.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (string)logs: 1/True/true or 0/False/false, return logs. Default false
-     *     (string)stream: 1/True/true or 0/False/false, return stream. Default false
-     *     (string)stdin: 1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.
-     *     (string)stdout: 1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.
-     *     (string)stderr: 1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.
+     * @param array  $parameters {
+     *
+     *     @var string $logs 1/True/true or 0/False/false, return logs. Default false
+     *     @var string $stream 1/True/true or 0/False/false, return stream. Default false
+     *     @var string $stdin 1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.
+     *     @var string $stdout 1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.
+     *     @var string $stderr 1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -555,10 +581,12 @@ class ContainerResource extends Resource
      * Remove the container id from the filesystem.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (string)v: 1/True/true or 0/False/false, Remove the volumes associated to the container. Default false.
-     *     (string)force: 1/True/true or 0/False/false, Kill then remove the container. Default false.
+     * @param array  $parameters {
+     *
+     *     @var string $v 1/True/true or 0/False/false, Remove the volumes associated to the container. Default false.
+     *     @var string $force 1/True/true or 0/False/false, Kill then remove the container. Default false.
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -583,9 +611,11 @@ class ContainerResource extends Resource
      * Get an tar archive of a resource in the filesystem of container id.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (string)path: Resource in the container’s filesystem to archive.
+     * @param array  $parameters {
+     *
+     *     @var string $path Resource in the container’s filesystem to archive.
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -609,9 +639,11 @@ class ContainerResource extends Resource
      * Retrieving information about files and folders in a container.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * 
-     *     (string)path: Resource in the container’s filesystem to archive.
+     * @param array  $parameters {
+     *
+     *     @var string $path Resource in the container’s filesystem to archive.
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -636,10 +668,12 @@ class ContainerResource extends Resource
      *
      * @param string $id          The container id or name
      * @param string $inputStream The input stream must be a tar archive compressed with one of the following algorithms: identity (no compression), gzip, bzip2, xz.
-     * @param array  $parameters  List of parameters
-     * 
-     *     (string)path: Path to a directory in the container to extract the archive’s contents into. 
-     *     (string)noOverwriteDirNonDir: If “1”, “true”, or “True” then it will be an error if unpacking the given content would cause an existing directory to be replaced with a non-directory and vice versa.
+     * @param array  $parameters  {
+     *
+     *     @var string $path Path to a directory in the container to extract the archive’s contents into. 
+     *     @var string $noOverwriteDirNonDir If “1”, “true”, or “True” then it will be an error if unpacking the given content would cause an existing directory to be replaced with a non-directory and vice versa.
+     * }
+     *
      * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface

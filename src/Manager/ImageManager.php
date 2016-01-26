@@ -10,7 +10,7 @@ use Docker\API\Resource\ImageResource;
 use Docker\Stream\BuildStream;
 use Docker\Stream\CreateImageStream;
 use Docker\Stream\PushStream;
-use Joli\Jane\Swagger\Client\QueryParam;
+use Joli\Jane\OpenApi\Client\QueryParam;
 
 class ImageManager extends ImageResource
 {

@@ -5,7 +5,7 @@ namespace Docker\Manager;
 use Docker\API\Resource\ContainerResource;
 use Docker\Stream\AttachWebsocketStream;
 use Docker\Stream\DockerRawStream;
-use Joli\Jane\Swagger\Client\QueryParam;
+use Joli\Jane\OpenApi\Client\QueryParam;
 
 class ContainerManager extends ContainerResource
 {

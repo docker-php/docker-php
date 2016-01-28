@@ -143,15 +143,17 @@ class ImageResource extends Resource
     /**
      * Return low-level information on the image name.
      *
+     * @param string $name       Image name or id
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\Image
      */
-    public function find($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function find($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/images/{name}/json';
+        $url        = str_replace('{name}', $name, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
@@ -169,15 +171,17 @@ class ImageResource extends Resource
     /**
      * Return the history of the image name.
      *
+     * @param string $name       Image name or id
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ImageHistoryItem[]
      */
-    public function history($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function history($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/images/{name}/history';
+        $url        = str_replace('{name}', $name, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
@@ -226,7 +230,8 @@ class ImageResource extends Resource
     /**
      * Tag the image name into a repository.
      *
-     * @param array $parameters {
+     * @param string $name       Image name or id
+     * @param array  $parameters {
      *
      *     @var string $repo The repository to tag in.
      *     @var string $force 1/True/true or 0/False/false, default false
@@ -237,13 +242,14 @@ class ImageResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function tag($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function tag($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('repo', null);
         $queryParam->setDefault('force', null);
         $queryParam->setDefault('tag', null);
         $url      = '/images/{name}/tag';
+        $url      = str_replace('{name}', $name, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);
@@ -256,7 +262,8 @@ class ImageResource extends Resource
     /**
      * Remove the image name from the filesystem.
      *
-     * @param array $parameters {
+     * @param string $name       Image name or id
+     * @param array  $parameters {
      *
      *     @var string $force 1/True/true or 0/False/false, default false
      *     @var string $noprune 1/True/true or 0/False/false, default false.
@@ -266,12 +273,13 @@ class ImageResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function remove($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function remove($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('force', null);
         $queryParam->setDefault('noprune', null);
         $url      = '/images/{name}';
+        $url      = str_replace('{name}', $name, $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);
@@ -359,15 +367,17 @@ class ImageResource extends Resource
     /**
      * Get a tarball containing all images and metadata for the repository specified by name.
      *
+     * @param string $name       Image name or id
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function save($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function save($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/images/{name}/get';
+        $url        = str_replace('{name}', $name, $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);

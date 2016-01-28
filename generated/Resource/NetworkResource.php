@@ -51,7 +51,7 @@ class NetworkResource extends Resource
     {
         $queryParam = new QueryParam();
         $url        = '/networks/{id}';
-        $url        = str_replace('{id}', $id, $url);
+        $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
@@ -74,7 +74,7 @@ class NetworkResource extends Resource
     {
         $queryParam = new QueryParam();
         $url        = '/networks/{id}';
-        $url        = str_replace('{id}', $id, $url);
+        $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);

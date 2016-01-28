@@ -78,7 +78,7 @@ class VolumeResource extends Resource
     {
         $queryParam = new QueryParam();
         $url        = '/volumes/{name}';
-        $url        = str_replace('{name}', $name, $url);
+        $url        = str_replace('{name}', urlencode($name), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
@@ -101,7 +101,7 @@ class VolumeResource extends Resource
     {
         $queryParam = new QueryParam();
         $url        = '/volumes/{name}';
-        $url        = str_replace('{name}', $name, $url);
+        $url        = str_replace('{name}', urlencode($name), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);

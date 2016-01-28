@@ -153,7 +153,7 @@ class ImageResource extends Resource
     {
         $queryParam = new QueryParam();
         $url        = '/images/{name}/json';
-        $url        = str_replace('{name}', $name, $url);
+        $url        = str_replace('{name}', urlencode($name), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
@@ -181,7 +181,7 @@ class ImageResource extends Resource
     {
         $queryParam = new QueryParam();
         $url        = '/images/{name}/history';
-        $url        = str_replace('{name}', $name, $url);
+        $url        = str_replace('{name}', urlencode($name), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
@@ -217,7 +217,7 @@ class ImageResource extends Resource
         $queryParam->setRequired('X-Registry-Auth');
         $queryParam->setHeaderParameters(['X-Registry-Auth']);
         $url      = '/images/{name}/push';
-        $url      = str_replace('{name}', $name, $url);
+        $url      = str_replace('{name}', urlencode($name), $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);
@@ -249,7 +249,7 @@ class ImageResource extends Resource
         $queryParam->setDefault('force', null);
         $queryParam->setDefault('tag', null);
         $url      = '/images/{name}/tag';
-        $url      = str_replace('{name}', $name, $url);
+        $url      = str_replace('{name}', urlencode($name), $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);
@@ -279,7 +279,7 @@ class ImageResource extends Resource
         $queryParam->setDefault('force', null);
         $queryParam->setDefault('noprune', null);
         $url      = '/images/{name}';
-        $url      = str_replace('{name}', $name, $url);
+        $url      = str_replace('{name}', urlencode($name), $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);
@@ -377,7 +377,7 @@ class ImageResource extends Resource
     {
         $queryParam = new QueryParam();
         $url        = '/images/{name}/get';
-        $url        = str_replace('{name}', $name, $url);
+        $url        = str_replace('{name}', urlencode($name), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);

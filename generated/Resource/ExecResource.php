@@ -27,7 +27,7 @@ class ExecResource extends Resource
         $queryParam->setDefault('Content-Type', 'application/json');
         $queryParam->setHeaderParameters(['Content-Type']);
         $url      = '/containers/{id}/exec';
-        $url      = str_replace('{id}', $id, $url);
+        $url      = str_replace('{id}', urlencode($id), $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $this->serializer->serialize($execConfig, 'json');
@@ -62,7 +62,7 @@ class ExecResource extends Resource
         $queryParam->setDefault('Content-Type', 'application/json');
         $queryParam->setHeaderParameters(['Content-Type']);
         $url      = '/exec/{id}/start';
-        $url      = str_replace('{id}', $id, $url);
+        $url      = str_replace('{id}', urlencode($id), $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $this->serializer->serialize($execStartConfig, 'json');
@@ -90,7 +90,7 @@ class ExecResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setDefault('w', null);
         $url      = '/exec/{id}/resize';
-        $url      = str_replace('{id}', $id, $url);
+        $url      = str_replace('{id}', urlencode($id), $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body     = $queryParam->buildFormDataString($parameters);
@@ -113,7 +113,7 @@ class ExecResource extends Resource
     {
         $queryParam = new QueryParam();
         $url        = '/exec/{id}/json';
-        $url        = str_replace('{id}', $id, $url);
+        $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);

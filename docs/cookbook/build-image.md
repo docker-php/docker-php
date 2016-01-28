@@ -1,6 +1,6 @@
 # Building an Image
 
-This library provides the endpoint for `/build` url in the docker remote API:
+This library provides the endpoint for `/build` url in the docker remote API in the `ImageManager`:
 
 ```php
 /**
@@ -49,7 +49,7 @@ Since `Docker` build directory can be heavy, Docker PHP override this call and a
 
 This function can return 3 different objects depending on the value of the `$fetch` parameter:
  
-### ContainerManager::FETCH_OBJECT
+### ImageManager::FETCH_OBJECT
 
 This is default mode, where this function will block until the build is finished and return an array of `BuildInfo` 
 object.
@@ -57,14 +57,17 @@ object.
 This object contains the log of the build:
 
 ```php
-$buildInfos = $containerManager->build($inputStream);
+$docker = new Docker();
+
+$imageManager = $docker->getImageManager();
+$buildInfos = $imageManager->build($inputStream);
 
 foreach ($buildInfos as $buildInfo) {
     echo $buildInfo->getStream();
 }
 ```
 
-### ContainerManager::FETCH_STREAM
+### ImageManager::FETCH_STREAM
 
 Use this mode if you want to stream, in real time, the log, of your build. It returns a `BuildStream` which accept to 
 add callback with the `onFrame` method. Once all callback have been set you need to call the `wait` to really read the
@@ -73,7 +76,7 @@ stream in real time.
 The callback will receive a `BuildInfo` object once a line is available:
 
 ```php
-$buildStream = $containerManager->build($inputStream, [], ContainerManager::FETCH_STREAM);
+$buildStream = $imageManager->build($inputStream, [], ContainerManager::FETCH_STREAM);
 $buildStream->onFrame(function (BuildInfo $buildInfo) {
     echo $buildInfo->getStream();
 });
@@ -86,7 +89,7 @@ while your image is being built. However if you never call the wait method, and 
 execution of your PHP script, it will be canceled as the connection will be terminated.
 
 
-### ContainerManager::FETCH_RESPONSE
+### ImageManager::FETCH_RESPONSE
 
 The build function will return the raw [PSR7](http://www.php-fig.org/psr/psr-7/) Response. It's up too you handle 
 decoding and receiving correct output in this case.
@@ -100,7 +103,7 @@ method.
 $context = new Context('/path/to/my/docker/build');
 $inputStream = $context->toStream();
 
-$containerManager->build($inputStream);
+$imageManager->build($inputStream);
 ```
 
 You can safely use this context object to build image with a huge directory to size without consuming any memory or disk
@@ -115,6 +118,6 @@ $contextBuilder = new ContextBuilder();
 $contextBuilder->from('ubuntu:latest');
 $contextBuilder->run('apt-get update && apt-get install -y php5');
 
-$containerManager->build($contextBuilder->getContext()->toStream());
+$imageManager->build($contextBuilder->getContext()->toStream());
 ```
 

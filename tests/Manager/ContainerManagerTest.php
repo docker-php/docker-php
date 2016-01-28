@@ -40,7 +40,7 @@ class ContainerManagerTest extends TestCase
         $dockerRawStream = $this->getManager()->attach($containerCreateResult->getId(), [
             'stream' => true,
             'stdout' => true,
-        ], ContainerManager::FETCH_STREAM);
+        ]);
 
         $stdoutFull = "";
         $dockerRawStream->onStdout(function ($stdout) use (&$stdoutFull) {
@@ -73,7 +73,7 @@ class ContainerManagerTest extends TestCase
             'stdout' => true,
             'stderr' => true,
             'stdin'  => true,
-        ], ContainerManager::FETCH_STREAM);
+        ]);
 
         $this->getManager()->start($containerCreateResult->getId());
 

@@ -16,7 +16,7 @@ class ContainerManager extends ContainerResource
      *
      * @return \Psr\Http\Message\ResponseInterface|DockerRawStream
      */
-    public function attach($id, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function attach($id, $parameters = [], $fetch = self::FETCH_STREAM)
     {
         $response = parent::attach($id, $parameters, $fetch);
 
@@ -34,7 +34,7 @@ class ContainerManager extends ContainerResource
      *
      * @return \Psr\Http\Message\ResponseInterface|AttachWebsocketStream
      */
-    public function attachWebsocket($id, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function attachWebsocket($id, $parameters = [], $fetch = self::FETCH_STREAM)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('logs', null);

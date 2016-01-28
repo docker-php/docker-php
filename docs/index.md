@@ -20,4 +20,3 @@ problems and advanced usage when using Docker-PHP
 
 * [Running a container](cookbook/container-run.md)
 * [Build an image](cookbook/build-image.md)
-* [Pull/Push an image](cookbook/pull-and-push-image.md)

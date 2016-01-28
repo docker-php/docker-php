@@ -2544,7 +2544,8 @@
                         "name": "name",
                         "in": "path",
                         "description": "Image name or id",
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     }
                 ],
                 "tags": [
@@ -2579,7 +2580,8 @@
                         "name": "name",
                         "in": "path",
                         "description": "Image name or id",
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     }
                 ],
                 "tags": [
@@ -2657,7 +2659,8 @@
                         "name": "name",
                         "in": "path",
                         "description": "Image name or id",
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     },
                     {
                         "name": "repo",
@@ -2707,7 +2710,8 @@
                         "name": "name",
                         "in": "path",
                         "description": "Image name or id",
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     },
                     {
                         "name": "force",
@@ -2982,7 +2986,8 @@
                         "name": "name",
                         "in": "path",
                         "description": "Image name or id",
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     }
                 ],
                 "tags": [

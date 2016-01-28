@@ -11,6 +11,7 @@ use Docker\Stream\BuildStream;
 use Docker\Stream\CreateImageStream;
 use Docker\Stream\PushStream;
 use Joli\Jane\OpenApi\Client\QueryParam;
+use Psr\Http\Message\StreamInterface;
 
 class ImageManager extends ImageResource
 {
@@ -18,6 +19,9 @@ class ImageManager extends ImageResource
 
     /**
      * {@inheritdoc}
+     *
+     * @param resource|StreamInterface|string $inputStream The input stream (encoded with tar) containing the Dockerfile
+     *                                                     and other files for the image.
      *
      * @return \Psr\Http\Message\ResponseInterface|BuildInfo[]|BuildStream
      */

@@ -32,5 +32,10 @@
         "test": "vendor/bin/phpunit",
         "test-ci": "vendor/bin/phpunit --coverage-clover build/coverage.xml"
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.21-dev"
+        }
+    },
     "minimum-stability": "stable"
 }

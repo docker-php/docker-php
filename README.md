@@ -63,6 +63,15 @@ Contributing
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 
+Versioning
+----------
+
+Docker PHP does not follow the classic [semver versioning](http://semver.org/), but follow the Docker Remote API
+versioning starting at the v1.21, the master branch will follow the next major release on the Docker Remote API.
+
+Changes on the core of this library not directly to the API, will be merged back to previous versions
+on a best effort basis.
+
 Credits
 -------
 

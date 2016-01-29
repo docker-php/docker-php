@@ -1,5 +1,5 @@
 {
-    "name": "stage1/docker-php",
+    "name": "docker-php/docker-php",
     "license": "MIT",
     "type": "library",
     "description": "A Docker PHP client",

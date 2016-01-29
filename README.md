@@ -7,12 +7,12 @@ This library aim to reach 100% API support of the Docker Engine.
 The test suite currently passes against the [Docker Remote API v1.21](http://docs.docker.com/reference/api/docker_remote_api_v1.21/).
 
 [![Documentation Status](https://readthedocs.org/projects/docker-php/badge/?version=latest)](http://docker-php.readthedocs.org/en/latest/)
-[![Latest Version](https://img.shields.io/github/release/stage1/docker-php.svg?style=flat-square)](https://github.com/stage1/docker-php/releases)
+[![Latest Version](https://img.shields.io/github/release/docker-php/docker-php.svg?style=flat-square)](https://github.com/docker-php/docker-php/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/travis/stage1/docker-php.svg?branch=master&style=flat-square)](https://travis-ci.org/stage1/docker-php)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/stage1/docker-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/stage1/docker-php)
-[![Quality Score](https://img.shields.io/scrutinizer/g/stage1/docker-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/stage1/docker-php)
-[![Total Downloads](https://img.shields.io/packagist/dt/stage1/docker-php.svg?style=flat-square)](https://packagist.org/packages/stage1/docker-php)
+[![Build Status](https://img.shields.io/travis/docker-php/docker-php.svg?branch=master&style=flat-square)](https://travis-ci.org/docker-php/docker-php)
+[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/docker-php/docker-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/docker-php/docker-php)
+[![Quality Score](https://img.shields.io/scrutinizer/g/docker-php/docker-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/docker-php/docker-php)
+[![Total Downloads](https://img.shields.io/packagist/dt/docker-php/docker-php.svg?style=flat-square)](https://packagist.org/packages/docker-php/docker-php)
 
 
 
@@ -22,7 +22,7 @@ Installation
 The recommended way to install Docker PHP is of course to use [Composer](http://getcomposer.org/):
 
 ```bash
-composer require stage1/docker-php
+composer require docker-php/docker-php
 ```
 
 Usage

@@ -1,7 +1,7 @@
 site_name: Docker PHP
 site_url:  http://docker-php.readthedocs.org/
 site_description: A Docker client in PHP
-repo_url: https://github.com/stage1/docker-php
+repo_url: https://github.com/docker-php/docker-php
 
 pages:
   - Home: index.md

@@ -10,6 +10,7 @@ use Docker\API\Resource\ImageResource;
 use Docker\Stream\BuildStream;
 use Docker\Stream\CreateImageStream;
 use Docker\Stream\PushStream;
+use Docker\Stream\TarStream;
 use Joli\Jane\OpenApi\Client\QueryParam;
 use Psr\Http\Message\StreamInterface;
 
@@ -27,7 +28,45 @@ class ImageManager extends ImageResource
      */
     public function build($inputStream, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
-        $response = parent::build($inputStream, $parameters, self::FETCH_RESPONSE);
+        if (is_resource($inputStream)) {
+            $inputStream = new TarStream($inputStream);
+        }
+
+        $queryParam = new QueryParam();
+        $queryParam->setDefault('dockerfile', null);
+        $queryParam->setDefault('t', null);
+        $queryParam->setDefault('remote', null);
+        $queryParam->setDefault('q', false);
+        $queryParam->setDefault('nocache', false);
+        $queryParam->setDefault('pull', null);
+        $queryParam->setDefault('rm', true);
+        $queryParam->setDefault('forcerm', false);
+        $queryParam->setDefault('memory', null);
+        $queryParam->setDefault('memswap', null);
+        $queryParam->setDefault('cpushares', null);
+        $queryParam->setDefault('cpusetcpus', null);
+        $queryParam->setDefault('cpuperiod', null);
+        $queryParam->setDefault('cpuquota', null);
+        $queryParam->setDefault('buildargs', null);
+        $queryParam->setDefault('Content-type', 'application/tar');
+        $queryParam->setHeaderParameters(['Content-type']);
+        $queryParam->setDefault('X-Registry-Config', null);
+        $queryParam->setHeaderParameters(['X-Registry-Config']);
+
+        $url      = '/build';
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+
+        $body     = $inputStream;
+
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+
+        if ($inputStream instanceof StreamInterface) {
+            $request = $request->withHeader('Transfer-Encoding', 'chunked');
+        }
+
+        $response = $this->httpClient->sendRequest($request);
 
         if (200 === $response->getStatusCode()) {
             if (self::FETCH_STREAM === $fetch) {

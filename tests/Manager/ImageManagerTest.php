@@ -28,7 +28,8 @@ class ImageManagerTest extends TestCase
         $contextBuilder->from('ubuntu:precise');
         $contextBuilder->add('/test', 'test file content');
 
-        $buildStream = $this->getManager()->build($contextBuilder->getContext()->read(), ['t' => 'test-image'], ImageManager::FETCH_STREAM);
+        $context = $contextBuilder->getContext();
+        $buildStream = $this->getManager()->build($context->read(), ['t' => 'test-image'], ImageManager::FETCH_STREAM);
 
         $this->assertInstanceOf('Docker\Stream\BuildStream', $buildStream);
 
@@ -48,7 +49,8 @@ class ImageManagerTest extends TestCase
         $contextBuilder->from('ubuntu:precise');
         $contextBuilder->add('/test', 'test file content');
 
-        $buildInfos = $this->getManager()->build($contextBuilder->getContext()->read(), ['t' => 'test-image'], ImageManager::FETCH_OBJECT);
+        $context = $contextBuilder->getContext();
+        $buildInfos = $this->getManager()->build($context->read(), ['t' => 'test-image'], ImageManager::FETCH_OBJECT);
 
         $this->assertInternalType('array', $buildInfos);
         $this->assertContains("Successfully built", $buildInfos[count($buildInfos) - 1]->getStream());
@@ -90,7 +92,8 @@ class ImageManagerTest extends TestCase
         $contextBuilder->from('ubuntu:precise');
         $contextBuilder->add('/test', 'test file content');
 
-        $this->getManager()->build($contextBuilder->getContext()->read(), ['t' => 'localhost:5000/test-image'], ImageManager::FETCH_OBJECT);
+        $context = $contextBuilder->getContext();
+        $this->getManager()->build($context->read(), ['t' => 'localhost:5000/test-image'], ImageManager::FETCH_OBJECT);
 
         $registryConfig = new AuthConfig();
         $registryConfig->setServeraddress('localhost:5000');
@@ -118,7 +121,8 @@ class ImageManagerTest extends TestCase
         $contextBuilder->from('ubuntu:precise');
         $contextBuilder->add('/test', 'test file content');
 
-        $this->getManager()->build($contextBuilder->getContext()->read(), ['t' => 'localhost:5000/test-image'], ImageManager::FETCH_OBJECT);
+        $context = $contextBuilder->getContext();
+        $this->getManager()->build($context->read(), ['t' => 'localhost:5000/test-image'], ImageManager::FETCH_OBJECT);
 
         $registryConfig = new AuthConfig();
         $registryConfig->setServeraddress('localhost:5000');

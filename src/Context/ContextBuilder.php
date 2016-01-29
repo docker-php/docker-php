@@ -42,6 +42,7 @@ class ContextBuilder
     public function __construct(Filesystem $fs = null)
     {
         $this->fs = $fs ?: new Filesystem();
+        $this->format = Context::FORMAT_STREAM;
     }
 
     /**
@@ -116,7 +117,7 @@ class ContextBuilder
         $this->fs->mkdir($this->directory);
         $this->write($this->directory);
 
-        return new Context($this->directory, $this->fs, $this->format);
+        return new Context($this->directory, $this->format);
     }
 
     /**

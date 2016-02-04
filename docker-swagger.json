@@ -7,7 +7,6 @@
     "version": "v1.21"
   },
   "host": "localhost",
-  "basePath": "/",
   "schemes": [
     "http",
     "https"

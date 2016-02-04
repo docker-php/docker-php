@@ -59,8 +59,8 @@ class NetworkConfigNormalizer extends SerializerAwareNormalizer implements Denor
         }
         if (isset($data->{'Ports'})) {
             $values_99 = [];
-            foreach ($data->{'Ports'} as $value_100) {
-                $values_99[] = $this->serializer->deserialize($value_100, 'Docker\\API\\Model\\Port', 'raw', $context);
+            foreach ($data->{'Ports'} as $containerPortProtocol => $value_100) {
+                $values_99[$containerPortProtocol] = $this->serializer->deserialize(current($value_100), 'Docker\\API\\Model\\PortBinding', 'raw', $context);
             }
             $object->setPorts($values_99);
         }
@@ -91,8 +91,8 @@ class NetworkConfigNormalizer extends SerializerAwareNormalizer implements Denor
         }
         if (null !== $object->getPorts()) {
             $values_101 = [];
-            foreach ($object->getPorts() as $value_102) {
-                $values_101[] = $this->serializer->serialize($value_102, 'raw', $context);
+            foreach ($object->getPorts() as $containerPortProtocol => $value_102) {
+                $values_101[$containerPortProtocol] = $this->serializer->serialize(current($value_102), 'raw', $context);
             }
             $data->{'Ports'} = $values_101;
         }

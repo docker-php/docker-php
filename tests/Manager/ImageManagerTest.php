@@ -58,7 +58,7 @@ class ImageManagerTest extends TestCase
 
     public function testCreateStream()
     {
-        $createImageStream = $this->getManager()->create([
+        $createImageStream = $this->getManager()->create(null, [
             'fromImage' => 'registry:latest'
         ], ImageManager::FETCH_STREAM);
 
@@ -78,7 +78,7 @@ class ImageManagerTest extends TestCase
 
     public function testCreateObject()
     {
-        $createImagesInfos = $this->getManager()->create([
+        $createImagesInfos = $this->getManager()->create(null, [
             'fromImage' => 'registry:latest'
         ], ImageManager::FETCH_OBJECT);
 

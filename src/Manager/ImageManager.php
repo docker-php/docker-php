@@ -60,9 +60,9 @@ class ImageManager extends ImageResource
      *
      * @return \Psr\Http\Message\ResponseInterface|CreateImageInfo[]|CreateImageStream
      */
-    public function create($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function create($inputStream = null, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
-        $response = parent::create($parameters, self::FETCH_RESPONSE);
+        $response = parent::create($inputStream, $parameters, self::FETCH_RESPONSE);
 
         if (200 === $response->getStatusCode()) {
             if (self::FETCH_STREAM === $fetch) {

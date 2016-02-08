@@ -30,7 +30,7 @@ class MiscManagerTest extends TestCase
             $lastEvent = $event;
         });
 
-        $this->getDocker()->getImageManager()->create([
+        $this->getDocker()->getImageManager()->create(null, [
             'fromImage' => 'busybox:latest'
         ]);
         $stream->wait();

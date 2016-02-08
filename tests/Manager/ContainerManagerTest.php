@@ -23,7 +23,7 @@ class ContainerManagerTest extends TestCase
      */
     public static function setUpBeforeClass()
     {
-        self::getDocker()->getImageManager()->create([
+        self::getDocker()->getImageManager()->create(null, [
             'fromImage' => 'busybox:latest'
         ]);
     }

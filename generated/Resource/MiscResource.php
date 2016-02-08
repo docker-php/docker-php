@@ -48,7 +48,7 @@ class MiscResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\SystemInformation', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\SystemInformation', 'json');
             }
         }
 
@@ -74,7 +74,7 @@ class MiscResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Version', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Version', 'json');
             }
         }
 

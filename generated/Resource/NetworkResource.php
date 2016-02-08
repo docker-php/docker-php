@@ -31,7 +31,7 @@ class NetworkResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Network[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Network[]', 'json');
             }
         }
 
@@ -82,7 +82,7 @@ class NetworkResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Network', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Network', 'json');
             }
         }
 
@@ -109,7 +109,7 @@ class NetworkResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\NetworkCreateResult', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\NetworkCreateResult', 'json');
             }
         }
 
@@ -119,16 +119,18 @@ class NetworkResource extends Resource
     /**
      * Connect a container to a network.
      *
+     * @param string                             $id         Network id or name
      * @param \Docker\API\Model\ContainerConnect $container  Container
      * @param array                              $parameters List of parameters
      * @param string                             $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function connect(\Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function connect($id, \Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/networks/{id}/connect';
+        $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($container, 'json');
@@ -141,16 +143,18 @@ class NetworkResource extends Resource
     /**
      * Disconnect a container to a network.
      *
+     * @param string                             $id         Network id or name
      * @param \Docker\API\Model\ContainerConnect $container  Container
      * @param array                              $parameters List of parameters
      * @param string                             $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function disconnect(\Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function disconnect($id, \Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/networks/{id}/disconnect';
+        $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($container, 'json');

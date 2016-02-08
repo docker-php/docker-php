@@ -31,7 +31,7 @@ class VolumeResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\VolumeList', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\VolumeList', 'json');
             }
         }
 
@@ -58,7 +58,7 @@ class VolumeResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Volume', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Volume', 'json');
             }
         }
 
@@ -109,7 +109,7 @@ class VolumeResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Volume', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Volume', 'json');
             }
         }
 

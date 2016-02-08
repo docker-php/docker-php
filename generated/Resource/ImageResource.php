@@ -37,7 +37,7 @@ class ImageResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ImageItem[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ImageItem[]', 'json');
             }
         }
 
@@ -108,7 +108,8 @@ class ImageResource extends Resource
     /**
      * Create an image either by pulling it from the registry or by importing it.
      *
-     * @param array $parameters {
+     * @param string $inputImage Image content if the value - has been specified in fromSrc query parameter
+     * @param array  $parameters {
      *
      *     @var string $fromImage Name of the image to pull. The name may include a tag or digest. This parameter may only be used when pulling an image.
      *     @var string $fromSrc Source to import. The value may be a URL from which the image can be retrieved or - to read the image from the request body. This parameter may only be used when importing an image.
@@ -121,7 +122,7 @@ class ImageResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function create($parameters = [], $fetch = self::FETCH_OBJECT)
+    public function create($inputImage, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('fromImage', null);
@@ -133,7 +134,7 @@ class ImageResource extends Resource
         $url      = '/images/create';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
+        $body     = $inputImage;
         $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
 
@@ -161,7 +162,7 @@ class ImageResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Image', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Image', 'json');
             }
         }
 
@@ -189,7 +190,7 @@ class ImageResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ImageHistoryItem[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ImageHistoryItem[]', 'json');
             }
         }
 
@@ -313,7 +314,7 @@ class ImageResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ImageSearchResult[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ImageSearchResult[]', 'json');
             }
         }
 
@@ -357,7 +358,7 @@ class ImageResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\CommitResult', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\CommitResult', 'json');
             }
         }
 

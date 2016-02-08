@@ -5,16 +5,16 @@ namespace Docker\API\Model;
 class ProgressDetail
 {
     /**
-     * @var mixed
+     * @var int
      */
     protected $code;
     /**
-     * @var mixed
+     * @var int
      */
     protected $message;
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getCode()
     {
@@ -22,7 +22,7 @@ class ProgressDetail
     }
 
     /**
-     * @param mixed $code
+     * @param int $code
      *
      * @return self
      */
@@ -34,7 +34,7 @@ class ProgressDetail
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getMessage()
     {
@@ -42,7 +42,7 @@ class ProgressDetail
     }
 
     /**
-     * @param mixed $message
+     * @param int $message
      *
      * @return self
      */

@@ -35,7 +35,7 @@ class ExecResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ExecCreateResult', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ExecCreateResult', 'json');
             }
         }
 
@@ -78,6 +78,7 @@ class ExecResource extends Resource
      * @param string $id         Exec instance id
      * @param array  $parameters {
      *
+     *     @var int $h Height of the tty session
      *     @var int $w Width of the tty session
      * }
      *
@@ -88,6 +89,7 @@ class ExecResource extends Resource
     public function resize($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
+        $queryParam->setDefault('h', null);
         $queryParam->setDefault('w', null);
         $url      = '/exec/{id}/resize';
         $url      = str_replace('{id}', urlencode($id), $url);
@@ -121,7 +123,7 @@ class ExecResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ExecCommand', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ExecCommand', 'json');
             }
         }
 

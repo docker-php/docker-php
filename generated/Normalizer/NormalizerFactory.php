@@ -21,8 +21,11 @@ class NormalizerFactory
         $normalizers[] = new RestartPolicyNormalizer();
         $normalizers[] = new PortBindingNormalizer();
         $normalizers[] = new HostConfigNormalizer();
+        $normalizers[] = new DeviceWeightNormalizer();
+        $normalizers[] = new DeviceRateNormalizer();
         $normalizers[] = new ContainerConfigNormalizer();
         $normalizers[] = new NetworkConfigNormalizer();
+        $normalizers[] = new ContainerNetworkNormalizer();
         $normalizers[] = new ContainerStateNormalizer();
         $normalizers[] = new ContainerNormalizer();
         $normalizers[] = new ContainerTopNormalizer();
@@ -48,10 +51,13 @@ class NormalizerFactory
         $normalizers[] = new VolumeConfigNormalizer();
         $normalizers[] = new NetworkNormalizer();
         $normalizers[] = new IPAMNormalizer();
+        $normalizers[] = new IPAMConfigNormalizer();
         $normalizers[] = new NetworkContainerNormalizer();
         $normalizers[] = new NetworkCreateResultNormalizer();
         $normalizers[] = new NetworkCreateConfigNormalizer();
         $normalizers[] = new ContainerConnectNormalizer();
+        $normalizers[] = new ContainerDisconnectNormalizer();
+        $normalizers[] = new EndpointConfigNormalizer();
         $normalizers[] = new ContainerCreateResultNormalizer();
         $normalizers[] = new BuildInfoNormalizer();
         $normalizers[] = new CreateImageInfoNormalizer();
@@ -59,6 +65,8 @@ class NormalizerFactory
         $normalizers[] = new ErrorDetailNormalizer();
         $normalizers[] = new ProgressDetailNormalizer();
         $normalizers[] = new EventNormalizer();
+        $normalizers[] = new ResourceUpdateNormalizer();
+        $normalizers[] = new ContainerUpdateResultNormalizer();
 
         return $normalizers;
     }

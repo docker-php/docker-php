@@ -51,6 +51,9 @@ class AuthConfigNormalizer extends SerializerAwareNormalizer implements Denormal
         if (isset($data->{'serveraddress'})) {
             $object->setServeraddress($data->{'serveraddress'});
         }
+        if (isset($data->{'registrytoken'})) {
+            $object->setRegistrytoken($data->{'registrytoken'});
+        }
 
         return $object;
     }
@@ -69,6 +72,9 @@ class AuthConfigNormalizer extends SerializerAwareNormalizer implements Denormal
         }
         if (null !== $object->getServeraddress()) {
             $data->{'serveraddress'} = $object->getServeraddress();
+        }
+        if (null !== $object->getRegistrytoken()) {
+            $data->{'registrytoken'} = $object->getRegistrytoken();
         }
 
         return $data;

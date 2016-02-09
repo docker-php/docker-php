@@ -52,11 +52,11 @@ class ExecConfigNormalizer extends SerializerAwareNormalizer implements Denormal
             $object->setTty($data->{'Tty'});
         }
         if (isset($data->{'Cmd'})) {
-            $values_187 = [];
-            foreach ($data->{'Cmd'} as $value_188) {
-                $values_187[] = $value_188;
+            $values_223 = [];
+            foreach ($data->{'Cmd'} as $value_224) {
+                $values_223[] = $value_224;
             }
-            $object->setCmd($values_187);
+            $object->setCmd($values_223);
         }
 
         return $object;
@@ -78,11 +78,11 @@ class ExecConfigNormalizer extends SerializerAwareNormalizer implements Denormal
             $data->{'Tty'} = $object->getTty();
         }
         if (null !== $object->getCmd()) {
-            $values_189 = [];
-            foreach ($object->getCmd() as $value_190) {
-                $values_189[] = $value_190;
+            $values_225 = [];
+            foreach ($object->getCmd() as $value_226) {
+                $values_225[] = $value_226;
             }
-            $data->{'Cmd'} = $values_189;
+            $data->{'Cmd'} = $values_225;
         }
 
         return $data;

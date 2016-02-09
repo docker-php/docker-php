@@ -63,6 +63,9 @@ class VersionNormalizer extends SerializerAwareNormalizer implements Denormalize
         if (isset($data->{'Experimental'})) {
             $object->setExperimental($data->{'Experimental'});
         }
+        if (isset($data->{'BuildTime'})) {
+            $object->setBuildTime($data->{'BuildTime'});
+        }
 
         return $object;
     }
@@ -93,6 +96,9 @@ class VersionNormalizer extends SerializerAwareNormalizer implements Denormalize
         }
         if (null !== $object->getExperimental()) {
             $data->{'Experimental'} = $object->getExperimental();
+        }
+        if (null !== $object->getBuildTime()) {
+            $data->{'BuildTime'} = $object->getBuildTime();
         }
 
         return $data;

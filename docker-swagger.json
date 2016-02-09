@@ -4,7 +4,7 @@
     "title": "Docker Remote API",
     "description": "The API for each docker installation.",
     "termsOfService": "http://example.com/tos/",
-    "version": "v1.21"
+    "version": "v1.22"
   },
   "host": "localhost",
   "schemes": [
@@ -44,6 +44,9 @@
         },
         "Experimental": {
           "type": "boolean"
+        },
+        "BuildTime": {
+          "type": "string"
         }
       }
     },
@@ -188,6 +191,36 @@
         "BlkioWeight": {
           "type": "integer"
         },
+        "BlkioWeightDevice": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DeviceWeight"
+          }
+        },
+        "BlkioDeviceReadBps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DeviceRate"
+          }
+        },
+        "BlkioDeviceReadIOps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DeviceRate"
+          }
+        },
+        "BlkioDeviceWriteBps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DeviceRate"
+          }
+        },
+        "BlkioDeviceWriteIOps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DeviceRate"
+          }
+        },
         "MemorySwappiness": {
           "type": "integer"
         },
@@ -274,6 +307,28 @@
         },
         "CgroupParent": {
           "type": "string"
+        }
+      }
+    },
+    "DeviceWeight": {
+      "type": "object",
+      "properties": {
+        "Path": {
+          "type": "string"
+        },
+        "Weight": {
+          "type": "integer"
+        }
+      }
+    },
+    "DeviceRate": {
+      "type": "object",
+      "properties": {
+        "Path": {
+          "type": "string"
+        },
+        "Rate": {
+          "type": ["integer","string"]
         }
       }
     },
@@ -393,6 +448,9 @@
             "default": {}
           }
         },
+        "NetworkSettings": {
+          "$ref": "#/definitions/NetworkConfig"
+        },
         "HostConfig": {
           "$ref": "#/definitions/HostConfig"
         }
@@ -419,6 +477,12 @@
         "PortMapping": {
           "type": "string"
         },
+        "Networks": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ContainerNetwork"
+          }
+        },
         "Ports": {
           "type": "object",
           "additionalProperties": {
@@ -427,6 +491,38 @@
               "$ref": "#/definitions/PortBinding"
             }
           }
+        }
+      }
+    },
+    "ContainerNetwork": {
+      "type": "object",
+      "properties": {
+        "NetworkID": {
+          "type": "string"
+        },
+        "EndpointID": {
+          "type": "string"
+        },
+        "Gateway": {
+          "type": "string"
+        },
+        "IPAddress": {
+          "type": "string"
+        },
+        "IPPrefixLen": {
+          "type": "integer"
+        },
+        "IPv6Gateway": {
+          "type": "string"
+        },
+        "GlobalIPv6Address": {
+          "type": "string"
+        },
+        "GlobalIPv6PrefixLen": {
+          "type": "integer"
+        },
+        "MacAddress": {
+          "type": "string"
         }
       }
     },
@@ -746,13 +842,28 @@
         },
         "serveraddress": {
           "type": "string"
+        },
+        "registrytoken": {
+          "type": "string"
         }
       }
     },
     "SystemInformation": {
       "type": "object",
       "properties": {
+        "Architecture": {
+          "type": "string"
+        },
         "Containers": {
+          "type": "integer"
+        },
+        "ContainersRunning": {
+          "type": "integer"
+        },
+        "ContainersStopped": {
+          "type": "integer"
+        },
+        "ContainersPaused": {
           "type": "integer"
         },
         "CpuCfsPeriod": {
@@ -774,6 +885,15 @@
           "type": "string"
         },
         "DriverStatus": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "SystemStatus": {
           "type": "array",
           "items": {
             "type": "array",
@@ -847,6 +967,9 @@
         },
         "OomKillDisable": {
           "type": "boolean"
+        },
+        "OSType": {
+          "type": "string"
         },
         "OperatingSystem": {
           "type": "string"
@@ -1093,17 +1216,37 @@
         "Config": {
           "type": "array",
           "items": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
+            "$ref": "#/definitions/IPAMConfig"
           }
+        },
+        "Options": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "IPAMConfig": {
+      "type": "object",
+      "properties": {
+        "Subnet": {
+          "type": "string"
+        },
+        "IPRange": {
+          "type": "string"
+        },
+        "Gateway": {
+          "type": "string"
         }
       }
     },
     "NetworkContainer": {
       "type": "object",
       "properties": {
+        "Name": {
+          "type": "string"
+        },
         "EndpointID": {
           "type": "string"
         },
@@ -1140,6 +1283,9 @@
         },
         "IPAM": {
           "$ref": "#/definitions/IPAM"
+        },
+        "Internal": {
+          "type": "boolean"
         }
       }
     },
@@ -1147,6 +1293,34 @@
       "type": "object",
       "properties": {
         "Container": {
+          "type": "string"
+        },
+        "EndpointConfig": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/EndpointConfig"
+          }
+        }
+      }
+    },
+    "ContainerDisconnect": {
+      "type": "object",
+      "properties": {
+        "Container": {
+          "type": "string"
+        },
+        "Force": {
+          "type": "boolean"
+        }
+      }
+    },
+    "EndpointConfig": {
+      "type": "object",
+      "properties": {
+        "IPv4Address": {
+          "type": "string"
+        },
+        "IPv6Address": {
           "type": "string"
         }
       }
@@ -1264,6 +1438,52 @@
         },
         "timeNano": {
           "type": "integer"
+        }
+      }
+    },
+    "ResourceUpdate": {
+      "type": "object",
+      "properties": {
+        "BlkioWeight": {
+          "type": "integer"
+        },
+        "CpuShares": {
+          "type": "integer"
+        },
+        "CpuPeriod": {
+          "type": "integer"
+        },
+        "CpuQuota": {
+          "type": "integer"
+        },
+        "CpusetCpus": {
+          "type": "string"
+        },
+        "CpusetMems": {
+          "type": "string"
+        },
+        "Memory": {
+          "type": "integer"
+        },
+        "MemorySwap": {
+          "type": "integer"
+        },
+        "MemoryReservation": {
+          "type": "integer"
+        },
+        "KernelMemory": {
+          "type": "integer"
+        }
+      }
+    },
+    "ContainerUpdateResult": {
+      "type": "object",
+      "properties": {
+        "Warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }
@@ -1790,6 +2010,47 @@
           "in": "query",
           "description": "Signal to send to the container, integer or string like SIGINT, defaults to SIGKILL",
           "type": "string"
+        }],
+        "tags": [
+          "Container"
+        ]
+      }
+    },
+    "/containers/{id}/update": {
+      "post": {
+        "summary": "Update a container",
+        "description": "Update resource configs of one or more containers.",
+        "operationId": "update",
+        "responses": {
+          "200": {
+            "description": "no error",
+            "schema": {
+              "$ref": "#/definitions/ContainerUpdateResult"
+            }
+          },
+          "400": {
+            "description": "bad parameter"
+          },
+          "404": {
+            "description": "no such container"
+          },
+          "500": {
+            "description": "server error"
+          }
+        },
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The container id or name",
+          "type": "string"
+        }, {
+            "name": "resourceConfig",
+            "in": "body",
+            "description": "Resources to update on container",
+            "schema": {
+                "$ref": "#/definitions/ResourceUpdate"
+            }
         }],
         "tags": [
           "Container"
@@ -3369,7 +3630,7 @@
           "description": "Container",
           "required": true,
           "schema": {
-            "$ref": "#/definitions/ContainerConnect"
+            "$ref": "#/definitions/ContainerDisconnect"
           }
         }],
         "tags": [

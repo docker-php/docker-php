@@ -2,16 +2,16 @@
 
 namespace Docker\API\Model;
 
-class ContainerConnect
+class ContainerDisconnect
 {
     /**
      * @var string
      */
     protected $container;
     /**
-     * @var EndpointConfig[]
+     * @var bool
      */
-    protected $endpointConfig;
+    protected $force;
 
     /**
      * @return string
@@ -34,21 +34,21 @@ class ContainerConnect
     }
 
     /**
-     * @return EndpointConfig[]
+     * @return bool
      */
-    public function getEndpointConfig()
+    public function getForce()
     {
-        return $this->endpointConfig;
+        return $this->force;
     }
 
     /**
-     * @param EndpointConfig[] $endpointConfig
+     * @param bool $force
      *
      * @return self
      */
-    public function setEndpointConfig(\ArrayObject $endpointConfig = null)
+    public function setForce($force = null)
     {
-        $this->endpointConfig = $endpointConfig;
+        $this->force = $force;
 
         return $this;
     }

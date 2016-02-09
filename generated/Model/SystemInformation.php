@@ -5,9 +5,25 @@ namespace Docker\API\Model;
 class SystemInformation
 {
     /**
+     * @var string
+     */
+    protected $architecture;
+    /**
      * @var int
      */
     protected $containers;
+    /**
+     * @var int
+     */
+    protected $containersRunning;
+    /**
+     * @var int
+     */
+    protected $containersStopped;
+    /**
+     * @var int
+     */
+    protected $containersPaused;
     /**
      * @var bool
      */
@@ -36,6 +52,10 @@ class SystemInformation
      * @var string[][]
      */
     protected $driverStatus;
+    /**
+     * @var string[][]
+     */
+    protected $systemStatus;
     /**
      * @var string
      */
@@ -123,6 +143,10 @@ class SystemInformation
     /**
      * @var string
      */
+    protected $oSType;
+    /**
+     * @var string
+     */
     protected $operatingSystem;
     /**
      * @var RegistryConfig
@@ -142,6 +166,26 @@ class SystemInformation
     protected $serverVersion;
 
     /**
+     * @return string
+     */
+    public function getArchitecture()
+    {
+        return $this->architecture;
+    }
+
+    /**
+     * @param string $architecture
+     *
+     * @return self
+     */
+    public function setArchitecture($architecture = null)
+    {
+        $this->architecture = $architecture;
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getContainers()
@@ -157,6 +201,66 @@ class SystemInformation
     public function setContainers($containers = null)
     {
         $this->containers = $containers;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getContainersRunning()
+    {
+        return $this->containersRunning;
+    }
+
+    /**
+     * @param int $containersRunning
+     *
+     * @return self
+     */
+    public function setContainersRunning($containersRunning = null)
+    {
+        $this->containersRunning = $containersRunning;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getContainersStopped()
+    {
+        return $this->containersStopped;
+    }
+
+    /**
+     * @param int $containersStopped
+     *
+     * @return self
+     */
+    public function setContainersStopped($containersStopped = null)
+    {
+        $this->containersStopped = $containersStopped;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getContainersPaused()
+    {
+        return $this->containersPaused;
+    }
+
+    /**
+     * @param int $containersPaused
+     *
+     * @return self
+     */
+    public function setContainersPaused($containersPaused = null)
+    {
+        $this->containersPaused = $containersPaused;
 
         return $this;
     }
@@ -297,6 +401,26 @@ class SystemInformation
     public function setDriverStatus(array $driverStatus = null)
     {
         $this->driverStatus = $driverStatus;
+
+        return $this;
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function getSystemStatus()
+    {
+        return $this->systemStatus;
+    }
+
+    /**
+     * @param string[][] $systemStatus
+     *
+     * @return self
+     */
+    public function setSystemStatus(array $systemStatus = null)
+    {
+        $this->systemStatus = $systemStatus;
 
         return $this;
     }
@@ -717,6 +841,26 @@ class SystemInformation
     public function setOomKillDisable($oomKillDisable = null)
     {
         $this->oomKillDisable = $oomKillDisable;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOSType()
+    {
+        return $this->oSType;
+    }
+
+    /**
+     * @param string $oSType
+     *
+     * @return self
+     */
+    public function setOSType($oSType = null)
+    {
+        $this->oSType = $oSType;
 
         return $this;
     }

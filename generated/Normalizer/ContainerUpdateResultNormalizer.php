@@ -7,11 +7,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\SerializerAwareNormalizer;
 
-class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implements DenormalizerInterface, NormalizerInterface
+class ContainerUpdateResultNormalizer extends SerializerAwareNormalizer implements DenormalizerInterface, NormalizerInterface
 {
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ($type !== 'Docker\\API\\Model\\ContainerCreateResult') {
+        if ($type !== 'Docker\\API\\Model\\ContainerUpdateResult') {
             return false;
         }
 
@@ -20,7 +20,7 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
 
     public function supportsNormalization($data, $format = null)
     {
-        if ($data instanceof \Docker\API\Model\ContainerCreateResult) {
+        if ($data instanceof \Docker\API\Model\ContainerUpdateResult) {
             return true;
         }
 
@@ -35,19 +35,16 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
         if (isset($data->{'$ref'})) {
             return new Reference($data->{'$ref'}, $context['rootSchema'] ?: null);
         }
-        $object = new \Docker\API\Model\ContainerCreateResult();
+        $object = new \Docker\API\Model\ContainerUpdateResult();
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Id'})) {
-            $object->setId($data->{'Id'});
-        }
         if (isset($data->{'Warnings'})) {
-            $values_269 = [];
-            foreach ($data->{'Warnings'} as $value_270) {
-                $values_269[] = $value_270;
+            $values_273 = [];
+            foreach ($data->{'Warnings'} as $value_274) {
+                $values_273[] = $value_274;
             }
-            $object->setWarnings($values_269);
+            $object->setWarnings($values_273);
         }
 
         return $object;
@@ -56,15 +53,12 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
     public function normalize($object, $format = null, array $context = [])
     {
         $data = new \stdClass();
-        if (null !== $object->getId()) {
-            $data->{'Id'} = $object->getId();
-        }
         if (null !== $object->getWarnings()) {
-            $values_271 = [];
-            foreach ($object->getWarnings() as $value_272) {
-                $values_271[] = $value_272;
+            $values_275 = [];
+            foreach ($object->getWarnings() as $value_276) {
+                $values_275[] = $value_276;
             }
-            $data->{'Warnings'} = $values_271;
+            $data->{'Warnings'} = $values_275;
         }
 
         return $data;

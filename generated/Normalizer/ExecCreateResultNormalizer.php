@@ -43,11 +43,11 @@ class ExecCreateResultNormalizer extends SerializerAwareNormalizer implements De
             $object->setId($data->{'Id'});
         }
         if (isset($data->{'Warnings'})) {
-            $values_183 = [];
-            foreach ($data->{'Warnings'} as $value_184) {
-                $values_183[] = $value_184;
+            $values_219 = [];
+            foreach ($data->{'Warnings'} as $value_220) {
+                $values_219[] = $value_220;
             }
-            $object->setWarnings($values_183);
+            $object->setWarnings($values_219);
         }
 
         return $object;
@@ -60,11 +60,11 @@ class ExecCreateResultNormalizer extends SerializerAwareNormalizer implements De
             $data->{'Id'} = $object->getId();
         }
         if (null !== $object->getWarnings()) {
-            $values_185 = [];
-            foreach ($object->getWarnings() as $value_186) {
-                $values_185[] = $value_186;
+            $values_221 = [];
+            foreach ($object->getWarnings() as $value_222) {
+                $values_221[] = $value_222;
             }
-            $data->{'Warnings'} = $values_185;
+            $data->{'Warnings'} = $values_221;
         }
 
         return $data;

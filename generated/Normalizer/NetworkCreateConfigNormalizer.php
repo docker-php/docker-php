@@ -48,6 +48,9 @@ class NetworkCreateConfigNormalizer extends SerializerAwareNormalizer implements
         if (isset($data->{'IPAM'})) {
             $object->setIPAM($this->serializer->deserialize($data->{'IPAM'}, 'Docker\\API\\Model\\IPAM', 'raw', $context));
         }
+        if (isset($data->{'Internal'})) {
+            $object->setInternal($data->{'Internal'});
+        }
 
         return $object;
     }
@@ -63,6 +66,9 @@ class NetworkCreateConfigNormalizer extends SerializerAwareNormalizer implements
         }
         if (null !== $object->getIPAM()) {
             $data->{'IPAM'} = $this->serializer->serialize($object->getIPAM(), 'raw', $context);
+        }
+        if (null !== $object->getInternal()) {
+            $data->{'Internal'} = $object->getInternal();
         }
 
         return $data;

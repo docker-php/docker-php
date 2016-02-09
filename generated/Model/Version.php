@@ -36,6 +36,10 @@ class Version
      * @var bool
      */
     protected $experimental;
+    /**
+     * @var string
+     */
+    protected $buildTime;
 
     /**
      * @return string
@@ -193,6 +197,26 @@ class Version
     public function setExperimental($experimental = null)
     {
         $this->experimental = $experimental;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBuildTime()
+    {
+        return $this->buildTime;
+    }
+
+    /**
+     * @param string $buildTime
+     *
+     * @return self
+     */
+    public function setBuildTime($buildTime = null)
+    {
+        $this->buildTime = $buildTime;
 
         return $this;
     }

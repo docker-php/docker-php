@@ -39,6 +39,9 @@ class NetworkContainerNormalizer extends SerializerAwareNormalizer implements De
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
+        if (isset($data->{'Name'})) {
+            $object->setName($data->{'Name'});
+        }
         if (isset($data->{'EndpointID'})) {
             $object->setEndpointID($data->{'EndpointID'});
         }
@@ -58,6 +61,9 @@ class NetworkContainerNormalizer extends SerializerAwareNormalizer implements De
     public function normalize($object, $format = null, array $context = [])
     {
         $data = new \stdClass();
+        if (null !== $object->getName()) {
+            $data->{'Name'} = $object->getName();
+        }
         if (null !== $object->getEndpointID()) {
             $data->{'EndpointID'} = $object->getEndpointID();
         }

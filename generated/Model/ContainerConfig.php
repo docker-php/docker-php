@@ -113,6 +113,10 @@ class ContainerConfig
      */
     protected $exposedPorts;
     /**
+     * @var NetworkConfig
+     */
+    protected $networkSettings;
+    /**
      * @var HostConfig
      */
     protected $hostConfig;
@@ -653,6 +657,26 @@ class ContainerConfig
     public function setExposedPorts(\ArrayObject $exposedPorts = null)
     {
         $this->exposedPorts = $exposedPorts;
+
+        return $this;
+    }
+
+    /**
+     * @return NetworkConfig
+     */
+    public function getNetworkSettings()
+    {
+        return $this->networkSettings;
+    }
+
+    /**
+     * @param NetworkConfig $networkSettings
+     *
+     * @return self
+     */
+    public function setNetworkSettings(NetworkConfig $networkSettings = null)
+    {
+        $this->networkSettings = $networkSettings;
 
         return $this;
     }

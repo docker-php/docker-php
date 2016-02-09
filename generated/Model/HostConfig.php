@@ -45,6 +45,26 @@ class HostConfig
      */
     protected $blkioWeight;
     /**
+     * @var DeviceWeight[]
+     */
+    protected $blkioWeightDevice;
+    /**
+     * @var DeviceRate[]
+     */
+    protected $blkioDeviceReadBps;
+    /**
+     * @var DeviceRate[]
+     */
+    protected $blkioDeviceReadIOps;
+    /**
+     * @var DeviceRate[]
+     */
+    protected $blkioDeviceWriteBps;
+    /**
+     * @var DeviceRate[]
+     */
+    protected $blkioDeviceWriteIOps;
+    /**
      * @var int
      */
     protected $memorySwappiness;
@@ -317,6 +337,106 @@ class HostConfig
     public function setBlkioWeight($blkioWeight = null)
     {
         $this->blkioWeight = $blkioWeight;
+
+        return $this;
+    }
+
+    /**
+     * @return DeviceWeight[]
+     */
+    public function getBlkioWeightDevice()
+    {
+        return $this->blkioWeightDevice;
+    }
+
+    /**
+     * @param DeviceWeight[] $blkioWeightDevice
+     *
+     * @return self
+     */
+    public function setBlkioWeightDevice(array $blkioWeightDevice = null)
+    {
+        $this->blkioWeightDevice = $blkioWeightDevice;
+
+        return $this;
+    }
+
+    /**
+     * @return DeviceRate[]
+     */
+    public function getBlkioDeviceReadBps()
+    {
+        return $this->blkioDeviceReadBps;
+    }
+
+    /**
+     * @param DeviceRate[] $blkioDeviceReadBps
+     *
+     * @return self
+     */
+    public function setBlkioDeviceReadBps(array $blkioDeviceReadBps = null)
+    {
+        $this->blkioDeviceReadBps = $blkioDeviceReadBps;
+
+        return $this;
+    }
+
+    /**
+     * @return DeviceRate[]
+     */
+    public function getBlkioDeviceReadIOps()
+    {
+        return $this->blkioDeviceReadIOps;
+    }
+
+    /**
+     * @param DeviceRate[] $blkioDeviceReadIOps
+     *
+     * @return self
+     */
+    public function setBlkioDeviceReadIOps(array $blkioDeviceReadIOps = null)
+    {
+        $this->blkioDeviceReadIOps = $blkioDeviceReadIOps;
+
+        return $this;
+    }
+
+    /**
+     * @return DeviceRate[]
+     */
+    public function getBlkioDeviceWriteBps()
+    {
+        return $this->blkioDeviceWriteBps;
+    }
+
+    /**
+     * @param DeviceRate[] $blkioDeviceWriteBps
+     *
+     * @return self
+     */
+    public function setBlkioDeviceWriteBps(array $blkioDeviceWriteBps = null)
+    {
+        $this->blkioDeviceWriteBps = $blkioDeviceWriteBps;
+
+        return $this;
+    }
+
+    /**
+     * @return DeviceRate[]
+     */
+    public function getBlkioDeviceWriteIOps()
+    {
+        return $this->blkioDeviceWriteIOps;
+    }
+
+    /**
+     * @param DeviceRate[] $blkioDeviceWriteIOps
+     *
+     * @return self
+     */
+    public function setBlkioDeviceWriteIOps(array $blkioDeviceWriteIOps = null)
+    {
+        $this->blkioDeviceWriteIOps = $blkioDeviceWriteIOps;
 
         return $this;
     }

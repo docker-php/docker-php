@@ -57,23 +57,30 @@ class NetworkConfigNormalizer extends SerializerAwareNormalizer implements Denor
         if (isset($data->{'PortMapping'})) {
             $object->setPortMapping($data->{'PortMapping'});
         }
-        if (isset($data->{'Ports'})) {
-            $values_99 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Ports'} as $key_101 => $value_100) {
-                $value_102 = $value_100;
-                if (is_array($value_100)) {
-                    $values_103 = [];
-                    foreach ($value_100 as $value_104) {
-                        $values_103[] = $this->serializer->deserialize($value_104, 'Docker\\API\\Model\\PortBinding', 'raw', $context);
-                    }
-                    $value_102 = $values_103;
-                }
-                if (is_null($value_100)) {
-                    $value_102 = $value_100;
-                }
-                $values_99[$key_101] = $value_102;
+        if (isset($data->{'Networks'})) {
+            $values_121 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Networks'} as $key_123 => $value_122) {
+                $values_121[$key_123] = $this->serializer->deserialize($value_122, 'Docker\\API\\Model\\ContainerNetwork', 'raw', $context);
             }
-            $object->setPorts($values_99);
+            $object->setNetworks($values_121);
+        }
+        if (isset($data->{'Ports'})) {
+            $values_124 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Ports'} as $key_126 => $value_125) {
+                $value_127 = $value_125;
+                if (is_array($value_125)) {
+                    $values_128 = [];
+                    foreach ($value_125 as $value_129) {
+                        $values_128[] = $this->serializer->deserialize($value_129, 'Docker\\API\\Model\\PortBinding', 'raw', $context);
+                    }
+                    $value_127 = $values_128;
+                }
+                if (is_null($value_125)) {
+                    $value_127 = $value_125;
+                }
+                $values_124[$key_126] = $value_127;
+            }
+            $object->setPorts($values_124);
         }
 
         return $object;
@@ -100,23 +107,30 @@ class NetworkConfigNormalizer extends SerializerAwareNormalizer implements Denor
         if (null !== $object->getPortMapping()) {
             $data->{'PortMapping'} = $object->getPortMapping();
         }
-        if (null !== $object->getPorts()) {
-            $values_105 = new \stdClass();
-            foreach ($object->getPorts() as $key_107 => $value_106) {
-                $value_108 = $value_106;
-                if (is_array($value_106)) {
-                    $values_109 = [];
-                    foreach ($value_106 as $value_110) {
-                        $values_109[] = $this->serializer->serialize($value_110, 'raw', $context);
-                    }
-                    $value_108 = $values_109;
-                }
-                if (is_null($value_106)) {
-                    $value_108 = $value_106;
-                }
-                $values_105->{$key_107} = $value_108;
+        if (null !== $object->getNetworks()) {
+            $values_130 = new \stdClass();
+            foreach ($object->getNetworks() as $key_132 => $value_131) {
+                $values_130->{$key_132} = $this->serializer->serialize($value_131, 'raw', $context);
             }
-            $data->{'Ports'} = $values_105;
+            $data->{'Networks'} = $values_130;
+        }
+        if (null !== $object->getPorts()) {
+            $values_133 = new \stdClass();
+            foreach ($object->getPorts() as $key_135 => $value_134) {
+                $value_136 = $value_134;
+                if (is_array($value_134)) {
+                    $values_137 = [];
+                    foreach ($value_134 as $value_138) {
+                        $values_137[] = $this->serializer->serialize($value_138, 'raw', $context);
+                    }
+                    $value_136 = $values_137;
+                }
+                if (is_null($value_134)) {
+                    $value_136 = $value_134;
+                }
+                $values_133->{$key_135} = $value_136;
+            }
+            $data->{'Ports'} = $values_133;
         }
 
         return $data;

@@ -40,11 +40,11 @@ class RegistryNormalizer extends SerializerAwareNormalizer implements Denormaliz
             $context['rootSchema'] = $object;
         }
         if (isset($data->{'Mirrors'})) {
-            $values_179 = [];
-            foreach ($data->{'Mirrors'} as $value_180) {
-                $values_179[] = $value_180;
+            $values_215 = [];
+            foreach ($data->{'Mirrors'} as $value_216) {
+                $values_215[] = $value_216;
             }
-            $object->setMirrors($values_179);
+            $object->setMirrors($values_215);
         }
         if (isset($data->{'Name'})) {
             $object->setName($data->{'Name'});
@@ -63,11 +63,11 @@ class RegistryNormalizer extends SerializerAwareNormalizer implements Denormaliz
     {
         $data = new \stdClass();
         if (null !== $object->getMirrors()) {
-            $values_181 = [];
-            foreach ($object->getMirrors() as $value_182) {
-                $values_181[] = $value_182;
+            $values_217 = [];
+            foreach ($object->getMirrors() as $value_218) {
+                $values_217[] = $value_218;
             }
-            $data->{'Mirrors'} = $values_181;
+            $data->{'Mirrors'} = $values_217;
         }
         if (null !== $object->getName()) {
             $data->{'Name'} = $object->getName();

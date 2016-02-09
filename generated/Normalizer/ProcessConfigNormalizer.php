@@ -52,11 +52,11 @@ class ProcessConfigNormalizer extends SerializerAwareNormalizer implements Denor
             $object->setEntrypoint($data->{'entrypoint'});
         }
         if (isset($data->{'arguments'})) {
-            $values_191 = [];
-            foreach ($data->{'arguments'} as $value_192) {
-                $values_191[] = $value_192;
+            $values_227 = [];
+            foreach ($data->{'arguments'} as $value_228) {
+                $values_227[] = $value_228;
             }
-            $object->setArguments($values_191);
+            $object->setArguments($values_227);
         }
 
         return $object;
@@ -78,11 +78,11 @@ class ProcessConfigNormalizer extends SerializerAwareNormalizer implements Denor
             $data->{'entrypoint'} = $object->getEntrypoint();
         }
         if (null !== $object->getArguments()) {
-            $values_193 = [];
-            foreach ($object->getArguments() as $value_194) {
-                $values_193[] = $value_194;
+            $values_229 = [];
+            foreach ($object->getArguments() as $value_230) {
+                $values_229[] = $value_230;
             }
-            $data->{'arguments'} = $values_193;
+            $data->{'arguments'} = $values_229;
         }
 
         return $data;

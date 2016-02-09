@@ -7,11 +7,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\SerializerAwareNormalizer;
 
-class ContainerConnectNormalizer extends SerializerAwareNormalizer implements DenormalizerInterface, NormalizerInterface
+class ContainerDisconnectNormalizer extends SerializerAwareNormalizer implements DenormalizerInterface, NormalizerInterface
 {
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ($type !== 'Docker\\API\\Model\\ContainerConnect') {
+        if ($type !== 'Docker\\API\\Model\\ContainerDisconnect') {
             return false;
         }
 
@@ -20,7 +20,7 @@ class ContainerConnectNormalizer extends SerializerAwareNormalizer implements De
 
     public function supportsNormalization($data, $format = null)
     {
-        if ($data instanceof \Docker\API\Model\ContainerConnect) {
+        if ($data instanceof \Docker\API\Model\ContainerDisconnect) {
             return true;
         }
 
@@ -35,19 +35,15 @@ class ContainerConnectNormalizer extends SerializerAwareNormalizer implements De
         if (isset($data->{'$ref'})) {
             return new Reference($data->{'$ref'}, $context['rootSchema'] ?: null);
         }
-        $object = new \Docker\API\Model\ContainerConnect();
+        $object = new \Docker\API\Model\ContainerDisconnect();
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
         if (isset($data->{'Container'})) {
             $object->setContainer($data->{'Container'});
         }
-        if (isset($data->{'EndpointConfig'})) {
-            $values_263 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'EndpointConfig'} as $key_265 => $value_264) {
-                $values_263[$key_265] = $this->serializer->deserialize($value_264, 'Docker\\API\\Model\\EndpointConfig', 'raw', $context);
-            }
-            $object->setEndpointConfig($values_263);
+        if (isset($data->{'Force'})) {
+            $object->setForce($data->{'Force'});
         }
 
         return $object;
@@ -59,12 +55,8 @@ class ContainerConnectNormalizer extends SerializerAwareNormalizer implements De
         if (null !== $object->getContainer()) {
             $data->{'Container'} = $object->getContainer();
         }
-        if (null !== $object->getEndpointConfig()) {
-            $values_266 = new \stdClass();
-            foreach ($object->getEndpointConfig() as $key_268 => $value_267) {
-                $values_266->{$key_268} = $this->serializer->serialize($value_267, 'raw', $context);
-            }
-            $data->{'EndpointConfig'} = $values_266;
+        if (null !== $object->getForce()) {
+            $data->{'Force'} = $object->getForce();
         }
 
         return $data;

@@ -46,11 +46,11 @@ class VolumeConfigNormalizer extends SerializerAwareNormalizer implements Denorm
             $object->setDriver($data->{'Driver'});
         }
         if (isset($data->{'DriverOpts'})) {
-            $values_199 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'DriverOpts'} as $key_201 => $value_200) {
-                $values_199[$key_201] = $value_200;
+            $values_235 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'DriverOpts'} as $key_237 => $value_236) {
+                $values_235[$key_237] = $value_236;
             }
-            $object->setDriverOpts($values_199);
+            $object->setDriverOpts($values_235);
         }
 
         return $object;
@@ -66,11 +66,11 @@ class VolumeConfigNormalizer extends SerializerAwareNormalizer implements Denorm
             $data->{'Driver'} = $object->getDriver();
         }
         if (null !== $object->getDriverOpts()) {
-            $values_202 = new \stdClass();
-            foreach ($object->getDriverOpts() as $key_204 => $value_203) {
-                $values_202->{$key_204} = $value_203;
+            $values_238 = new \stdClass();
+            foreach ($object->getDriverOpts() as $key_240 => $value_239) {
+                $values_238->{$key_240} = $value_239;
             }
-            $data->{'DriverOpts'} = $values_202;
+            $data->{'DriverOpts'} = $values_238;
         }
 
         return $data;

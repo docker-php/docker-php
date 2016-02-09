@@ -40,18 +40,18 @@ class RegistryConfigNormalizer extends SerializerAwareNormalizer implements Deno
             $context['rootSchema'] = $object;
         }
         if (isset($data->{'IndexConfigs'})) {
-            $values_169 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'IndexConfigs'} as $key_171 => $value_170) {
-                $values_169[$key_171] = $this->serializer->deserialize($value_170, 'Docker\\API\\Model\\Registry', 'raw', $context);
+            $values_205 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'IndexConfigs'} as $key_207 => $value_206) {
+                $values_205[$key_207] = $this->serializer->deserialize($value_206, 'Docker\\API\\Model\\Registry', 'raw', $context);
             }
-            $object->setIndexConfigs($values_169);
+            $object->setIndexConfigs($values_205);
         }
         if (isset($data->{'InsecureRegistryCIDRs'})) {
-            $values_172 = [];
-            foreach ($data->{'InsecureRegistryCIDRs'} as $value_173) {
-                $values_172[] = $value_173;
+            $values_208 = [];
+            foreach ($data->{'InsecureRegistryCIDRs'} as $value_209) {
+                $values_208[] = $value_209;
             }
-            $object->setInsecureRegistryCIDRs($values_172);
+            $object->setInsecureRegistryCIDRs($values_208);
         }
 
         return $object;
@@ -61,18 +61,18 @@ class RegistryConfigNormalizer extends SerializerAwareNormalizer implements Deno
     {
         $data = new \stdClass();
         if (null !== $object->getIndexConfigs()) {
-            $values_174 = new \stdClass();
-            foreach ($object->getIndexConfigs() as $key_176 => $value_175) {
-                $values_174->{$key_176} = $this->serializer->serialize($value_175, 'raw', $context);
+            $values_210 = new \stdClass();
+            foreach ($object->getIndexConfigs() as $key_212 => $value_211) {
+                $values_210->{$key_212} = $this->serializer->serialize($value_211, 'raw', $context);
             }
-            $data->{'IndexConfigs'} = $values_174;
+            $data->{'IndexConfigs'} = $values_210;
         }
         if (null !== $object->getInsecureRegistryCIDRs()) {
-            $values_177 = [];
-            foreach ($object->getInsecureRegistryCIDRs() as $value_178) {
-                $values_177[] = $value_178;
+            $values_213 = [];
+            foreach ($object->getInsecureRegistryCIDRs() as $value_214) {
+                $values_213[] = $value_214;
             }
-            $data->{'InsecureRegistryCIDRs'} = $values_177;
+            $data->{'InsecureRegistryCIDRs'} = $values_213;
         }
 
         return $data;

@@ -404,6 +404,35 @@ class ContainerResource extends Resource
     }
 
     /**
+     * Update resource configs of one or more containers.
+     *
+     * @param string                           $id             The container id or name
+     * @param \Docker\API\Model\ResourceUpdate $resourceConfig Resources to update on container
+     * @param array                            $parameters     List of parameters
+     * @param string                           $fetch          Fetch mode (object or response)
+     *
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerUpdateResult
+     */
+    public function update($id, \Docker\API\Model\ResourceUpdate $resourceConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
+    {
+        $queryParam = new QueryParam();
+        $url        = '/containers/{id}/update';
+        $url        = str_replace('{id}', urlencode($id), $url);
+        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body       = $this->serializer->serialize($resourceConfig, 'json');
+        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $response   = $this->httpClient->sendRequest($request);
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerUpdateResult', 'json');
+            }
+        }
+
+        return $response;
+    }
+
+    /**
      * Rename the container id to a new_name.
      *
      * @param string $id         The container id or name

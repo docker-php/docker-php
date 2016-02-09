@@ -39,8 +39,20 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
+        if (isset($data->{'Architecture'})) {
+            $object->setArchitecture($data->{'Architecture'});
+        }
         if (isset($data->{'Containers'})) {
             $object->setContainers($data->{'Containers'});
+        }
+        if (isset($data->{'ContainersRunning'})) {
+            $object->setContainersRunning($data->{'ContainersRunning'});
+        }
+        if (isset($data->{'ContainersStopped'})) {
+            $object->setContainersStopped($data->{'ContainersStopped'});
+        }
+        if (isset($data->{'ContainersPaused'})) {
+            $object->setContainersPaused($data->{'ContainersPaused'});
         }
         if (isset($data->{'CpuCfsPeriod'})) {
             $object->setCpuCfsPeriod($data->{'CpuCfsPeriod'});
@@ -61,15 +73,26 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $object->setDriver($data->{'Driver'});
         }
         if (isset($data->{'DriverStatus'})) {
-            $values_157 = [];
-            foreach ($data->{'DriverStatus'} as $value_158) {
-                $values_159 = [];
-                foreach ($value_158 as $value_160) {
-                    $values_159[] = $value_160;
+            $values_185 = [];
+            foreach ($data->{'DriverStatus'} as $value_186) {
+                $values_187 = [];
+                foreach ($value_186 as $value_188) {
+                    $values_187[] = $value_188;
                 }
-                $values_157[] = $values_159;
+                $values_185[] = $values_187;
             }
-            $object->setDriverStatus($values_157);
+            $object->setDriverStatus($values_185);
+        }
+        if (isset($data->{'SystemStatus'})) {
+            $values_189 = [];
+            foreach ($data->{'SystemStatus'} as $value_190) {
+                $values_191 = [];
+                foreach ($value_190 as $value_192) {
+                    $values_191[] = $value_192;
+                }
+                $values_189[] = $values_191;
+            }
+            $object->setSystemStatus($values_189);
         }
         if (isset($data->{'ExecutionDriver'})) {
             $object->setExecutionDriver($data->{'ExecutionDriver'});
@@ -105,11 +128,11 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $object->setKernelVersion($data->{'KernelVersion'});
         }
         if (isset($data->{'Labels'})) {
-            $values_161 = [];
-            foreach ($data->{'Labels'} as $value_162) {
-                $values_161[] = $value_162;
+            $values_193 = [];
+            foreach ($data->{'Labels'} as $value_194) {
+                $values_193[] = $value_194;
             }
-            $object->setLabels($values_161);
+            $object->setLabels($values_193);
         }
         if (isset($data->{'MemTotal'})) {
             $object->setMemTotal($data->{'MemTotal'});
@@ -138,6 +161,9 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         if (isset($data->{'OomKillDisable'})) {
             $object->setOomKillDisable($data->{'OomKillDisable'});
         }
+        if (isset($data->{'OSType'})) {
+            $object->setOSType($data->{'OSType'});
+        }
         if (isset($data->{'OperatingSystem'})) {
             $object->setOperatingSystem($data->{'OperatingSystem'});
         }
@@ -160,8 +186,20 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
     public function normalize($object, $format = null, array $context = [])
     {
         $data = new \stdClass();
+        if (null !== $object->getArchitecture()) {
+            $data->{'Architecture'} = $object->getArchitecture();
+        }
         if (null !== $object->getContainers()) {
             $data->{'Containers'} = $object->getContainers();
+        }
+        if (null !== $object->getContainersRunning()) {
+            $data->{'ContainersRunning'} = $object->getContainersRunning();
+        }
+        if (null !== $object->getContainersStopped()) {
+            $data->{'ContainersStopped'} = $object->getContainersStopped();
+        }
+        if (null !== $object->getContainersPaused()) {
+            $data->{'ContainersPaused'} = $object->getContainersPaused();
         }
         if (null !== $object->getCpuCfsPeriod()) {
             $data->{'CpuCfsPeriod'} = $object->getCpuCfsPeriod();
@@ -182,15 +220,26 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $data->{'Driver'} = $object->getDriver();
         }
         if (null !== $object->getDriverStatus()) {
-            $values_163 = [];
-            foreach ($object->getDriverStatus() as $value_164) {
-                $values_165 = [];
-                foreach ($value_164 as $value_166) {
-                    $values_165[] = $value_166;
+            $values_195 = [];
+            foreach ($object->getDriverStatus() as $value_196) {
+                $values_197 = [];
+                foreach ($value_196 as $value_198) {
+                    $values_197[] = $value_198;
                 }
-                $values_163[] = $values_165;
+                $values_195[] = $values_197;
             }
-            $data->{'DriverStatus'} = $values_163;
+            $data->{'DriverStatus'} = $values_195;
+        }
+        if (null !== $object->getSystemStatus()) {
+            $values_199 = [];
+            foreach ($object->getSystemStatus() as $value_200) {
+                $values_201 = [];
+                foreach ($value_200 as $value_202) {
+                    $values_201[] = $value_202;
+                }
+                $values_199[] = $values_201;
+            }
+            $data->{'SystemStatus'} = $values_199;
         }
         if (null !== $object->getExecutionDriver()) {
             $data->{'ExecutionDriver'} = $object->getExecutionDriver();
@@ -226,11 +275,11 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $data->{'KernelVersion'} = $object->getKernelVersion();
         }
         if (null !== $object->getLabels()) {
-            $values_167 = [];
-            foreach ($object->getLabels() as $value_168) {
-                $values_167[] = $value_168;
+            $values_203 = [];
+            foreach ($object->getLabels() as $value_204) {
+                $values_203[] = $value_204;
             }
-            $data->{'Labels'} = $values_167;
+            $data->{'Labels'} = $values_203;
         }
         if (null !== $object->getMemTotal()) {
             $data->{'MemTotal'} = $object->getMemTotal();
@@ -258,6 +307,9 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         }
         if (null !== $object->getOomKillDisable()) {
             $data->{'OomKillDisable'} = $object->getOomKillDisable();
+        }
+        if (null !== $object->getOSType()) {
+            $data->{'OSType'} = $object->getOSType();
         }
         if (null !== $object->getOperatingSystem()) {
             $data->{'OperatingSystem'} = $object->getOperatingSystem();

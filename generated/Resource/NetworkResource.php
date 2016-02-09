@@ -143,14 +143,14 @@ class NetworkResource extends Resource
     /**
      * Disconnect a container to a network.
      *
-     * @param string                             $id         Network id or name
-     * @param \Docker\API\Model\ContainerConnect $container  Container
-     * @param array                              $parameters List of parameters
-     * @param string                             $fetch      Fetch mode (object or response)
+     * @param string                                $id         Network id or name
+     * @param \Docker\API\Model\ContainerDisconnect $container  Container
+     * @param array                                 $parameters List of parameters
+     * @param string                                $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function disconnect($id, \Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function disconnect($id, \Docker\API\Model\ContainerDisconnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/networks/{id}/disconnect';

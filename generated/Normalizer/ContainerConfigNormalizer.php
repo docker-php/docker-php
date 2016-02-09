@@ -43,11 +43,11 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $object->setId($data->{'Id'});
         }
         if (isset($data->{'Names'})) {
-            $values_59 = [];
-            foreach ($data->{'Names'} as $value_60) {
-                $values_59[] = $value_60;
+            $values_81 = [];
+            foreach ($data->{'Names'} as $value_82) {
+                $values_81[] = $value_82;
             }
-            $object->setNames($values_59);
+            $object->setNames($values_81);
         }
         if (isset($data->{'Image'})) {
             $object->setImage($data->{'Image'});
@@ -62,18 +62,18 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $object->setStatus($data->{'Status'});
         }
         if (isset($data->{'Ports'})) {
-            $values_61 = [];
-            foreach ($data->{'Ports'} as $value_62) {
-                $values_61[] = $this->serializer->deserialize($value_62, 'Docker\\API\\Model\\Port', 'raw', $context);
+            $values_83 = [];
+            foreach ($data->{'Ports'} as $value_84) {
+                $values_83[] = $this->serializer->deserialize($value_84, 'Docker\\API\\Model\\Port', 'raw', $context);
             }
-            $object->setPorts($values_61);
+            $object->setPorts($values_83);
         }
         if (isset($data->{'Labels'})) {
-            $values_63 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Labels'} as $key_65 => $value_64) {
-                $values_63[$key_65] = $value_64;
+            $values_85 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Labels'} as $key_87 => $value_86) {
+                $values_85[$key_87] = $value_86;
             }
-            $object->setLabels($values_63);
+            $object->setLabels($values_85);
         }
         if (isset($data->{'SizeRw'})) {
             $object->setSizeRw($data->{'SizeRw'});
@@ -109,46 +109,46 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $object->setStdinOnce($data->{'StdinOnce'});
         }
         if (isset($data->{'Env'})) {
-            $values_66 = [];
-            foreach ($data->{'Env'} as $value_67) {
-                $values_66[] = $value_67;
+            $values_88 = [];
+            foreach ($data->{'Env'} as $value_89) {
+                $values_88[] = $value_89;
             }
-            $object->setEnv($values_66);
+            $object->setEnv($values_88);
         }
         if (isset($data->{'Cmd'})) {
-            $value_68 = $data->{'Cmd'};
+            $value_90 = $data->{'Cmd'};
             if (is_array($data->{'Cmd'})) {
-                $values_69 = [];
-                foreach ($data->{'Cmd'} as $value_70) {
-                    $values_69[] = $value_70;
+                $values_91 = [];
+                foreach ($data->{'Cmd'} as $value_92) {
+                    $values_91[] = $value_92;
                 }
-                $value_68 = $values_69;
+                $value_90 = $values_91;
             }
             if (is_string($data->{'Cmd'})) {
-                $value_68 = $data->{'Cmd'};
+                $value_90 = $data->{'Cmd'};
             }
-            $object->setCmd($value_68);
+            $object->setCmd($value_90);
         }
         if (isset($data->{'Entrypoint'})) {
-            $value_71 = $data->{'Entrypoint'};
+            $value_93 = $data->{'Entrypoint'};
             if (is_array($data->{'Entrypoint'})) {
-                $values_72 = [];
-                foreach ($data->{'Entrypoint'} as $value_73) {
-                    $values_72[] = $value_73;
+                $values_94 = [];
+                foreach ($data->{'Entrypoint'} as $value_95) {
+                    $values_94[] = $value_95;
                 }
-                $value_71 = $values_72;
+                $value_93 = $values_94;
             }
             if (is_string($data->{'Entrypoint'})) {
-                $value_71 = $data->{'Entrypoint'};
+                $value_93 = $data->{'Entrypoint'};
             }
-            $object->setEntrypoint($value_71);
+            $object->setEntrypoint($value_93);
         }
         if (isset($data->{'Mounts'})) {
-            $values_74 = [];
-            foreach ($data->{'Mounts'} as $value_75) {
-                $values_74[] = $this->serializer->deserialize($value_75, 'Docker\\API\\Model\\Mount', 'raw', $context);
+            $values_96 = [];
+            foreach ($data->{'Mounts'} as $value_97) {
+                $values_96[] = $this->serializer->deserialize($value_97, 'Docker\\API\\Model\\Mount', 'raw', $context);
             }
-            $object->setMounts($values_74);
+            $object->setMounts($values_96);
         }
         if (isset($data->{'WorkingDir'})) {
             $object->setWorkingDir($data->{'WorkingDir'});
@@ -160,11 +160,14 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $object->setMacAddress($data->{'MacAddress'});
         }
         if (isset($data->{'ExposedPorts'})) {
-            $values_76 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'ExposedPorts'} as $key_78 => $value_77) {
-                $values_76[$key_78] = $value_77;
+            $values_98 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'ExposedPorts'} as $key_100 => $value_99) {
+                $values_98[$key_100] = $value_99;
             }
-            $object->setExposedPorts($values_76);
+            $object->setExposedPorts($values_98);
+        }
+        if (isset($data->{'NetworkSettings'})) {
+            $object->setNetworkSettings($this->serializer->deserialize($data->{'NetworkSettings'}, 'Docker\\API\\Model\\NetworkConfig', 'raw', $context));
         }
         if (isset($data->{'HostConfig'})) {
             $object->setHostConfig($this->serializer->deserialize($data->{'HostConfig'}, 'Docker\\API\\Model\\HostConfig', 'raw', $context));
@@ -180,11 +183,11 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $data->{'Id'} = $object->getId();
         }
         if (null !== $object->getNames()) {
-            $values_79 = [];
-            foreach ($object->getNames() as $value_80) {
-                $values_79[] = $value_80;
+            $values_101 = [];
+            foreach ($object->getNames() as $value_102) {
+                $values_101[] = $value_102;
             }
-            $data->{'Names'} = $values_79;
+            $data->{'Names'} = $values_101;
         }
         if (null !== $object->getImage()) {
             $data->{'Image'} = $object->getImage();
@@ -199,18 +202,18 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $data->{'Status'} = $object->getStatus();
         }
         if (null !== $object->getPorts()) {
-            $values_81 = [];
-            foreach ($object->getPorts() as $value_82) {
-                $values_81[] = $this->serializer->serialize($value_82, 'raw', $context);
+            $values_103 = [];
+            foreach ($object->getPorts() as $value_104) {
+                $values_103[] = $this->serializer->serialize($value_104, 'raw', $context);
             }
-            $data->{'Ports'} = $values_81;
+            $data->{'Ports'} = $values_103;
         }
         if (null !== $object->getLabels()) {
-            $values_83 = new \stdClass();
-            foreach ($object->getLabels() as $key_85 => $value_84) {
-                $values_83->{$key_85} = $value_84;
+            $values_105 = new \stdClass();
+            foreach ($object->getLabels() as $key_107 => $value_106) {
+                $values_105->{$key_107} = $value_106;
             }
-            $data->{'Labels'} = $values_83;
+            $data->{'Labels'} = $values_105;
         }
         if (null !== $object->getSizeRw()) {
             $data->{'SizeRw'} = $object->getSizeRw();
@@ -246,46 +249,46 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $data->{'StdinOnce'} = $object->getStdinOnce();
         }
         if (null !== $object->getEnv()) {
-            $values_86 = [];
-            foreach ($object->getEnv() as $value_87) {
-                $values_86[] = $value_87;
+            $values_108 = [];
+            foreach ($object->getEnv() as $value_109) {
+                $values_108[] = $value_109;
             }
-            $data->{'Env'} = $values_86;
+            $data->{'Env'} = $values_108;
         }
         if (null !== $object->getCmd()) {
-            $value_88 = $object->getCmd();
+            $value_110 = $object->getCmd();
             if (is_array($object->getCmd())) {
-                $values_89 = [];
-                foreach ($object->getCmd() as $value_90) {
-                    $values_89[] = $value_90;
+                $values_111 = [];
+                foreach ($object->getCmd() as $value_112) {
+                    $values_111[] = $value_112;
                 }
-                $value_88 = $values_89;
+                $value_110 = $values_111;
             }
             if (is_string($object->getCmd())) {
-                $value_88 = $object->getCmd();
+                $value_110 = $object->getCmd();
             }
-            $data->{'Cmd'} = $value_88;
+            $data->{'Cmd'} = $value_110;
         }
         if (null !== $object->getEntrypoint()) {
-            $value_91 = $object->getEntrypoint();
+            $value_113 = $object->getEntrypoint();
             if (is_array($object->getEntrypoint())) {
-                $values_92 = [];
-                foreach ($object->getEntrypoint() as $value_93) {
-                    $values_92[] = $value_93;
+                $values_114 = [];
+                foreach ($object->getEntrypoint() as $value_115) {
+                    $values_114[] = $value_115;
                 }
-                $value_91 = $values_92;
+                $value_113 = $values_114;
             }
             if (is_string($object->getEntrypoint())) {
-                $value_91 = $object->getEntrypoint();
+                $value_113 = $object->getEntrypoint();
             }
-            $data->{'Entrypoint'} = $value_91;
+            $data->{'Entrypoint'} = $value_113;
         }
         if (null !== $object->getMounts()) {
-            $values_94 = [];
-            foreach ($object->getMounts() as $value_95) {
-                $values_94[] = $this->serializer->serialize($value_95, 'raw', $context);
+            $values_116 = [];
+            foreach ($object->getMounts() as $value_117) {
+                $values_116[] = $this->serializer->serialize($value_117, 'raw', $context);
             }
-            $data->{'Mounts'} = $values_94;
+            $data->{'Mounts'} = $values_116;
         }
         if (null !== $object->getWorkingDir()) {
             $data->{'WorkingDir'} = $object->getWorkingDir();
@@ -297,11 +300,14 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $data->{'MacAddress'} = $object->getMacAddress();
         }
         if (null !== $object->getExposedPorts()) {
-            $values_96 = new \stdClass();
-            foreach ($object->getExposedPorts() as $key_98 => $value_97) {
-                $values_96->{$key_98} = $value_97;
+            $values_118 = new \stdClass();
+            foreach ($object->getExposedPorts() as $key_120 => $value_119) {
+                $values_118->{$key_120} = $value_119;
             }
-            $data->{'ExposedPorts'} = $values_96;
+            $data->{'ExposedPorts'} = $values_118;
+        }
+        if (null !== $object->getNetworkSettings()) {
+            $data->{'NetworkSettings'} = $this->serializer->serialize($object->getNetworkSettings(), 'raw', $context);
         }
         if (null !== $object->getHostConfig()) {
             $data->{'HostConfig'} = $this->serializer->serialize($object->getHostConfig(), 'raw', $context);

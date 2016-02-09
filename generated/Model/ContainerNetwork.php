@@ -2,12 +2,16 @@
 
 namespace Docker\API\Model;
 
-class NetworkConfig
+class ContainerNetwork
 {
     /**
      * @var string
      */
-    protected $bridge;
+    protected $networkID;
+    /**
+     * @var string
+     */
+    protected $endpointID;
     /**
      * @var string
      */
@@ -23,36 +27,56 @@ class NetworkConfig
     /**
      * @var string
      */
-    protected $macAddress;
+    protected $iPv6Gateway;
     /**
      * @var string
      */
-    protected $portMapping;
+    protected $globalIPv6Address;
     /**
-     * @var ContainerNetwork[]
+     * @var int
      */
-    protected $networks;
+    protected $globalIPv6PrefixLen;
     /**
-     * @var PortBinding[][]|null[]
+     * @var string
      */
-    protected $ports;
+    protected $macAddress;
 
     /**
      * @return string
      */
-    public function getBridge()
+    public function getNetworkID()
     {
-        return $this->bridge;
+        return $this->networkID;
     }
 
     /**
-     * @param string $bridge
+     * @param string $networkID
      *
      * @return self
      */
-    public function setBridge($bridge = null)
+    public function setNetworkID($networkID = null)
     {
-        $this->bridge = $bridge;
+        $this->networkID = $networkID;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEndpointID()
+    {
+        return $this->endpointID;
+    }
+
+    /**
+     * @param string $endpointID
+     *
+     * @return self
+     */
+    public function setEndpointID($endpointID = null)
+    {
+        $this->endpointID = $endpointID;
 
         return $this;
     }
@@ -120,6 +144,66 @@ class NetworkConfig
     /**
      * @return string
      */
+    public function getIPv6Gateway()
+    {
+        return $this->iPv6Gateway;
+    }
+
+    /**
+     * @param string $iPv6Gateway
+     *
+     * @return self
+     */
+    public function setIPv6Gateway($iPv6Gateway = null)
+    {
+        $this->iPv6Gateway = $iPv6Gateway;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGlobalIPv6Address()
+    {
+        return $this->globalIPv6Address;
+    }
+
+    /**
+     * @param string $globalIPv6Address
+     *
+     * @return self
+     */
+    public function setGlobalIPv6Address($globalIPv6Address = null)
+    {
+        $this->globalIPv6Address = $globalIPv6Address;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGlobalIPv6PrefixLen()
+    {
+        return $this->globalIPv6PrefixLen;
+    }
+
+    /**
+     * @param int $globalIPv6PrefixLen
+     *
+     * @return self
+     */
+    public function setGlobalIPv6PrefixLen($globalIPv6PrefixLen = null)
+    {
+        $this->globalIPv6PrefixLen = $globalIPv6PrefixLen;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getMacAddress()
     {
         return $this->macAddress;
@@ -133,66 +217,6 @@ class NetworkConfig
     public function setMacAddress($macAddress = null)
     {
         $this->macAddress = $macAddress;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPortMapping()
-    {
-        return $this->portMapping;
-    }
-
-    /**
-     * @param string $portMapping
-     *
-     * @return self
-     */
-    public function setPortMapping($portMapping = null)
-    {
-        $this->portMapping = $portMapping;
-
-        return $this;
-    }
-
-    /**
-     * @return ContainerNetwork[]
-     */
-    public function getNetworks()
-    {
-        return $this->networks;
-    }
-
-    /**
-     * @param ContainerNetwork[] $networks
-     *
-     * @return self
-     */
-    public function setNetworks(\ArrayObject $networks = null)
-    {
-        $this->networks = $networks;
-
-        return $this;
-    }
-
-    /**
-     * @return PortBinding[][]|null[]
-     */
-    public function getPorts()
-    {
-        return $this->ports;
-    }
-
-    /**
-     * @param PortBinding[][]|null[] $ports
-     *
-     * @return self
-     */
-    public function setPorts(\ArrayObject $ports = null)
-    {
-        $this->ports = $ports;
 
         return $this;
     }

@@ -43,15 +43,18 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $object->setDriver($data->{'Driver'});
         }
         if (isset($data->{'Config'})) {
-            $values_217 = [];
-            foreach ($data->{'Config'} as $value_218) {
-                $values_219 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-                foreach ($value_218 as $key_221 => $value_220) {
-                    $values_219[$key_221] = $value_220;
-                }
-                $values_217[] = $values_219;
+            $values_253 = [];
+            foreach ($data->{'Config'} as $value_254) {
+                $values_253[] = $this->serializer->deserialize($value_254, 'Docker\\API\\Model\\IPAMConfig', 'raw', $context);
             }
-            $object->setConfig($values_217);
+            $object->setConfig($values_253);
+        }
+        if (isset($data->{'Options'})) {
+            $values_255 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Options'} as $key_257 => $value_256) {
+                $values_255[$key_257] = $value_256;
+            }
+            $object->setOptions($values_255);
         }
 
         return $object;
@@ -64,15 +67,18 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $data->{'Driver'} = $object->getDriver();
         }
         if (null !== $object->getConfig()) {
-            $values_222 = [];
-            foreach ($object->getConfig() as $value_223) {
-                $values_224 = new \stdClass();
-                foreach ($value_223 as $key_226 => $value_225) {
-                    $values_224->{$key_226} = $value_225;
-                }
-                $values_222[] = $values_224;
+            $values_258 = [];
+            foreach ($object->getConfig() as $value_259) {
+                $values_258[] = $this->serializer->serialize($value_259, 'raw', $context);
             }
-            $data->{'Config'} = $values_222;
+            $data->{'Config'} = $values_258;
+        }
+        if (null !== $object->getOptions()) {
+            $values_260 = new \stdClass();
+            foreach ($object->getOptions() as $key_262 => $value_261) {
+                $values_260->{$key_262} = $value_261;
+            }
+            $data->{'Options'} = $values_260;
         }
 
         return $data;

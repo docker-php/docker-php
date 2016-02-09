@@ -20,6 +20,10 @@ class AuthConfig
      * @var string
      */
     protected $serveraddress;
+    /**
+     * @var string
+     */
+    protected $registrytoken;
 
     /**
      * @return string
@@ -97,6 +101,26 @@ class AuthConfig
     public function setServeraddress($serveraddress = null)
     {
         $this->serveraddress = $serveraddress;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRegistrytoken()
+    {
+        return $this->registrytoken;
+    }
+
+    /**
+     * @param string $registrytoken
+     *
+     * @return self
+     */
+    public function setRegistrytoken($registrytoken = null)
+    {
+        $this->registrytoken = $registrytoken;
 
         return $this;
     }

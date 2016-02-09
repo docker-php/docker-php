@@ -7,11 +7,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\SerializerAwareNormalizer;
 
-class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implements DenormalizerInterface, NormalizerInterface
+class DeviceRateNormalizer extends SerializerAwareNormalizer implements DenormalizerInterface, NormalizerInterface
 {
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ($type !== 'Docker\\API\\Model\\ContainerCreateResult') {
+        if ($type !== 'Docker\\API\\Model\\DeviceRate') {
             return false;
         }
 
@@ -20,7 +20,7 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
 
     public function supportsNormalization($data, $format = null)
     {
-        if ($data instanceof \Docker\API\Model\ContainerCreateResult) {
+        if ($data instanceof \Docker\API\Model\DeviceRate) {
             return true;
         }
 
@@ -35,19 +35,22 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
         if (isset($data->{'$ref'})) {
             return new Reference($data->{'$ref'}, $context['rootSchema'] ?: null);
         }
-        $object = new \Docker\API\Model\ContainerCreateResult();
+        $object = new \Docker\API\Model\DeviceRate();
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Id'})) {
-            $object->setId($data->{'Id'});
+        if (isset($data->{'Path'})) {
+            $object->setPath($data->{'Path'});
         }
-        if (isset($data->{'Warnings'})) {
-            $values_269 = [];
-            foreach ($data->{'Warnings'} as $value_270) {
-                $values_269[] = $value_270;
+        if (isset($data->{'Rate'})) {
+            $value_79 = $data->{'Rate'};
+            if (is_int($data->{'Rate'})) {
+                $value_79 = $data->{'Rate'};
             }
-            $object->setWarnings($values_269);
+            if (is_string($data->{'Rate'})) {
+                $value_79 = $data->{'Rate'};
+            }
+            $object->setRate($value_79);
         }
 
         return $object;
@@ -56,15 +59,18 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
     public function normalize($object, $format = null, array $context = [])
     {
         $data = new \stdClass();
-        if (null !== $object->getId()) {
-            $data->{'Id'} = $object->getId();
+        if (null !== $object->getPath()) {
+            $data->{'Path'} = $object->getPath();
         }
-        if (null !== $object->getWarnings()) {
-            $values_271 = [];
-            foreach ($object->getWarnings() as $value_272) {
-                $values_271[] = $value_272;
+        if (null !== $object->getRate()) {
+            $value_80 = $object->getRate();
+            if (is_int($object->getRate())) {
+                $value_80 = $object->getRate();
             }
-            $data->{'Warnings'} = $values_271;
+            if (is_string($object->getRate())) {
+                $value_80 = $object->getRate();
+            }
+            $data->{'Rate'} = $value_80;
         }
 
         return $data;

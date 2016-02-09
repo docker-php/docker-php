@@ -7,11 +7,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\SerializerAwareNormalizer;
 
-class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implements DenormalizerInterface, NormalizerInterface
+class DeviceWeightNormalizer extends SerializerAwareNormalizer implements DenormalizerInterface, NormalizerInterface
 {
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ($type !== 'Docker\\API\\Model\\ContainerCreateResult') {
+        if ($type !== 'Docker\\API\\Model\\DeviceWeight') {
             return false;
         }
 
@@ -20,7 +20,7 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
 
     public function supportsNormalization($data, $format = null)
     {
-        if ($data instanceof \Docker\API\Model\ContainerCreateResult) {
+        if ($data instanceof \Docker\API\Model\DeviceWeight) {
             return true;
         }
 
@@ -35,19 +35,15 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
         if (isset($data->{'$ref'})) {
             return new Reference($data->{'$ref'}, $context['rootSchema'] ?: null);
         }
-        $object = new \Docker\API\Model\ContainerCreateResult();
+        $object = new \Docker\API\Model\DeviceWeight();
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Id'})) {
-            $object->setId($data->{'Id'});
+        if (isset($data->{'Path'})) {
+            $object->setPath($data->{'Path'});
         }
-        if (isset($data->{'Warnings'})) {
-            $values_269 = [];
-            foreach ($data->{'Warnings'} as $value_270) {
-                $values_269[] = $value_270;
-            }
-            $object->setWarnings($values_269);
+        if (isset($data->{'Weight'})) {
+            $object->setWeight($data->{'Weight'});
         }
 
         return $object;
@@ -56,15 +52,11 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
     public function normalize($object, $format = null, array $context = [])
     {
         $data = new \stdClass();
-        if (null !== $object->getId()) {
-            $data->{'Id'} = $object->getId();
+        if (null !== $object->getPath()) {
+            $data->{'Path'} = $object->getPath();
         }
-        if (null !== $object->getWarnings()) {
-            $values_271 = [];
-            foreach ($object->getWarnings() as $value_272) {
-                $values_271[] = $value_272;
-            }
-            $data->{'Warnings'} = $values_271;
+        if (null !== $object->getWeight()) {
+            $data->{'Weight'} = $object->getWeight();
         }
 
         return $data;

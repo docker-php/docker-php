@@ -42,6 +42,9 @@ class PortBindingNormalizer extends SerializerAwareNormalizer implements Denorma
         if (isset($data->{'HostPort'})) {
             $object->setHostPort($data->{'HostPort'});
         }
+        if (isset($data->{'HostIp'})) {
+            $object->setHostIp($data->{'HostIp'});
+        }
 
         return $object;
     }
@@ -51,6 +54,9 @@ class PortBindingNormalizer extends SerializerAwareNormalizer implements Denorma
         $data = new \stdClass();
         if (null !== $object->getHostPort()) {
             $data->{'HostPort'} = $object->getHostPort();
+        }
+        if (null !== $object->getHostIp()) {
+            $data->{'HostIp'} = $object->getHostIp();
         }
 
         return $data;

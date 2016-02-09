@@ -79,18 +79,18 @@ class ImageNormalizer extends SerializerAwareNormalizer implements DenormalizerI
             $object->setGraphDriver($this->serializer->deserialize($data->{'GraphDriver'}, 'Docker\\API\\Model\\GraphDriver', 'raw', $context));
         }
         if (isset($data->{'RepoDigests'})) {
-            $values_137 = [];
-            foreach ($data->{'RepoDigests'} as $value_138) {
-                $values_137[] = $value_138;
+            $values_145 = [];
+            foreach ($data->{'RepoDigests'} as $value_146) {
+                $values_145[] = $value_146;
             }
-            $object->setRepoDigests($values_137);
+            $object->setRepoDigests($values_145);
         }
         if (isset($data->{'RepoTags'})) {
-            $values_139 = [];
-            foreach ($data->{'RepoTags'} as $value_140) {
-                $values_139[] = $value_140;
+            $values_147 = [];
+            foreach ($data->{'RepoTags'} as $value_148) {
+                $values_147[] = $value_148;
             }
-            $object->setRepoTags($values_139);
+            $object->setRepoTags($values_147);
         }
         if (isset($data->{'Config'})) {
             $object->setConfig($this->serializer->deserialize($data->{'Config'}, 'Docker\\API\\Model\\ContainerConfig', 'raw', $context));
@@ -142,18 +142,18 @@ class ImageNormalizer extends SerializerAwareNormalizer implements DenormalizerI
             $data->{'GraphDriver'} = $this->serializer->serialize($object->getGraphDriver(), 'raw', $context);
         }
         if (null !== $object->getRepoDigests()) {
-            $values_141 = [];
-            foreach ($object->getRepoDigests() as $value_142) {
-                $values_141[] = $value_142;
+            $values_149 = [];
+            foreach ($object->getRepoDigests() as $value_150) {
+                $values_149[] = $value_150;
             }
-            $data->{'RepoDigests'} = $values_141;
+            $data->{'RepoDigests'} = $values_149;
         }
         if (null !== $object->getRepoTags()) {
-            $values_143 = [];
-            foreach ($object->getRepoTags() as $value_144) {
-                $values_143[] = $value_144;
+            $values_151 = [];
+            foreach ($object->getRepoTags() as $value_152) {
+                $values_151[] = $value_152;
             }
-            $data->{'RepoTags'} = $values_143;
+            $data->{'RepoTags'} = $values_151;
         }
         if (null !== $object->getConfig()) {
             $data->{'Config'} = $this->serializer->serialize($object->getConfig(), 'raw', $context);

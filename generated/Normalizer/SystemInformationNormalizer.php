@@ -61,15 +61,15 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $object->setDriver($data->{'Driver'});
         }
         if (isset($data->{'DriverStatus'})) {
-            $values_149 = [];
-            foreach ($data->{'DriverStatus'} as $value_150) {
-                $values_151 = [];
-                foreach ($value_150 as $value_152) {
-                    $values_151[] = $value_152;
+            $values_157 = [];
+            foreach ($data->{'DriverStatus'} as $value_158) {
+                $values_159 = [];
+                foreach ($value_158 as $value_160) {
+                    $values_159[] = $value_160;
                 }
-                $values_149[] = $values_151;
+                $values_157[] = $values_159;
             }
-            $object->setDriverStatus($values_149);
+            $object->setDriverStatus($values_157);
         }
         if (isset($data->{'ExecutionDriver'})) {
             $object->setExecutionDriver($data->{'ExecutionDriver'});
@@ -105,11 +105,11 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $object->setKernelVersion($data->{'KernelVersion'});
         }
         if (isset($data->{'Labels'})) {
-            $values_153 = [];
-            foreach ($data->{'Labels'} as $value_154) {
-                $values_153[] = $value_154;
+            $values_161 = [];
+            foreach ($data->{'Labels'} as $value_162) {
+                $values_161[] = $value_162;
             }
-            $object->setLabels($values_153);
+            $object->setLabels($values_161);
         }
         if (isset($data->{'MemTotal'})) {
             $object->setMemTotal($data->{'MemTotal'});
@@ -182,15 +182,15 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $data->{'Driver'} = $object->getDriver();
         }
         if (null !== $object->getDriverStatus()) {
-            $values_155 = [];
-            foreach ($object->getDriverStatus() as $value_156) {
-                $values_157 = [];
-                foreach ($value_156 as $value_158) {
-                    $values_157[] = $value_158;
+            $values_163 = [];
+            foreach ($object->getDriverStatus() as $value_164) {
+                $values_165 = [];
+                foreach ($value_164 as $value_166) {
+                    $values_165[] = $value_166;
                 }
-                $values_155[] = $values_157;
+                $values_163[] = $values_165;
             }
-            $data->{'DriverStatus'} = $values_155;
+            $data->{'DriverStatus'} = $values_163;
         }
         if (null !== $object->getExecutionDriver()) {
             $data->{'ExecutionDriver'} = $object->getExecutionDriver();
@@ -226,11 +226,11 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $data->{'KernelVersion'} = $object->getKernelVersion();
         }
         if (null !== $object->getLabels()) {
-            $values_159 = [];
-            foreach ($object->getLabels() as $value_160) {
-                $values_159[] = $value_160;
+            $values_167 = [];
+            foreach ($object->getLabels() as $value_168) {
+                $values_167[] = $value_168;
             }
-            $data->{'Labels'} = $values_159;
+            $data->{'Labels'} = $values_167;
         }
         if (null !== $object->getMemTotal()) {
             $data->{'MemTotal'} = $object->getMemTotal();

@@ -43,15 +43,15 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $object->setDriver($data->{'Driver'});
         }
         if (isset($data->{'Config'})) {
-            $values_209 = [];
-            foreach ($data->{'Config'} as $value_210) {
-                $values_211 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-                foreach ($value_210 as $key_213 => $value_212) {
-                    $values_211[$key_213] = $value_212;
+            $values_217 = [];
+            foreach ($data->{'Config'} as $value_218) {
+                $values_219 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                foreach ($value_218 as $key_221 => $value_220) {
+                    $values_219[$key_221] = $value_220;
                 }
-                $values_209[] = $values_211;
+                $values_217[] = $values_219;
             }
-            $object->setConfig($values_209);
+            $object->setConfig($values_217);
         }
 
         return $object;
@@ -64,15 +64,15 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $data->{'Driver'} = $object->getDriver();
         }
         if (null !== $object->getConfig()) {
-            $values_214 = [];
-            foreach ($object->getConfig() as $value_215) {
-                $values_216 = new \stdClass();
-                foreach ($value_215 as $key_218 => $value_217) {
-                    $values_216->{$key_218} = $value_217;
+            $values_222 = [];
+            foreach ($object->getConfig() as $value_223) {
+                $values_224 = new \stdClass();
+                foreach ($value_223 as $key_226 => $value_225) {
+                    $values_224->{$key_226} = $value_225;
                 }
-                $values_214[] = $values_216;
+                $values_222[] = $values_224;
             }
-            $data->{'Config'} = $values_214;
+            $data->{'Config'} = $values_222;
         }
 
         return $data;

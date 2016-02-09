@@ -138,6 +138,9 @@
       "properties": {
         "HostPort": {
           "type": "string"
+        },
+        "HostIp": {
+          "type": "string"
         }
       }
     },
@@ -417,9 +420,12 @@
           "type": "string"
         },
         "Ports": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/port"
+          "type": "object",
+          "additionalProperties": {
+            "type": ["array", "null"],
+            "items": {
+              "$ref": "#/definitions/PortBinding"
+            }
           }
         }
       }

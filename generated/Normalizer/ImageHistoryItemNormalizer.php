@@ -49,11 +49,11 @@ class ImageHistoryItemNormalizer extends SerializerAwareNormalizer implements De
             $object->setCreatedBy($data->{'CreatedBy'});
         }
         if (isset($data->{'Tags'})) {
-            $values_145 = [];
-            foreach ($data->{'Tags'} as $value_146) {
-                $values_145[] = $value_146;
+            $values_153 = [];
+            foreach ($data->{'Tags'} as $value_154) {
+                $values_153[] = $value_154;
             }
-            $object->setTags($values_145);
+            $object->setTags($values_153);
         }
         if (isset($data->{'Size'})) {
             $object->setSize($data->{'Size'});
@@ -78,11 +78,11 @@ class ImageHistoryItemNormalizer extends SerializerAwareNormalizer implements De
             $data->{'CreatedBy'} = $object->getCreatedBy();
         }
         if (null !== $object->getTags()) {
-            $values_147 = [];
-            foreach ($object->getTags() as $value_148) {
-                $values_147[] = $value_148;
+            $values_155 = [];
+            foreach ($object->getTags() as $value_156) {
+                $values_155[] = $value_156;
             }
-            $data->{'Tags'} = $values_147;
+            $data->{'Tags'} = $values_155;
         }
         if (null !== $object->getSize()) {
             $data->{'Size'} = $object->getSize();

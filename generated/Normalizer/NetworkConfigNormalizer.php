@@ -58,9 +58,20 @@ class NetworkConfigNormalizer extends SerializerAwareNormalizer implements Denor
             $object->setPortMapping($data->{'PortMapping'});
         }
         if (isset($data->{'Ports'})) {
-            $values_99 = [];
-            foreach ($data->{'Ports'} as $value_100) {
-                $values_99[] = $this->serializer->deserialize($value_100, 'Docker\\API\\Model\\Port', 'raw', $context);
+            $values_99 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Ports'} as $key_101 => $value_100) {
+                $value_102 = $value_100;
+                if (is_array($value_100)) {
+                    $values_103 = [];
+                    foreach ($value_100 as $value_104) {
+                        $values_103[] = $this->serializer->deserialize($value_104, 'Docker\\API\\Model\\PortBinding', 'raw', $context);
+                    }
+                    $value_102 = $values_103;
+                }
+                if (is_null($value_100)) {
+                    $value_102 = $value_100;
+                }
+                $values_99[$key_101] = $value_102;
             }
             $object->setPorts($values_99);
         }
@@ -90,11 +101,22 @@ class NetworkConfigNormalizer extends SerializerAwareNormalizer implements Denor
             $data->{'PortMapping'} = $object->getPortMapping();
         }
         if (null !== $object->getPorts()) {
-            $values_101 = [];
-            foreach ($object->getPorts() as $value_102) {
-                $values_101[] = $this->serializer->serialize($value_102, 'raw', $context);
+            $values_105 = new \stdClass();
+            foreach ($object->getPorts() as $key_107 => $value_106) {
+                $value_108 = $value_106;
+                if (is_array($value_106)) {
+                    $values_109 = [];
+                    foreach ($value_106 as $value_110) {
+                        $values_109[] = $this->serializer->serialize($value_110, 'raw', $context);
+                    }
+                    $value_108 = $values_109;
+                }
+                if (is_null($value_106)) {
+                    $value_108 = $value_106;
+                }
+                $values_105->{$key_107} = $value_108;
             }
-            $data->{'Ports'} = $values_101;
+            $data->{'Ports'} = $values_105;
         }
 
         return $data;

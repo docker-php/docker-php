@@ -40,11 +40,11 @@ class VolumeListNormalizer extends SerializerAwareNormalizer implements Denormal
             $context['rootSchema'] = $object;
         }
         if (isset($data->{'Volumes'})) {
-            $values_187 = [];
-            foreach ($data->{'Volumes'} as $value_188) {
-                $values_187[] = $this->serializer->deserialize($value_188, 'Docker\\API\\Model\\Volume', 'raw', $context);
+            $values_195 = [];
+            foreach ($data->{'Volumes'} as $value_196) {
+                $values_195[] = $this->serializer->deserialize($value_196, 'Docker\\API\\Model\\Volume', 'raw', $context);
             }
-            $object->setVolumes($values_187);
+            $object->setVolumes($values_195);
         }
 
         return $object;
@@ -54,11 +54,11 @@ class VolumeListNormalizer extends SerializerAwareNormalizer implements Denormal
     {
         $data = new \stdClass();
         if (null !== $object->getVolumes()) {
-            $values_189 = [];
-            foreach ($object->getVolumes() as $value_190) {
-                $values_189[] = $this->serializer->serialize($value_190, 'raw', $context);
+            $values_197 = [];
+            foreach ($object->getVolumes() as $value_198) {
+                $values_197[] = $this->serializer->serialize($value_198, 'raw', $context);
             }
-            $data->{'Volumes'} = $values_189;
+            $data->{'Volumes'} = $values_197;
         }
 
         return $data;

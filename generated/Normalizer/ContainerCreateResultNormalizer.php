@@ -43,11 +43,11 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
             $object->setId($data->{'Id'});
         }
         if (isset($data->{'Warnings'})) {
-            $values_219 = [];
-            foreach ($data->{'Warnings'} as $value_220) {
-                $values_219[] = $value_220;
+            $values_227 = [];
+            foreach ($data->{'Warnings'} as $value_228) {
+                $values_227[] = $value_228;
             }
-            $object->setWarnings($values_219);
+            $object->setWarnings($values_227);
         }
 
         return $object;
@@ -60,11 +60,11 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
             $data->{'Id'} = $object->getId();
         }
         if (null !== $object->getWarnings()) {
-            $values_221 = [];
-            foreach ($object->getWarnings() as $value_222) {
-                $values_221[] = $value_222;
+            $values_229 = [];
+            foreach ($object->getWarnings() as $value_230) {
+                $values_229[] = $value_230;
             }
-            $data->{'Warnings'} = $values_221;
+            $data->{'Warnings'} = $values_229;
         }
 
         return $data;

@@ -41,7 +41,7 @@ class ContainerResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerConfig[]', 'json');
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerConfig[]', 'json');
             }
         }
 
@@ -76,7 +76,7 @@ class ContainerResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerCreateResult', 'json');
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerCreateResult', 'json');
             }
         }
 
@@ -104,7 +104,7 @@ class ContainerResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Container', 'json');
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Container', 'json');
             }
         }
 
@@ -137,7 +137,7 @@ class ContainerResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerTop', 'json');
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerTop', 'json');
             }
         }
 
@@ -154,7 +154,7 @@ class ContainerResource extends Resource
      *     @var bool $stdout 1/True/true or 0/False/false, show stdout log. Default false.
      *     @var bool $stderr 1/True/true or 0/False/false, show stderr log. Default false.
      *     @var int $since UNIX timestamp (integer) to filter logs. Specifying a timestamp will only output log-entries since that timestamp. Default: 0 (unfiltered)
-     *     @var bool $timestamps 1/True/true or 0/False/false, print timestamps for every log line.
+     *     @var bool $timestamps 1/True/true or 0/False/false, print timestamps for every log line. 
      *     @var string $tail Output specified number of lines at the end of logs: all or <number>. Default all.
      * }
      *
@@ -208,7 +208,7 @@ class ContainerResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerChange[]', 'json');
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerChange[]', 'json');
             }
         }
 
@@ -570,7 +570,7 @@ class ContainerResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerWait', 'json');
+                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ContainerWait', 'json');
             }
         }
 
@@ -670,7 +670,7 @@ class ContainerResource extends Resource
      * @param string $inputStream The input stream must be a tar archive compressed with one of the following algorithms: identity (no compression), gzip, bzip2, xz.
      * @param array  $parameters  {
      *
-     *     @var string $path Path to a directory in the container to extract the archive’s contents into.
+     *     @var string $path Path to a directory in the container to extract the archive’s contents into. 
      *     @var string $noOverwriteDirNonDir If “1”, “true”, or “True” then it will be an error if unpacking the given content would cause an existing directory to be replaced with a non-directory and vice versa.
      * }
      *

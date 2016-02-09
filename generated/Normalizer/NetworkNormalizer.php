@@ -55,18 +55,18 @@ class NetworkNormalizer extends SerializerAwareNormalizer implements Denormalize
             $object->setIPAM($this->serializer->deserialize($data->{'IPAM'}, 'Docker\\API\\Model\\IPAM', 'raw', $context));
         }
         if (isset($data->{'Containers'})) {
-            $values_197 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Containers'} as $key_199 => $value_198) {
-                $values_197[$key_199] = $this->serializer->deserialize($value_198, 'Docker\\API\\Model\\NetworkContainer', 'raw', $context);
+            $values_205 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Containers'} as $key_207 => $value_206) {
+                $values_205[$key_207] = $this->serializer->deserialize($value_206, 'Docker\\API\\Model\\NetworkContainer', 'raw', $context);
             }
-            $object->setContainers($values_197);
+            $object->setContainers($values_205);
         }
         if (isset($data->{'Options'})) {
-            $values_200 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Options'} as $key_202 => $value_201) {
-                $values_200[$key_202] = $value_201;
+            $values_208 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Options'} as $key_210 => $value_209) {
+                $values_208[$key_210] = $value_209;
             }
-            $object->setOptions($values_200);
+            $object->setOptions($values_208);
         }
 
         return $object;
@@ -91,18 +91,18 @@ class NetworkNormalizer extends SerializerAwareNormalizer implements Denormalize
             $data->{'IPAM'} = $this->serializer->serialize($object->getIPAM(), 'raw', $context);
         }
         if (null !== $object->getContainers()) {
-            $values_203 = new \stdClass();
-            foreach ($object->getContainers() as $key_205 => $value_204) {
-                $values_203->{$key_205} = $this->serializer->serialize($value_204, 'raw', $context);
+            $values_211 = new \stdClass();
+            foreach ($object->getContainers() as $key_213 => $value_212) {
+                $values_211->{$key_213} = $this->serializer->serialize($value_212, 'raw', $context);
             }
-            $data->{'Containers'} = $values_203;
+            $data->{'Containers'} = $values_211;
         }
         if (null !== $object->getOptions()) {
-            $values_206 = new \stdClass();
-            foreach ($object->getOptions() as $key_208 => $value_207) {
-                $values_206->{$key_208} = $value_207;
+            $values_214 = new \stdClass();
+            foreach ($object->getOptions() as $key_216 => $value_215) {
+                $values_214->{$key_216} = $value_215;
             }
-            $data->{'Options'} = $values_206;
+            $data->{'Options'} = $values_214;
         }
 
         return $data;

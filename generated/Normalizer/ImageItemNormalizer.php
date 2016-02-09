@@ -40,11 +40,11 @@ class ImageItemNormalizer extends SerializerAwareNormalizer implements Denormali
             $context['rootSchema'] = $object;
         }
         if (isset($data->{'RepoTags'})) {
-            $values_123 = [];
-            foreach ($data->{'RepoTags'} as $value_124) {
-                $values_123[] = $value_124;
+            $values_131 = [];
+            foreach ($data->{'RepoTags'} as $value_132) {
+                $values_131[] = $value_132;
             }
-            $object->setRepoTags($values_123);
+            $object->setRepoTags($values_131);
         }
         if (isset($data->{'Id'})) {
             $object->setId($data->{'Id'});
@@ -62,18 +62,18 @@ class ImageItemNormalizer extends SerializerAwareNormalizer implements Denormali
             $object->setVirtualSize($data->{'VirtualSize'});
         }
         if (isset($data->{'Labels'})) {
-            $values_125 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Labels'} as $key_127 => $value_126) {
-                $values_125[$key_127] = $value_126;
+            $values_133 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Labels'} as $key_135 => $value_134) {
+                $values_133[$key_135] = $value_134;
             }
-            $object->setLabels($values_125);
+            $object->setLabels($values_133);
         }
         if (isset($data->{'RepoDigests'})) {
-            $values_128 = [];
-            foreach ($data->{'RepoDigests'} as $value_129) {
-                $values_128[] = $value_129;
+            $values_136 = [];
+            foreach ($data->{'RepoDigests'} as $value_137) {
+                $values_136[] = $value_137;
             }
-            $object->setRepoDigests($values_128);
+            $object->setRepoDigests($values_136);
         }
 
         return $object;
@@ -83,11 +83,11 @@ class ImageItemNormalizer extends SerializerAwareNormalizer implements Denormali
     {
         $data = new \stdClass();
         if (null !== $object->getRepoTags()) {
-            $values_130 = [];
-            foreach ($object->getRepoTags() as $value_131) {
-                $values_130[] = $value_131;
+            $values_138 = [];
+            foreach ($object->getRepoTags() as $value_139) {
+                $values_138[] = $value_139;
             }
-            $data->{'RepoTags'} = $values_130;
+            $data->{'RepoTags'} = $values_138;
         }
         if (null !== $object->getId()) {
             $data->{'Id'} = $object->getId();
@@ -105,18 +105,18 @@ class ImageItemNormalizer extends SerializerAwareNormalizer implements Denormali
             $data->{'VirtualSize'} = $object->getVirtualSize();
         }
         if (null !== $object->getLabels()) {
-            $values_132 = new \stdClass();
-            foreach ($object->getLabels() as $key_134 => $value_133) {
-                $values_132->{$key_134} = $value_133;
+            $values_140 = new \stdClass();
+            foreach ($object->getLabels() as $key_142 => $value_141) {
+                $values_140->{$key_142} = $value_141;
             }
-            $data->{'Labels'} = $values_132;
+            $data->{'Labels'} = $values_140;
         }
         if (null !== $object->getRepoDigests()) {
-            $values_135 = [];
-            foreach ($object->getRepoDigests() as $value_136) {
-                $values_135[] = $value_136;
+            $values_143 = [];
+            foreach ($object->getRepoDigests() as $value_144) {
+                $values_143[] = $value_144;
             }
-            $data->{'RepoDigests'} = $values_135;
+            $data->{'RepoDigests'} = $values_143;
         }
 
         return $data;

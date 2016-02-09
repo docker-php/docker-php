@@ -43,11 +43,11 @@ class ContainerNormalizer extends SerializerAwareNormalizer implements Denormali
             $object->setAppArmorProfile($data->{'AppArmorProfile'});
         }
         if (isset($data->{'Args'})) {
-            $values_103 = [];
-            foreach ($data->{'Args'} as $value_104) {
-                $values_103[] = $value_104;
+            $values_111 = [];
+            foreach ($data->{'Args'} as $value_112) {
+                $values_111[] = $value_112;
             }
-            $object->setArgs($values_103);
+            $object->setArgs($values_111);
         }
         if (isset($data->{'Config'})) {
             $object->setConfig($this->serializer->deserialize($data->{'Config'}, 'Docker\\API\\Model\\ContainerConfig', 'raw', $context));
@@ -107,11 +107,11 @@ class ContainerNormalizer extends SerializerAwareNormalizer implements Denormali
             $object->setState($this->serializer->deserialize($data->{'State'}, 'Docker\\API\\Model\\ContainerState', 'raw', $context));
         }
         if (isset($data->{'Mounts'})) {
-            $values_105 = [];
-            foreach ($data->{'Mounts'} as $value_106) {
-                $values_105[] = $this->serializer->deserialize($value_106, 'Docker\\API\\Model\\Mount', 'raw', $context);
+            $values_113 = [];
+            foreach ($data->{'Mounts'} as $value_114) {
+                $values_113[] = $this->serializer->deserialize($value_114, 'Docker\\API\\Model\\Mount', 'raw', $context);
             }
-            $object->setMounts($values_105);
+            $object->setMounts($values_113);
         }
 
         return $object;
@@ -124,11 +124,11 @@ class ContainerNormalizer extends SerializerAwareNormalizer implements Denormali
             $data->{'AppArmorProfile'} = $object->getAppArmorProfile();
         }
         if (null !== $object->getArgs()) {
-            $values_107 = [];
-            foreach ($object->getArgs() as $value_108) {
-                $values_107[] = $value_108;
+            $values_115 = [];
+            foreach ($object->getArgs() as $value_116) {
+                $values_115[] = $value_116;
             }
-            $data->{'Args'} = $values_107;
+            $data->{'Args'} = $values_115;
         }
         if (null !== $object->getConfig()) {
             $data->{'Config'} = $this->serializer->serialize($object->getConfig(), 'raw', $context);
@@ -188,11 +188,11 @@ class ContainerNormalizer extends SerializerAwareNormalizer implements Denormali
             $data->{'State'} = $this->serializer->serialize($object->getState(), 'raw', $context);
         }
         if (null !== $object->getMounts()) {
-            $values_109 = [];
-            foreach ($object->getMounts() as $value_110) {
-                $values_109[] = $this->serializer->serialize($value_110, 'raw', $context);
+            $values_117 = [];
+            foreach ($object->getMounts() as $value_118) {
+                $values_117[] = $this->serializer->serialize($value_118, 'raw', $context);
             }
-            $data->{'Mounts'} = $values_109;
+            $data->{'Mounts'} = $values_117;
         }
 
         return $data;

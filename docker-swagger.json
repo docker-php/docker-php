@@ -2401,7 +2401,7 @@
           },
           "required": false
         }, {
-          "name": "X-Registry-Config",
+          "name": "X-Registry-Auth",
           "in": "header",
           "description": "A base64-encoded AuthConfig object",
           "type": "string"

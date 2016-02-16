@@ -3038,7 +3038,7 @@
       }
     },
     "/exec/{id}/json": {
-      "post": {
+      "get": {
         "summary": "Exec Inspect",
         "description": "Return low-level information about the exec command id.",
         "operationId": "find",

@@ -53,6 +53,30 @@ class ExecManagerTest extends TestCase
         ]);
     }
 
+    public function testExecFind()
+    {
+        $createContainerResult = $this->createContainer();
+
+        $execConfig = new ExecConfig();
+        $execConfig->setCmd(["/bin/true"]);
+
+        $execCreateResult = $this->getManager()->create($createContainerResult->getId(), $execConfig);
+
+        $execStartConfig = new ExecStartConfig();
+        $execStartConfig->setDetach(false);
+        $execStartConfig->setTty(false);
+
+        $this->getManager()->start($execCreateResult->getId(), $execStartConfig);
+
+        $execFindResult = $this->getManager()->find($execCreateResult->getId());
+
+        $this->assertInstanceOf('Docker\API\Model\ExecCommand', $execFindResult);
+
+        self::getDocker()->getContainerManager()->kill($createContainerResult->getId(), [
+            'signal' => 'SIGKILL'
+        ]);
+    }
+
     private function createContainer()
     {
         $containerConfig = new ContainerConfig();

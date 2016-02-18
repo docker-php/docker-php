@@ -129,8 +129,8 @@ class ImageResource extends Resource
         $queryParam->setDefault('fromSrc', null);
         $queryParam->setDefault('repo', null);
         $queryParam->setDefault('tag', null);
-        $queryParam->setDefault('X-Registry-Config', null);
-        $queryParam->setHeaderParameters(['X-Registry-Config']);
+        $queryParam->setDefault('X-Registry-Auth', null);
+        $queryParam->setHeaderParameters(['X-Registry-Auth']);
         $url      = '/images/create';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

@@ -72,13 +72,20 @@ class DockerClient implements HttpClient
             $cafile = getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'ca.pem';
             $certfile = getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'cert.pem';
             $keyfile = getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'key.pem';
-            $peername = getenv('DOCKER_PEER_NAME') ? getenv('DOCKER_PEER_NAME') : 'boot2docker';
 
-            $options['ssl'] = [
-                'cafile' => $cafile,
-                'local_cert' => $certfile,
-                'local_pk' => $keyfile,
-                'peer_name' => $peername,
+            $stream_context = [
+                'cafile'        => $cafile,
+                'local_cert'    => $certfile,
+                'local_pk'      => $keyfile,
+            ];
+
+            if (getenv('DOCKER_PEER_NAME')) {
+                $stream_context['peer_name'] = getenv('DOCKER_PEER_NAME');
+            }
+
+            $options['ssl'] = true;
+            $options['stream_context_options'] = [
+                'ssl' =>  $stream_context
             ];
         }
 

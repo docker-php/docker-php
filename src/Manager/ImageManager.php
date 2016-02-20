@@ -62,6 +62,10 @@ class ImageManager extends ImageResource
      */
     public function create($inputStream = null, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
+        if (isset($parameters['X-Registry-Auth']) && $parameters['X-Registry-Auth'] instanceof AuthConfig) {
+            $parameters['X-Registry-Auth'] = base64_encode($this->serializer->serialize($parameters['X-Registry-Auth'], 'json'));
+        }
+
         $response = parent::create($inputStream, $parameters, self::FETCH_RESPONSE);
 
         if (200 === $response->getStatusCode()) {

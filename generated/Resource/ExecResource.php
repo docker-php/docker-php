@@ -119,7 +119,7 @@ class ExecResource extends Resource
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
-        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $request    = $this->messageFactory->createRequest('GET', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {

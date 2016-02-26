@@ -334,6 +334,7 @@ class ImageResource extends Resource
      *     @var string $author author (e.g., “John Hannibal Smith <hannibal@a-team.com>“)
      *     @var string $pause 1/True/true or 0/False/false, whether to pause the container before committing
      *     @var string $changes Dockerfile instructions to apply while committing
+     *     @var string $Content-Type Content Type of input
      * }
      *
      * @param string $fetch Fetch mode (object or response)
@@ -350,6 +351,8 @@ class ImageResource extends Resource
         $queryParam->setDefault('author', null);
         $queryParam->setDefault('pause', null);
         $queryParam->setDefault('changes', null);
+        $queryParam->setDefault('Content-Type', 'application/json');
+        $queryParam->setHeaderParameters(['Content-Type']);
         $url      = '/commit';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

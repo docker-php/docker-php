@@ -3043,6 +3043,13 @@
           "in": "query",
           "description": "Dockerfile instructions to apply while committing",
           "type": "string"
+        }, {
+          "name": "Content-Type",
+          "required": true,
+          "in": "header",
+          "type": "string",
+          "default": "application/json",
+          "description": "Content Type of input"
         }],
         "tags": [
           "Image"

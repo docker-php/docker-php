@@ -9,6 +9,9 @@ First step is to create a container and its associated configuration, by creatin
 passing to the `create` api endpoint.
 
 ```php
+use Docker\Docker;                   
+use Docker\API\Model\ContainerConfig;
+
 $docker = new Docker();
 $containerManager = $docker->getContainerManager();
 

@@ -52,6 +52,9 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
         if (isset($data->{'Image'})) {
             $object->setImage($data->{'Image'});
         }
+        if (isset($data->{'ImageID'})) {
+            $object->setImageID($data->{'ImageID'});
+        }
         if (isset($data->{'Command'})) {
             $object->setCommand($data->{'Command'});
         }
@@ -188,6 +191,9 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
         }
         if (null !== $object->getImage()) {
             $data->{'Image'} = $object->getImage();
+        }
+        if (null !== $object->getImageID()) {
+            $data->{'ImageID'} = $object->getImageID();
         }
         if (null !== $object->getCommand()) {
             $data->{'Command'} = $object->getCommand();

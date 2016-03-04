@@ -292,6 +292,9 @@
         "Image": {
           "type": "string"
         },
+        "ImageID": {
+           "type": "string"
+        },
         "Command": {
           "type": "string"
         },

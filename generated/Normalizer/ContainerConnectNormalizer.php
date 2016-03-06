@@ -39,7 +39,7 @@ class ContainerConnectNormalizer extends SerializerAwareNormalizer implements De
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Container'})) {
+        if (property_exists($data, 'Container')) {
             $object->setContainer($data->{'Container'});
         }
 

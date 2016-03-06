@@ -39,60 +39,60 @@ class ImageNormalizer extends SerializerAwareNormalizer implements DenormalizerI
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Id'})) {
+        if (property_exists($data, 'Id')) {
             $object->setId($data->{'Id'});
         }
-        if (isset($data->{'Container'})) {
+        if (property_exists($data, 'Container')) {
             $object->setContainer($data->{'Container'});
         }
-        if (isset($data->{'Comment'})) {
+        if (property_exists($data, 'Comment')) {
             $object->setComment($data->{'Comment'});
         }
-        if (isset($data->{'Os'})) {
+        if (property_exists($data, 'Os')) {
             $object->setOs($data->{'Os'});
         }
-        if (isset($data->{'Architecture'})) {
+        if (property_exists($data, 'Architecture')) {
             $object->setArchitecture($data->{'Architecture'});
         }
-        if (isset($data->{'Parent'})) {
+        if (property_exists($data, 'Parent')) {
             $object->setParent($data->{'Parent'});
         }
-        if (isset($data->{'ContainerConfig'})) {
+        if (property_exists($data, 'ContainerConfig')) {
             $object->setContainerConfig($this->serializer->deserialize($data->{'ContainerConfig'}, 'Docker\\API\\Model\\ContainerConfig', 'raw', $context));
         }
-        if (isset($data->{'DockerVersion'})) {
+        if (property_exists($data, 'DockerVersion')) {
             $object->setDockerVersion($data->{'DockerVersion'});
         }
-        if (isset($data->{'VirtualSize'})) {
+        if (property_exists($data, 'VirtualSize')) {
             $object->setVirtualSize($data->{'VirtualSize'});
         }
-        if (isset($data->{'Size'})) {
+        if (property_exists($data, 'Size')) {
             $object->setSize($data->{'Size'});
         }
-        if (isset($data->{'Author'})) {
+        if (property_exists($data, 'Author')) {
             $object->setAuthor($data->{'Author'});
         }
-        if (isset($data->{'Created'})) {
+        if (property_exists($data, 'Created')) {
             $object->setCreated($data->{'Created'});
         }
-        if (isset($data->{'GraphDriver'})) {
+        if (property_exists($data, 'GraphDriver')) {
             $object->setGraphDriver($this->serializer->deserialize($data->{'GraphDriver'}, 'Docker\\API\\Model\\GraphDriver', 'raw', $context));
         }
-        if (isset($data->{'RepoDigests'})) {
-            $values_145 = [];
-            foreach ($data->{'RepoDigests'} as $value_146) {
-                $values_145[] = $value_146;
+        if (property_exists($data, 'RepoDigests')) {
+            $values = [];
+            foreach ($data->{'RepoDigests'} as $value) {
+                $values[] = $value;
             }
-            $object->setRepoDigests($values_145);
+            $object->setRepoDigests($values);
         }
-        if (isset($data->{'RepoTags'})) {
-            $values_147 = [];
-            foreach ($data->{'RepoTags'} as $value_148) {
-                $values_147[] = $value_148;
+        if (property_exists($data, 'RepoTags')) {
+            $values_1 = [];
+            foreach ($data->{'RepoTags'} as $value_1) {
+                $values_1[] = $value_1;
             }
-            $object->setRepoTags($values_147);
+            $object->setRepoTags($values_1);
         }
-        if (isset($data->{'Config'})) {
+        if (property_exists($data, 'Config')) {
             $object->setConfig($this->serializer->deserialize($data->{'Config'}, 'Docker\\API\\Model\\ContainerConfig', 'raw', $context));
         }
 
@@ -142,18 +142,18 @@ class ImageNormalizer extends SerializerAwareNormalizer implements DenormalizerI
             $data->{'GraphDriver'} = $this->serializer->serialize($object->getGraphDriver(), 'raw', $context);
         }
         if (null !== $object->getRepoDigests()) {
-            $values_149 = [];
-            foreach ($object->getRepoDigests() as $value_150) {
-                $values_149[] = $value_150;
+            $values = [];
+            foreach ($object->getRepoDigests() as $value) {
+                $values[] = $value;
             }
-            $data->{'RepoDigests'} = $values_149;
+            $data->{'RepoDigests'} = $values;
         }
         if (null !== $object->getRepoTags()) {
-            $values_151 = [];
-            foreach ($object->getRepoTags() as $value_152) {
-                $values_151[] = $value_152;
+            $values_1 = [];
+            foreach ($object->getRepoTags() as $value_1) {
+                $values_1[] = $value_1;
             }
-            $data->{'RepoTags'} = $values_151;
+            $data->{'RepoTags'} = $values_1;
         }
         if (null !== $object->getConfig()) {
             $data->{'Config'} = $this->serializer->serialize($object->getConfig(), 'raw', $context);

@@ -39,13 +39,13 @@ class PortNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'PrivatePort'})) {
+        if (property_exists($data, 'PrivatePort')) {
             $object->setPrivatePort($data->{'PrivatePort'});
         }
-        if (isset($data->{'PublicPort'})) {
+        if (property_exists($data, 'PublicPort')) {
             $object->setPublicPort($data->{'PublicPort'});
         }
-        if (isset($data->{'Type'})) {
+        if (property_exists($data, 'Type')) {
             $object->setType($data->{'Type'});
         }
 

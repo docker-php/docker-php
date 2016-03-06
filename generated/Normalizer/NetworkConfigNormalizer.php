@@ -39,41 +39,41 @@ class NetworkConfigNormalizer extends SerializerAwareNormalizer implements Denor
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Bridge'})) {
+        if (property_exists($data, 'Bridge')) {
             $object->setBridge($data->{'Bridge'});
         }
-        if (isset($data->{'Gateway'})) {
+        if (property_exists($data, 'Gateway')) {
             $object->setGateway($data->{'Gateway'});
         }
-        if (isset($data->{'IPAddress'})) {
+        if (property_exists($data, 'IPAddress')) {
             $object->setIPAddress($data->{'IPAddress'});
         }
-        if (isset($data->{'IPPrefixLen'})) {
+        if (property_exists($data, 'IPPrefixLen')) {
             $object->setIPPrefixLen($data->{'IPPrefixLen'});
         }
-        if (isset($data->{'MacAddress'})) {
+        if (property_exists($data, 'MacAddress')) {
             $object->setMacAddress($data->{'MacAddress'});
         }
-        if (isset($data->{'PortMapping'})) {
+        if (property_exists($data, 'PortMapping')) {
             $object->setPortMapping($data->{'PortMapping'});
         }
-        if (isset($data->{'Ports'})) {
-            $values_99 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Ports'} as $key_101 => $value_100) {
-                $value_102 = $value_100;
-                if (is_array($value_100)) {
-                    $values_103 = [];
-                    foreach ($value_100 as $value_104) {
-                        $values_103[] = $this->serializer->deserialize($value_104, 'Docker\\API\\Model\\PortBinding', 'raw', $context);
+        if (property_exists($data, 'Ports')) {
+            $values = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Ports'} as $key => $value) {
+                $value_1 = $value;
+                if (is_array($value)) {
+                    $values_1 = [];
+                    foreach ($value as $value_2) {
+                        $values_1[] = $this->serializer->deserialize($value_2, 'Docker\\API\\Model\\PortBinding', 'raw', $context);
                     }
-                    $value_102 = $values_103;
+                    $value_1 = $values_1;
                 }
-                if (is_null($value_100)) {
-                    $value_102 = $value_100;
+                if (is_null($value)) {
+                    $value_1 = $value;
                 }
-                $values_99[$key_101] = $value_102;
+                $values[$key] = $value_1;
             }
-            $object->setPorts($values_99);
+            $object->setPorts($values);
         }
 
         return $object;
@@ -101,22 +101,22 @@ class NetworkConfigNormalizer extends SerializerAwareNormalizer implements Denor
             $data->{'PortMapping'} = $object->getPortMapping();
         }
         if (null !== $object->getPorts()) {
-            $values_105 = new \stdClass();
-            foreach ($object->getPorts() as $key_107 => $value_106) {
-                $value_108 = $value_106;
-                if (is_array($value_106)) {
-                    $values_109 = [];
-                    foreach ($value_106 as $value_110) {
-                        $values_109[] = $this->serializer->serialize($value_110, 'raw', $context);
+            $values = new \stdClass();
+            foreach ($object->getPorts() as $key => $value) {
+                $value_1 = $value;
+                if (is_array($value)) {
+                    $values_1 = [];
+                    foreach ($value as $value_2) {
+                        $values_1[] = $this->serializer->serialize($value_2, 'raw', $context);
                     }
-                    $value_108 = $values_109;
+                    $value_1 = $values_1;
                 }
-                if (is_null($value_106)) {
-                    $value_108 = $value_106;
+                if (is_null($value)) {
+                    $value_1 = $value;
                 }
-                $values_105->{$key_107} = $value_108;
+                $values->{$key} = $value_1;
             }
-            $data->{'Ports'} = $values_105;
+            $data->{'Ports'} = $values;
         }
 
         return $data;

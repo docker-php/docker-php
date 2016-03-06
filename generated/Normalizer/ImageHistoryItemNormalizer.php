@@ -39,26 +39,26 @@ class ImageHistoryItemNormalizer extends SerializerAwareNormalizer implements De
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Id'})) {
+        if (property_exists($data, 'Id')) {
             $object->setId($data->{'Id'});
         }
-        if (isset($data->{'Created'})) {
+        if (property_exists($data, 'Created')) {
             $object->setCreated($data->{'Created'});
         }
-        if (isset($data->{'CreatedBy'})) {
+        if (property_exists($data, 'CreatedBy')) {
             $object->setCreatedBy($data->{'CreatedBy'});
         }
-        if (isset($data->{'Tags'})) {
-            $values_153 = [];
-            foreach ($data->{'Tags'} as $value_154) {
-                $values_153[] = $value_154;
+        if (property_exists($data, 'Tags')) {
+            $values = [];
+            foreach ($data->{'Tags'} as $value) {
+                $values[] = $value;
             }
-            $object->setTags($values_153);
+            $object->setTags($values);
         }
-        if (isset($data->{'Size'})) {
+        if (property_exists($data, 'Size')) {
             $object->setSize($data->{'Size'});
         }
-        if (isset($data->{'Comment'})) {
+        if (property_exists($data, 'Comment')) {
             $object->setComment($data->{'Comment'});
         }
 
@@ -78,11 +78,11 @@ class ImageHistoryItemNormalizer extends SerializerAwareNormalizer implements De
             $data->{'CreatedBy'} = $object->getCreatedBy();
         }
         if (null !== $object->getTags()) {
-            $values_155 = [];
-            foreach ($object->getTags() as $value_156) {
-                $values_155[] = $value_156;
+            $values = [];
+            foreach ($object->getTags() as $value) {
+                $values[] = $value;
             }
-            $data->{'Tags'} = $values_155;
+            $data->{'Tags'} = $values;
         }
         if (null !== $object->getSize()) {
             $data->{'Size'} = $object->getSize();

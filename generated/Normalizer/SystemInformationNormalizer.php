@@ -39,118 +39,118 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Containers'})) {
+        if (property_exists($data, 'Containers')) {
             $object->setContainers($data->{'Containers'});
         }
-        if (isset($data->{'CpuCfsPeriod'})) {
+        if (property_exists($data, 'CpuCfsPeriod')) {
             $object->setCpuCfsPeriod($data->{'CpuCfsPeriod'});
         }
-        if (isset($data->{'CpuCfsQuota'})) {
+        if (property_exists($data, 'CpuCfsQuota')) {
             $object->setCpuCfsQuota($data->{'CpuCfsQuota'});
         }
-        if (isset($data->{'Debug'})) {
+        if (property_exists($data, 'Debug')) {
             $object->setDebug($data->{'Debug'});
         }
-        if (isset($data->{'DiscoveryBackend'})) {
+        if (property_exists($data, 'DiscoveryBackend')) {
             $object->setDiscoveryBackend($data->{'DiscoveryBackend'});
         }
-        if (isset($data->{'DockerRootDir'})) {
+        if (property_exists($data, 'DockerRootDir')) {
             $object->setDockerRootDir($data->{'DockerRootDir'});
         }
-        if (isset($data->{'Driver'})) {
+        if (property_exists($data, 'Driver')) {
             $object->setDriver($data->{'Driver'});
         }
-        if (isset($data->{'DriverStatus'})) {
-            $values_157 = [];
-            foreach ($data->{'DriverStatus'} as $value_158) {
-                $values_159 = [];
-                foreach ($value_158 as $value_160) {
-                    $values_159[] = $value_160;
+        if (property_exists($data, 'DriverStatus')) {
+            $values = [];
+            foreach ($data->{'DriverStatus'} as $value) {
+                $values_1 = [];
+                foreach ($value as $value_1) {
+                    $values_1[] = $value_1;
                 }
-                $values_157[] = $values_159;
+                $values[] = $values_1;
             }
-            $object->setDriverStatus($values_157);
+            $object->setDriverStatus($values);
         }
-        if (isset($data->{'ExecutionDriver'})) {
+        if (property_exists($data, 'ExecutionDriver')) {
             $object->setExecutionDriver($data->{'ExecutionDriver'});
         }
-        if (isset($data->{'ExperimentalBuild'})) {
+        if (property_exists($data, 'ExperimentalBuild')) {
             $object->setExperimentalBuild($data->{'ExperimentalBuild'});
         }
-        if (isset($data->{'HttpProxy'})) {
+        if (property_exists($data, 'HttpProxy')) {
             $object->setHttpProxy($data->{'HttpProxy'});
         }
-        if (isset($data->{'HttpsProxy'})) {
+        if (property_exists($data, 'HttpsProxy')) {
             $object->setHttpsProxy($data->{'HttpsProxy'});
         }
-        if (isset($data->{'ID'})) {
+        if (property_exists($data, 'ID')) {
             $object->setID($data->{'ID'});
         }
-        if (isset($data->{'IPv4Forwarding'})) {
+        if (property_exists($data, 'IPv4Forwarding')) {
             $object->setIPv4Forwarding($data->{'IPv4Forwarding'});
         }
-        if (isset($data->{'Images'})) {
+        if (property_exists($data, 'Images')) {
             $object->setImages($data->{'Images'});
         }
-        if (isset($data->{'IndexServerAddress'})) {
+        if (property_exists($data, 'IndexServerAddress')) {
             $object->setIndexServerAddress($data->{'IndexServerAddress'});
         }
-        if (isset($data->{'InitPath'})) {
+        if (property_exists($data, 'InitPath')) {
             $object->setInitPath($data->{'InitPath'});
         }
-        if (isset($data->{'InitSha1'})) {
+        if (property_exists($data, 'InitSha1')) {
             $object->setInitSha1($data->{'InitSha1'});
         }
-        if (isset($data->{'KernelVersion'})) {
+        if (property_exists($data, 'KernelVersion')) {
             $object->setKernelVersion($data->{'KernelVersion'});
         }
-        if (isset($data->{'Labels'})) {
-            $values_161 = [];
-            foreach ($data->{'Labels'} as $value_162) {
-                $values_161[] = $value_162;
+        if (property_exists($data, 'Labels')) {
+            $values_2 = [];
+            foreach ($data->{'Labels'} as $value_2) {
+                $values_2[] = $value_2;
             }
-            $object->setLabels($values_161);
+            $object->setLabels($values_2);
         }
-        if (isset($data->{'MemTotal'})) {
+        if (property_exists($data, 'MemTotal')) {
             $object->setMemTotal($data->{'MemTotal'});
         }
-        if (isset($data->{'MemoryLimit'})) {
+        if (property_exists($data, 'MemoryLimit')) {
             $object->setMemoryLimit($data->{'MemoryLimit'});
         }
-        if (isset($data->{'NCPU'})) {
+        if (property_exists($data, 'NCPU')) {
             $object->setNCPU($data->{'NCPU'});
         }
-        if (isset($data->{'NEventsListener'})) {
+        if (property_exists($data, 'NEventsListener')) {
             $object->setNEventsListener($data->{'NEventsListener'});
         }
-        if (isset($data->{'NFd'})) {
+        if (property_exists($data, 'NFd')) {
             $object->setNFd($data->{'NFd'});
         }
-        if (isset($data->{'NGoroutines'})) {
+        if (property_exists($data, 'NGoroutines')) {
             $object->setNGoroutines($data->{'NGoroutines'});
         }
-        if (isset($data->{'Name'})) {
+        if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
         }
-        if (isset($data->{'NoProxy'})) {
+        if (property_exists($data, 'NoProxy')) {
             $object->setNoProxy($data->{'NoProxy'});
         }
-        if (isset($data->{'OomKillDisable'})) {
+        if (property_exists($data, 'OomKillDisable')) {
             $object->setOomKillDisable($data->{'OomKillDisable'});
         }
-        if (isset($data->{'OperatingSystem'})) {
+        if (property_exists($data, 'OperatingSystem')) {
             $object->setOperatingSystem($data->{'OperatingSystem'});
         }
-        if (isset($data->{'RegistryConfig'})) {
+        if (property_exists($data, 'RegistryConfig')) {
             $object->setRegistryConfig($this->serializer->deserialize($data->{'RegistryConfig'}, 'Docker\\API\\Model\\RegistryConfig', 'raw', $context));
         }
-        if (isset($data->{'SwapLimit'})) {
+        if (property_exists($data, 'SwapLimit')) {
             $object->setSwapLimit($data->{'SwapLimit'});
         }
-        if (isset($data->{'SystemTime'})) {
+        if (property_exists($data, 'SystemTime')) {
             $object->setSystemTime($data->{'SystemTime'});
         }
-        if (isset($data->{'ServerVersion'})) {
+        if (property_exists($data, 'ServerVersion')) {
             $object->setServerVersion($data->{'ServerVersion'});
         }
 
@@ -182,15 +182,15 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $data->{'Driver'} = $object->getDriver();
         }
         if (null !== $object->getDriverStatus()) {
-            $values_163 = [];
-            foreach ($object->getDriverStatus() as $value_164) {
-                $values_165 = [];
-                foreach ($value_164 as $value_166) {
-                    $values_165[] = $value_166;
+            $values = [];
+            foreach ($object->getDriverStatus() as $value) {
+                $values_1 = [];
+                foreach ($value as $value_1) {
+                    $values_1[] = $value_1;
                 }
-                $values_163[] = $values_165;
+                $values[] = $values_1;
             }
-            $data->{'DriverStatus'} = $values_163;
+            $data->{'DriverStatus'} = $values;
         }
         if (null !== $object->getExecutionDriver()) {
             $data->{'ExecutionDriver'} = $object->getExecutionDriver();
@@ -226,11 +226,11 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $data->{'KernelVersion'} = $object->getKernelVersion();
         }
         if (null !== $object->getLabels()) {
-            $values_167 = [];
-            foreach ($object->getLabels() as $value_168) {
-                $values_167[] = $value_168;
+            $values_2 = [];
+            foreach ($object->getLabels() as $value_2) {
+                $values_2[] = $value_2;
             }
-            $data->{'Labels'} = $values_167;
+            $data->{'Labels'} = $values_2;
         }
         if (null !== $object->getMemTotal()) {
             $data->{'MemTotal'} = $object->getMemTotal();

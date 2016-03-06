@@ -39,7 +39,7 @@ class ContainerWaitNormalizer extends SerializerAwareNormalizer implements Denor
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'StatusCode'})) {
+        if (property_exists($data, 'StatusCode')) {
             $object->setStatusCode($data->{'StatusCode'});
         }
 

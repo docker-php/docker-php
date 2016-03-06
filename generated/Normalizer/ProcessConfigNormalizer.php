@@ -39,24 +39,24 @@ class ProcessConfigNormalizer extends SerializerAwareNormalizer implements Denor
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'privileged'})) {
+        if (property_exists($data, 'privileged')) {
             $object->setPrivileged($data->{'privileged'});
         }
-        if (isset($data->{'user'})) {
+        if (property_exists($data, 'user')) {
             $object->setUser($data->{'user'});
         }
-        if (isset($data->{'tty'})) {
+        if (property_exists($data, 'tty')) {
             $object->setTty($data->{'tty'});
         }
-        if (isset($data->{'entrypoint'})) {
+        if (property_exists($data, 'entrypoint')) {
             $object->setEntrypoint($data->{'entrypoint'});
         }
-        if (isset($data->{'arguments'})) {
-            $values_191 = [];
-            foreach ($data->{'arguments'} as $value_192) {
-                $values_191[] = $value_192;
+        if (property_exists($data, 'arguments')) {
+            $values = [];
+            foreach ($data->{'arguments'} as $value) {
+                $values[] = $value;
             }
-            $object->setArguments($values_191);
+            $object->setArguments($values);
         }
 
         return $object;
@@ -78,11 +78,11 @@ class ProcessConfigNormalizer extends SerializerAwareNormalizer implements Denor
             $data->{'entrypoint'} = $object->getEntrypoint();
         }
         if (null !== $object->getArguments()) {
-            $values_193 = [];
-            foreach ($object->getArguments() as $value_194) {
-                $values_193[] = $value_194;
+            $values = [];
+            foreach ($object->getArguments() as $value) {
+                $values[] = $value;
             }
-            $data->{'arguments'} = $values_193;
+            $data->{'arguments'} = $values;
         }
 
         return $data;

@@ -39,31 +39,31 @@ class ContainerStateNormalizer extends SerializerAwareNormalizer implements Deno
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Error'})) {
+        if (property_exists($data, 'Error')) {
             $object->setError($data->{'Error'});
         }
-        if (isset($data->{'ExitCode'})) {
+        if (property_exists($data, 'ExitCode')) {
             $object->setExitCode($data->{'ExitCode'});
         }
-        if (isset($data->{'FinishedAt'})) {
+        if (property_exists($data, 'FinishedAt')) {
             $object->setFinishedAt($data->{'FinishedAt'});
         }
-        if (isset($data->{'OOMKilled'})) {
+        if (property_exists($data, 'OOMKilled')) {
             $object->setOOMKilled($data->{'OOMKilled'});
         }
-        if (isset($data->{'Paused'})) {
+        if (property_exists($data, 'Paused')) {
             $object->setPaused($data->{'Paused'});
         }
-        if (isset($data->{'Pid'})) {
+        if (property_exists($data, 'Pid')) {
             $object->setPid($data->{'Pid'});
         }
-        if (isset($data->{'Restarting'})) {
+        if (property_exists($data, 'Restarting')) {
             $object->setRestarting($data->{'Restarting'});
         }
-        if (isset($data->{'Running'})) {
+        if (property_exists($data, 'Running')) {
             $object->setRunning($data->{'Running'});
         }
-        if (isset($data->{'StartedAt'})) {
+        if (property_exists($data, 'StartedAt')) {
             $object->setStartedAt($data->{'StartedAt'});
         }
 

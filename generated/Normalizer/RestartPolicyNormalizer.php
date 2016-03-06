@@ -39,10 +39,10 @@ class RestartPolicyNormalizer extends SerializerAwareNormalizer implements Denor
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Name'})) {
+        if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
         }
-        if (isset($data->{'MaximumRetryCount'})) {
+        if (property_exists($data, 'MaximumRetryCount')) {
             $object->setMaximumRetryCount($data->{'MaximumRetryCount'});
         }
 

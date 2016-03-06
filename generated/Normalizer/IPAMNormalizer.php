@@ -39,19 +39,19 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Driver'})) {
+        if (property_exists($data, 'Driver')) {
             $object->setDriver($data->{'Driver'});
         }
-        if (isset($data->{'Config'})) {
-            $values_217 = [];
-            foreach ($data->{'Config'} as $value_218) {
-                $values_219 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-                foreach ($value_218 as $key_221 => $value_220) {
-                    $values_219[$key_221] = $value_220;
+        if (property_exists($data, 'Config')) {
+            $values = [];
+            foreach ($data->{'Config'} as $value) {
+                $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                foreach ($value as $key => $value_1) {
+                    $values_1[$key] = $value_1;
                 }
-                $values_217[] = $values_219;
+                $values[] = $values_1;
             }
-            $object->setConfig($values_217);
+            $object->setConfig($values);
         }
 
         return $object;
@@ -64,15 +64,15 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $data->{'Driver'} = $object->getDriver();
         }
         if (null !== $object->getConfig()) {
-            $values_222 = [];
-            foreach ($object->getConfig() as $value_223) {
-                $values_224 = new \stdClass();
-                foreach ($value_223 as $key_226 => $value_225) {
-                    $values_224->{$key_226} = $value_225;
+            $values = [];
+            foreach ($object->getConfig() as $value) {
+                $values_1 = new \stdClass();
+                foreach ($value as $key => $value_1) {
+                    $values_1->{$key} = $value_1;
                 }
-                $values_222[] = $values_224;
+                $values[] = $values_1;
             }
-            $data->{'Config'} = $values_222;
+            $data->{'Config'} = $values;
         }
 
         return $data;

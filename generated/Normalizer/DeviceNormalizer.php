@@ -39,13 +39,13 @@ class DeviceNormalizer extends SerializerAwareNormalizer implements Denormalizer
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'PathOnHost'})) {
+        if (property_exists($data, 'PathOnHost')) {
             $object->setPathOnHost($data->{'PathOnHost'});
         }
-        if (isset($data->{'PathInContainer'})) {
+        if (property_exists($data, 'PathInContainer')) {
             $object->setPathInContainer($data->{'PathInContainer'});
         }
-        if (isset($data->{'CgroupPermissions'})) {
+        if (property_exists($data, 'CgroupPermissions')) {
             $object->setCgroupPermissions($data->{'CgroupPermissions'});
         }
 

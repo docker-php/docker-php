@@ -39,10 +39,10 @@ class ErrorDetailNormalizer extends SerializerAwareNormalizer implements Denorma
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'code'})) {
+        if (property_exists($data, 'code')) {
             $object->setCode($data->{'code'});
         }
-        if (isset($data->{'message'})) {
+        if (property_exists($data, 'message')) {
             $object->setMessage($data->{'message'});
         }
 

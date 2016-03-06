@@ -39,31 +39,31 @@ class ContainerNetworkNormalizer extends SerializerAwareNormalizer implements De
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'NetworkID'})) {
+        if (property_exists($data, 'NetworkID')) {
             $object->setNetworkID($data->{'NetworkID'});
         }
-        if (isset($data->{'EndpointID'})) {
+        if (property_exists($data, 'EndpointID')) {
             $object->setEndpointID($data->{'EndpointID'});
         }
-        if (isset($data->{'Gateway'})) {
+        if (property_exists($data, 'Gateway')) {
             $object->setGateway($data->{'Gateway'});
         }
-        if (isset($data->{'IPAddress'})) {
+        if (property_exists($data, 'IPAddress')) {
             $object->setIPAddress($data->{'IPAddress'});
         }
-        if (isset($data->{'IPPrefixLen'})) {
+        if (property_exists($data, 'IPPrefixLen')) {
             $object->setIPPrefixLen($data->{'IPPrefixLen'});
         }
-        if (isset($data->{'IPv6Gateway'})) {
+        if (property_exists($data, 'IPv6Gateway')) {
             $object->setIPv6Gateway($data->{'IPv6Gateway'});
         }
-        if (isset($data->{'GlobalIPv6Address'})) {
+        if (property_exists($data, 'GlobalIPv6Address')) {
             $object->setGlobalIPv6Address($data->{'GlobalIPv6Address'});
         }
-        if (isset($data->{'GlobalIPv6PrefixLen'})) {
+        if (property_exists($data, 'GlobalIPv6PrefixLen')) {
             $object->setGlobalIPv6PrefixLen($data->{'GlobalIPv6PrefixLen'});
         }
-        if (isset($data->{'MacAddress'})) {
+        if (property_exists($data, 'MacAddress')) {
             $object->setMacAddress($data->{'MacAddress'});
         }
 

@@ -39,34 +39,34 @@ class NetworkNormalizer extends SerializerAwareNormalizer implements Denormalize
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Name'})) {
+        if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
         }
-        if (isset($data->{'Id'})) {
+        if (property_exists($data, 'Id')) {
             $object->setId($data->{'Id'});
         }
-        if (isset($data->{'Scope'})) {
+        if (property_exists($data, 'Scope')) {
             $object->setScope($data->{'Scope'});
         }
-        if (isset($data->{'Driver'})) {
+        if (property_exists($data, 'Driver')) {
             $object->setDriver($data->{'Driver'});
         }
-        if (isset($data->{'IPAM'})) {
+        if (property_exists($data, 'IPAM')) {
             $object->setIPAM($this->serializer->deserialize($data->{'IPAM'}, 'Docker\\API\\Model\\IPAM', 'raw', $context));
         }
-        if (isset($data->{'Containers'})) {
-            $values_241 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Containers'} as $key_243 => $value_242) {
-                $values_241[$key_243] = $this->serializer->deserialize($value_242, 'Docker\\API\\Model\\NetworkContainer', 'raw', $context);
+        if (property_exists($data, 'Containers')) {
+            $values = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Containers'} as $key => $value) {
+                $values[$key] = $this->serializer->deserialize($value, 'Docker\\API\\Model\\NetworkContainer', 'raw', $context);
             }
-            $object->setContainers($values_241);
+            $object->setContainers($values);
         }
-        if (isset($data->{'Options'})) {
-            $values_244 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Options'} as $key_246 => $value_245) {
-                $values_244[$key_246] = $value_245;
+        if (property_exists($data, 'Options')) {
+            $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Options'} as $key_1 => $value_1) {
+                $values_1[$key_1] = $value_1;
             }
-            $object->setOptions($values_244);
+            $object->setOptions($values_1);
         }
 
         return $object;
@@ -91,18 +91,18 @@ class NetworkNormalizer extends SerializerAwareNormalizer implements Denormalize
             $data->{'IPAM'} = $this->serializer->serialize($object->getIPAM(), 'raw', $context);
         }
         if (null !== $object->getContainers()) {
-            $values_247 = new \stdClass();
-            foreach ($object->getContainers() as $key_249 => $value_248) {
-                $values_247->{$key_249} = $this->serializer->serialize($value_248, 'raw', $context);
+            $values = new \stdClass();
+            foreach ($object->getContainers() as $key => $value) {
+                $values->{$key} = $this->serializer->serialize($value, 'raw', $context);
             }
-            $data->{'Containers'} = $values_247;
+            $data->{'Containers'} = $values;
         }
         if (null !== $object->getOptions()) {
-            $values_250 = new \stdClass();
-            foreach ($object->getOptions() as $key_252 => $value_251) {
-                $values_250->{$key_252} = $value_251;
+            $values_1 = new \stdClass();
+            foreach ($object->getOptions() as $key_1 => $value_1) {
+                $values_1->{$key_1} = $value_1;
             }
-            $data->{'Options'} = $values_250;
+            $data->{'Options'} = $values_1;
         }
 
         return $data;

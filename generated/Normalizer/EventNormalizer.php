@@ -39,19 +39,19 @@ class EventNormalizer extends SerializerAwareNormalizer implements DenormalizerI
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'status'})) {
+        if (property_exists($data, 'status')) {
             $object->setStatus($data->{'status'});
         }
-        if (isset($data->{'id'})) {
+        if (property_exists($data, 'id')) {
             $object->setId($data->{'id'});
         }
-        if (isset($data->{'from'})) {
+        if (property_exists($data, 'from')) {
             $object->setFrom($data->{'from'});
         }
-        if (isset($data->{'time'})) {
+        if (property_exists($data, 'time')) {
             $object->setTime($data->{'time'});
         }
-        if (isset($data->{'timeNano'})) {
+        if (property_exists($data, 'timeNano')) {
             $object->setTimeNano($data->{'timeNano'});
         }
 

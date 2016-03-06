@@ -39,19 +39,19 @@ class ImageSearchResultNormalizer extends SerializerAwareNormalizer implements D
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'description'})) {
+        if (property_exists($data, 'description')) {
             $object->setDescription($data->{'description'});
         }
-        if (isset($data->{'is_official'})) {
+        if (property_exists($data, 'is_official')) {
             $object->setIsOfficial($data->{'is_official'});
         }
-        if (isset($data->{'is_automated'})) {
+        if (property_exists($data, 'is_automated')) {
             $object->setIsAutomated($data->{'is_automated'});
         }
-        if (isset($data->{'name'})) {
+        if (property_exists($data, 'name')) {
             $object->setName($data->{'name'});
         }
-        if (isset($data->{'star_count'})) {
+        if (property_exists($data, 'star_count')) {
             $object->setStarCount($data->{'star_count'});
         }
 

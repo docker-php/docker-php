@@ -1043,7 +1043,7 @@
           "type": "string"
         },
         "Warnings": {
-          "type": "array",
+          "type": ["array", "null"],
           "items": {
             "type": "string"
           }
@@ -1335,7 +1335,7 @@
           "type": "string"
         },
         "Warnings": {
-          "type": "array",
+          "type": ["array", "null"],
           "items": {
             "type": "string"
           }
@@ -1483,7 +1483,7 @@
       "type": "object",
       "properties": {
         "Warnings": {
-          "type": "array",
+          "type": ["array", "null"],
           "items": {
             "type": "string"
           }

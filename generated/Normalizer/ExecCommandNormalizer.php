@@ -39,28 +39,28 @@ class ExecCommandNormalizer extends SerializerAwareNormalizer implements Denorma
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'ID'})) {
+        if (property_exists($data, 'ID')) {
             $object->setID($data->{'ID'});
         }
-        if (isset($data->{'Running'})) {
+        if (property_exists($data, 'Running')) {
             $object->setRunning($data->{'Running'});
         }
-        if (isset($data->{'ExitCode'})) {
+        if (property_exists($data, 'ExitCode')) {
             $object->setExitCode($data->{'ExitCode'});
         }
-        if (isset($data->{'ProcessConfig'})) {
+        if (property_exists($data, 'ProcessConfig')) {
             $object->setProcessConfig($this->serializer->deserialize($data->{'ProcessConfig'}, 'Docker\\API\\Model\\ProcessConfig', 'raw', $context));
         }
-        if (isset($data->{'OpenStdin'})) {
+        if (property_exists($data, 'OpenStdin')) {
             $object->setOpenStdin($data->{'OpenStdin'});
         }
-        if (isset($data->{'OpenStderr'})) {
+        if (property_exists($data, 'OpenStderr')) {
             $object->setOpenStderr($data->{'OpenStderr'});
         }
-        if (isset($data->{'OpenStdout'})) {
+        if (property_exists($data, 'OpenStdout')) {
             $object->setOpenStdout($data->{'OpenStdout'});
         }
-        if (isset($data->{'Container'})) {
+        if (property_exists($data, 'Container')) {
             $object->setContainer($this->serializer->deserialize($data->{'Container'}, 'Docker\\API\\Model\\Container', 'raw', $context));
         }
 

@@ -39,10 +39,10 @@ class GraphDriverNormalizer extends SerializerAwareNormalizer implements Denorma
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Name'})) {
+        if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
         }
-        if (isset($data->{'Data'})) {
+        if (property_exists($data, 'Data')) {
             $object->setData($data->{'Data'});
         }
 

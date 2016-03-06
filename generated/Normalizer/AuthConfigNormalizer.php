@@ -39,19 +39,19 @@ class AuthConfigNormalizer extends SerializerAwareNormalizer implements Denormal
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'username'})) {
+        if (property_exists($data, 'username')) {
             $object->setUsername($data->{'username'});
         }
-        if (isset($data->{'password'})) {
+        if (property_exists($data, 'password')) {
             $object->setPassword($data->{'password'});
         }
-        if (isset($data->{'email'})) {
+        if (property_exists($data, 'email')) {
             $object->setEmail($data->{'email'});
         }
-        if (isset($data->{'serveraddress'})) {
+        if (property_exists($data, 'serveraddress')) {
             $object->setServeraddress($data->{'serveraddress'});
         }
-        if (isset($data->{'registrytoken'})) {
+        if (property_exists($data, 'registrytoken')) {
             $object->setRegistrytoken($data->{'registrytoken'});
         }
 

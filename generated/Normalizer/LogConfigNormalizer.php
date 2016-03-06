@@ -39,10 +39,10 @@ class LogConfigNormalizer extends SerializerAwareNormalizer implements Denormali
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Type'})) {
+        if (property_exists($data, 'Type')) {
             $object->setType($data->{'Type'});
         }
-        if (isset($data->{'Config'})) {
+        if (property_exists($data, 'Config')) {
             $values = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
             foreach ($data->{'Config'} as $key => $value) {
                 $values[$key] = $value;
@@ -60,11 +60,11 @@ class LogConfigNormalizer extends SerializerAwareNormalizer implements Denormali
             $data->{'Type'} = $object->getType();
         }
         if (null !== $object->getConfig()) {
-            $values_0 = new \stdClass();
-            foreach ($object->getConfig() as $key_2 => $value_1) {
-                $values_0->{$key_2} = $value_1;
+            $values = new \stdClass();
+            foreach ($object->getConfig() as $key => $value) {
+                $values->{$key} = $value;
             }
-            $data->{'Config'} = $values_0;
+            $data->{'Config'} = $values;
         }
 
         return $data;

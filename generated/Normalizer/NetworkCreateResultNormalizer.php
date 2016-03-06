@@ -39,10 +39,10 @@ class NetworkCreateResultNormalizer extends SerializerAwareNormalizer implements
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Id'})) {
+        if (property_exists($data, 'Id')) {
             $object->setId($data->{'Id'});
         }
-        if (isset($data->{'Warning'})) {
+        if (property_exists($data, 'Warning')) {
             $object->setWarning($data->{'Warning'});
         }
 

@@ -39,18 +39,18 @@ class VolumeConfigNormalizer extends SerializerAwareNormalizer implements Denorm
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Name'})) {
+        if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
         }
-        if (isset($data->{'Driver'})) {
+        if (property_exists($data, 'Driver')) {
             $object->setDriver($data->{'Driver'});
         }
-        if (isset($data->{'DriverOpts'})) {
-            $values_235 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'DriverOpts'} as $key_237 => $value_236) {
-                $values_235[$key_237] = $value_236;
+        if (property_exists($data, 'DriverOpts')) {
+            $values = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'DriverOpts'} as $key => $value) {
+                $values[$key] = $value;
             }
-            $object->setDriverOpts($values_235);
+            $object->setDriverOpts($values);
         }
 
         return $object;
@@ -66,11 +66,11 @@ class VolumeConfigNormalizer extends SerializerAwareNormalizer implements Denorm
             $data->{'Driver'} = $object->getDriver();
         }
         if (null !== $object->getDriverOpts()) {
-            $values_238 = new \stdClass();
-            foreach ($object->getDriverOpts() as $key_240 => $value_239) {
-                $values_238->{$key_240} = $value_239;
+            $values = new \stdClass();
+            foreach ($object->getDriverOpts() as $key => $value) {
+                $values->{$key} = $value;
             }
-            $data->{'DriverOpts'} = $values_238;
+            $data->{'DriverOpts'} = $values;
         }
 
         return $data;

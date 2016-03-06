@@ -39,31 +39,31 @@ class VersionNormalizer extends SerializerAwareNormalizer implements Denormalize
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Version'})) {
+        if (property_exists($data, 'Version')) {
             $object->setVersion($data->{'Version'});
         }
-        if (isset($data->{'Os'})) {
+        if (property_exists($data, 'Os')) {
             $object->setOs($data->{'Os'});
         }
-        if (isset($data->{'KernelVersion'})) {
+        if (property_exists($data, 'KernelVersion')) {
             $object->setKernelVersion($data->{'KernelVersion'});
         }
-        if (isset($data->{'GoVersion'})) {
+        if (property_exists($data, 'GoVersion')) {
             $object->setGoVersion($data->{'GoVersion'});
         }
-        if (isset($data->{'GitCommit'})) {
+        if (property_exists($data, 'GitCommit')) {
             $object->setGitCommit($data->{'GitCommit'});
         }
-        if (isset($data->{'Arch'})) {
+        if (property_exists($data, 'Arch')) {
             $object->setArch($data->{'Arch'});
         }
-        if (isset($data->{'ApiVersion'})) {
+        if (property_exists($data, 'ApiVersion')) {
             $object->setApiVersion($data->{'ApiVersion'});
         }
-        if (isset($data->{'Experimental'})) {
+        if (property_exists($data, 'Experimental')) {
             $object->setExperimental($data->{'Experimental'});
         }
-        if (isset($data->{'BuildTime'})) {
+        if (property_exists($data, 'BuildTime')) {
             $object->setBuildTime($data->{'BuildTime'});
         }
 

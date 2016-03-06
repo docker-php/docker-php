@@ -37,7 +37,7 @@ class ImageResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ImageItem[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ImageItem[]', 'json');
             }
         }
 
@@ -115,7 +115,7 @@ class ImageResource extends Resource
      *     @var string $fromSrc Source to import. The value may be a URL from which the image can be retrieved or - to read the image from the request body. This parameter may only be used when importing an image.
      *     @var string $repo Repository name given to an image when it is imported. The repo may include a tag. This parameter may only be used when importing an image.
      *     @var string $tag Tag or digest.
-     *     @var string $X-Registry-Config A base64-encoded AuthConfig object
+     *     @var string $X-Registry-Auth A base64-encoded AuthConfig object
      * }
      *
      * @param string $fetch Fetch mode (object or response)
@@ -162,7 +162,7 @@ class ImageResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\Image', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Image', 'json');
             }
         }
 
@@ -190,7 +190,7 @@ class ImageResource extends Resource
         $response   = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ImageHistoryItem[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ImageHistoryItem[]', 'json');
             }
         }
 
@@ -314,7 +314,7 @@ class ImageResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\ImageSearchResult[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ImageSearchResult[]', 'json');
             }
         }
 
@@ -361,7 +361,7 @@ class ImageResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize($response->getBody()->getContents(), 'Docker\\API\\Model\\CommitResult', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\CommitResult', 'json');
             }
         }
 

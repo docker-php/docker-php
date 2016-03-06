@@ -39,23 +39,23 @@ class ContainerTopNormalizer extends SerializerAwareNormalizer implements Denorm
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Titles'})) {
-            $values_147 = [];
-            foreach ($data->{'Titles'} as $value_148) {
-                $values_147[] = $value_148;
+        if (property_exists($data, 'Titles')) {
+            $values = [];
+            foreach ($data->{'Titles'} as $value) {
+                $values[] = $value;
             }
-            $object->setTitles($values_147);
+            $object->setTitles($values);
         }
-        if (isset($data->{'Processes'})) {
-            $values_149 = [];
-            foreach ($data->{'Processes'} as $value_150) {
-                $values_151 = [];
-                foreach ($value_150 as $value_152) {
-                    $values_151[] = $value_152;
+        if (property_exists($data, 'Processes')) {
+            $values_1 = [];
+            foreach ($data->{'Processes'} as $value_1) {
+                $values_2 = [];
+                foreach ($value_1 as $value_2) {
+                    $values_2[] = $value_2;
                 }
-                $values_149[] = $values_151;
+                $values_1[] = $values_2;
             }
-            $object->setProcesses($values_149);
+            $object->setProcesses($values_1);
         }
 
         return $object;
@@ -65,22 +65,22 @@ class ContainerTopNormalizer extends SerializerAwareNormalizer implements Denorm
     {
         $data = new \stdClass();
         if (null !== $object->getTitles()) {
-            $values_153 = [];
-            foreach ($object->getTitles() as $value_154) {
-                $values_153[] = $value_154;
+            $values = [];
+            foreach ($object->getTitles() as $value) {
+                $values[] = $value;
             }
-            $data->{'Titles'} = $values_153;
+            $data->{'Titles'} = $values;
         }
         if (null !== $object->getProcesses()) {
-            $values_155 = [];
-            foreach ($object->getProcesses() as $value_156) {
-                $values_157 = [];
-                foreach ($value_156 as $value_158) {
-                    $values_157[] = $value_158;
+            $values_1 = [];
+            foreach ($object->getProcesses() as $value_1) {
+                $values_2 = [];
+                foreach ($value_1 as $value_2) {
+                    $values_2[] = $value_2;
                 }
-                $values_155[] = $values_157;
+                $values_1[] = $values_2;
             }
-            $data->{'Processes'} = $values_155;
+            $data->{'Processes'} = $values_1;
         }
 
         return $data;

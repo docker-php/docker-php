@@ -39,16 +39,16 @@ class MountNormalizer extends SerializerAwareNormalizer implements DenormalizerI
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Source'})) {
+        if (property_exists($data, 'Source')) {
             $object->setSource($data->{'Source'});
         }
-        if (isset($data->{'Destination'})) {
+        if (property_exists($data, 'Destination')) {
             $object->setDestination($data->{'Destination'});
         }
-        if (isset($data->{'Mode'})) {
+        if (property_exists($data, 'Mode')) {
             $object->setMode($data->{'Mode'});
         }
-        if (isset($data->{'RW'})) {
+        if (property_exists($data, 'RW')) {
             $object->setRW($data->{'RW'});
         }
 

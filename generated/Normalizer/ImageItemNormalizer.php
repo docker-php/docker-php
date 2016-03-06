@@ -39,41 +39,41 @@ class ImageItemNormalizer extends SerializerAwareNormalizer implements Denormali
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'RepoTags'})) {
-            $values_159 = [];
-            foreach ($data->{'RepoTags'} as $value_160) {
-                $values_159[] = $value_160;
+        if (property_exists($data, 'RepoTags')) {
+            $values = [];
+            foreach ($data->{'RepoTags'} as $value) {
+                $values[] = $value;
             }
-            $object->setRepoTags($values_159);
+            $object->setRepoTags($values);
         }
-        if (isset($data->{'Id'})) {
+        if (property_exists($data, 'Id')) {
             $object->setId($data->{'Id'});
         }
-        if (isset($data->{'ParentId'})) {
+        if (property_exists($data, 'ParentId')) {
             $object->setParentId($data->{'ParentId'});
         }
-        if (isset($data->{'Created'})) {
+        if (property_exists($data, 'Created')) {
             $object->setCreated($data->{'Created'});
         }
-        if (isset($data->{'Size'})) {
+        if (property_exists($data, 'Size')) {
             $object->setSize($data->{'Size'});
         }
-        if (isset($data->{'VirtualSize'})) {
+        if (property_exists($data, 'VirtualSize')) {
             $object->setVirtualSize($data->{'VirtualSize'});
         }
-        if (isset($data->{'Labels'})) {
-            $values_161 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Labels'} as $key_163 => $value_162) {
-                $values_161[$key_163] = $value_162;
+        if (property_exists($data, 'Labels')) {
+            $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Labels'} as $key => $value_1) {
+                $values_1[$key] = $value_1;
             }
-            $object->setLabels($values_161);
+            $object->setLabels($values_1);
         }
-        if (isset($data->{'RepoDigests'})) {
-            $values_164 = [];
-            foreach ($data->{'RepoDigests'} as $value_165) {
-                $values_164[] = $value_165;
+        if (property_exists($data, 'RepoDigests')) {
+            $values_2 = [];
+            foreach ($data->{'RepoDigests'} as $value_2) {
+                $values_2[] = $value_2;
             }
-            $object->setRepoDigests($values_164);
+            $object->setRepoDigests($values_2);
         }
 
         return $object;
@@ -83,11 +83,11 @@ class ImageItemNormalizer extends SerializerAwareNormalizer implements Denormali
     {
         $data = new \stdClass();
         if (null !== $object->getRepoTags()) {
-            $values_166 = [];
-            foreach ($object->getRepoTags() as $value_167) {
-                $values_166[] = $value_167;
+            $values = [];
+            foreach ($object->getRepoTags() as $value) {
+                $values[] = $value;
             }
-            $data->{'RepoTags'} = $values_166;
+            $data->{'RepoTags'} = $values;
         }
         if (null !== $object->getId()) {
             $data->{'Id'} = $object->getId();
@@ -105,18 +105,18 @@ class ImageItemNormalizer extends SerializerAwareNormalizer implements Denormali
             $data->{'VirtualSize'} = $object->getVirtualSize();
         }
         if (null !== $object->getLabels()) {
-            $values_168 = new \stdClass();
-            foreach ($object->getLabels() as $key_170 => $value_169) {
-                $values_168->{$key_170} = $value_169;
+            $values_1 = new \stdClass();
+            foreach ($object->getLabels() as $key => $value_1) {
+                $values_1->{$key} = $value_1;
             }
-            $data->{'Labels'} = $values_168;
+            $data->{'Labels'} = $values_1;
         }
         if (null !== $object->getRepoDigests()) {
-            $values_171 = [];
-            foreach ($object->getRepoDigests() as $value_172) {
-                $values_171[] = $value_172;
+            $values_2 = [];
+            foreach ($object->getRepoDigests() as $value_2) {
+                $values_2[] = $value_2;
             }
-            $data->{'RepoDigests'} = $values_171;
+            $data->{'RepoDigests'} = $values_2;
         }
 
         return $data;

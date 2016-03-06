@@ -9,7 +9,7 @@ class ExecCreateResult
      */
     protected $id;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $warnings;
 
@@ -34,7 +34,7 @@ class ExecCreateResult
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getWarnings()
     {
@@ -42,11 +42,11 @@ class ExecCreateResult
     }
 
     /**
-     * @param string[] $warnings
+     * @param string[]|null $warnings
      *
      * @return self
      */
-    public function setWarnings(array $warnings = null)
+    public function setWarnings($warnings = null)
     {
         $this->warnings = $warnings;
 

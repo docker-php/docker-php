@@ -39,13 +39,13 @@ class UlimitNormalizer extends SerializerAwareNormalizer implements Denormalizer
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Name'})) {
+        if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
         }
-        if (isset($data->{'Soft'})) {
+        if (property_exists($data, 'Soft')) {
             $object->setSoft($data->{'Soft'});
         }
-        if (isset($data->{'Hard'})) {
+        if (property_exists($data, 'Hard')) {
             $object->setHard($data->{'Hard'});
         }
 

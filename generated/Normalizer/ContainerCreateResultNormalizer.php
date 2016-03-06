@@ -39,15 +39,22 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Id'})) {
+        if (property_exists($data, 'Id')) {
             $object->setId($data->{'Id'});
         }
-        if (isset($data->{'Warnings'})) {
-            $values_269 = [];
-            foreach ($data->{'Warnings'} as $value_270) {
-                $values_269[] = $value_270;
+        if (property_exists($data, 'Warnings')) {
+            $value = $data->{'Warnings'};
+            if (is_array($data->{'Warnings'})) {
+                $values = [];
+                foreach ($data->{'Warnings'} as $value_1) {
+                    $values[] = $value_1;
+                }
+                $value = $values;
             }
-            $object->setWarnings($values_269);
+            if (is_null($data->{'Warnings'})) {
+                $value = $data->{'Warnings'};
+            }
+            $object->setWarnings($value);
         }
 
         return $object;
@@ -59,13 +66,18 @@ class ContainerCreateResultNormalizer extends SerializerAwareNormalizer implemen
         if (null !== $object->getId()) {
             $data->{'Id'} = $object->getId();
         }
-        if (null !== $object->getWarnings()) {
-            $values_271 = [];
-            foreach ($object->getWarnings() as $value_272) {
-                $values_271[] = $value_272;
+        $value = $object->getWarnings();
+        if (is_array($object->getWarnings())) {
+            $values = [];
+            foreach ($object->getWarnings() as $value_1) {
+                $values[] = $value_1;
             }
-            $data->{'Warnings'} = $values_271;
+            $value = $values;
         }
+        if (is_null($object->getWarnings())) {
+            $value = $object->getWarnings();
+        }
+        $data->{'Warnings'} = $value;
 
         return $data;
     }

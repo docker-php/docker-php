@@ -19,6 +19,10 @@ class ContainerConfig
     /**
      * @var string
      */
+    protected $imageID;
+    /**
+     * @var string
+     */
     protected $command;
     /**
      * @var int
@@ -177,6 +181,26 @@ class ContainerConfig
     public function setImage($image = null)
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImageID()
+    {
+        return $this->imageID;
+    }
+
+    /**
+     * @param string $imageID
+     *
+     * @return self
+     */
+    public function setImageID($imageID = null)
+    {
+        $this->imageID = $imageID;
 
         return $this;
     }

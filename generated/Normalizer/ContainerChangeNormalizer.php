@@ -39,10 +39,10 @@ class ContainerChangeNormalizer extends SerializerAwareNormalizer implements Den
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Path'})) {
+        if (property_exists($data, 'Path')) {
             $object->setPath($data->{'Path'});
         }
-        if (isset($data->{'Kind'})) {
+        if (property_exists($data, 'Kind')) {
             $object->setKind($data->{'Kind'});
         }
 

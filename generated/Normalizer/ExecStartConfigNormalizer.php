@@ -39,10 +39,10 @@ class ExecStartConfigNormalizer extends SerializerAwareNormalizer implements Den
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Detach'})) {
+        if (property_exists($data, 'Detach')) {
             $object->setDetach($data->{'Detach'});
         }
-        if (isset($data->{'Tty'})) {
+        if (property_exists($data, 'Tty')) {
             $object->setTty($data->{'Tty'});
         }
 

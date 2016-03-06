@@ -39,15 +39,22 @@ class ExecCreateResultNormalizer extends SerializerAwareNormalizer implements De
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Id'})) {
+        if (property_exists($data, 'Id')) {
             $object->setId($data->{'Id'});
         }
-        if (isset($data->{'Warnings'})) {
-            $values_219 = [];
-            foreach ($data->{'Warnings'} as $value_220) {
-                $values_219[] = $value_220;
+        if (property_exists($data, 'Warnings')) {
+            $value = $data->{'Warnings'};
+            if (is_array($data->{'Warnings'})) {
+                $values = [];
+                foreach ($data->{'Warnings'} as $value_1) {
+                    $values[] = $value_1;
+                }
+                $value = $values;
             }
-            $object->setWarnings($values_219);
+            if (is_null($data->{'Warnings'})) {
+                $value = $data->{'Warnings'};
+            }
+            $object->setWarnings($value);
         }
 
         return $object;
@@ -59,13 +66,18 @@ class ExecCreateResultNormalizer extends SerializerAwareNormalizer implements De
         if (null !== $object->getId()) {
             $data->{'Id'} = $object->getId();
         }
-        if (null !== $object->getWarnings()) {
-            $values_221 = [];
-            foreach ($object->getWarnings() as $value_222) {
-                $values_221[] = $value_222;
+        $value = $object->getWarnings();
+        if (is_array($object->getWarnings())) {
+            $values = [];
+            foreach ($object->getWarnings() as $value_1) {
+                $values[] = $value_1;
             }
-            $data->{'Warnings'} = $values_221;
+            $value = $values;
         }
+        if (is_null($object->getWarnings())) {
+            $value = $object->getWarnings();
+        }
+        $data->{'Warnings'} = $value;
 
         return $data;
     }

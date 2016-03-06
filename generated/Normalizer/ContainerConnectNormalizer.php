@@ -39,15 +39,15 @@ class ContainerConnectNormalizer extends SerializerAwareNormalizer implements De
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Container'})) {
+        if (property_exists($data, 'Container')) {
             $object->setContainer($data->{'Container'});
         }
-        if (isset($data->{'EndpointConfig'})) {
-            $values_263 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'EndpointConfig'} as $key_265 => $value_264) {
-                $values_263[$key_265] = $this->serializer->deserialize($value_264, 'Docker\\API\\Model\\EndpointConfig', 'raw', $context);
+        if (property_exists($data, 'EndpointConfig')) {
+            $values = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'EndpointConfig'} as $key => $value) {
+                $values[$key] = $this->serializer->deserialize($value, 'Docker\\API\\Model\\EndpointConfig', 'raw', $context);
             }
-            $object->setEndpointConfig($values_263);
+            $object->setEndpointConfig($values);
         }
 
         return $object;
@@ -60,11 +60,11 @@ class ContainerConnectNormalizer extends SerializerAwareNormalizer implements De
             $data->{'Container'} = $object->getContainer();
         }
         if (null !== $object->getEndpointConfig()) {
-            $values_266 = new \stdClass();
-            foreach ($object->getEndpointConfig() as $key_268 => $value_267) {
-                $values_266->{$key_268} = $this->serializer->serialize($value_267, 'raw', $context);
+            $values = new \stdClass();
+            foreach ($object->getEndpointConfig() as $key => $value) {
+                $values->{$key} = $this->serializer->serialize($value, 'raw', $context);
             }
-            $data->{'EndpointConfig'} = $values_266;
+            $data->{'EndpointConfig'} = $values;
         }
 
         return $data;

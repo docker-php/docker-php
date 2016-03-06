@@ -39,19 +39,19 @@ class NetworkContainerNormalizer extends SerializerAwareNormalizer implements De
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Name'})) {
+        if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
         }
-        if (isset($data->{'EndpointID'})) {
+        if (property_exists($data, 'EndpointID')) {
             $object->setEndpointID($data->{'EndpointID'});
         }
-        if (isset($data->{'MacAddress'})) {
+        if (property_exists($data, 'MacAddress')) {
             $object->setMacAddress($data->{'MacAddress'});
         }
-        if (isset($data->{'IPv4Address'})) {
+        if (property_exists($data, 'IPv4Address')) {
             $object->setIPv4Address($data->{'IPv4Address'});
         }
-        if (isset($data->{'IPv6Address'})) {
+        if (property_exists($data, 'IPv6Address')) {
             $object->setIPv6Address($data->{'IPv6Address'});
         }
 

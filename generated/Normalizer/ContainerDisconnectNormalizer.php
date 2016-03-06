@@ -39,10 +39,10 @@ class ContainerDisconnectNormalizer extends SerializerAwareNormalizer implements
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Container'})) {
+        if (property_exists($data, 'Container')) {
             $object->setContainer($data->{'Container'});
         }
-        if (isset($data->{'Force'})) {
+        if (property_exists($data, 'Force')) {
             $object->setForce($data->{'Force'});
         }
 

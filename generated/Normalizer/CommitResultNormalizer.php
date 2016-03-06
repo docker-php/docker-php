@@ -39,7 +39,7 @@ class CommitResultNormalizer extends SerializerAwareNormalizer implements Denorm
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Id'})) {
+        if (property_exists($data, 'Id')) {
             $object->setId($data->{'Id'});
         }
 

@@ -39,10 +39,10 @@ class DeviceWeightNormalizer extends SerializerAwareNormalizer implements Denorm
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Path'})) {
+        if (property_exists($data, 'Path')) {
             $object->setPath($data->{'Path'});
         }
-        if (isset($data->{'Weight'})) {
+        if (property_exists($data, 'Weight')) {
             $object->setWeight($data->{'Weight'});
         }
 

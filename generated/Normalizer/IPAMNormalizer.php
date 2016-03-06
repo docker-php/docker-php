@@ -39,22 +39,22 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Driver'})) {
+        if (property_exists($data, 'Driver')) {
             $object->setDriver($data->{'Driver'});
         }
-        if (isset($data->{'Config'})) {
-            $values_253 = [];
-            foreach ($data->{'Config'} as $value_254) {
-                $values_253[] = $this->serializer->deserialize($value_254, 'Docker\\API\\Model\\IPAMConfig', 'raw', $context);
+        if (property_exists($data, 'Config')) {
+            $values = [];
+            foreach ($data->{'Config'} as $value) {
+                $values[] = $this->serializer->deserialize($value, 'Docker\\API\\Model\\IPAMConfig', 'raw', $context);
             }
-            $object->setConfig($values_253);
+            $object->setConfig($values);
         }
-        if (isset($data->{'Options'})) {
-            $values_255 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Options'} as $key_257 => $value_256) {
-                $values_255[$key_257] = $value_256;
+        if (property_exists($data, 'Options')) {
+            $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Options'} as $key => $value_1) {
+                $values_1[$key] = $value_1;
             }
-            $object->setOptions($values_255);
+            $object->setOptions($values_1);
         }
 
         return $object;
@@ -67,18 +67,18 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $data->{'Driver'} = $object->getDriver();
         }
         if (null !== $object->getConfig()) {
-            $values_258 = [];
-            foreach ($object->getConfig() as $value_259) {
-                $values_258[] = $this->serializer->serialize($value_259, 'raw', $context);
+            $values = [];
+            foreach ($object->getConfig() as $value) {
+                $values[] = $this->serializer->serialize($value, 'raw', $context);
             }
-            $data->{'Config'} = $values_258;
+            $data->{'Config'} = $values;
         }
         if (null !== $object->getOptions()) {
-            $values_260 = new \stdClass();
-            foreach ($object->getOptions() as $key_262 => $value_261) {
-                $values_260->{$key_262} = $value_261;
+            $values_1 = new \stdClass();
+            foreach ($object->getOptions() as $key => $value_1) {
+                $values_1->{$key} = $value_1;
             }
-            $data->{'Options'} = $values_260;
+            $data->{'Options'} = $values_1;
         }
 
         return $data;

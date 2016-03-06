@@ -39,24 +39,24 @@ class ExecConfigNormalizer extends SerializerAwareNormalizer implements Denormal
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'AttachStdin'})) {
+        if (property_exists($data, 'AttachStdin')) {
             $object->setAttachStdin($data->{'AttachStdin'});
         }
-        if (isset($data->{'AttachStdout'})) {
+        if (property_exists($data, 'AttachStdout')) {
             $object->setAttachStdout($data->{'AttachStdout'});
         }
-        if (isset($data->{'AttachStderr'})) {
+        if (property_exists($data, 'AttachStderr')) {
             $object->setAttachStderr($data->{'AttachStderr'});
         }
-        if (isset($data->{'Tty'})) {
+        if (property_exists($data, 'Tty')) {
             $object->setTty($data->{'Tty'});
         }
-        if (isset($data->{'Cmd'})) {
-            $values_223 = [];
-            foreach ($data->{'Cmd'} as $value_224) {
-                $values_223[] = $value_224;
+        if (property_exists($data, 'Cmd')) {
+            $values = [];
+            foreach ($data->{'Cmd'} as $value) {
+                $values[] = $value;
             }
-            $object->setCmd($values_223);
+            $object->setCmd($values);
         }
 
         return $object;
@@ -78,11 +78,11 @@ class ExecConfigNormalizer extends SerializerAwareNormalizer implements Denormal
             $data->{'Tty'} = $object->getTty();
         }
         if (null !== $object->getCmd()) {
-            $values_225 = [];
-            foreach ($object->getCmd() as $value_226) {
-                $values_225[] = $value_226;
+            $values = [];
+            foreach ($object->getCmd() as $value) {
+                $values[] = $value;
             }
-            $data->{'Cmd'} = $values_225;
+            $data->{'Cmd'} = $values;
         }
 
         return $data;

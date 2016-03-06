@@ -39,13 +39,13 @@ class IPAMConfigNormalizer extends SerializerAwareNormalizer implements Denormal
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Subnet'})) {
+        if (property_exists($data, 'Subnet')) {
             $object->setSubnet($data->{'Subnet'});
         }
-        if (isset($data->{'IPRange'})) {
+        if (property_exists($data, 'IPRange')) {
             $object->setIPRange($data->{'IPRange'});
         }
-        if (isset($data->{'Gateway'})) {
+        if (property_exists($data, 'Gateway')) {
             $object->setGateway($data->{'Gateway'});
         }
 

@@ -39,34 +39,34 @@ class ResourceUpdateNormalizer extends SerializerAwareNormalizer implements Deno
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'BlkioWeight'})) {
+        if (property_exists($data, 'BlkioWeight')) {
             $object->setBlkioWeight($data->{'BlkioWeight'});
         }
-        if (isset($data->{'CpuShares'})) {
+        if (property_exists($data, 'CpuShares')) {
             $object->setCpuShares($data->{'CpuShares'});
         }
-        if (isset($data->{'CpuPeriod'})) {
+        if (property_exists($data, 'CpuPeriod')) {
             $object->setCpuPeriod($data->{'CpuPeriod'});
         }
-        if (isset($data->{'CpuQuota'})) {
+        if (property_exists($data, 'CpuQuota')) {
             $object->setCpuQuota($data->{'CpuQuota'});
         }
-        if (isset($data->{'CpusetCpus'})) {
+        if (property_exists($data, 'CpusetCpus')) {
             $object->setCpusetCpus($data->{'CpusetCpus'});
         }
-        if (isset($data->{'CpusetMems'})) {
+        if (property_exists($data, 'CpusetMems')) {
             $object->setCpusetMems($data->{'CpusetMems'});
         }
-        if (isset($data->{'Memory'})) {
+        if (property_exists($data, 'Memory')) {
             $object->setMemory($data->{'Memory'});
         }
-        if (isset($data->{'MemorySwap'})) {
+        if (property_exists($data, 'MemorySwap')) {
             $object->setMemorySwap($data->{'MemorySwap'});
         }
-        if (isset($data->{'MemoryReservation'})) {
+        if (property_exists($data, 'MemoryReservation')) {
             $object->setMemoryReservation($data->{'MemoryReservation'});
         }
-        if (isset($data->{'KernelMemory'})) {
+        if (property_exists($data, 'KernelMemory')) {
             $object->setKernelMemory($data->{'KernelMemory'});
         }
 

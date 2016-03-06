@@ -39,25 +39,25 @@ class BuildInfoNormalizer extends SerializerAwareNormalizer implements Denormali
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'id'})) {
+        if (property_exists($data, 'id')) {
             $object->setId($data->{'id'});
         }
-        if (isset($data->{'stream'})) {
+        if (property_exists($data, 'stream')) {
             $object->setStream($data->{'stream'});
         }
-        if (isset($data->{'error'})) {
+        if (property_exists($data, 'error')) {
             $object->setError($data->{'error'});
         }
-        if (isset($data->{'errorDetail'})) {
+        if (property_exists($data, 'errorDetail')) {
             $object->setErrorDetail($this->serializer->deserialize($data->{'errorDetail'}, 'Docker\\API\\Model\\ErrorDetail', 'raw', $context));
         }
-        if (isset($data->{'status'})) {
+        if (property_exists($data, 'status')) {
             $object->setStatus($data->{'status'});
         }
-        if (isset($data->{'progress'})) {
+        if (property_exists($data, 'progress')) {
             $object->setProgress($data->{'progress'});
         }
-        if (isset($data->{'progressDetail'})) {
+        if (property_exists($data, 'progressDetail')) {
             $object->setProgressDetail($this->serializer->deserialize($data->{'progressDetail'}, 'Docker\\API\\Model\\ProgressDetail', 'raw', $context));
         }
 

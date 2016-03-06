@@ -39,79 +39,79 @@ class ContainerNormalizer extends SerializerAwareNormalizer implements Denormali
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'AppArmorProfile'})) {
+        if (property_exists($data, 'AppArmorProfile')) {
             $object->setAppArmorProfile($data->{'AppArmorProfile'});
         }
-        if (isset($data->{'Args'})) {
-            $values_139 = [];
-            foreach ($data->{'Args'} as $value_140) {
-                $values_139[] = $value_140;
+        if (property_exists($data, 'Args')) {
+            $values = [];
+            foreach ($data->{'Args'} as $value) {
+                $values[] = $value;
             }
-            $object->setArgs($values_139);
+            $object->setArgs($values);
         }
-        if (isset($data->{'Config'})) {
+        if (property_exists($data, 'Config')) {
             $object->setConfig($this->serializer->deserialize($data->{'Config'}, 'Docker\\API\\Model\\ContainerConfig', 'raw', $context));
         }
-        if (isset($data->{'Created'})) {
+        if (property_exists($data, 'Created')) {
             $object->setCreated($data->{'Created'});
         }
-        if (isset($data->{'Driver'})) {
+        if (property_exists($data, 'Driver')) {
             $object->setDriver($data->{'Driver'});
         }
-        if (isset($data->{'ExecDriver'})) {
+        if (property_exists($data, 'ExecDriver')) {
             $object->setExecDriver($data->{'ExecDriver'});
         }
-        if (isset($data->{'ExecIDs'})) {
+        if (property_exists($data, 'ExecIDs')) {
             $object->setExecIDs($data->{'ExecIDs'});
         }
-        if (isset($data->{'HostConfig'})) {
+        if (property_exists($data, 'HostConfig')) {
             $object->setHostConfig($this->serializer->deserialize($data->{'HostConfig'}, 'Docker\\API\\Model\\HostConfig', 'raw', $context));
         }
-        if (isset($data->{'HostnamePath'})) {
+        if (property_exists($data, 'HostnamePath')) {
             $object->setHostnamePath($data->{'HostnamePath'});
         }
-        if (isset($data->{'HostsPath'})) {
+        if (property_exists($data, 'HostsPath')) {
             $object->setHostsPath($data->{'HostsPath'});
         }
-        if (isset($data->{'LogPath'})) {
+        if (property_exists($data, 'LogPath')) {
             $object->setLogPath($data->{'LogPath'});
         }
-        if (isset($data->{'Id'})) {
+        if (property_exists($data, 'Id')) {
             $object->setId($data->{'Id'});
         }
-        if (isset($data->{'Image'})) {
+        if (property_exists($data, 'Image')) {
             $object->setImage($data->{'Image'});
         }
-        if (isset($data->{'MountLabel'})) {
+        if (property_exists($data, 'MountLabel')) {
             $object->setMountLabel($data->{'MountLabel'});
         }
-        if (isset($data->{'Name'})) {
+        if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
         }
-        if (isset($data->{'NetworkSettings'})) {
+        if (property_exists($data, 'NetworkSettings')) {
             $object->setNetworkSettings($this->serializer->deserialize($data->{'NetworkSettings'}, 'Docker\\API\\Model\\NetworkConfig', 'raw', $context));
         }
-        if (isset($data->{'Path'})) {
+        if (property_exists($data, 'Path')) {
             $object->setPath($data->{'Path'});
         }
-        if (isset($data->{'ProcessLabel'})) {
+        if (property_exists($data, 'ProcessLabel')) {
             $object->setProcessLabel($data->{'ProcessLabel'});
         }
-        if (isset($data->{'ResolvConfPath'})) {
+        if (property_exists($data, 'ResolvConfPath')) {
             $object->setResolvConfPath($data->{'ResolvConfPath'});
         }
-        if (isset($data->{'RestartCount'})) {
+        if (property_exists($data, 'RestartCount')) {
             $object->setRestartCount($data->{'RestartCount'});
         }
-        if (isset($data->{'State'})) {
+        if (property_exists($data, 'State')) {
             $object->setState($this->serializer->deserialize($data->{'State'}, 'Docker\\API\\Model\\ContainerState', 'raw', $context));
         }
-        if (isset($data->{'Mounts'})) {
-            $values_141 = [];
-            foreach ($data->{'Mounts'} as $value_142) {
-                $values_141[] = $this->serializer->deserialize($value_142, 'Docker\\API\\Model\\Mount', 'raw', $context);
+        if (property_exists($data, 'Mounts')) {
+            $values_1 = [];
+            foreach ($data->{'Mounts'} as $value_1) {
+                $values_1[] = $this->serializer->deserialize($value_1, 'Docker\\API\\Model\\Mount', 'raw', $context);
             }
-            $object->setMounts($values_141);
+            $object->setMounts($values_1);
         }
 
         return $object;
@@ -124,11 +124,11 @@ class ContainerNormalizer extends SerializerAwareNormalizer implements Denormali
             $data->{'AppArmorProfile'} = $object->getAppArmorProfile();
         }
         if (null !== $object->getArgs()) {
-            $values_143 = [];
-            foreach ($object->getArgs() as $value_144) {
-                $values_143[] = $value_144;
+            $values = [];
+            foreach ($object->getArgs() as $value) {
+                $values[] = $value;
             }
-            $data->{'Args'} = $values_143;
+            $data->{'Args'} = $values;
         }
         if (null !== $object->getConfig()) {
             $data->{'Config'} = $this->serializer->serialize($object->getConfig(), 'raw', $context);
@@ -188,11 +188,11 @@ class ContainerNormalizer extends SerializerAwareNormalizer implements Denormali
             $data->{'State'} = $this->serializer->serialize($object->getState(), 'raw', $context);
         }
         if (null !== $object->getMounts()) {
-            $values_145 = [];
-            foreach ($object->getMounts() as $value_146) {
-                $values_145[] = $this->serializer->serialize($value_146, 'raw', $context);
+            $values_1 = [];
+            foreach ($object->getMounts() as $value_1) {
+                $values_1[] = $this->serializer->serialize($value_1, 'raw', $context);
             }
-            $data->{'Mounts'} = $values_145;
+            $data->{'Mounts'} = $values_1;
         }
 
         return $data;

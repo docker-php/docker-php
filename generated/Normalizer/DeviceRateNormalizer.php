@@ -39,18 +39,18 @@ class DeviceRateNormalizer extends SerializerAwareNormalizer implements Denormal
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
-        if (isset($data->{'Path'})) {
+        if (property_exists($data, 'Path')) {
             $object->setPath($data->{'Path'});
         }
-        if (isset($data->{'Rate'})) {
-            $value_79 = $data->{'Rate'};
+        if (property_exists($data, 'Rate')) {
+            $value = $data->{'Rate'};
             if (is_int($data->{'Rate'})) {
-                $value_79 = $data->{'Rate'};
+                $value = $data->{'Rate'};
             }
             if (is_string($data->{'Rate'})) {
-                $value_79 = $data->{'Rate'};
+                $value = $data->{'Rate'};
             }
-            $object->setRate($value_79);
+            $object->setRate($value);
         }
 
         return $object;
@@ -63,14 +63,14 @@ class DeviceRateNormalizer extends SerializerAwareNormalizer implements Denormal
             $data->{'Path'} = $object->getPath();
         }
         if (null !== $object->getRate()) {
-            $value_80 = $object->getRate();
+            $value = $object->getRate();
             if (is_int($object->getRate())) {
-                $value_80 = $object->getRate();
+                $value = $object->getRate();
             }
             if (is_string($object->getRate())) {
-                $value_80 = $object->getRate();
+                $value = $object->getRate();
             }
-            $data->{'Rate'} = $value_80;
+            $data->{'Rate'} = $value;
         }
 
         return $data;

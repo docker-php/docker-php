@@ -11,7 +11,7 @@ php55:
   user: root
   volumes:
     - ./:/app
-    - /var/run/docker.sock:/var/run/docker.sock:rw
+    - /var/run/docker.sock:/var/run/docker.sock
 php56:
   image: phundament/php-one:5.6-fpm
   command: sh -c 'composer update && vendor/bin/phpunit'

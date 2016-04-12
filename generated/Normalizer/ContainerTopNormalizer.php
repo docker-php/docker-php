@@ -40,22 +40,43 @@ class ContainerTopNormalizer extends SerializerAwareNormalizer implements Denorm
             $context['rootSchema'] = $object;
         }
         if (property_exists($data, 'Titles')) {
-            $values = [];
-            foreach ($data->{'Titles'} as $value) {
-                $values[] = $value;
+            $value = $data->{'Titles'};
+            if (is_array($data->{'Titles'})) {
+                $values = [];
+                foreach ($data->{'Titles'} as $value_1) {
+                    $values[] = $value_1;
+                }
+                $value = $values;
             }
-            $object->setTitles($values);
+            if (is_null($data->{'Titles'})) {
+                $value = $data->{'Titles'};
+            }
+            $object->setTitles($value);
         }
         if (property_exists($data, 'Processes')) {
-            $values_1 = [];
-            foreach ($data->{'Processes'} as $value_1) {
-                $values_2 = [];
-                foreach ($value_1 as $value_2) {
-                    $values_2[] = $value_2;
+            $value_2 = $data->{'Processes'};
+            if (is_array($data->{'Processes'})) {
+                $values_1 = [];
+                foreach ($data->{'Processes'} as $value_3) {
+                    $value_4 = $value_3;
+                    if (is_array($value_3)) {
+                        $values_2 = [];
+                        foreach ($value_3 as $value_5) {
+                            $values_2[] = $value_5;
+                        }
+                        $value_4 = $values_2;
+                    }
+                    if (is_null($value_3)) {
+                        $value_4 = $value_3;
+                    }
+                    $values_1[] = $value_4;
                 }
-                $values_1[] = $values_2;
+                $value_2 = $values_1;
             }
-            $object->setProcesses($values_1);
+            if (is_null($data->{'Processes'})) {
+                $value_2 = $data->{'Processes'};
+            }
+            $object->setProcesses($value_2);
         }
 
         return $object;
@@ -63,25 +84,42 @@ class ContainerTopNormalizer extends SerializerAwareNormalizer implements Denorm
 
     public function normalize($object, $format = null, array $context = [])
     {
-        $data = new \stdClass();
-        if (null !== $object->getTitles()) {
+        $data  = new \stdClass();
+        $value = $object->getTitles();
+        if (is_array($object->getTitles())) {
             $values = [];
-            foreach ($object->getTitles() as $value) {
-                $values[] = $value;
+            foreach ($object->getTitles() as $value_1) {
+                $values[] = $value_1;
             }
-            $data->{'Titles'} = $values;
+            $value = $values;
         }
-        if (null !== $object->getProcesses()) {
+        if (is_null($object->getTitles())) {
+            $value = $object->getTitles();
+        }
+        $data->{'Titles'} = $value;
+        $value_2          = $object->getProcesses();
+        if (is_array($object->getProcesses())) {
             $values_1 = [];
-            foreach ($object->getProcesses() as $value_1) {
-                $values_2 = [];
-                foreach ($value_1 as $value_2) {
-                    $values_2[] = $value_2;
+            foreach ($object->getProcesses() as $value_3) {
+                $value_4 = $value_3;
+                if (is_array($value_3)) {
+                    $values_2 = [];
+                    foreach ($value_3 as $value_5) {
+                        $values_2[] = $value_5;
+                    }
+                    $value_4 = $values_2;
                 }
-                $values_1[] = $values_2;
+                if (is_null($value_3)) {
+                    $value_4 = $value_3;
+                }
+                $values_1[] = $value_4;
             }
-            $data->{'Processes'} = $values_1;
+            $value_2 = $values_1;
         }
+        if (is_null($object->getProcesses())) {
+            $value_2 = $object->getProcesses();
+        }
+        $data->{'Processes'} = $value_2;
 
         return $data;
     }

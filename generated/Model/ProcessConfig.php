@@ -21,7 +21,7 @@ class ProcessConfig
      */
     protected $entrypoint;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $arguments;
 
@@ -106,7 +106,7 @@ class ProcessConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getArguments()
     {
@@ -114,11 +114,11 @@ class ProcessConfig
     }
 
     /**
-     * @param string[] $arguments
+     * @param string[]|null $arguments
      *
      * @return self
      */
-    public function setArguments(array $arguments = null)
+    public function setArguments($arguments = null)
     {
         $this->arguments = $arguments;
 

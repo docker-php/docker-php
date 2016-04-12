@@ -47,11 +47,18 @@ class RegistryConfigNormalizer extends SerializerAwareNormalizer implements Deno
             $object->setIndexConfigs($values);
         }
         if (property_exists($data, 'InsecureRegistryCIDRs')) {
-            $values_1 = [];
-            foreach ($data->{'InsecureRegistryCIDRs'} as $value_1) {
-                $values_1[] = $value_1;
+            $value_1 = $data->{'InsecureRegistryCIDRs'};
+            if (is_array($data->{'InsecureRegistryCIDRs'})) {
+                $values_1 = [];
+                foreach ($data->{'InsecureRegistryCIDRs'} as $value_2) {
+                    $values_1[] = $value_2;
+                }
+                $value_1 = $values_1;
             }
-            $object->setInsecureRegistryCIDRs($values_1);
+            if (is_null($data->{'InsecureRegistryCIDRs'})) {
+                $value_1 = $data->{'InsecureRegistryCIDRs'};
+            }
+            $object->setInsecureRegistryCIDRs($value_1);
         }
 
         return $object;
@@ -67,13 +74,18 @@ class RegistryConfigNormalizer extends SerializerAwareNormalizer implements Deno
             }
             $data->{'IndexConfigs'} = $values;
         }
-        if (null !== $object->getInsecureRegistryCIDRs()) {
+        $value_1 = $object->getInsecureRegistryCIDRs();
+        if (is_array($object->getInsecureRegistryCIDRs())) {
             $values_1 = [];
-            foreach ($object->getInsecureRegistryCIDRs() as $value_1) {
-                $values_1[] = $value_1;
+            foreach ($object->getInsecureRegistryCIDRs() as $value_2) {
+                $values_1[] = $value_2;
             }
-            $data->{'InsecureRegistryCIDRs'} = $values_1;
+            $value_1 = $values_1;
         }
+        if (is_null($object->getInsecureRegistryCIDRs())) {
+            $value_1 = $object->getInsecureRegistryCIDRs();
+        }
+        $data->{'InsecureRegistryCIDRs'} = $value_1;
 
         return $data;
     }

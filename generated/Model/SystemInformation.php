@@ -33,7 +33,7 @@ class SystemInformation
      */
     protected $driver;
     /**
-     * @var string[][]
+     * @var string[][]|null[]|null
      */
     protected $driverStatus;
     /**
@@ -81,7 +81,7 @@ class SystemInformation
      */
     protected $kernelVersion;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $labels;
     /**
@@ -282,7 +282,7 @@ class SystemInformation
     }
 
     /**
-     * @return string[][]
+     * @return string[][]|null[]|null
      */
     public function getDriverStatus()
     {
@@ -290,11 +290,11 @@ class SystemInformation
     }
 
     /**
-     * @param string[][] $driverStatus
+     * @param string[][]|null[]|null $driverStatus
      *
      * @return self
      */
-    public function setDriverStatus(array $driverStatus = null)
+    public function setDriverStatus($driverStatus = null)
     {
         $this->driverStatus = $driverStatus;
 
@@ -522,7 +522,7 @@ class SystemInformation
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getLabels()
     {
@@ -530,11 +530,11 @@ class SystemInformation
     }
 
     /**
-     * @param string[] $labels
+     * @param string[]|null $labels
      *
      * @return self
      */
-    public function setLabels(array $labels = null)
+    public function setLabels($labels = null)
     {
         $this->labels = $labels;
 

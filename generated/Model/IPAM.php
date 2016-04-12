@@ -9,7 +9,7 @@ class IPAM
      */
     protected $driver;
     /**
-     * @var string[][]
+     * @var string[][]|null
      */
     protected $config;
 
@@ -34,7 +34,7 @@ class IPAM
     }
 
     /**
-     * @return string[][]
+     * @return string[][]|null
      */
     public function getConfig()
     {
@@ -42,11 +42,11 @@ class IPAM
     }
 
     /**
-     * @param string[][] $config
+     * @param string[][]|null $config
      *
      * @return self
      */
-    public function setConfig(array $config = null)
+    public function setConfig($config = null)
     {
         $this->config = $config;
 

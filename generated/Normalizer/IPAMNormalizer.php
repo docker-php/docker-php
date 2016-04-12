@@ -43,15 +43,22 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $object->setDriver($data->{'Driver'});
         }
         if (property_exists($data, 'Config')) {
-            $values = [];
-            foreach ($data->{'Config'} as $value) {
-                $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-                foreach ($value as $key => $value_1) {
-                    $values_1[$key] = $value_1;
+            $value = $data->{'Config'};
+            if (is_array($data->{'Config'})) {
+                $values = [];
+                foreach ($data->{'Config'} as $value_1) {
+                    $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                    foreach ($value_1 as $key => $value_2) {
+                        $values_1[$key] = $value_2;
+                    }
+                    $values[] = $values_1;
                 }
-                $values[] = $values_1;
+                $value = $values;
             }
-            $object->setConfig($values);
+            if (is_null($data->{'Config'})) {
+                $value = $data->{'Config'};
+            }
+            $object->setConfig($value);
         }
 
         return $object;
@@ -63,17 +70,22 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
         if (null !== $object->getDriver()) {
             $data->{'Driver'} = $object->getDriver();
         }
-        if (null !== $object->getConfig()) {
+        $value = $object->getConfig();
+        if (is_array($object->getConfig())) {
             $values = [];
-            foreach ($object->getConfig() as $value) {
+            foreach ($object->getConfig() as $value_1) {
                 $values_1 = new \stdClass();
-                foreach ($value as $key => $value_1) {
-                    $values_1->{$key} = $value_1;
+                foreach ($value_1 as $key => $value_2) {
+                    $values_1->{$key} = $value_2;
                 }
                 $values[] = $values_1;
             }
-            $data->{'Config'} = $values;
+            $value = $values;
         }
+        if (is_null($object->getConfig())) {
+            $value = $object->getConfig();
+        }
+        $data->{'Config'} = $value;
 
         return $data;
     }

@@ -57,11 +57,11 @@ class Image
      */
     protected $graphDriver;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $repoDigests;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $repoTags;
     /**
@@ -330,7 +330,7 @@ class Image
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getRepoDigests()
     {
@@ -338,11 +338,11 @@ class Image
     }
 
     /**
-     * @param string[] $repoDigests
+     * @param string[]|null $repoDigests
      *
      * @return self
      */
-    public function setRepoDigests(array $repoDigests = null)
+    public function setRepoDigests($repoDigests = null)
     {
         $this->repoDigests = $repoDigests;
 
@@ -350,7 +350,7 @@ class Image
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getRepoTags()
     {
@@ -358,11 +358,11 @@ class Image
     }
 
     /**
-     * @param string[] $repoTags
+     * @param string[]|null $repoTags
      *
      * @return self
      */
-    public function setRepoTags(array $repoTags = null)
+    public function setRepoTags($repoTags = null)
     {
         $this->repoTags = $repoTags;
 

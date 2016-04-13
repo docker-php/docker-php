@@ -96,4 +96,60 @@ RUN foo command
 DOCKERFILE
         );
     }
+
+    public function testWritesEnvCommands()
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->env('foo', 'bar');
+
+        $context  = $contextBuilder->getContext();
+
+        $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
+FROM base
+ENV foo bar
+DOCKERFILE
+        );
+    }
+
+    public function testWritesCopyCommands()
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->copy('/foo', '/bar');
+
+        $context  = $contextBuilder->getContext();
+
+        $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
+FROM base
+COPY /foo /bar
+DOCKERFILE
+        );
+    }
+
+    public function testWritesWorkdirCommands()
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->workdir('/foo');
+
+        $context  = $contextBuilder->getContext();
+
+        $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
+FROM base
+WORKDIR /foo
+DOCKERFILE
+        );
+    }
+
+    public function testWritesExposeCommands()
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->expose('80');
+
+        $context  = $contextBuilder->getContext();
+
+        $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
+FROM base
+EXPOSE 80
+DOCKERFILE
+        );
+    }
 }

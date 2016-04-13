@@ -13,7 +13,7 @@ class IPAM
      */
     protected $config;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $options;
 
@@ -58,7 +58,7 @@ class IPAM
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getOptions()
     {
@@ -66,11 +66,11 @@ class IPAM
     }
 
     /**
-     * @param string[] $options
+     * @param string[]|null $options
      *
      * @return self
      */
-    public function setOptions(\ArrayObject $options = null)
+    public function setOptions($options = null)
     {
         $this->options = $options;
 

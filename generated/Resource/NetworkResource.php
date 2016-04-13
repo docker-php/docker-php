@@ -93,20 +93,26 @@ class NetworkResource extends Resource
      * Create network.
      *
      * @param \Docker\API\Model\NetworkCreateConfig $networkConfig Network configuration
-     * @param array                                 $parameters    List of parameters
-     * @param string                                $fetch         Fetch mode (object or response)
+     * @param array                                 $parameters    {
+     *
+     *     @var string $Content-Type Content Type of input
+     * }
+     *
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\NetworkCreateResult
      */
     public function create(\Docker\API\Model\NetworkCreateConfig $networkConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/networks/create';
-        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body       = $this->serializer->serialize($networkConfig, 'json');
-        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $queryParam->setDefault('Content-Type', 'application/json');
+        $queryParam->setHeaderParameters(['Content-Type']);
+        $url      = '/networks/create';
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $this->serializer->serialize($networkConfig, 'json');
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\NetworkCreateResult', 'json');

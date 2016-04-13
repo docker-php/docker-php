@@ -103,6 +103,64 @@ class ContextBuilder
     }
 
     /**
+     * Add a ENV instruction to Dockerfile
+     *
+     * @param string $name Name of the environment variable
+     * @param string $value Value of the environment variable
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function env($name, $value)
+    {
+        $this->commands[] = ['type' => 'ENV', 'name' => $name, 'value' => $value];
+
+        return $this;
+    }
+
+    /**
+     * Add a COPY instruction to Dockerfile
+     *
+     * @param string $from Path of folder or file to copy
+     * @param string $to Path of destination
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function copy($from, $to)
+    {
+        $this->commands[] = ['type' => 'COPY', 'from' => $from, 'to' => $to];
+
+        return $this;
+    }
+
+    /**
+     * Add a WORKDIR instruction to Dockerfile
+     *
+     * @param string $workdir Working directory
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function workdir($workdir)
+    {
+        $this->commands[] = ['type' => 'WORKDIR', 'workdir' => $workdir];
+
+        return $this;
+    }
+
+    /**
+     * Add a EXPOSE instruction to Dockerfile
+     *
+     * @param int $port Port to expose
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function expose($port)
+    {
+        $this->commands[] = ['type' => 'EXPOSE', 'port' => $port];
+
+        return $this;
+    }
+
+    /**
      * Create context given the state of builder
      *
      * @return \Docker\Context\Context
@@ -147,6 +205,18 @@ class ContextBuilder
                     break;
                 case 'ADD':
                     $dockerfile[] = 'ADD '.$this->getFile($directory, $command['content']).' '.$command['path'];
+                    break;
+                case 'COPY':
+                    $dockerfile[] = 'COPY '.$command['from'].' '.$command['to'];
+                    break;
+                case 'ENV':
+                    $dockerfile[] = 'ENV '.$command['name'].' '.$command['value'];
+                    break;
+                case 'WORKDIR':
+                    $dockerfile[] = 'WORKDIR '.$command['workdir'];
+                    break;
+                case 'EXPOSE':
+                    $dockerfile[] = 'EXPOSE '.$command['port'];
                     break;
             }
         }

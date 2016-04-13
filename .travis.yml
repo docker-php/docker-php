@@ -18,6 +18,7 @@ php:
 env:
   global:
     - TEST_COMMAND="composer test"
+    - DOCKER_VERSION=1.10.3-0~trusty
 
 matrix:
   allow_failures:
@@ -31,6 +32,8 @@ matrix:
       env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true TEST_COMMAND="composer test-ci"
 
 before_install:
+  - sudo apt-cache madison docker-engine
+  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-engine=${DOCKER_VERSION}
   - travis_retry composer self-update
 
 install:

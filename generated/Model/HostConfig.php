@@ -5,11 +5,11 @@ namespace Docker\API\Model;
 class HostConfig
 {
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $binds;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $links;
     /**
@@ -45,23 +45,23 @@ class HostConfig
      */
     protected $blkioWeight;
     /**
-     * @var DeviceWeight[]
+     * @var DeviceWeight[]|null
      */
     protected $blkioWeightDevice;
     /**
-     * @var DeviceRate[]
+     * @var DeviceRate[]|null
      */
     protected $blkioDeviceReadBps;
     /**
-     * @var DeviceRate[]
+     * @var DeviceRate[]|null
      */
     protected $blkioDeviceReadIOps;
     /**
-     * @var DeviceRate[]
+     * @var DeviceRate[]|null
      */
     protected $blkioDeviceWriteBps;
     /**
-     * @var DeviceRate[]
+     * @var DeviceRate[]|null
      */
     protected $blkioDeviceWriteIOps;
     /**
@@ -89,27 +89,27 @@ class HostConfig
      */
     protected $readonlyRootfs;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $dns;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $dnsSearch;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $extraHosts;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $volumesFrom;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $capAdd;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $capDrop;
     /**
@@ -121,15 +121,15 @@ class HostConfig
      */
     protected $networkMode;
     /**
-     * @var Device[]
+     * @var Device[]|null
      */
     protected $devices;
     /**
-     * @var Ulimit[]
+     * @var Ulimit[]|null
      */
     protected $ulimits;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $securityOpt;
     /**
@@ -142,7 +142,7 @@ class HostConfig
     protected $cgroupParent;
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getBinds()
     {
@@ -150,11 +150,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $binds
+     * @param string[]|null $binds
      *
      * @return self
      */
-    public function setBinds(array $binds = null)
+    public function setBinds($binds = null)
     {
         $this->binds = $binds;
 
@@ -162,7 +162,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getLinks()
     {
@@ -170,11 +170,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $links
+     * @param string[]|null $links
      *
      * @return self
      */
-    public function setLinks(array $links = null)
+    public function setLinks($links = null)
     {
         $this->links = $links;
 
@@ -342,7 +342,7 @@ class HostConfig
     }
 
     /**
-     * @return DeviceWeight[]
+     * @return DeviceWeight[]|null
      */
     public function getBlkioWeightDevice()
     {
@@ -350,11 +350,11 @@ class HostConfig
     }
 
     /**
-     * @param DeviceWeight[] $blkioWeightDevice
+     * @param DeviceWeight[]|null $blkioWeightDevice
      *
      * @return self
      */
-    public function setBlkioWeightDevice(array $blkioWeightDevice = null)
+    public function setBlkioWeightDevice($blkioWeightDevice = null)
     {
         $this->blkioWeightDevice = $blkioWeightDevice;
 
@@ -362,7 +362,7 @@ class HostConfig
     }
 
     /**
-     * @return DeviceRate[]
+     * @return DeviceRate[]|null
      */
     public function getBlkioDeviceReadBps()
     {
@@ -370,11 +370,11 @@ class HostConfig
     }
 
     /**
-     * @param DeviceRate[] $blkioDeviceReadBps
+     * @param DeviceRate[]|null $blkioDeviceReadBps
      *
      * @return self
      */
-    public function setBlkioDeviceReadBps(array $blkioDeviceReadBps = null)
+    public function setBlkioDeviceReadBps($blkioDeviceReadBps = null)
     {
         $this->blkioDeviceReadBps = $blkioDeviceReadBps;
 
@@ -382,7 +382,7 @@ class HostConfig
     }
 
     /**
-     * @return DeviceRate[]
+     * @return DeviceRate[]|null
      */
     public function getBlkioDeviceReadIOps()
     {
@@ -390,11 +390,11 @@ class HostConfig
     }
 
     /**
-     * @param DeviceRate[] $blkioDeviceReadIOps
+     * @param DeviceRate[]|null $blkioDeviceReadIOps
      *
      * @return self
      */
-    public function setBlkioDeviceReadIOps(array $blkioDeviceReadIOps = null)
+    public function setBlkioDeviceReadIOps($blkioDeviceReadIOps = null)
     {
         $this->blkioDeviceReadIOps = $blkioDeviceReadIOps;
 
@@ -402,7 +402,7 @@ class HostConfig
     }
 
     /**
-     * @return DeviceRate[]
+     * @return DeviceRate[]|null
      */
     public function getBlkioDeviceWriteBps()
     {
@@ -410,11 +410,11 @@ class HostConfig
     }
 
     /**
-     * @param DeviceRate[] $blkioDeviceWriteBps
+     * @param DeviceRate[]|null $blkioDeviceWriteBps
      *
      * @return self
      */
-    public function setBlkioDeviceWriteBps(array $blkioDeviceWriteBps = null)
+    public function setBlkioDeviceWriteBps($blkioDeviceWriteBps = null)
     {
         $this->blkioDeviceWriteBps = $blkioDeviceWriteBps;
 
@@ -422,7 +422,7 @@ class HostConfig
     }
 
     /**
-     * @return DeviceRate[]
+     * @return DeviceRate[]|null
      */
     public function getBlkioDeviceWriteIOps()
     {
@@ -430,11 +430,11 @@ class HostConfig
     }
 
     /**
-     * @param DeviceRate[] $blkioDeviceWriteIOps
+     * @param DeviceRate[]|null $blkioDeviceWriteIOps
      *
      * @return self
      */
-    public function setBlkioDeviceWriteIOps(array $blkioDeviceWriteIOps = null)
+    public function setBlkioDeviceWriteIOps($blkioDeviceWriteIOps = null)
     {
         $this->blkioDeviceWriteIOps = $blkioDeviceWriteIOps;
 
@@ -562,7 +562,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getDns()
     {
@@ -570,11 +570,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $dns
+     * @param string[]|null $dns
      *
      * @return self
      */
-    public function setDns(array $dns = null)
+    public function setDns($dns = null)
     {
         $this->dns = $dns;
 
@@ -582,7 +582,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getDnsSearch()
     {
@@ -590,11 +590,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $dnsSearch
+     * @param string[]|null $dnsSearch
      *
      * @return self
      */
-    public function setDnsSearch(array $dnsSearch = null)
+    public function setDnsSearch($dnsSearch = null)
     {
         $this->dnsSearch = $dnsSearch;
 
@@ -602,7 +602,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getExtraHosts()
     {
@@ -610,11 +610,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $extraHosts
+     * @param string[]|null $extraHosts
      *
      * @return self
      */
-    public function setExtraHosts(array $extraHosts = null)
+    public function setExtraHosts($extraHosts = null)
     {
         $this->extraHosts = $extraHosts;
 
@@ -622,7 +622,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getVolumesFrom()
     {
@@ -630,11 +630,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $volumesFrom
+     * @param string[]|null $volumesFrom
      *
      * @return self
      */
-    public function setVolumesFrom(array $volumesFrom = null)
+    public function setVolumesFrom($volumesFrom = null)
     {
         $this->volumesFrom = $volumesFrom;
 
@@ -642,7 +642,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getCapAdd()
     {
@@ -650,11 +650,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $capAdd
+     * @param string[]|null $capAdd
      *
      * @return self
      */
-    public function setCapAdd(array $capAdd = null)
+    public function setCapAdd($capAdd = null)
     {
         $this->capAdd = $capAdd;
 
@@ -662,7 +662,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getCapDrop()
     {
@@ -670,11 +670,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $capDrop
+     * @param string[]|null $capDrop
      *
      * @return self
      */
-    public function setCapDrop(array $capDrop = null)
+    public function setCapDrop($capDrop = null)
     {
         $this->capDrop = $capDrop;
 
@@ -722,7 +722,7 @@ class HostConfig
     }
 
     /**
-     * @return Device[]
+     * @return Device[]|null
      */
     public function getDevices()
     {
@@ -730,11 +730,11 @@ class HostConfig
     }
 
     /**
-     * @param Device[] $devices
+     * @param Device[]|null $devices
      *
      * @return self
      */
-    public function setDevices(array $devices = null)
+    public function setDevices($devices = null)
     {
         $this->devices = $devices;
 
@@ -742,7 +742,7 @@ class HostConfig
     }
 
     /**
-     * @return Ulimit[]
+     * @return Ulimit[]|null
      */
     public function getUlimits()
     {
@@ -750,11 +750,11 @@ class HostConfig
     }
 
     /**
-     * @param Ulimit[] $ulimits
+     * @param Ulimit[]|null $ulimits
      *
      * @return self
      */
-    public function setUlimits(array $ulimits = null)
+    public function setUlimits($ulimits = null)
     {
         $this->ulimits = $ulimits;
 
@@ -762,7 +762,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getSecurityOpt()
     {
@@ -770,11 +770,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $securityOpt
+     * @param string[]|null $securityOpt
      *
      * @return self
      */
-    public function setSecurityOpt(array $securityOpt = null)
+    public function setSecurityOpt($securityOpt = null)
     {
         $this->securityOpt = $securityOpt;
 

@@ -79,18 +79,32 @@ class ImageNormalizer extends SerializerAwareNormalizer implements DenormalizerI
             $object->setGraphDriver($this->serializer->deserialize($data->{'GraphDriver'}, 'Docker\\API\\Model\\GraphDriver', 'raw', $context));
         }
         if (property_exists($data, 'RepoDigests')) {
-            $values = [];
-            foreach ($data->{'RepoDigests'} as $value) {
-                $values[] = $value;
+            $value = $data->{'RepoDigests'};
+            if (is_array($data->{'RepoDigests'})) {
+                $values = [];
+                foreach ($data->{'RepoDigests'} as $value_1) {
+                    $values[] = $value_1;
+                }
+                $value = $values;
             }
-            $object->setRepoDigests($values);
+            if (is_null($data->{'RepoDigests'})) {
+                $value = $data->{'RepoDigests'};
+            }
+            $object->setRepoDigests($value);
         }
         if (property_exists($data, 'RepoTags')) {
-            $values_1 = [];
-            foreach ($data->{'RepoTags'} as $value_1) {
-                $values_1[] = $value_1;
+            $value_2 = $data->{'RepoTags'};
+            if (is_array($data->{'RepoTags'})) {
+                $values_1 = [];
+                foreach ($data->{'RepoTags'} as $value_3) {
+                    $values_1[] = $value_3;
+                }
+                $value_2 = $values_1;
             }
-            $object->setRepoTags($values_1);
+            if (is_null($data->{'RepoTags'})) {
+                $value_2 = $data->{'RepoTags'};
+            }
+            $object->setRepoTags($value_2);
         }
         if (property_exists($data, 'Config')) {
             $object->setConfig($this->serializer->deserialize($data->{'Config'}, 'Docker\\API\\Model\\ContainerConfig', 'raw', $context));
@@ -141,20 +155,30 @@ class ImageNormalizer extends SerializerAwareNormalizer implements DenormalizerI
         if (null !== $object->getGraphDriver()) {
             $data->{'GraphDriver'} = $this->serializer->serialize($object->getGraphDriver(), 'raw', $context);
         }
-        if (null !== $object->getRepoDigests()) {
+        $value = $object->getRepoDigests();
+        if (is_array($object->getRepoDigests())) {
             $values = [];
-            foreach ($object->getRepoDigests() as $value) {
-                $values[] = $value;
+            foreach ($object->getRepoDigests() as $value_1) {
+                $values[] = $value_1;
             }
-            $data->{'RepoDigests'} = $values;
+            $value = $values;
         }
-        if (null !== $object->getRepoTags()) {
+        if (is_null($object->getRepoDigests())) {
+            $value = $object->getRepoDigests();
+        }
+        $data->{'RepoDigests'} = $value;
+        $value_2               = $object->getRepoTags();
+        if (is_array($object->getRepoTags())) {
             $values_1 = [];
-            foreach ($object->getRepoTags() as $value_1) {
-                $values_1[] = $value_1;
+            foreach ($object->getRepoTags() as $value_3) {
+                $values_1[] = $value_3;
             }
-            $data->{'RepoTags'} = $values_1;
+            $value_2 = $values_1;
         }
+        if (is_null($object->getRepoTags())) {
+            $value_2 = $object->getRepoTags();
+        }
+        $data->{'RepoTags'} = $value_2;
         if (null !== $object->getConfig()) {
             $data->{'Config'} = $this->serializer->serialize($object->getConfig(), 'raw', $context);
         }

@@ -101,6 +101,8 @@ class NetworkResource extends Resource
     public function create(\Docker\API\Model\NetworkCreateConfig $networkConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
+        $queryParam->setDefault('Content-Type', 'application/json');
+        $queryParam->setHeaderParameters(['Content-Type']);
         $url        = '/networks/create';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -164,3 +166,4 @@ class NetworkResource extends Resource
         return $response;
     }
 }
+

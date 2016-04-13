@@ -57,11 +57,18 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $object->setConfig($value);
         }
         if (property_exists($data, 'Options')) {
-            $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Options'} as $key => $value_2) {
-                $values_1[$key] = $value_2;
+            $value_2 = $data->{'Options'};
+            if (is_object($data->{'Options'})) {
+                $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                foreach ($data->{'Options'} as $key => $value_3) {
+                    $values_1[$key] = $value_3;
+                }
+                $value_2 = $values_1;
             }
-            $object->setOptions($values_1);
+            if (is_null($data->{'Options'})) {
+                $value_2 = $data->{'Options'};
+            }
+            $object->setOptions($value_2);
         }
 
         return $object;
@@ -85,13 +92,18 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $value = $object->getConfig();
         }
         $data->{'Config'} = $value;
-        if (null !== $object->getOptions()) {
+        $value_2          = $object->getOptions();
+        if (is_object($object->getOptions())) {
             $values_1 = new \stdClass();
-            foreach ($object->getOptions() as $key => $value_2) {
-                $values_1->{$key} = $value_2;
+            foreach ($object->getOptions() as $key => $value_3) {
+                $values_1->{$key} = $value_3;
             }
-            $data->{'Options'} = $values_1;
+            $value_2 = $values_1;
         }
+        if (is_null($object->getOptions())) {
+            $value_2 = $object->getOptions();
+        }
+        $data->{'Options'} = $value_2;
 
         return $data;
     }

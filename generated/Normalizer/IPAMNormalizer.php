@@ -47,11 +47,18 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             if (is_array($data->{'Config'})) {
                 $values = [];
                 foreach ($data->{'Config'} as $value_1) {
-                    $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-                    foreach ($value_1 as $key => $value_2) {
-                        $values_1[$key] = $value_2;
+                    $value_2 = $value_1;
+                    if (is_object($value_1)) {
+                        $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                        foreach ($value_1 as $key => $value_3) {
+                            $values_1[$key] = $value_3;
+                        }
+                        $value_2 = $values_1;
                     }
-                    $values[] = $values_1;
+                    if (is_null($value_1)) {
+                        $value_2 = $value_1;
+                    }
+                    $values[] = $value_2;
                 }
                 $value = $values;
             }
@@ -74,11 +81,18 @@ class IPAMNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
         if (is_array($object->getConfig())) {
             $values = [];
             foreach ($object->getConfig() as $value_1) {
-                $values_1 = new \stdClass();
-                foreach ($value_1 as $key => $value_2) {
-                    $values_1->{$key} = $value_2;
+                $value_2 = $value_1;
+                if (is_object($value_1)) {
+                    $values_1 = new \stdClass();
+                    foreach ($value_1 as $key => $value_3) {
+                        $values_1->{$key} = $value_3;
+                    }
+                    $value_2 = $values_1;
                 }
-                $values[] = $values_1;
+                if (is_null($value_1)) {
+                    $value_2 = $value_1;
+                }
+                $values[] = $value_2;
             }
             $value = $values;
         }

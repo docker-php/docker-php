@@ -1096,7 +1096,7 @@
         "Config": {
           "type": ["array", "null"],
           "items": {
-            "type": "object",
+            "type": ["object", "null"],
             "additionalProperties": {
               "type": "string"
             }
@@ -3308,8 +3308,16 @@
           "required": true,
           "schema": {
             "$ref": "#/definitions/NetworkCreateConfig"
+          }},
+          {
+            "name": "Content-Type",
+            "required": true,
+            "in": "header",
+            "type": "string",
+            "default": "application/json",
+            "description": "Content Type of input"
           }
-        }],
+        ],
         "tags": [
           "Network"
         ]
@@ -3389,3 +3397,4 @@
     }
   }
 }
+

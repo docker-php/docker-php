@@ -49,11 +49,18 @@ class ImageHistoryItemNormalizer extends SerializerAwareNormalizer implements De
             $object->setCreatedBy($data->{'CreatedBy'});
         }
         if (property_exists($data, 'Tags')) {
-            $values = [];
-            foreach ($data->{'Tags'} as $value) {
-                $values[] = $value;
+            $value = $data->{'Tags'};
+            if (is_array($data->{'Tags'})) {
+                $values = [];
+                foreach ($data->{'Tags'} as $value_1) {
+                    $values[] = $value_1;
+                }
+                $value = $values;
             }
-            $object->setTags($values);
+            if (is_null($data->{'Tags'})) {
+                $value = $data->{'Tags'};
+            }
+            $object->setTags($value);
         }
         if (property_exists($data, 'Size')) {
             $object->setSize($data->{'Size'});
@@ -77,13 +84,18 @@ class ImageHistoryItemNormalizer extends SerializerAwareNormalizer implements De
         if (null !== $object->getCreatedBy()) {
             $data->{'CreatedBy'} = $object->getCreatedBy();
         }
-        if (null !== $object->getTags()) {
+        $value = $object->getTags();
+        if (is_array($object->getTags())) {
             $values = [];
-            foreach ($object->getTags() as $value) {
-                $values[] = $value;
+            foreach ($object->getTags() as $value_1) {
+                $values[] = $value_1;
             }
-            $data->{'Tags'} = $values;
+            $value = $values;
         }
+        if (is_null($object->getTags())) {
+            $value = $object->getTags();
+        }
+        $data->{'Tags'} = $value;
         if (null !== $object->getSize()) {
             $data->{'Size'} = $object->getSize();
         }

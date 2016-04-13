@@ -40,11 +40,18 @@ class RegistryNormalizer extends SerializerAwareNormalizer implements Denormaliz
             $context['rootSchema'] = $object;
         }
         if (property_exists($data, 'Mirrors')) {
-            $values = [];
-            foreach ($data->{'Mirrors'} as $value) {
-                $values[] = $value;
+            $value = $data->{'Mirrors'};
+            if (is_array($data->{'Mirrors'})) {
+                $values = [];
+                foreach ($data->{'Mirrors'} as $value_1) {
+                    $values[] = $value_1;
+                }
+                $value = $values;
             }
-            $object->setMirrors($values);
+            if (is_null($data->{'Mirrors'})) {
+                $value = $data->{'Mirrors'};
+            }
+            $object->setMirrors($value);
         }
         if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
@@ -61,14 +68,19 @@ class RegistryNormalizer extends SerializerAwareNormalizer implements Denormaliz
 
     public function normalize($object, $format = null, array $context = [])
     {
-        $data = new \stdClass();
-        if (null !== $object->getMirrors()) {
+        $data  = new \stdClass();
+        $value = $object->getMirrors();
+        if (is_array($object->getMirrors())) {
             $values = [];
-            foreach ($object->getMirrors() as $value) {
-                $values[] = $value;
+            foreach ($object->getMirrors() as $value_1) {
+                $values[] = $value_1;
             }
-            $data->{'Mirrors'} = $values;
+            $value = $values;
         }
+        if (is_null($object->getMirrors())) {
+            $value = $object->getMirrors();
+        }
+        $data->{'Mirrors'} = $value;
         if (null !== $object->getName()) {
             $data->{'Name'} = $object->getName();
         }

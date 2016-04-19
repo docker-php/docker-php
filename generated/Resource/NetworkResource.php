@@ -127,21 +127,27 @@ class NetworkResource extends Resource
      *
      * @param string                             $id         Network id or name
      * @param \Docker\API\Model\ContainerConnect $container  Container
-     * @param array                              $parameters List of parameters
-     * @param string                             $fetch      Fetch mode (object or response)
+     * @param array                              $parameters {
+     *
+     *     @var string $Content-Type Content Type of input
+     * }
+     *
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function connect($id, \Docker\API\Model\ContainerConnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/networks/{id}/connect';
-        $url        = str_replace('{id}', urlencode($id), $url);
-        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body       = $this->serializer->serialize($container, 'json');
-        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $queryParam->setDefault('Content-Type', 'application/json');
+        $queryParam->setHeaderParameters(['Content-Type']);
+        $url      = '/networks/{id}/connect';
+        $url      = str_replace('{id}', urlencode($id), $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $this->serializer->serialize($container, 'json');
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $response = $this->httpClient->sendRequest($request);
 
         return $response;
     }
@@ -151,21 +157,27 @@ class NetworkResource extends Resource
      *
      * @param string                                $id         Network id or name
      * @param \Docker\API\Model\ContainerDisconnect $container  Container
-     * @param array                                 $parameters List of parameters
-     * @param string                                $fetch      Fetch mode (object or response)
+     * @param array                                 $parameters {
+     *
+     *     @var string $Content-Type Content Type of input
+     * }
+     *
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function disconnect($id, \Docker\API\Model\ContainerDisconnect $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/networks/{id}/disconnect';
-        $url        = str_replace('{id}', urlencode($id), $url);
-        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body       = $this->serializer->serialize($container, 'json');
-        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $queryParam->setDefault('Content-Type', 'application/json');
+        $queryParam->setHeaderParameters(['Content-Type']);
+        $url      = '/networks/{id}/disconnect';
+        $url      = str_replace('{id}', urlencode($id), $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $this->serializer->serialize($container, 'json');
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $response = $this->httpClient->sendRequest($request);
 
         return $response;
     }

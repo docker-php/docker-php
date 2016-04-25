@@ -43,11 +43,18 @@ class LogConfigNormalizer extends SerializerAwareNormalizer implements Denormali
             $object->setType($data->{'Type'});
         }
         if (property_exists($data, 'Config')) {
-            $values = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Config'} as $key => $value) {
-                $values[$key] = $value;
+            $value = $data->{'Config'};
+            if (is_object($data->{'Config'})) {
+                $values = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                foreach ($data->{'Config'} as $key => $value_1) {
+                    $values[$key] = $value_1;
+                }
+                $value = $values;
             }
-            $object->setConfig($values);
+            if (is_null($data->{'Config'})) {
+                $value = $data->{'Config'};
+            }
+            $object->setConfig($value);
         }
 
         return $object;
@@ -59,13 +66,18 @@ class LogConfigNormalizer extends SerializerAwareNormalizer implements Denormali
         if (null !== $object->getType()) {
             $data->{'Type'} = $object->getType();
         }
-        if (null !== $object->getConfig()) {
+        $value = $object->getConfig();
+        if (is_object($object->getConfig())) {
             $values = new \stdClass();
-            foreach ($object->getConfig() as $key => $value) {
-                $values->{$key} = $value;
+            foreach ($object->getConfig() as $key => $value_1) {
+                $values->{$key} = $value_1;
             }
-            $data->{'Config'} = $values;
+            $value = $values;
         }
+        if (is_null($object->getConfig())) {
+            $value = $object->getConfig();
+        }
+        $data->{'Config'} = $value;
 
         return $data;
     }

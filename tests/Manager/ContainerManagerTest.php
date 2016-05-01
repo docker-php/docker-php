@@ -5,6 +5,7 @@ namespace Docker\Tests\Manager;
 use Docker\API\Model\ContainerConfig;
 use Docker\Manager\ContainerManager;
 use Docker\Tests\TestCase;
+use Http\Client\Plugin\Exception\ClientErrorException;
 
 class ContainerManagerTest extends TestCase
 {
@@ -97,5 +98,27 @@ class ContainerManagerTest extends TestCase
 
         // Exit the container
         $webSocketStream->write("exit\n");
+    }
+
+    public function testLogs()
+    {
+        $containerConfig = new ContainerConfig();
+        $containerConfig->setImage('busybox:latest');
+        $containerConfig->setCmd(['echo', '-n', 'output']);
+        $containerConfig->setAttachStdout(true);
+        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
+
+        $containerCreateResult = $this->getManager()->create($containerConfig);
+
+        $this->getManager()->start($containerCreateResult->getId());
+        $this->getManager()->wait($containerCreateResult->getId());
+
+        $logs = $this->getManager()->logs($containerCreateResult->getId(), [
+            'stdout' => true,
+            'stderr' => true,
+        ]);
+
+
+        $this->assertContains("output", $logs['stdout'][0]);
     }
 }

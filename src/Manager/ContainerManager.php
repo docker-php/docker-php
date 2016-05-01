@@ -4,6 +4,7 @@ namespace Docker\Manager;
 
 use Docker\API\Resource\ContainerResource;
 use Docker\Stream\AttachWebsocketStream;
+use Docker\Stream\DockerRawStaticStream;
 use Docker\Stream\DockerRawStream;
 use Joli\Jane\OpenApi\Client\QueryParam;
 
@@ -64,6 +65,43 @@ class ContainerManager extends ContainerResource
         if ($response->getStatusCode() == 101) {
             if ($fetch == self::FETCH_STREAM) {
                 return new AttachWebsocketStream($response->getBody());
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return \Psr\Http\Message\ResponseInterface|DockerRawStream|string[][]
+     */
+    public function logs($id, $parameters = [], $fetch = self::FETCH_OBJECT) {
+        $response = parent::logs($id, $parameters, $fetch);
+
+        if ($response->getStatusCode() == 200) {
+            if ($fetch == self::FETCH_STREAM) {
+                return new DockerRawStream($response->getBody());
+            }
+
+            if ($fetch == self::FETCH_OBJECT) {
+                $dockerRawStream = new DockerRawStream($response->getBody());
+
+                $logs = [
+                    'stdout' => [],
+                    'stderr' => []
+                ];
+
+                $dockerRawStream->onStdout(function ($logLine) use (&$logs) {
+                    $logs['stdout'][] = $logLine;
+                });
+                $dockerRawStream->onStderr(function ($logLine) use (&$logs) {
+                    $logs['stderr'][] = $logLine;
+                });
+
+                $dockerRawStream->wait();
+
+                return $logs;
             }
         }
 

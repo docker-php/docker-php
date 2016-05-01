@@ -88,7 +88,7 @@
           "type": "string"
         },
         "Config": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "string"
           }
@@ -228,9 +228,12 @@
           "type": "boolean"
         },
         "PortBindings": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
-            "$ref": "#/definitions/PortBinding"
+            "type": ["array", "null"],
+            "items": {
+              "$ref": "#/definitions/PortBinding"
+            }
           }
         },
         "PublishAllPorts": {
@@ -3614,6 +3617,13 @@
           "schema": {
             "$ref": "#/definitions/ContainerConnect"
           }
+        }, {
+          "name": "Content-Type",
+          "required": true,
+          "in": "header",
+          "type": "string",
+          "default": "application/json",
+          "description": "Content Type of input"
         }],
         "tags": [
           "Network"
@@ -3650,6 +3660,13 @@
           "schema": {
             "$ref": "#/definitions/ContainerDisconnect"
           }
+        }, {
+          "name": "Content-Type",
+          "required": true,
+          "in": "header",
+          "type": "string",
+          "default": "application/json",
+          "description": "Content Type of input"
         }],
         "tags": [
           "Network"

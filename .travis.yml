@@ -18,7 +18,7 @@ php:
 env:
   global:
     - TEST_COMMAND="composer test"
-    - DOCKER_VERSION=1.10.3-0~trusty
+    - DOCKER_VERSION=1.11.1-0~trusty
 
 matrix:
   allow_failures:

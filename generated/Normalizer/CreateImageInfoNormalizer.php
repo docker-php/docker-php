@@ -39,6 +39,9 @@ class CreateImageInfoNormalizer extends SerializerAwareNormalizer implements Den
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
+        if (property_exists($data, 'id')) {
+            $object->setId($data->{'id'});
+        }
         if (property_exists($data, 'error')) {
             $object->setError($data->{'error'});
         }
@@ -58,6 +61,9 @@ class CreateImageInfoNormalizer extends SerializerAwareNormalizer implements Den
     public function normalize($object, $format = null, array $context = [])
     {
         $data = new \stdClass();
+        if (null !== $object->getId()) {
+            $data->{'id'} = $object->getId();
+        }
         if (null !== $object->getError()) {
             $data->{'error'} = $object->getError();
         }

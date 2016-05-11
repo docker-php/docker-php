@@ -1374,6 +1374,9 @@
     "CreateImageInfo": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
         "error": {
           "type": "string"
         },
@@ -1423,6 +1426,12 @@
           "type": "integer"
         },
         "message": {
+          "type": "integer"
+        },
+        "current": {
+          "type": "integer"
+        },
+        "total": {
           "type": "integer"
         }
       }

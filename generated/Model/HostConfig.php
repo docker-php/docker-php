@@ -73,6 +73,14 @@ class HostConfig
      */
     protected $oomKillDisable;
     /**
+     * @var int
+     */
+    protected $oomScoreAdj;
+    /**
+     * @var int
+     */
+    protected $pidsLimit;
+    /**
      * @var PortBinding[][]|null[]|null
      */
     protected $portBindings;
@@ -95,6 +103,10 @@ class HostConfig
     /**
      * @var string[]|null
      */
+    protected $dnsOptions;
+    /**
+     * @var string[]|null
+     */
     protected $dnsSearch;
     /**
      * @var string[]|null
@@ -112,6 +124,10 @@ class HostConfig
      * @var string[]|null
      */
     protected $capDrop;
+    /**
+     * @var string[]|null
+     */
+    protected $groupAdd;
     /**
      * @var RestartPolicy
      */
@@ -140,6 +156,14 @@ class HostConfig
      * @var string
      */
     protected $cgroupParent;
+    /**
+     * @var string
+     */
+    protected $volumeDriver;
+    /**
+     * @var int
+     */
+    protected $shmSize;
 
     /**
      * @return string[]|null
@@ -482,6 +506,46 @@ class HostConfig
     }
 
     /**
+     * @return int
+     */
+    public function getOomScoreAdj()
+    {
+        return $this->oomScoreAdj;
+    }
+
+    /**
+     * @param int $oomScoreAdj
+     *
+     * @return self
+     */
+    public function setOomScoreAdj($oomScoreAdj = null)
+    {
+        $this->oomScoreAdj = $oomScoreAdj;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPidsLimit()
+    {
+        return $this->pidsLimit;
+    }
+
+    /**
+     * @param int $pidsLimit
+     *
+     * @return self
+     */
+    public function setPidsLimit($pidsLimit = null)
+    {
+        $this->pidsLimit = $pidsLimit;
+
+        return $this;
+    }
+
+    /**
      * @return PortBinding[][]|null[]|null
      */
     public function getPortBindings()
@@ -584,6 +648,26 @@ class HostConfig
     /**
      * @return string[]|null
      */
+    public function getDnsOptions()
+    {
+        return $this->dnsOptions;
+    }
+
+    /**
+     * @param string[]|null $dnsOptions
+     *
+     * @return self
+     */
+    public function setDnsOptions($dnsOptions = null)
+    {
+        $this->dnsOptions = $dnsOptions;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
     public function getDnsSearch()
     {
         return $this->dnsSearch;
@@ -677,6 +761,26 @@ class HostConfig
     public function setCapDrop($capDrop = null)
     {
         $this->capDrop = $capDrop;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getGroupAdd()
+    {
+        return $this->groupAdd;
+    }
+
+    /**
+     * @param string[]|null $groupAdd
+     *
+     * @return self
+     */
+    public function setGroupAdd($groupAdd = null)
+    {
+        $this->groupAdd = $groupAdd;
 
         return $this;
     }
@@ -817,6 +921,46 @@ class HostConfig
     public function setCgroupParent($cgroupParent = null)
     {
         $this->cgroupParent = $cgroupParent;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVolumeDriver()
+    {
+        return $this->volumeDriver;
+    }
+
+    /**
+     * @param string $volumeDriver
+     *
+     * @return self
+     */
+    public function setVolumeDriver($volumeDriver = null)
+    {
+        $this->volumeDriver = $volumeDriver;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getShmSize()
+    {
+        return $this->shmSize;
+    }
+
+    /**
+     * @param int $shmSize
+     *
+     * @return self
+     */
+    public function setShmSize($shmSize = null)
+    {
+        $this->shmSize = $shmSize;
 
         return $this;
     }

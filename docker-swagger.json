@@ -236,6 +236,12 @@
         "OomKillDisable": {
           "type": "boolean"
         },
+        "OomScoreAdj": {
+          "type": "integer"
+        },
+        "PidsLimit": {
+          "type": "integer"
+        },
         "PortBindings": {
           "type": ["object", "null"],
           "additionalProperties": {
@@ -255,6 +261,12 @@
           "type": "boolean"
         },
         "Dns": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "DnsOptions": {
           "type": ["array", "null"],
           "items": {
             "type": "string"
@@ -290,6 +302,12 @@
             "type": "string"
           }
         },
+        "GroupAdd": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
         "RestartPolicy": {
           "$ref": "#/definitions/RestartPolicy"
         },
@@ -319,6 +337,12 @@
         },
         "CgroupParent": {
           "type": "string"
+        },
+        "VolumeDriver": {
+          "type": "string"
+        },
+        "ShmSize": {
+          "type": "integer"
         }
       }
     },

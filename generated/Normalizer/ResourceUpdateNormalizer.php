@@ -69,6 +69,9 @@ class ResourceUpdateNormalizer extends SerializerAwareNormalizer implements Deno
         if (property_exists($data, 'KernelMemory')) {
             $object->setKernelMemory($data->{'KernelMemory'});
         }
+        if (property_exists($data, 'RestartPolicy')) {
+            $object->setRestartPolicy($this->serializer->deserialize($data->{'RestartPolicy'}, 'Docker\\API\\Model\\RestartPolicy', 'raw', $context));
+        }
 
         return $object;
     }
@@ -105,6 +108,9 @@ class ResourceUpdateNormalizer extends SerializerAwareNormalizer implements Deno
         }
         if (null !== $object->getKernelMemory()) {
             $data->{'KernelMemory'} = $object->getKernelMemory();
+        }
+        if (null !== $object->getRestartPolicy()) {
+            $data->{'RestartPolicy'} = $this->serializer->serialize($object->getRestartPolicy(), 'raw', $context);
         }
 
         return $data;

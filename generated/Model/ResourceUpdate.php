@@ -44,6 +44,10 @@ class ResourceUpdate
      * @var int
      */
     protected $kernelMemory;
+    /**
+     * @var RestartPolicy
+     */
+    protected $restartPolicy;
 
     /**
      * @return int
@@ -241,6 +245,26 @@ class ResourceUpdate
     public function setKernelMemory($kernelMemory = null)
     {
         $this->kernelMemory = $kernelMemory;
+
+        return $this;
+    }
+
+    /**
+     * @return RestartPolicy
+     */
+    public function getRestartPolicy()
+    {
+        return $this->restartPolicy;
+    }
+
+    /**
+     * @param RestartPolicy $restartPolicy
+     *
+     * @return self
+     */
+    public function setRestartPolicy(RestartPolicy $restartPolicy = null)
+    {
+        $this->restartPolicy = $restartPolicy;
 
         return $this;
     }

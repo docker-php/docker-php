@@ -1497,6 +1497,9 @@
         },
         "KernelMemory": {
           "type": "integer"
+        },
+        "RestartPolicy": {
+          "$ref": "#/definitions/RestartPolicy"
         }
       }
     },

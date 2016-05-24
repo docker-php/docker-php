@@ -7,6 +7,10 @@ class Mount
     /**
      * @var string
      */
+    protected $name;
+    /**
+     * @var string
+     */
     protected $source;
     /**
      * @var string
@@ -15,11 +19,39 @@ class Mount
     /**
      * @var string
      */
+    protected $driver;
+    /**
+     * @var string
+     */
     protected $mode;
     /**
      * @var bool
      */
     protected $rW;
+    /**
+     * @var string
+     */
+    protected $propagation;
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return self
+     */
+    public function setName($name = null)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
 
     /**
      * @return string
@@ -64,6 +96,26 @@ class Mount
     /**
      * @return string
      */
+    public function getDriver()
+    {
+        return $this->driver;
+    }
+
+    /**
+     * @param string $driver
+     *
+     * @return self
+     */
+    public function setDriver($driver = null)
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getMode()
     {
         return $this->mode;
@@ -97,6 +149,26 @@ class Mount
     public function setRW($rW = null)
     {
         $this->rW = $rW;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPropagation()
+    {
+        return $this->propagation;
+    }
+
+    /**
+     * @param string $propagation
+     *
+     * @return self
+     */
+    public function setPropagation($propagation = null)
+    {
+        $this->propagation = $propagation;
 
         return $this;
     }

@@ -64,13 +64,19 @@
         }
       }
     },
-    "mount": {
+    "Mount": {
       "type": "object",
       "properties": {
+        "Name": {
+          "type": "string"
+        },
         "Source": {
           "type": "string"
         },
         "Destination": {
+          "type": "string"
+        },
+        "Driver": {
           "type": "string"
         },
         "Mode": {
@@ -78,6 +84,9 @@
         },
         "RW": {
           "type": "boolean"
+        },
+        "Propagation": {
+          "type": "string"
         }
       }
     },
@@ -359,6 +368,9 @@
         "Created": {
           "type": "integer"
         },
+        "State": {
+          "type": "string"
+        },
         "Status": {
           "type": "string"
         },
@@ -434,7 +446,7 @@
         "Mounts": {
           "type": ["array", "null"],
           "items": {
-            "$ref": "#/definitions/mount"
+            "$ref": "#/definitions/Mount"
           }
         },
         "WorkingDir": {
@@ -636,7 +648,7 @@
         "Mounts": {
           "type": ["array", "null"],
           "items": {
-            "$ref": "#/definitions/mount"
+            "$ref": "#/definitions/Mount"
           }
         }
       }

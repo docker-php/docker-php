@@ -31,6 +31,10 @@ class ContainerConfig
     /**
      * @var string
      */
+    protected $state;
+    /**
+     * @var string
+     */
     protected $status;
     /**
      * @var Port[]|null
@@ -241,6 +245,26 @@ class ContainerConfig
     public function setCreated($created = null)
     {
         $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     *
+     * @return self
+     */
+    public function setState($state = null)
+    {
+        $this->state = $state;
 
         return $this;
     }

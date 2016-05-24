@@ -39,17 +39,26 @@ class MountNormalizer extends SerializerAwareNormalizer implements DenormalizerI
         if (!isset($context['rootSchema'])) {
             $context['rootSchema'] = $object;
         }
+        if (property_exists($data, 'Name')) {
+            $object->setName($data->{'Name'});
+        }
         if (property_exists($data, 'Source')) {
             $object->setSource($data->{'Source'});
         }
         if (property_exists($data, 'Destination')) {
             $object->setDestination($data->{'Destination'});
         }
+        if (property_exists($data, 'Driver')) {
+            $object->setDriver($data->{'Driver'});
+        }
         if (property_exists($data, 'Mode')) {
             $object->setMode($data->{'Mode'});
         }
         if (property_exists($data, 'RW')) {
             $object->setRW($data->{'RW'});
+        }
+        if (property_exists($data, 'Propagation')) {
+            $object->setPropagation($data->{'Propagation'});
         }
 
         return $object;
@@ -58,17 +67,26 @@ class MountNormalizer extends SerializerAwareNormalizer implements DenormalizerI
     public function normalize($object, $format = null, array $context = [])
     {
         $data = new \stdClass();
+        if (null !== $object->getName()) {
+            $data->{'Name'} = $object->getName();
+        }
         if (null !== $object->getSource()) {
             $data->{'Source'} = $object->getSource();
         }
         if (null !== $object->getDestination()) {
             $data->{'Destination'} = $object->getDestination();
         }
+        if (null !== $object->getDriver()) {
+            $data->{'Driver'} = $object->getDriver();
+        }
         if (null !== $object->getMode()) {
             $data->{'Mode'} = $object->getMode();
         }
         if (null !== $object->getRW()) {
             $data->{'RW'} = $object->getRW();
+        }
+        if (null !== $object->getPropagation()) {
+            $data->{'Propagation'} = $object->getPropagation();
         }
 
         return $data;

@@ -68,6 +68,9 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
         if (property_exists($data, 'Created')) {
             $object->setCreated($data->{'Created'});
         }
+        if (property_exists($data, 'State')) {
+            $object->setState($data->{'State'});
+        }
         if (property_exists($data, 'Status')) {
             $object->setStatus($data->{'Status'});
         }
@@ -236,6 +239,9 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
         }
         if (null !== $object->getCreated()) {
             $data->{'Created'} = $object->getCreated();
+        }
+        if (null !== $object->getState()) {
+            $data->{'State'} = $object->getState();
         }
         if (null !== $object->getStatus()) {
             $data->{'Status'} = $object->getStatus();

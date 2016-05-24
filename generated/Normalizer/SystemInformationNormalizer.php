@@ -42,6 +42,12 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         if (property_exists($data, 'Architecture')) {
             $object->setArchitecture($data->{'Architecture'});
         }
+        if (property_exists($data, 'ClusterStore')) {
+            $object->setClusterStore($data->{'ClusterStore'});
+        }
+        if (property_exists($data, 'CgroupDriver')) {
+            $object->setCgroupDriver($data->{'CgroupDriver'});
+        }
         if (property_exists($data, 'Containers')) {
             $object->setContainers($data->{'Containers'});
         }
@@ -152,6 +158,9 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         if (property_exists($data, 'InitSha1')) {
             $object->setInitSha1($data->{'InitSha1'});
         }
+        if (property_exists($data, 'KernelMemory')) {
+            $object->setKernelMemory($data->{'KernelMemory'});
+        }
         if (property_exists($data, 'KernelVersion')) {
             $object->setKernelVersion($data->{'KernelVersion'});
         }
@@ -223,6 +232,12 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         $data = new \stdClass();
         if (null !== $object->getArchitecture()) {
             $data->{'Architecture'} = $object->getArchitecture();
+        }
+        if (null !== $object->getClusterStore()) {
+            $data->{'ClusterStore'} = $object->getClusterStore();
+        }
+        if (null !== $object->getCgroupDriver()) {
+            $data->{'CgroupDriver'} = $object->getCgroupDriver();
         }
         if (null !== $object->getContainers()) {
             $data->{'Containers'} = $object->getContainers();
@@ -329,6 +344,9 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         }
         if (null !== $object->getInitSha1()) {
             $data->{'InitSha1'} = $object->getInitSha1();
+        }
+        if (null !== $object->getKernelMemory()) {
+            $data->{'KernelMemory'} = $object->getKernelMemory();
         }
         if (null !== $object->getKernelVersion()) {
             $data->{'KernelVersion'} = $object->getKernelVersion();

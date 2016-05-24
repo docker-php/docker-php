@@ -872,6 +872,12 @@
         "Architecture": {
           "type": "string"
         },
+        "ClusterStore": {
+          "type": "string"
+        },
+        "CgroupDriver": {
+          "type": "string"
+        },
         "Containers": {
           "type": "integer"
         },
@@ -949,6 +955,9 @@
         },
         "InitSha1": {
           "type": "string"
+        },
+        "KernelMemory": {
+          "type": "boolean"
         },
         "KernelVersion": {
           "type": "string"

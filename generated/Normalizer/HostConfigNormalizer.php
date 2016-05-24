@@ -326,6 +326,9 @@ class HostConfigNormalizer extends SerializerAwareNormalizer implements Denormal
         if (property_exists($data, 'RestartPolicy')) {
             $object->setRestartPolicy($this->serializer->deserialize($data->{'RestartPolicy'}, 'Docker\\API\\Model\\RestartPolicy', 'raw', $context));
         }
+        if (property_exists($data, 'UsernsMode')) {
+            $object->setUsernsMode($data->{'UsernsMode'});
+        }
         if (property_exists($data, 'NetworkMode')) {
             $object->setNetworkMode($data->{'NetworkMode'});
         }
@@ -644,6 +647,9 @@ class HostConfigNormalizer extends SerializerAwareNormalizer implements Denormal
         $data->{'GroupAdd'} = $value_33;
         if (null !== $object->getRestartPolicy()) {
             $data->{'RestartPolicy'} = $this->serializer->serialize($object->getRestartPolicy(), 'raw', $context);
+        }
+        if (null !== $object->getUsernsMode()) {
+            $data->{'UsernsMode'} = $object->getUsernsMode();
         }
         if (null !== $object->getNetworkMode()) {
             $data->{'NetworkMode'} = $object->getNetworkMode();

@@ -311,6 +311,9 @@
         "RestartPolicy": {
           "$ref": "#/definitions/RestartPolicy"
         },
+        "UsernsMode": {
+          "type": "string"
+        },
         "NetworkMode": {
           "type": "string"
         },

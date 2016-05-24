@@ -135,6 +135,10 @@ class HostConfig
     /**
      * @var string
      */
+    protected $usernsMode;
+    /**
+     * @var string
+     */
     protected $networkMode;
     /**
      * @var Device[]|null
@@ -801,6 +805,26 @@ class HostConfig
     public function setRestartPolicy(RestartPolicy $restartPolicy = null)
     {
         $this->restartPolicy = $restartPolicy;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsernsMode()
+    {
+        return $this->usernsMode;
+    }
+
+    /**
+     * @param string $usernsMode
+     *
+     * @return self
+     */
+    public function setUsernsMode($usernsMode = null)
+    {
+        $this->usernsMode = $usernsMode;
 
         return $this;
     }

@@ -51,8 +51,14 @@ class NetworkNormalizer extends SerializerAwareNormalizer implements Denormalize
         if (property_exists($data, 'Driver')) {
             $object->setDriver($data->{'Driver'});
         }
+        if (property_exists($data, 'EnableIPv6')) {
+            $object->setEnableIPv6($data->{'EnableIPv6'});
+        }
         if (property_exists($data, 'IPAM')) {
             $object->setIPAM($this->serializer->deserialize($data->{'IPAM'}, 'Docker\\API\\Model\\IPAM', 'raw', $context));
+        }
+        if (property_exists($data, 'Internal')) {
+            $object->setInternal($data->{'Internal'});
         }
         if (property_exists($data, 'Containers')) {
             $values = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
@@ -87,8 +93,14 @@ class NetworkNormalizer extends SerializerAwareNormalizer implements Denormalize
         if (null !== $object->getDriver()) {
             $data->{'Driver'} = $object->getDriver();
         }
+        if (null !== $object->getEnableIPv6()) {
+            $data->{'EnableIPv6'} = $object->getEnableIPv6();
+        }
         if (null !== $object->getIPAM()) {
             $data->{'IPAM'} = $this->serializer->serialize($object->getIPAM(), 'raw', $context);
+        }
+        if (null !== $object->getInternal()) {
+            $data->{'Internal'} = $object->getInternal();
         }
         if (null !== $object->getContainers()) {
             $values = new \stdClass();

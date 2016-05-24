@@ -1208,8 +1208,14 @@
         "Driver": {
           "type": "string"
         },
+        "EnableIPv6": {
+          "type": "boolean"
+        },
         "IPAM": {
           "$ref": "#/definitions/IPAM"
+        },
+        "Internal": {
+          "type": "boolean"
         },
         "Containers": {
           "type": "object",

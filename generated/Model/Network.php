@@ -21,9 +21,17 @@ class Network
      */
     protected $driver;
     /**
+     * @var bool
+     */
+    protected $enableIPv6;
+    /**
      * @var IPAM
      */
     protected $iPAM;
+    /**
+     * @var bool
+     */
+    protected $internal;
     /**
      * @var NetworkContainer[]
      */
@@ -114,6 +122,26 @@ class Network
     }
 
     /**
+     * @return bool
+     */
+    public function getEnableIPv6()
+    {
+        return $this->enableIPv6;
+    }
+
+    /**
+     * @param bool $enableIPv6
+     *
+     * @return self
+     */
+    public function setEnableIPv6($enableIPv6 = null)
+    {
+        $this->enableIPv6 = $enableIPv6;
+
+        return $this;
+    }
+
+    /**
      * @return IPAM
      */
     public function getIPAM()
@@ -129,6 +157,26 @@ class Network
     public function setIPAM(IPAM $iPAM = null)
     {
         $this->iPAM = $iPAM;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInternal()
+    {
+        return $this->internal;
+    }
+
+    /**
+     * @param bool $internal
+     *
+     * @return self
+     */
+    public function setInternal($internal = null)
+    {
+        $this->internal = $internal;
 
         return $this;
     }

@@ -1567,6 +1567,17 @@
           }
         }
       }
+    },
+    "AuthResult": {
+      "type": "object",
+      "properties": {
+        "Status": {
+          "type": "string"
+        },
+        "IdentityToken": {
+          "type": "string"
+        }
+      }
     }
   },
   "paths": {
@@ -2984,7 +2995,10 @@
         "operationId": "checkAuthentication",
         "responses": {
           "200": {
-            "description": "No error"
+            "description": "No error",
+            "schema": {
+              "$ref": "#/definitions/AuthResult"
+            }
           },
           "204": {
             "description": "No error"

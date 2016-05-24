@@ -67,6 +67,7 @@ class NormalizerFactory
         $normalizers[] = new EventNormalizer();
         $normalizers[] = new ResourceUpdateNormalizer();
         $normalizers[] = new ContainerUpdateResultNormalizer();
+        $normalizers[] = new AuthResultNormalizer();
 
         return $normalizers;
     }

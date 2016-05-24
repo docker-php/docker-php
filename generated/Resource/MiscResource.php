@@ -14,7 +14,7 @@ class MiscResource extends Resource
      * @param array                        $parameters List of parameters
      * @param string                       $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\AuthResult
      */
     public function checkAuthentication(\Docker\API\Model\AuthConfig $authConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -25,6 +25,11 @@ class MiscResource extends Resource
         $body       = $this->serializer->serialize($authConfig, 'json');
         $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response   = $this->httpClient->sendRequest($request);
+        if (self::FETCH_OBJECT == $fetch) {
+            if ('200' == $response->getStatusCode()) {
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\AuthResult', 'json');
+            }
+        }
 
         return $response;
     }

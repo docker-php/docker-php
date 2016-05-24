@@ -42,14 +42,34 @@ class NetworkCreateConfigNormalizer extends SerializerAwareNormalizer implements
         if (property_exists($data, 'Name')) {
             $object->setName($data->{'Name'});
         }
+        if (property_exists($data, 'CheckDuplicate')) {
+            $object->setCheckDuplicate($data->{'CheckDuplicate'});
+        }
         if (property_exists($data, 'Driver')) {
             $object->setDriver($data->{'Driver'});
+        }
+        if (property_exists($data, 'EnableIPv6')) {
+            $object->setEnableIPv6($data->{'EnableIPv6'});
         }
         if (property_exists($data, 'IPAM')) {
             $object->setIPAM($this->serializer->deserialize($data->{'IPAM'}, 'Docker\\API\\Model\\IPAM', 'raw', $context));
         }
         if (property_exists($data, 'Internal')) {
             $object->setInternal($data->{'Internal'});
+        }
+        if (property_exists($data, 'Options')) {
+            $values = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Options'} as $key => $value) {
+                $values[$key] = $value;
+            }
+            $object->setOptions($values);
+        }
+        if (property_exists($data, 'Labels')) {
+            $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+            foreach ($data->{'Labels'} as $key_1 => $value_1) {
+                $values_1[$key_1] = $value_1;
+            }
+            $object->setLabels($values_1);
         }
 
         return $object;
@@ -61,14 +81,34 @@ class NetworkCreateConfigNormalizer extends SerializerAwareNormalizer implements
         if (null !== $object->getName()) {
             $data->{'Name'} = $object->getName();
         }
+        if (null !== $object->getCheckDuplicate()) {
+            $data->{'CheckDuplicate'} = $object->getCheckDuplicate();
+        }
         if (null !== $object->getDriver()) {
             $data->{'Driver'} = $object->getDriver();
+        }
+        if (null !== $object->getEnableIPv6()) {
+            $data->{'EnableIPv6'} = $object->getEnableIPv6();
         }
         if (null !== $object->getIPAM()) {
             $data->{'IPAM'} = $this->serializer->serialize($object->getIPAM(), 'raw', $context);
         }
         if (null !== $object->getInternal()) {
             $data->{'Internal'} = $object->getInternal();
+        }
+        if (null !== $object->getOptions()) {
+            $values = new \stdClass();
+            foreach ($object->getOptions() as $key => $value) {
+                $values->{$key} = $value;
+            }
+            $data->{'Options'} = $values;
+        }
+        if (null !== $object->getLabels()) {
+            $values_1 = new \stdClass();
+            foreach ($object->getLabels() as $key_1 => $value_1) {
+                $values_1->{$key_1} = $value_1;
+            }
+            $data->{'Labels'} = $values_1;
         }
 
         return $data;

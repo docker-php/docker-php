@@ -1302,14 +1302,32 @@
         "Name": {
           "type": "string"
         },
+        "CheckDuplicate": {
+          "type": "boolean"
+        },
         "Driver": {
           "type": "string"
+        },
+        "EnableIPv6": {
+          "type": "boolean"
         },
         "IPAM": {
           "$ref": "#/definitions/IPAM"
         },
         "Internal": {
           "type": "boolean"
+        },
+        "Options": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },

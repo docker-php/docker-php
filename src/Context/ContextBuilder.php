@@ -37,6 +37,16 @@ class ContextBuilder
     private $format;
 
     /**
+     * @var string
+     */
+    private $command;
+
+    /**
+     * @var string
+     */
+    private $entrypoint;
+
+    /**
      * @param \Symfony\Component\Filesystem\Filesystem
      */
     public function __construct(Filesystem $fs = null)
@@ -69,6 +79,34 @@ class ContextBuilder
     public function from($from)
     {
         $this->from = $from;
+
+        return $this;
+    }
+
+    /**
+     * Set the CMD instruction in the Dockerfile
+     *
+     * @param string $command Command to execute
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function command($command)
+    {
+        $this->command = $command;
+
+        return $this;
+    }
+
+    /**
+     * Set the ENTRYPOINT instruction in the Dockerfile
+     *
+     * @param string $entrypoint The entrypoint
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function entrypoint($entrypoint)
+    {
+        $this->entrypoint = $entrypoint;
 
         return $this;
     }
@@ -161,6 +199,34 @@ class ContextBuilder
     }
 
     /**
+     * Adds an USER instruction to the Dockerfile
+     *
+     * @param string $user User to switch to
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function user($user)
+    {
+        $this->commands[] = ['type' => 'USER', 'user' => $user];
+
+        return $this;
+    }
+
+    /**
+     * Adds a VOLUME instruction to the Dockerfile
+     *
+     * @param string $volume Volume path to add
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function volume($volume)
+    {
+        $this->commands[] = ['type' => 'VOLUME', 'volume' => $volume];
+
+        return $this;
+    }
+
+    /**
      * Create context given the state of builder
      *
      * @return \Docker\Context\Context
@@ -218,7 +284,21 @@ class ContextBuilder
                 case 'EXPOSE':
                     $dockerfile[] = 'EXPOSE '.$command['port'];
                     break;
+                case 'VOLUME':
+                    $dockerfile[] = 'VOLUME ' . $command['volume'];
+                    break;
+                case 'USER':
+                    $dockerfile[] = 'USER ' . $command['user'];
+                    break;
             }
+        }
+
+        if (!empty($this->entrypoint)) {
+            $dockerfile[] = 'ENTRYPOINT ' . $this->entrypoint;
+        }
+
+        if (!empty($this->command)) {
+            $dockerfile[] = 'CMD ' . $this->command;
         }
 
         $this->fs->dumpFile($directory.DIRECTORY_SEPARATOR.'Dockerfile', implode(PHP_EOL, $dockerfile));

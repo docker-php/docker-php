@@ -470,10 +470,12 @@
             "type": "string"
           }
         },
-        "Mounts": {
-          "type": ["array", "null"],
-          "items": {
-            "$ref": "#/definitions/Mount"
+        "Volumes": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "object",
+            "enum": [{}],
+            "default": {}
           }
         },
         "WorkingDir": {

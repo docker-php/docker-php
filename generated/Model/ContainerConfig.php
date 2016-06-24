@@ -77,7 +77,7 @@ class ContainerConfig
      */
     protected $macAddress;
     /**
-     * @var mixed[]
+     * @var mixed[]|null
      */
     protected $exposedPorts;
     /**
@@ -454,7 +454,7 @@ class ContainerConfig
     }
 
     /**
-     * @return mixed[]
+     * @return mixed[]|null
      */
     public function getExposedPorts()
     {
@@ -462,11 +462,11 @@ class ContainerConfig
     }
 
     /**
-     * @param mixed[] $exposedPorts
+     * @param mixed[]|null $exposedPorts
      *
      * @return self
      */
-    public function setExposedPorts(\ArrayObject $exposedPorts = null)
+    public function setExposedPorts($exposedPorts = null)
     {
         $this->exposedPorts = $exposedPorts;
 

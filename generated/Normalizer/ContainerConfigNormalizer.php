@@ -149,11 +149,18 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $object->setMacAddress($data->{'MacAddress'});
         }
         if (property_exists($data, 'ExposedPorts')) {
-            $values_5 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'ExposedPorts'} as $key_2 => $value_10) {
-                $values_5[$key_2] = $value_10;
+            $value_10 = $data->{'ExposedPorts'};
+            if (is_object($data->{'ExposedPorts'})) {
+                $values_5 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                foreach ($data->{'ExposedPorts'} as $key_2 => $value_11) {
+                    $values_5[$key_2] = $value_11;
+                }
+                $value_10 = $values_5;
             }
-            $object->setExposedPorts($values_5);
+            if (is_null($data->{'ExposedPorts'})) {
+                $value_10 = $data->{'ExposedPorts'};
+            }
+            $object->setExposedPorts($value_10);
         }
         if (property_exists($data, 'StopSignal')) {
             $object->setStopSignal($data->{'StopSignal'});
@@ -274,13 +281,18 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
         if (null !== $object->getMacAddress()) {
             $data->{'MacAddress'} = $object->getMacAddress();
         }
-        if (null !== $object->getExposedPorts()) {
+        $value_10 = $object->getExposedPorts();
+        if (is_object($object->getExposedPorts())) {
             $values_5 = new \stdClass();
-            foreach ($object->getExposedPorts() as $key_2 => $value_10) {
-                $values_5->{$key_2} = $value_10;
+            foreach ($object->getExposedPorts() as $key_2 => $value_11) {
+                $values_5->{$key_2} = $value_11;
             }
-            $data->{'ExposedPorts'} = $values_5;
+            $value_10 = $values_5;
         }
+        if (is_null($object->getExposedPorts())) {
+            $value_10 = $object->getExposedPorts();
+        }
+        $data->{'ExposedPorts'} = $value_10;
         if (null !== $object->getStopSignal()) {
             $data->{'StopSignal'} = $object->getStopSignal();
         }

@@ -42,7 +42,10 @@ class VolumeResource extends Resource
      * Create a volume.
      *
      * @param \Docker\API\Model\VolumeConfig $volumeConfig Volume configuration
-     * @param array                          $parameters   List of parameters
+     * @param array                          $parameters {
+     *
+     *     @var string $Content-Type Content Type of input
+     * }
      * @param string                         $fetch        Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\Volume
@@ -50,6 +53,8 @@ class VolumeResource extends Resource
     public function create(\Docker\API\Model\VolumeConfig $volumeConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
+        $queryParam->setDefault('Content-Type', 'application/json');
+        $queryParam->setHeaderParameters(['Content-Type']);
         $url        = '/volumes/create';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

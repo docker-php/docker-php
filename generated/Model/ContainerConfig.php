@@ -101,9 +101,9 @@ class ContainerConfig
      */
     protected $entrypoint;
     /**
-     * @var Mount[]|null
+     * @var mixed[]|null
      */
-    protected $mounts;
+    protected $volumes;
     /**
      * @var string
      */
@@ -610,21 +610,21 @@ class ContainerConfig
     }
 
     /**
-     * @return Mount[]|null
+     * @return mixed[]|null
      */
-    public function getMounts()
+    public function getVolumes()
     {
-        return $this->mounts;
+        return $this->volumes;
     }
 
     /**
-     * @param Mount[]|null $mounts
+     * @param mixed[]|null $volumes
      *
      * @return self
      */
-    public function setMounts($mounts = null)
+    public function setVolumes($volumes = null)
     {
-        $this->mounts = $mounts;
+        $this->volumes = $volumes;
 
         return $this;
     }

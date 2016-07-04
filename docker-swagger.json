@@ -486,7 +486,7 @@
           "type": "string"
         },
         "ExposedPorts": {
-          "type": "object",
+          "type": ["object","null"],
           "additionalProperties": {
             "type": "object",
             "enum": [{}],

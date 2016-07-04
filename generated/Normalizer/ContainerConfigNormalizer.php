@@ -194,11 +194,18 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
             $object->setMacAddress($data->{'MacAddress'});
         }
         if (property_exists($data, 'ExposedPorts')) {
-            $values_7 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'ExposedPorts'} as $key_1 => $value_13) {
-                $values_7[$key_1] = $value_13;
+            $value_13 = $data->{'ExposedPorts'};
+            if (is_object($data->{'ExposedPorts'})) {
+                $values_7 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                foreach ($data->{'ExposedPorts'} as $key_1 => $value_14) {
+                    $values_7[$key_1] = $value_14;
+                }
+                $value_13 = $values_7;
             }
-            $object->setExposedPorts($values_7);
+            if (is_null($data->{'ExposedPorts'})) {
+                $value_13 = $data->{'ExposedPorts'};
+            }
+            $object->setExposedPorts($value_13);
         }
         if (property_exists($data, 'NetworkSettings')) {
             $object->setNetworkSettings($this->serializer->deserialize($data->{'NetworkSettings'}, 'Docker\\API\\Model\\NetworkConfig', 'raw', $context));
@@ -359,13 +366,18 @@ class ContainerConfigNormalizer extends SerializerAwareNormalizer implements Den
         if (null !== $object->getMacAddress()) {
             $data->{'MacAddress'} = $object->getMacAddress();
         }
-        if (null !== $object->getExposedPorts()) {
+        $value_13 = $object->getExposedPorts();
+        if (is_object($object->getExposedPorts())) {
             $values_7 = new \stdClass();
-            foreach ($object->getExposedPorts() as $key_1 => $value_13) {
-                $values_7->{$key_1} = $value_13;
+            foreach ($object->getExposedPorts() as $key_1 => $value_14) {
+                $values_7->{$key_1} = $value_14;
             }
-            $data->{'ExposedPorts'} = $values_7;
+            $value_13 = $values_7;
         }
+        if (is_null($object->getExposedPorts())) {
+            $value_13 = $object->getExposedPorts();
+        }
+        $data->{'ExposedPorts'} = $value_13;
         if (null !== $object->getNetworkSettings()) {
             $data->{'NetworkSettings'} = $this->serializer->serialize($object->getNetworkSettings(), 'raw', $context);
         }

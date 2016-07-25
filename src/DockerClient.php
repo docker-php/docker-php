@@ -2,7 +2,9 @@
 
 namespace Docker;
 
+use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
+use Http\Client\Plugin\AddHostPlugin;
 use Http\Client\Plugin\ContentLengthPlugin;
 use Http\Client\Plugin\DecoderPlugin;
 use Http\Client\Plugin\ErrorPlugin;
@@ -25,11 +27,13 @@ class DockerClient implements HttpClient
         $lengthPlugin = new ContentLengthPlugin();
         $decodingPlugin = new DecoderPlugin();
         $errorPlugin = new ErrorPlugin();
+        $hostPlugin = new AddHostPlugin(new Uri('http://localhost'));
 
         $this->httpClient = new PluginClient($socketClient, [
             $errorPlugin,
             $lengthPlugin,
-            $decodingPlugin
+            $decodingPlugin,
+            $hostPlugin
         ]);
     }
 

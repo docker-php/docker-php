@@ -163,10 +163,10 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         }
         if (property_exists($data, 'Labels')) {
             $value_8 = $data->{'Labels'};
-            if (is_array($data->{'Labels'})) {
-                $values_4 = [];
-                foreach ($data->{'Labels'} as $value_9) {
-                    $values_4[] = $value_9;
+            if (is_object($data->{'Labels'})) {
+                $values_4 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                foreach ($data->{'Labels'} as $key => $value_9) {
+                    $values_4[$key] = $value_9;
                 }
                 $value_8 = $values_4;
             }
@@ -360,10 +360,10 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $data->{'KernelVersion'} = $object->getKernelVersion();
         }
         $value_8 = $object->getLabels();
-        if (is_array($object->getLabels())) {
-            $values_4 = [];
-            foreach ($object->getLabels() as $value_9) {
-                $values_4[] = $value_9;
+        if (is_object($object->getLabels())) {
+            $values_4 = new \stdClass();
+            foreach ($object->getLabels() as $key => $value_9) {
+                $values_4->{$key} = $value_9;
             }
             $value_8 = $values_4;
         }

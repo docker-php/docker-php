@@ -72,6 +72,17 @@ class NormalizerFactory
         $normalizers[] = new ResourceUpdateNormalizer();
         $normalizers[] = new ContainerUpdateResultNormalizer();
         $normalizers[] = new AuthResultNormalizer();
+        $normalizers[] = new ContainerNodeNormalizer();
+        $normalizers[] = new NodeNormalizer();
+        $normalizers[] = new NodeVersionNormalizer();
+        $normalizers[] = new NodeSpecNormalizer();
+        $normalizers[] = new NodeDescriptionNormalizer();
+        $normalizers[] = new NodeStatusNormalizer();
+        $normalizers[] = new NodeManagerStatusNormalizer();
+        $normalizers[] = new NodePlatformNormalizer();
+        $normalizers[] = new NodeResourcesNormalizer();
+        $normalizers[] = new NodeEngineNormalizer();
+        $normalizers[] = new NodePluginNormalizer();
 
         return $normalizers;
     }

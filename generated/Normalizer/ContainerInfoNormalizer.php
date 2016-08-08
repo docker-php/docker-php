@@ -128,6 +128,9 @@ class ContainerInfoNormalizer extends SerializerAwareNormalizer implements Denor
             }
             $object->setMounts($value_6);
         }
+        if (property_exists($data, 'Node')) {
+            $object->setNode($this->serializer->deserialize($data->{'Node'}, 'Docker\\API\\Model\\ContainerNode', 'raw', $context));
+        }
 
         return $object;
     }
@@ -216,6 +219,9 @@ class ContainerInfoNormalizer extends SerializerAwareNormalizer implements Denor
             $value_6 = $object->getMounts();
         }
         $data->{'Mounts'} = $value_6;
+        if (null !== $object->getNode()) {
+            $data->{'Node'} = $this->serializer->serialize($object->getNode(), 'raw', $context);
+        }
 
         return $data;
     }

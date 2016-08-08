@@ -448,6 +448,9 @@
           "items": {
             "$ref": "#/definitions/Mount"
           }
+        },
+        "Node": {
+          "$ref": "#/definitions/ContainerNode"
         }
       }
     },
@@ -1109,8 +1112,8 @@
           "type": "string"
         },
         "Labels": {
-          "type": ["array", "null"],
-          "items": {
+          "type": ["object", "null"],
+          "additionalProperties": {
             "type": "string"
           }
         },
@@ -1491,7 +1494,7 @@
           }
         },
         "Labels": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "string"
           }
@@ -1706,6 +1709,174 @@
           "type": "string"
         },
         "IdentityToken": {
+          "type": "string"
+        }
+      }
+    },
+    "ContainerNode": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Ip": {
+          "type": "string"
+        },
+        "Addr": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        }
+      }
+    },
+    "Node": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Version": {
+          "$ref": "#/definitions/NodeVersion"
+        },
+        "CreatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UpdatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Spec": {
+          "$ref": "#/definitions/NodeSpec"
+        },
+        "Description": {
+          "$ref": "#/definitions/NodeDescription"
+        },
+        "Status": {
+          "$ref": "#/definitions/NodeStatus"
+        },
+        "ManagerStatus": {
+          "$ref": "#/definitions/NodeManagerStatus"
+        }
+      }
+    },
+    "NodeVersion": {
+      "type": "object",
+      "properties": {
+        "Index": {
+          "type": "string"
+        }
+      }
+    },
+    "NodeSpec": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Role": {
+          "type": "string"
+        },
+        "Availability": {
+          "type": "string"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "NodeDescription": {
+      "type": "object",
+      "properties": {
+        "Hostname": {
+          "type": "string"
+        },
+        "Platform": {
+          "$ref": "#/definitions/NodePlatform"
+        },
+        "Resources": {
+          "$ref": "#/definitions/NodeResources"
+        },
+        "Engine": {
+          "$ref": "#/definitions/NodeEngine"
+        }
+      }
+    },
+    "NodeStatus": {
+      "type": "object",
+      "properties": {
+        "State": {
+          "type": "string"
+        }
+      }
+    },
+    "NodeManagerStatus": {
+      "type": "object",
+      "properties": {
+        "Leader": {
+          "type": "boolean"
+        },
+        "Reachability": {
+          "type": "string"
+        },
+        "Addr": {
+          "type": "string"
+        }
+      }
+    },
+    "NodePlatform": {
+      "type": "object",
+      "properties": {
+        "Architecture": {
+          "type": "string"
+        },
+        "OS": {
+          "type": "string"
+        }
+      }
+    },
+    "NodeResources": {
+      "type": "object",
+      "properties": {
+        "NanoCPUs": {
+          "type": "integer"
+        },
+        "MemoryBytes": {
+          "type": "integer"
+        }
+      }
+    },
+    "NodeEngine": {
+      "type": "object",
+      "properties": {
+        "EngineVersion": {
+          "type": "boolean"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Plugins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NodePlugin"
+          }
+        }
+      }
+    },
+    "NodePlugin": {
+      "type": "object",
+      "properties": {
+        "Type": {
+          "type": "string"
+        },
+        "Name": {
           "type": "string"
         }
       }
@@ -2870,6 +3041,9 @@
           "200": {
             "description": "no error"
           },
+          "404": {
+            "description": "'docker import' flow not implement"
+          },
           "500": {
             "description": "server error"
           }
@@ -3846,6 +4020,9 @@
           "201": {
             "description": "No error"
           },
+          "403": {
+            "description": "Operation not supported for swarm scoped networks"
+          },
           "404": {
             "description": "Network or container not found"
           },
@@ -3889,6 +4066,9 @@
           "201": {
             "description": "No error"
           },
+          "403": {
+            "description": "Operation not supported for swarm scoped networks"
+          },
           "404": {
             "description": "Network or container not found"
           },
@@ -3920,6 +4100,70 @@
         }],
         "tags": [
           "Network"
+        ]
+      }
+    },
+    "/nodes": {
+      "get": {
+        "summary": "List nodes",
+        "description": "List nodes.",
+        "operationId": "findAll",
+        "responses": {
+          "200": {
+            "description": "No error",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Node"
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "filters",
+          "in": "query",
+          "description": "A JSON encoded value of the filters (a map[string][]string) to process on the nodes list.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }],
+        "tags": [
+          "Node"
+        ]
+      }
+    },
+    "/nodes/{id}": {
+      "get": {
+        "summary": "Inspect a node",
+        "description": "Return low-level information on the node id.",
+        "operationId": "find",
+        "responses": {
+          "200": {
+            "description": "No error",
+            "schema": {
+              "$ref": "#/definitions/Node"
+            }
+          },
+          "404": {
+            "description": "No such node"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "description": "Node id or name",
+          "required": true,
+          "type": "string"
+        }],
+        "tags": [
+          "Node"
         ]
       }
     }

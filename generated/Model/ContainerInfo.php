@@ -64,6 +64,10 @@ class ContainerInfo
      * @var Mount[]|null
      */
     protected $mounts;
+    /**
+     * @var ContainerNode
+     */
+    protected $node;
 
     /**
      * @return string
@@ -361,6 +365,26 @@ class ContainerInfo
     public function setMounts($mounts = null)
     {
         $this->mounts = $mounts;
+
+        return $this;
+    }
+
+    /**
+     * @return ContainerNode
+     */
+    public function getNode()
+    {
+        return $this->node;
+    }
+
+    /**
+     * @param ContainerNode $node
+     *
+     * @return self
+     */
+    public function setNode(ContainerNode $node = null)
+    {
+        $this->node = $node;
 
         return $this;
     }

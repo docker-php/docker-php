@@ -114,6 +114,15 @@ class NormalizerFactory
         $normalizers[] = new ContainerSpecMountVolumeOptionsNormalizer();
         $normalizers[] = new ContainerStatusNormalizer();
         $normalizers[] = new DriverNormalizer();
+        $normalizers[] = new ServiceNormalizer();
+        $normalizers[] = new UpdateStatusNormalizer();
+        $normalizers[] = new ServiceSpecNormalizer();
+        $normalizers[] = new UpdateConfigNormalizer();
+        $normalizers[] = new NetworkAttachmentConfigNormalizer();
+        $normalizers[] = new ServiceSpecModeNormalizer();
+        $normalizers[] = new ReplicatedServiceNormalizer();
+        $normalizers[] = new GlobalServiceNormalizer();
+        $normalizers[] = new ServiceCreateResponseNormalizer();
 
         return $normalizers;
     }

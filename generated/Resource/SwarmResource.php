@@ -90,7 +90,7 @@ class SwarmResource extends Resource
     public function update(\Docker\API\Model\SwarmUpdateConfig $swarmUpdateConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $queryParam->setDefault('version', null);
+        $queryParam->setRequired('version');
         $queryParam->setDefault('rotateWorkerToken', null);
         $queryParam->setDefault('rotateManagerToken', null);
         $url      = '/swarm/update';

@@ -1141,6 +1141,12 @@
         "RegistryConfig": {
           "$ref": "#/definitions/RegistryConfig"
         },
+        "SecurityOptions": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
         "SwapLimit": {
           "type": "boolean"
         },

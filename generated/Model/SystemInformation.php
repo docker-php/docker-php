@@ -165,6 +165,10 @@ class SystemInformation
      */
     protected $registryConfig;
     /**
+     * @var string[]|null
+     */
+    protected $securityOptions;
+    /**
      * @var bool
      */
     protected $swapLimit;
@@ -973,6 +977,26 @@ class SystemInformation
     public function setRegistryConfig(RegistryConfig $registryConfig = null)
     {
         $this->registryConfig = $registryConfig;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getSecurityOptions()
+    {
+        return $this->securityOptions;
+    }
+
+    /**
+     * @param string[]|null $securityOptions
+     *
+     * @return self
+     */
+    public function setSecurityOptions($securityOptions = null)
+    {
+        $this->securityOptions = $securityOptions;
 
         return $this;
     }

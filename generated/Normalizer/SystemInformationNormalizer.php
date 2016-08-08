@@ -214,6 +214,20 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         if (property_exists($data, 'RegistryConfig')) {
             $object->setRegistryConfig($this->serializer->deserialize($data->{'RegistryConfig'}, 'Docker\\API\\Model\\RegistryConfig', 'raw', $context));
         }
+        if (property_exists($data, 'SecurityOptions')) {
+            $value_10 = $data->{'SecurityOptions'};
+            if (is_array($data->{'SecurityOptions'})) {
+                $values_5 = [];
+                foreach ($data->{'SecurityOptions'} as $value_11) {
+                    $values_5[] = $value_11;
+                }
+                $value_10 = $values_5;
+            }
+            if (is_null($data->{'SecurityOptions'})) {
+                $value_10 = $data->{'SecurityOptions'};
+            }
+            $object->setSecurityOptions($value_10);
+        }
         if (property_exists($data, 'SwapLimit')) {
             $object->setSwapLimit($data->{'SwapLimit'});
         }
@@ -399,6 +413,18 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         if (null !== $object->getRegistryConfig()) {
             $data->{'RegistryConfig'} = $this->serializer->serialize($object->getRegistryConfig(), 'raw', $context);
         }
+        $value_10 = $object->getSecurityOptions();
+        if (is_array($object->getSecurityOptions())) {
+            $values_5 = [];
+            foreach ($object->getSecurityOptions() as $value_11) {
+                $values_5[] = $value_11;
+            }
+            $value_10 = $values_5;
+        }
+        if (is_null($object->getSecurityOptions())) {
+            $value_10 = $object->getSecurityOptions();
+        }
+        $data->{'SecurityOptions'} = $value_10;
         if (null !== $object->getSwapLimit()) {
             $data->{'SwapLimit'} = $object->getSwapLimit();
         }

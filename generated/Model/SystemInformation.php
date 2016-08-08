@@ -65,10 +65,6 @@ class SystemInformation
      */
     protected $systemStatus;
     /**
-     * @var string
-     */
-    protected $executionDriver;
-    /**
      * @var bool
      */
     protected $experimentalBuild;
@@ -477,26 +473,6 @@ class SystemInformation
     public function setSystemStatus($systemStatus = null)
     {
         $this->systemStatus = $systemStatus;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExecutionDriver()
-    {
-        return $this->executionDriver;
-    }
-
-    /**
-     * @param string $executionDriver
-     *
-     * @return self
-     */
-    public function setExecutionDriver($executionDriver = null)
-    {
-        $this->executionDriver = $executionDriver;
 
         return $this;
     }

@@ -128,9 +128,6 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             }
             $object->setSystemStatus($value_4);
         }
-        if (property_exists($data, 'ExecutionDriver')) {
-            $object->setExecutionDriver($data->{'ExecutionDriver'});
-        }
         if (property_exists($data, 'ExperimentalBuild')) {
             $object->setExperimentalBuild($data->{'ExperimentalBuild'});
         }
@@ -329,9 +326,6 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $value_4 = $object->getSystemStatus();
         }
         $data->{'SystemStatus'} = $value_4;
-        if (null !== $object->getExecutionDriver()) {
-            $data->{'ExecutionDriver'} = $object->getExecutionDriver();
-        }
         if (null !== $object->getExperimentalBuild()) {
             $data->{'ExperimentalBuild'} = $object->getExperimentalBuild();
         }

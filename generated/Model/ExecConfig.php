@@ -24,6 +24,10 @@ class ExecConfig
      * @var string[]|null
      */
     protected $cmd;
+    /**
+     * @var string
+     */
+    protected $detachKeys;
 
     /**
      * @return bool
@@ -121,6 +125,26 @@ class ExecConfig
     public function setCmd($cmd = null)
     {
         $this->cmd = $cmd;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDetachKeys()
+    {
+        return $this->detachKeys;
+    }
+
+    /**
+     * @param string $detachKeys
+     *
+     * @return self
+     */
+    public function setDetachKeys($detachKeys = null)
+    {
+        $this->detachKeys = $detachKeys;
 
         return $this;
     }

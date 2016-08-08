@@ -36,6 +36,10 @@ class ExecCommand
      * @var Container
      */
     protected $container;
+    /**
+     * @var string
+     */
+    protected $detachKeys;
 
     /**
      * @return string
@@ -193,6 +197,26 @@ class ExecCommand
     public function setContainer(Container $container = null)
     {
         $this->container = $container;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDetachKeys()
+    {
+        return $this->detachKeys;
+    }
+
+    /**
+     * @param string $detachKeys
+     *
+     * @return self
+     */
+    public function setDetachKeys($detachKeys = null)
+    {
+        $this->detachKeys = $detachKeys;
 
         return $this;
     }

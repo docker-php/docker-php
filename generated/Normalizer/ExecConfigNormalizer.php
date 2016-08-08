@@ -65,6 +65,9 @@ class ExecConfigNormalizer extends SerializerAwareNormalizer implements Denormal
             }
             $object->setCmd($value);
         }
+        if (property_exists($data, 'DetachKeys')) {
+            $object->setDetachKeys($data->{'DetachKeys'});
+        }
 
         return $object;
     }
@@ -96,6 +99,9 @@ class ExecConfigNormalizer extends SerializerAwareNormalizer implements Denormal
             $value = $object->getCmd();
         }
         $data->{'Cmd'} = $value;
+        if (null !== $object->getDetachKeys()) {
+            $data->{'DetachKeys'} = $object->getDetachKeys();
+        }
 
         return $data;
     }

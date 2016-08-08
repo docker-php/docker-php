@@ -69,6 +69,10 @@ class Container
      */
     protected $networkSettings;
     /**
+     * @var Node
+     */
+    protected $node;
+    /**
      * @var string
      */
     protected $path;
@@ -409,6 +413,26 @@ class Container
     public function setNetworkSettings(NetworkConfig $networkSettings = null)
     {
         $this->networkSettings = $networkSettings;
+
+        return $this;
+    }
+
+    /**
+     * @return Node
+     */
+    public function getNode()
+    {
+        return $this->node;
+    }
+
+    /**
+     * @param Node $node
+     *
+     * @return self
+     */
+    public function setNode(Node $node = null)
+    {
+        $this->node = $node;
 
         return $this;
     }

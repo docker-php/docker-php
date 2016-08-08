@@ -98,6 +98,9 @@ class ContainerNormalizer extends SerializerAwareNormalizer implements Denormali
         if (property_exists($data, 'NetworkSettings')) {
             $object->setNetworkSettings($this->serializer->deserialize($data->{'NetworkSettings'}, 'Docker\\API\\Model\\NetworkConfig', 'raw', $context));
         }
+        if (property_exists($data, 'Node')) {
+            $object->setNode($this->serializer->deserialize($data->{'Node'}, 'Docker\\API\\Model\\Node', 'raw', $context));
+        }
         if (property_exists($data, 'Path')) {
             $object->setPath($data->{'Path'});
         }
@@ -190,6 +193,9 @@ class ContainerNormalizer extends SerializerAwareNormalizer implements Denormali
         }
         if (null !== $object->getNetworkSettings()) {
             $data->{'NetworkSettings'} = $this->serializer->serialize($object->getNetworkSettings(), 'raw', $context);
+        }
+        if (null !== $object->getNode()) {
+            $data->{'Node'} = $this->serializer->serialize($object->Node(), 'raw', $context);
         }
         if (null !== $object->getPath()) {
             $data->{'Path'} = $object->getPath();

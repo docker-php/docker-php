@@ -26,7 +26,7 @@ This will return a `ContainerCreateResult` object with the id of the created con
 container id you can also specify a unique name for this container:
 
 ```php
-$containerConfig->setNames(['my-container-unique-name']]);
+$containerCreateResult = $containerManager->create($containerConfig, ['name' => 'my-container-unique-name']);
 ```
 
 Be aware that the container is immutable if you need to change a configuration for a container, you will need to remove

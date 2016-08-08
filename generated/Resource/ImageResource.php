@@ -235,7 +235,6 @@ class ImageResource extends Resource
      * @param array  $parameters {
      *
      *     @var string $repo The repository to tag in.
-     *     @var string $force 1/True/true or 0/False/false, default false
      *     @var string $tag The new tag name.
      * }
      *
@@ -247,7 +246,6 @@ class ImageResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('repo', null);
-        $queryParam->setDefault('force', null);
         $queryParam->setDefault('tag', null);
         $url      = '/images/{name}/tag';
         $url      = str_replace('{name}', urlencode($name), $url);

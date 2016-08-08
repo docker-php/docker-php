@@ -3024,11 +3024,6 @@
           "description": "The repository to tag in.",
           "type": "string"
         }, {
-          "name": "force",
-          "in": "query",
-          "description": "1/True/true or 0/False/false, default false",
-          "type": "string"
-        }, {
           "name": "tag",
           "in": "query",
           "description": "The new tag name.",

@@ -296,6 +296,7 @@ class ImageResource extends Resource
      * @param array $parameters {
      *
      *     @var string $term Term to search
+     *     @var string $filters A JSON encoded value of the filters (a map[string][]string) to process on the images list.
      * }
      *
      * @param string $fetch Fetch mode (object or response)
@@ -306,6 +307,7 @@ class ImageResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('term', null);
+        $queryParam->setDefault('filters', null);
         $url      = '/images/search';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

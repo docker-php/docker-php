@@ -3104,6 +3104,11 @@
           "in": "query",
           "description": "Term to search",
           "type": "string"
+        }, {
+          "name": "filters",
+          "in": "query",
+          "description": "A JSON encoded value of the filters (a map[string][]string) to process on the images list.",
+          "type": "string"
         }],
         "tags": [
           "Image"

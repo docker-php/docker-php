@@ -99,6 +99,12 @@ class HostConfigNormalizer extends SerializerAwareNormalizer implements Denormal
         if (property_exists($data, 'CpusetMems')) {
             $object->setCpusetMems($data->{'CpusetMems'});
         }
+        if (property_exists($data, 'MaximumIOps')) {
+            $object->setMaximumIOps($data->{'MaximumIOps'});
+        }
+        if (property_exists($data, 'MaximumIOBps')) {
+            $object->setMaximumIOBps($data->{'MaximumIOBps'});
+        }
         if (property_exists($data, 'BlkioWeight')) {
             $object->setBlkioWeight($data->{'BlkioWeight'});
         }
@@ -467,6 +473,12 @@ class HostConfigNormalizer extends SerializerAwareNormalizer implements Denormal
         }
         if (null !== $object->getCpusetMems()) {
             $data->{'CpusetMems'} = $object->getCpusetMems();
+        }
+        if (null !== $object->getMaximumIOps()) {
+            $data->{'MaximumIOps'} = $object->getMaximumIOps();
+        }
+        if (null !== $object->getMaximumIOBps()) {
+            $data->{'MaximumIOBps'} = $object->getMaximumIOBps();
         }
         if (null !== $object->getBlkioWeight()) {
             $data->{'BlkioWeight'} = $object->getBlkioWeight();

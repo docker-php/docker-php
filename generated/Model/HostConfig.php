@@ -43,6 +43,14 @@ class HostConfig
     /**
      * @var int
      */
+    protected $maximumIOps;
+    /**
+     * @var int
+     */
+    protected $maximumIOBps;
+    /**
+     * @var int
+     */
     protected $blkioWeight;
     /**
      * @var DeviceWeight[]|null
@@ -349,6 +357,46 @@ class HostConfig
     public function setCpusetMems($cpusetMems = null)
     {
         $this->cpusetMems = $cpusetMems;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaximumIOps()
+    {
+        return $this->maximumIOps;
+    }
+
+    /**
+     * @param int $maximumIOps
+     *
+     * @return self
+     */
+    public function setMaximumIOps($maximumIOps = null)
+    {
+        $this->maximumIOps = $maximumIOps;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaximumIOBps()
+    {
+        return $this->maximumIOBps;
+    }
+
+    /**
+     * @param int $maximumIOBps
+     *
+     * @return self
+     */
+    public function setMaximumIOBps($maximumIOBps = null)
+    {
+        $this->maximumIOBps = $maximumIOBps;
 
         return $this;
     }

@@ -197,6 +197,12 @@
         "CpusetMems": {
           "type": "string"
         },
+        "MaximumIOps": {
+          "type": "integer"
+        },
+        "MaximumIOBps": {
+          "type": "integer"
+        },
         "BlkioWeight": {
           "type": "integer"
         },

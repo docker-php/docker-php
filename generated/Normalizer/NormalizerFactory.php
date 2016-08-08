@@ -83,6 +83,16 @@ class NormalizerFactory
         $normalizers[] = new NodeResourcesNormalizer();
         $normalizers[] = new NodeEngineNormalizer();
         $normalizers[] = new NodePluginNormalizer();
+        $normalizers[] = new SwarmConfigNormalizer();
+        $normalizers[] = new SwarmConfigSpecNormalizer();
+        $normalizers[] = new SwarmConfigSpecOrchestrationNormalizer();
+        $normalizers[] = new SwarmConfigSpecRaftNormalizer();
+        $normalizers[] = new SwarmConfigSpecDispatcherNormalizer();
+        $normalizers[] = new SwarmConfigSpecCAConfigNormalizer();
+        $normalizers[] = new SwarmConfigSpecCAConfigExternalCANormalizer();
+        $normalizers[] = new SwarmJoinConfigNormalizer();
+        $normalizers[] = new SwarmUpdateConfigNormalizer();
+        $normalizers[] = new SwarmJoinTokensNormalizer();
 
         return $normalizers;
     }

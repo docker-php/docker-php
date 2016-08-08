@@ -1880,6 +1880,158 @@
           "type": "string"
         }
       }
+    },
+    "SwarmConfig": {
+      "type": "object",
+      "properties": {
+        "ListenAddr": {
+          "type": "string"
+        },
+        "AdvertiseAddr": {
+          "type": "string"
+        },
+        "ForceNewCluster": {
+          "type": "boolean"
+        },
+        "Spec": {
+          "$ref": "#/definitions/SwarmConfigSpec"
+        }
+      }
+    },
+    "SwarmConfigSpec": {
+      "type": "object",
+      "properties": {
+        "Orchestration": {
+          "$ref": "#/definitions/SwarmConfigSpecOrchestration"
+        },
+        "Raft": {
+          "$ref": "#/definitions/SwarmConfigSpecRaft"
+        },
+        "Dispatcher": {
+          "$ref": "#/definitions/SwarmConfigSpecDispatcher"
+        },
+        "CAConfig": {
+          "$ref": "#/definitions/SwarmConfigSpecCAConfig"
+        }
+      }
+    },
+    "SwarmConfigSpecOrchestration": {
+      "type": "object",
+      "properties": {
+        "TaskHistoryRetentionLimit": {
+          "type": "integer"
+        }
+      }
+    },
+    "SwarmConfigSpecRaft": {
+      "type": "object",
+      "properties": {
+        "SnapshotInterval": {
+          "type": "integer"
+        },
+        "KeepOldSnapshots": {
+          "type": "integer"
+        },
+        "LogEntriesForSlowFollowers": {
+          "type": "integer"
+        },
+        "HeartbeatTick": {
+          "type": "integer"
+        },
+        "ElectionTick": {
+          "type": "integer"
+        }
+      }
+    },
+    "SwarmConfigSpecDispatcher": {
+      "type": "object",
+      "properties": {
+        "HeartbeatPeriod": {
+          "type": "integer"
+        }
+      }
+    },
+    "SwarmConfigSpecCAConfig": {
+      "type": "object",
+      "properties": {
+        "NodeCertExpiry": {
+          "type": "boolean"
+        },
+        "ExternalCA": {
+          "$ref": "#/definitions/SwarmConfigSpecCAConfigExternalCA"
+        }
+      }
+    },
+    "SwarmConfigSpecCAConfigExternalCA": {
+      "type": "object",
+      "properties": {
+        "Protocol": {
+          "type": "string"
+        },
+        "URL": {
+          "type": "string"
+        },
+        "Options": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "SwarmJoinConfig": {
+      "type": "object",
+      "properties": {
+        "ListenAddr": {
+          "type": "string"
+        },
+        "AdvertiseAddr": {
+          "type": "string"
+        },
+        "RemoteAddrs": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "JoinToken": {
+          "type": "string"
+        }
+      }
+    },
+    "SwarmUpdateConfig": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Orchestration": {
+          "$ref": "#/definitions/SwarmConfigSpecOrchestration"
+        },
+        "Raft": {
+          "$ref": "#/definitions/SwarmConfigSpecRaft"
+        },
+        "Dispatcher": {
+          "$ref": "#/definitions/SwarmConfigSpecDispatcher"
+        },
+        "CAConfig": {
+          "$ref": "#/definitions/SwarmConfigSpecCAConfig"
+        },
+        "JoinTokens": {
+          "$ref": "#/definitions/SwarmJoinTokens"
+        }
+      }
+    },
+    "SwarmJoinTokens": {
+      "type": "object",
+      "properties": {
+        "Worker": {
+          "type": "string"
+        },
+        "Manager": {
+          "type": "string"
+        }
+      }
     }
   },
   "paths": {
@@ -4164,6 +4316,135 @@
         }],
         "tags": [
           "Node"
+        ]
+      }
+    },
+    "/swarm/init": {
+      "post": {
+        "summary": "Initialize a new Swarm",
+        "description": "Initialize a new Swarm",
+        "operationId": "initialize",
+        "responses": {
+          "200": {
+            "description": "No error"
+          },
+          "400": {
+            "description": "Bad parameter"
+          },
+          "406": {
+            "description": "Node is already part of a Swarm"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "swarmConfig",
+          "in": "body",
+          "description": "Config for the Swarm",
+          "schema": {
+            "$ref": "#/definitions/SwarmConfig"
+          }
+        }],
+        "tags": [
+          "Swarm"
+        ]
+      }
+    },
+    "/swarm/join": {
+      "post": {
+        "summary": "Join an existing new Swarm",
+        "description": "Join an existing new Swarm",
+        "operationId": "join",
+        "responses": {
+          "200": {
+            "description": "No error"
+          },
+          "400": {
+            "description": "Bad parameter"
+          },
+          "406": {
+            "description": "Node is already part of a Swarm"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "swarmJoinConfig",
+          "in": "body",
+          "description": "Config for joining the Swarm",
+          "schema": {
+            "$ref": "#/definitions/SwarmJoinConfig"
+          }
+        }],
+        "tags": [
+          "Swarm"
+        ]
+      }
+    },
+    "/swarm/leave": {
+      "post": {
+        "summary": "Leave a Swarm",
+        "description": "Leave a Swarm",
+        "operationId": "leave",
+        "responses": {
+          "200": {
+            "description": "No error"
+          },
+          "406": {
+            "description": "Node is not part of a Swarm"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "tags": [
+          "Swarm"
+        ]
+      }
+    },
+    "/swarm/update": {
+      "post": {
+        "summary": "Update a Swarm",
+        "description": "Update a Swarm",
+        "operationId": "update",
+        "responses": {
+          "200": {
+            "description": "No error"
+          },
+          "406": {
+            "description": "Node is not part of a Swarm"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "swarmUpdateConfig",
+          "in": "body",
+          "description": "Config for updating the Swarm",
+          "schema": {
+            "$ref": "#/definitions/SwarmUpdateConfig"
+          }
+        }, {
+          "name": "version",
+          "in": "query",
+          "description": "The version number of the swarm object being updated. This is required to avoid conflicting writes.",
+          "type": "integer"
+        }, {
+          "name": "rotateWorkerToken",
+          "in": "query",
+          "description": "Set to true (or 1) to rotate the worker join token.",
+          "type": "boolean"
+        }, {
+          "name": "rotateManagerToken",
+          "in": "query",
+          "description": "Set to true (or 1) to rotate the manager join token.",
+          "type": "boolean"
+        }],
+        "tags": [
+          "Swarm"
         ]
       }
     }

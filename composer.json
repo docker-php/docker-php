@@ -34,7 +34,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.22-dev"
+            "dev-master": "1.24-dev"
         }
     },
     "prefer-stable": true,

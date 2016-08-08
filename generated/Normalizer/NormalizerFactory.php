@@ -93,6 +93,27 @@ class NormalizerFactory
         $normalizers[] = new SwarmJoinConfigNormalizer();
         $normalizers[] = new SwarmUpdateConfigNormalizer();
         $normalizers[] = new SwarmJoinTokensNormalizer();
+        $normalizers[] = new TaskNormalizer();
+        $normalizers[] = new TaskSpecNormalizer();
+        $normalizers[] = new TaskStatusNormalizer();
+        $normalizers[] = new NetworkAttachmentNormalizer();
+        $normalizers[] = new SwarmNetworkNormalizer();
+        $normalizers[] = new SwarmNetworkSpecNormalizer();
+        $normalizers[] = new SwarmIPAMOptionsNormalizer();
+        $normalizers[] = new TaskSpecResourceRequirementsNormalizer();
+        $normalizers[] = new TaskSpecRestartPolicyNormalizer();
+        $normalizers[] = new TaskSpecPlacementNormalizer();
+        $normalizers[] = new AnnotationsNormalizer();
+        $normalizers[] = new EndpointNormalizer();
+        $normalizers[] = new EndpointSpecNormalizer();
+        $normalizers[] = new PortConfigNormalizer();
+        $normalizers[] = new EndpointVirtualIPNormalizer();
+        $normalizers[] = new ContainerSpecNormalizer();
+        $normalizers[] = new ContainerSpecMountNormalizer();
+        $normalizers[] = new ContainerSpecMountBindOptionsNormalizer();
+        $normalizers[] = new ContainerSpecMountVolumeOptionsNormalizer();
+        $normalizers[] = new ContainerStatusNormalizer();
+        $normalizers[] = new DriverNormalizer();
 
         return $normalizers;
     }

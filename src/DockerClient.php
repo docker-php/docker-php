@@ -2,11 +2,11 @@
 
 namespace Docker;
 
+use Http\Client\Common\Plugin\ContentLengthPlugin;
+use Http\Client\Common\Plugin\DecoderPlugin;
+use Http\Client\Common\Plugin\ErrorPlugin;
+use Http\Client\Common\PluginClient;
 use Http\Client\HttpClient;
-use Http\Client\Plugin\ContentLengthPlugin;
-use Http\Client\Plugin\DecoderPlugin;
-use Http\Client\Plugin\ErrorPlugin;
-use Http\Client\Plugin\PluginClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Client\Socket\Client as SocketHttpClient;
 use Psr\Http\Message\RequestInterface;

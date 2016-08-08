@@ -22,7 +22,7 @@ class ContainerResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerConfig[]
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerInfo[]
      */
     public function findAll($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -41,7 +41,7 @@ class ContainerResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerConfig[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerInfo[]', 'json');
             }
         }
 

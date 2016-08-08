@@ -50,7 +50,7 @@
         }
       }
     },
-    "port": {
+    "Port": {
       "type": "object",
       "properties": {
         "PrivatePort": {
@@ -371,7 +371,7 @@
         }
       }
     },
-    "ContainerConfig": {
+    "ContainerInfo": {
       "type": "object",
       "properties": {
         "Id": {
@@ -387,7 +387,7 @@
           "type": "string"
         },
         "ImageID": {
-           "type": "string"
+          "type": "string"
         },
         "Command": {
           "type": "string"
@@ -404,11 +404,11 @@
         "Ports": {
           "type": ["array", "null"],
           "items": {
-            "$ref": "#/definitions/port"
+            "$ref": "#/definitions/Port"
           }
         },
         "Labels": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "string"
           }
@@ -419,14 +419,31 @@
         "SizeRootFs": {
           "type": "integer"
         },
+        "HostConfig": {
+          "$ref": "#/definitions/HostConfig"
+        },
+        "NetworkSettings": {
+          "$ref": "#/definitions/NetworkConfig"
+        },
+        "Mounts": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/Mount"
+          }
+        }
+      }
+    },
+    "ContainerConfig": {
+      "type": "object",
+      "properties": {
         "Hostname": {
-          "type": "integer"
+          "type": "string"
         },
         "Domainname": {
-          "type": "integer"
+          "type": "string"
         },
         "User": {
-          "type": "integer"
+          "type": "string"
         },
         "AttachStdin": {
           "type": "boolean",
@@ -470,10 +487,19 @@
             "type": "string"
           }
         },
-        "Mounts": {
-          "type": ["array", "null"],
-          "items": {
-            "$ref": "#/definitions/Mount"
+        "Image": {
+          "type": "string"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Volumes": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "object"
           }
         },
         "WorkingDir": {
@@ -493,11 +519,89 @@
             "default": {}
           }
         },
-        "NetworkSettings": {
-          "$ref": "#/definitions/NetworkConfig"
+        "StopSignal": {
+          "type": "string"
         },
         "HostConfig": {
           "$ref": "#/definitions/HostConfig"
+        },
+        "NetworkingConfig": {
+          "$ref": "#/definitions/NetworkingConfig"
+        }
+      }
+    },
+    "NetworkingConfig": {
+      "type": "object",
+      "properties": {
+        "EndpointsConfig": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/EndpointSettings"
+          }
+        }
+      }
+    },
+    "EndpointSettings": {
+      "type": "object",
+      "properties": {
+        "IPAMConfig": {
+          "$ref": "#/definitions/EndpointIPAMConfig"
+        },
+        "Links": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "NetworkID": {
+          "type": "string"
+        },
+        "EndpointID": {
+          "type": "string"
+        },
+        "Gateway": {
+          "type": "string"
+        },
+        "IPAddress": {
+          "type": "string"
+        },
+        "IPPrefixLen": {
+          "type": "integer"
+        },
+        "IPv6Gateway": {
+          "type": "string"
+        },
+        "GlobalIPv6Address": {
+          "type": "string"
+        },
+        "GlobalIPv6PrefixLen": {
+          "type": "integer"
+        },
+        "MacAddress": {
+          "type": "string"
+        }
+      }
+    },
+    "EndpointIPAMConfig": {
+      "type": "object",
+      "properties": {
+        "IPv4Address": {
+          "type": "string"
+        },
+        "IPv6Address": {
+          "type": "string"
+        },
+        "LinkLocalIPs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -1627,7 +1731,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/ContainerConfig"
+                "$ref": "#/definitions/ContainerInfo"
               }
             }
           },

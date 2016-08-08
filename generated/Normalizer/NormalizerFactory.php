@@ -23,7 +23,11 @@ class NormalizerFactory
         $normalizers[] = new HostConfigNormalizer();
         $normalizers[] = new DeviceWeightNormalizer();
         $normalizers[] = new DeviceRateNormalizer();
+        $normalizers[] = new ContainerInfoNormalizer();
         $normalizers[] = new ContainerConfigNormalizer();
+        $normalizers[] = new NetworkingConfigNormalizer();
+        $normalizers[] = new EndpointSettingsNormalizer();
+        $normalizers[] = new EndpointIPAMConfigNormalizer();
         $normalizers[] = new NetworkConfigNormalizer();
         $normalizers[] = new ContainerNetworkNormalizer();
         $normalizers[] = new ContainerStateNormalizer();

@@ -13,7 +13,7 @@ class HostConfig
      */
     protected $links;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $lxcConf;
     /**
@@ -96,6 +96,10 @@ class HostConfig
      * @var bool
      */
     protected $readonlyRootfs;
+    /**
+     * @var string[]|null
+     */
+    protected $storageOpt;
     /**
      * @var string[]|null
      */
@@ -210,7 +214,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getLxcConf()
     {
@@ -218,11 +222,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $lxcConf
+     * @param string[]|null $lxcConf
      *
      * @return self
      */
-    public function setLxcConf(\ArrayObject $lxcConf = null)
+    public function setLxcConf($lxcConf = null)
     {
         $this->lxcConf = $lxcConf;
 
@@ -625,6 +629,26 @@ class HostConfig
     public function setReadonlyRootfs($readonlyRootfs = null)
     {
         $this->readonlyRootfs = $readonlyRootfs;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getStorageOpt()
+    {
+        return $this->storageOpt;
+    }
+
+    /**
+     * @param string[]|null $storageOpt
+     *
+     * @return self
+     */
+    public function setStorageOpt($storageOpt = null)
+    {
+        $this->storageOpt = $storageOpt;
 
         return $this;
     }

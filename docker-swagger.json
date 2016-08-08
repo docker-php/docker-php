@@ -172,7 +172,7 @@
           }
         },
         "LxcConf": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "string"
           }
@@ -259,6 +259,12 @@
         },
         "ReadonlyRootfs": {
           "type": "boolean"
+        },
+        "StorageOpt": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "Dns": {
           "type": ["array", "null"],

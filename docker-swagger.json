@@ -266,6 +266,12 @@
         "ReadonlyRootfs": {
           "type": "boolean"
         },
+        "Sysctls": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "StorageOpt": {
           "type": ["object", "null"],
           "additionalProperties": {

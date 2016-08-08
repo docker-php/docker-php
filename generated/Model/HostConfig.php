@@ -107,6 +107,10 @@ class HostConfig
     /**
      * @var string[]|null
      */
+    protected $sysctls;
+    /**
+     * @var string[]|null
+     */
     protected $storageOpt;
     /**
      * @var string[]|null
@@ -677,6 +681,26 @@ class HostConfig
     public function setReadonlyRootfs($readonlyRootfs = null)
     {
         $this->readonlyRootfs = $readonlyRootfs;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getSysctls()
+    {
+        return $this->sysctls;
+    }
+
+    /**
+     * @param string[]|null $sysctls
+     *
+     * @return self
+     */
+    public function setSysctls($sysctls = null)
+    {
+        $this->sysctls = $sysctls;
 
         return $this;
     }

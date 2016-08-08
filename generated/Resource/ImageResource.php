@@ -294,6 +294,7 @@ class ImageResource extends Resource
      * @param array $parameters {
      *
      *     @var string $term Term to search
+     *     @var int $limit Maximum returned search results
      *     @var string $filters A JSON encoded value of the filters (a map[string][]string) to process on the images list.
      * }
      *
@@ -305,6 +306,7 @@ class ImageResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('term', null);
+        $queryParam->setDefault('limit', null);
         $queryParam->setDefault('filters', null);
         $url      = '/images/search';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));

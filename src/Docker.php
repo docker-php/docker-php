@@ -222,11 +222,11 @@ class Docker
      */
     public function getSwarmManager()
     {
-        if (null === $this->taskManager) {
-            $this->taskManager = new SwarmManager($this->httpClient, $this->messageFactory, $this->serializer);
+        if (null === $this->swarmManager) {
+            $this->swarmManager = new SwarmManager($this->httpClient, $this->messageFactory, $this->serializer);
         }
 
-        return $this->taskManager;
+        return $this->swarmManager;
     }
 
     /**

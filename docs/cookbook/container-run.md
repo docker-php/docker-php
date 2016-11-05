@@ -61,7 +61,7 @@ $containerManager->wait('my-container-unique-name');
 
 Sometimes you will need to read logs in real time for a container. You can use the `attach` method for that. 
 Be aware that you will only receive them if you configure the container with 
-[son log driver](https://docs.docker.com/engine/reference/logging/overview/), which is the default configuration.
+[json log driver](https://docs.docker.com/engine/reference/logging/overview/), which is the default configuration.
 
 ```php
 $attachStream = $containerManager->attach('my-container-unique-name');

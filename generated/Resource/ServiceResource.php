@@ -42,7 +42,10 @@ class ServiceResource extends Resource
      * Create a service.
      *
      * @param \Docker\API\Model\ServiceSpec $serviceSpec Service specification to create
-     * @param array                         $parameters  List of parameters
+     * @param array  $parameters {
+     *
+     *     @var string $X-Registry-Auth A base64-encoded AuthConfig object
+     * }
      * @param string                        $fetch       Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ServiceCreateResponse
@@ -50,6 +53,9 @@ class ServiceResource extends Resource
     public function create(\Docker\API\Model\ServiceSpec $serviceSpec, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
+        $queryParam->setDefault('X-Registry-Auth', null);
+        $queryParam->setHeaderParameters(['X-Registry-Auth']);
+
         $url        = '/services/create';
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

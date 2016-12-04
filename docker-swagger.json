@@ -1388,13 +1388,19 @@
           "type": "boolean"
         },
         "Containers": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "$ref": "#/definitions/NetworkContainer"
           }
         },
         "Options": {
           "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Labels": {
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "string"
           }

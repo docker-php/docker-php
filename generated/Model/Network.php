@@ -33,13 +33,17 @@ class Network
      */
     protected $internal;
     /**
-     * @var NetworkContainer[]
+     * @var NetworkContainer[]|null
      */
     protected $containers;
     /**
      * @var string[]
      */
     protected $options;
+    /**
+     * @var string[]|null
+     */
+    protected $labels;
 
     /**
      * @return string
@@ -182,7 +186,7 @@ class Network
     }
 
     /**
-     * @return NetworkContainer[]
+     * @return NetworkContainer[]|null
      */
     public function getContainers()
     {
@@ -190,11 +194,11 @@ class Network
     }
 
     /**
-     * @param NetworkContainer[] $containers
+     * @param NetworkContainer[]|null $containers
      *
      * @return self
      */
-    public function setContainers(\ArrayObject $containers = null)
+    public function setContainers($containers = null)
     {
         $this->containers = $containers;
 
@@ -217,6 +221,26 @@ class Network
     public function setOptions(\ArrayObject $options = null)
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getLabels()
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @param string[]|null $labels
+     *
+     * @return self
+     */
+    public function setLabels($labels = null)
+    {
+        $this->labels = $labels;
 
         return $this;
     }

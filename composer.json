@@ -18,7 +18,7 @@
         "php": ">=5.4",
         "symfony/filesystem": "^2.3 || ^3.0",
         "symfony/process": "^2.3 || ^3.0",
-        "jane/open-api": "^1.0",
+        "jane/open-api": "^1.2",
         "php-http/socket-client": "^1.0",
         "php-http/client-common": "^1.1",
         "php-http/message": "^1.0",

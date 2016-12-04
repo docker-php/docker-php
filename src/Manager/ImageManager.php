@@ -11,7 +11,7 @@ use Docker\Stream\BuildStream;
 use Docker\Stream\CreateImageStream;
 use Docker\Stream\PushStream;
 use Docker\Stream\TarStream;
-use Joli\Jane\OpenApi\Client\QueryParam;
+use Joli\Jane\OpenApi\Runtime\Client\QueryParam;
 use Psr\Http\Message\StreamInterface;
 
 class ImageManager extends ImageResource

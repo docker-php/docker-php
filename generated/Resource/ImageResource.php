@@ -235,7 +235,6 @@ class ImageResource extends Resource
      * @param array  $parameters {
      *
      *     @var string $repo The repository to tag in.
-     *     @var string $force 1/True/true or 0/False/false, default false
      *     @var string $tag The new tag name.
      * }
      *
@@ -247,7 +246,6 @@ class ImageResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('repo', null);
-        $queryParam->setDefault('force', null);
         $queryParam->setDefault('tag', null);
         $url      = '/images/{name}/tag';
         $url      = str_replace('{name}', urlencode($name), $url);
@@ -296,6 +294,8 @@ class ImageResource extends Resource
      * @param array $parameters {
      *
      *     @var string $term Term to search
+     *     @var int $limit Maximum returned search results
+     *     @var string $filters A JSON encoded value of the filters (a map[string][]string) to process on the images list.
      * }
      *
      * @param string $fetch Fetch mode (object or response)
@@ -306,6 +306,8 @@ class ImageResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('term', null);
+        $queryParam->setDefault('limit', null);
+        $queryParam->setDefault('filters', null);
         $url      = '/images/search';
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

@@ -63,6 +63,9 @@ class ExecCommandNormalizer extends SerializerAwareNormalizer implements Denorma
         if (property_exists($data, 'Container')) {
             $object->setContainer($this->serializer->deserialize($data->{'Container'}, 'Docker\\API\\Model\\Container', 'raw', $context));
         }
+        if (property_exists($data, 'DetachKeys')) {
+            $object->setDetachKeys($data->{'DetachKeys'});
+        }
 
         return $object;
     }
@@ -93,6 +96,9 @@ class ExecCommandNormalizer extends SerializerAwareNormalizer implements Denorma
         }
         if (null !== $object->getContainer()) {
             $data->{'Container'} = $this->serializer->serialize($object->getContainer(), 'raw', $context);
+        }
+        if (null !== $object->getDetachKeys()) {
+            $data->{'DetachKeys'} = $object->getDetachKeys();
         }
 
         return $data;

@@ -65,11 +65,18 @@ class NetworkCreateConfigNormalizer extends SerializerAwareNormalizer implements
             $object->setOptions($values);
         }
         if (property_exists($data, 'Labels')) {
-            $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
-            foreach ($data->{'Labels'} as $key_1 => $value_1) {
-                $values_1[$key_1] = $value_1;
+            $value_1 = $data->{'Labels'};
+            if (is_object($data->{'Labels'})) {
+                $values_1 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                foreach ($data->{'Labels'} as $key_1 => $value_2) {
+                    $values_1[$key_1] = $value_2;
+                }
+                $value_1 = $values_1;
             }
-            $object->setLabels($values_1);
+            if (is_null($data->{'Labels'})) {
+                $value_1 = $data->{'Labels'};
+            }
+            $object->setLabels($value_1);
         }
 
         return $object;
@@ -103,13 +110,18 @@ class NetworkCreateConfigNormalizer extends SerializerAwareNormalizer implements
             }
             $data->{'Options'} = $values;
         }
-        if (null !== $object->getLabels()) {
+        $value_1 = $object->getLabels();
+        if (is_object($object->getLabels())) {
             $values_1 = new \stdClass();
-            foreach ($object->getLabels() as $key_1 => $value_1) {
-                $values_1->{$key_1} = $value_1;
+            foreach ($object->getLabels() as $key_1 => $value_2) {
+                $values_1->{$key_1} = $value_2;
             }
-            $data->{'Labels'} = $values_1;
+            $value_1 = $values_1;
         }
+        if (is_null($object->getLabels())) {
+            $value_1 = $object->getLabels();
+        }
+        $data->{'Labels'} = $value_1;
 
         return $data;
     }

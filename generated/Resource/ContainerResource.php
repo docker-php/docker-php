@@ -22,7 +22,7 @@ class ContainerResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerConfig[]
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\ContainerInfo[]
      */
     public function findAll($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -41,7 +41,7 @@ class ContainerResource extends Resource
         $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerConfig[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerInfo[]', 'json');
             }
         }
 
@@ -300,21 +300,26 @@ class ContainerResource extends Resource
      * Start the container id.
      *
      * @param string $id         The container id or name
-     * @param array  $parameters List of parameters
-     * @param string $fetch      Fetch mode (object or response)
+     * @param array  $parameters {
+     *
+     *     @var string $detachKeys Override the key sequence for detaching a container. Format is a single character [a-Z] or ctrl-<value> where <value> is one of: a-z, @, ^, [, , or _.
+     * }
+     *
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function start($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/containers/{id}/start';
-        $url        = str_replace('{id}', urlencode($id), $url);
-        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body       = $queryParam->buildFormDataString($parameters);
-        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $queryParam->setDefault('detachKeys', null);
+        $url      = '/containers/{id}/start';
+        $url      = str_replace('{id}', urlencode($id), $url);
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $queryParam->buildFormDataString($parameters);
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $response = $this->httpClient->sendRequest($request);
 
         return $response;
     }
@@ -517,6 +522,7 @@ class ContainerResource extends Resource
      *     @var string $stdin 1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.
      *     @var string $stdout 1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.
      *     @var string $stderr 1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.
+     *     @var string $detachKeys Override the key sequence for detaching a container. Format is a single character [a-Z] or ctrl-<value> where <value> is one of: a-z, @, ^, [, , or _.
      * }
      *
      * @param string $fetch Fetch mode (object or response)
@@ -531,6 +537,7 @@ class ContainerResource extends Resource
         $queryParam->setDefault('stdin', null);
         $queryParam->setDefault('stdout', null);
         $queryParam->setDefault('stderr', null);
+        $queryParam->setDefault('detachKeys', null);
         $url      = '/containers/{id}/attach';
         $url      = str_replace('{id}', urlencode($id), $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
@@ -553,6 +560,7 @@ class ContainerResource extends Resource
      *     @var string $stdin 1/True/true or 0/False/false, if stream=true, attach to stdin. Default false.
      *     @var string $stdout 1/True/true or 0/False/false, if logs=true, return stdout log, if stream=true, attach to stdout. Default false.
      *     @var string $stderr 1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.
+     *     @var string $detachKeys Override the key sequence for detaching a container. Format is a single character [a-Z] or ctrl-<value> where <value> is one of: a-z, @, ^, [, , or _.
      * }
      *
      * @param string $fetch Fetch mode (object or response)
@@ -567,6 +575,7 @@ class ContainerResource extends Resource
         $queryParam->setDefault('stdin', null);
         $queryParam->setDefault('stdout', null);
         $queryParam->setDefault('stderr', null);
+        $queryParam->setDefault('detachKeys', null);
         $url      = '/containers/{id}/attach/ws';
         $url      = str_replace('{id}', urlencode($id), $url);
         $url      = $url . ('?' . $queryParam->buildQueryString($parameters));

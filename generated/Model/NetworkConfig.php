@@ -33,7 +33,7 @@ class NetworkConfig
      */
     protected $networks;
     /**
-     * @var PortBinding[][]|null[]
+     * @var PortBinding[][]|null[]|null
      */
     protected $ports;
 
@@ -178,7 +178,7 @@ class NetworkConfig
     }
 
     /**
-     * @return PortBinding[][]|null[]
+     * @return PortBinding[][]|null[]|null
      */
     public function getPorts()
     {
@@ -186,11 +186,11 @@ class NetworkConfig
     }
 
     /**
-     * @param PortBinding[][]|null[] $ports
+     * @param PortBinding[][]|null[]|null $ports
      *
      * @return self
      */
-    public function setPorts(\ArrayObject $ports = null)
+    public function setPorts($ports = null)
     {
         $this->ports = $ports;
 

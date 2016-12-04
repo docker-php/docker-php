@@ -13,7 +13,7 @@ class HostConfig
      */
     protected $links;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $lxcConf;
     /**
@@ -40,6 +40,14 @@ class HostConfig
      * @var string
      */
     protected $cpusetMems;
+    /**
+     * @var int
+     */
+    protected $maximumIOps;
+    /**
+     * @var int
+     */
+    protected $maximumIOBps;
     /**
      * @var int
      */
@@ -96,6 +104,14 @@ class HostConfig
      * @var bool
      */
     protected $readonlyRootfs;
+    /**
+     * @var string[]|null
+     */
+    protected $sysctls;
+    /**
+     * @var string[]|null
+     */
+    protected $storageOpt;
     /**
      * @var string[]|null
      */
@@ -210,7 +226,7 @@ class HostConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getLxcConf()
     {
@@ -218,11 +234,11 @@ class HostConfig
     }
 
     /**
-     * @param string[] $lxcConf
+     * @param string[]|null $lxcConf
      *
      * @return self
      */
-    public function setLxcConf(\ArrayObject $lxcConf = null)
+    public function setLxcConf($lxcConf = null)
     {
         $this->lxcConf = $lxcConf;
 
@@ -345,6 +361,46 @@ class HostConfig
     public function setCpusetMems($cpusetMems = null)
     {
         $this->cpusetMems = $cpusetMems;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaximumIOps()
+    {
+        return $this->maximumIOps;
+    }
+
+    /**
+     * @param int $maximumIOps
+     *
+     * @return self
+     */
+    public function setMaximumIOps($maximumIOps = null)
+    {
+        $this->maximumIOps = $maximumIOps;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaximumIOBps()
+    {
+        return $this->maximumIOBps;
+    }
+
+    /**
+     * @param int $maximumIOBps
+     *
+     * @return self
+     */
+    public function setMaximumIOBps($maximumIOBps = null)
+    {
+        $this->maximumIOBps = $maximumIOBps;
 
         return $this;
     }
@@ -625,6 +681,46 @@ class HostConfig
     public function setReadonlyRootfs($readonlyRootfs = null)
     {
         $this->readonlyRootfs = $readonlyRootfs;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getSysctls()
+    {
+        return $this->sysctls;
+    }
+
+    /**
+     * @param string[]|null $sysctls
+     *
+     * @return self
+     */
+    public function setSysctls($sysctls = null)
+    {
+        $this->sysctls = $sysctls;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getStorageOpt()
+    {
+        return $this->storageOpt;
+    }
+
+    /**
+     * @param string[]|null $storageOpt
+     *
+     * @return self
+     */
+    public function setStorageOpt($storageOpt = null)
+    {
+        $this->storageOpt = $storageOpt;
 
         return $this;
     }

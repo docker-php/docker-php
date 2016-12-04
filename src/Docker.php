@@ -8,6 +8,10 @@ use Docker\Manager\ExecManager;
 use Docker\Manager\ImageManager;
 use Docker\Manager\MiscManager;
 use Docker\Manager\NetworkManager;
+use Docker\Manager\NodeManager;
+use Docker\Manager\ServiceManager;
+use Docker\Manager\SwarmManager;
+use Docker\Manager\TaskManager;
 use Docker\Manager\VolumeManager;
 use Http\Client\HttpClient;
 use Http\Message\MessageFactory;
@@ -61,6 +65,26 @@ class Docker
      * @var NetworkManager
      */
     private $networkManager;
+
+    /**
+     * @var NodeManager
+     */
+    private $nodeManager;
+
+    /**
+     * @var ServiceManager
+     */
+    private $serviceManager;
+
+    /**
+     * @var SwarmManager
+     */
+    private $swarmManager;
+
+    /**
+     * @var TaskManager
+     */
+    private $taskManager;
 
     /**
      * @var ExecManager
@@ -167,5 +191,53 @@ class Docker
         }
 
         return $this->networkManager;
+    }
+
+    /**
+     * @return NodeManager
+     */
+    public function getNodeManager()
+    {
+        if (null === $this->nodeManager) {
+            $this->nodeManager = new NodeManager($this->httpClient, $this->messageFactory, $this->serializer);
+        }
+
+        return $this->nodeManager;
+    }
+
+    /**
+     * @return ServiceManager
+     */
+    public function getServiceManager()
+    {
+        if (null === $this->serviceManager) {
+            $this->serviceManager = new ServiceManager($this->httpClient, $this->messageFactory, $this->serializer);
+        }
+
+        return $this->serviceManager;
+    }
+
+    /**
+     * @return SwarmManager
+     */
+    public function getSwarmManager()
+    {
+        if (null === $this->swarmManager) {
+            $this->swarmManager = new SwarmManager($this->httpClient, $this->messageFactory, $this->serializer);
+        }
+
+        return $this->swarmManager;
+    }
+
+    /**
+     * @return TaskManager
+     */
+    public function getTaskManager()
+    {
+        if (null === $this->taskManager) {
+            $this->taskManager = new TaskManager($this->httpClient, $this->messageFactory, $this->serializer);
+        }
+
+        return $this->taskManager;
     }
 }

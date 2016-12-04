@@ -128,9 +128,6 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             }
             $object->setSystemStatus($value_4);
         }
-        if (property_exists($data, 'ExecutionDriver')) {
-            $object->setExecutionDriver($data->{'ExecutionDriver'});
-        }
         if (property_exists($data, 'ExperimentalBuild')) {
             $object->setExperimentalBuild($data->{'ExperimentalBuild'});
         }
@@ -166,10 +163,10 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         }
         if (property_exists($data, 'Labels')) {
             $value_8 = $data->{'Labels'};
-            if (is_array($data->{'Labels'})) {
-                $values_4 = [];
-                foreach ($data->{'Labels'} as $value_9) {
-                    $values_4[] = $value_9;
+            if (is_object($data->{'Labels'})) {
+                $values_4 = new \ArrayObject([], \ArrayObject::ARRAY_AS_PROPS);
+                foreach ($data->{'Labels'} as $key => $value_9) {
+                    $values_4[$key] = $value_9;
                 }
                 $value_8 = $values_4;
             }
@@ -213,6 +210,20 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         }
         if (property_exists($data, 'RegistryConfig')) {
             $object->setRegistryConfig($this->serializer->deserialize($data->{'RegistryConfig'}, 'Docker\\API\\Model\\RegistryConfig', 'raw', $context));
+        }
+        if (property_exists($data, 'SecurityOptions')) {
+            $value_10 = $data->{'SecurityOptions'};
+            if (is_array($data->{'SecurityOptions'})) {
+                $values_5 = [];
+                foreach ($data->{'SecurityOptions'} as $value_11) {
+                    $values_5[] = $value_11;
+                }
+                $value_10 = $values_5;
+            }
+            if (is_null($data->{'SecurityOptions'})) {
+                $value_10 = $data->{'SecurityOptions'};
+            }
+            $object->setSecurityOptions($value_10);
         }
         if (property_exists($data, 'SwapLimit')) {
             $object->setSwapLimit($data->{'SwapLimit'});
@@ -315,9 +326,6 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $value_4 = $object->getSystemStatus();
         }
         $data->{'SystemStatus'} = $value_4;
-        if (null !== $object->getExecutionDriver()) {
-            $data->{'ExecutionDriver'} = $object->getExecutionDriver();
-        }
         if (null !== $object->getExperimentalBuild()) {
             $data->{'ExperimentalBuild'} = $object->getExperimentalBuild();
         }
@@ -352,10 +360,10 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
             $data->{'KernelVersion'} = $object->getKernelVersion();
         }
         $value_8 = $object->getLabels();
-        if (is_array($object->getLabels())) {
-            $values_4 = [];
-            foreach ($object->getLabels() as $value_9) {
-                $values_4[] = $value_9;
+        if (is_object($object->getLabels())) {
+            $values_4 = new \stdClass();
+            foreach ($object->getLabels() as $key => $value_9) {
+                $values_4->{$key} = $value_9;
             }
             $value_8 = $values_4;
         }
@@ -399,6 +407,18 @@ class SystemInformationNormalizer extends SerializerAwareNormalizer implements D
         if (null !== $object->getRegistryConfig()) {
             $data->{'RegistryConfig'} = $this->serializer->serialize($object->getRegistryConfig(), 'raw', $context);
         }
+        $value_10 = $object->getSecurityOptions();
+        if (is_array($object->getSecurityOptions())) {
+            $values_5 = [];
+            foreach ($object->getSecurityOptions() as $value_11) {
+                $values_5[] = $value_11;
+            }
+            $value_10 = $values_5;
+        }
+        if (is_null($object->getSecurityOptions())) {
+            $value_10 = $object->getSecurityOptions();
+        }
+        $data->{'SecurityOptions'} = $value_10;
         if (null !== $object->getSwapLimit()) {
             $data->{'SwapLimit'} = $object->getSwapLimit();
         }

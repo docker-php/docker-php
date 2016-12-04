@@ -4,7 +4,7 @@ Docker PHP
 **Docker PHP** (for lack of a better name) is a [Docker](http://docker.com/) client written in PHP.
 This library aim to reach 100% API support of the Docker Engine.
 
-The test suite currently passes against the [Docker Remote API v1.23](http://docs.docker.com/reference/api/docker_remote_api_v1.23/).
+The test suite currently passes against the [Docker Remote API v1.24](http://docs.docker.com/reference/api/docker_remote_api_v1.24/).
 
 [![Documentation Status](https://readthedocs.org/projects/docker-php/badge/?version=latest)](http://docker-php.readthedocs.org/en/latest/)
 [![Latest Version](https://img.shields.io/github/release/docker-php/docker-php.svg?style=flat-square)](https://github.com/docker-php/docker-php/releases)

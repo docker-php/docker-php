@@ -67,6 +67,21 @@ $ git pull --rebase upstream master
 $ git push -f origin feature-or-bug-fix-description
 ```
 
+## Internal
+
+This library consist, for the most part, of auto generated code where the reference is an [Open API Specification (Swagger v2)](https://openapis.org/). In order to modify API 
+endpoint or requested / returned object, you will need to update the `docker-swagger.json` file instead of files in the `generated` directory.
+
+There is a bash script at the root of this repository `generate.sh` which helps launching the command to generate files according to the
+specification.
+
+When changing the specification don't hesite to do 2 commits for better reading:
+
+ * One with only changes to the specification
+ * One with changes on the generated code
+
+Having this also helps backporting changes to the specification in previous versions.
+
 
 ## Coding standard
 

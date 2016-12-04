@@ -65,10 +65,6 @@ class SystemInformation
      */
     protected $systemStatus;
     /**
-     * @var string
-     */
-    protected $executionDriver;
-    /**
      * @var bool
      */
     protected $experimentalBuild;
@@ -164,6 +160,10 @@ class SystemInformation
      * @var RegistryConfig
      */
     protected $registryConfig;
+    /**
+     * @var string[]|null
+     */
+    protected $securityOptions;
     /**
      * @var bool
      */
@@ -473,26 +473,6 @@ class SystemInformation
     public function setSystemStatus($systemStatus = null)
     {
         $this->systemStatus = $systemStatus;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExecutionDriver()
-    {
-        return $this->executionDriver;
-    }
-
-    /**
-     * @param string $executionDriver
-     *
-     * @return self
-     */
-    public function setExecutionDriver($executionDriver = null)
-    {
-        $this->executionDriver = $executionDriver;
 
         return $this;
     }
@@ -973,6 +953,26 @@ class SystemInformation
     public function setRegistryConfig(RegistryConfig $registryConfig = null)
     {
         $this->registryConfig = $registryConfig;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getSecurityOptions()
+    {
+        return $this->securityOptions;
+    }
+
+    /**
+     * @param string[]|null $securityOptions
+     *
+     * @return self
+     */
+    public function setSecurityOptions($securityOptions = null)
+    {
+        $this->securityOptions = $securityOptions;
 
         return $this;
     }

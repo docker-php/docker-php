@@ -42,20 +42,26 @@ class VolumeResource extends Resource
      * Create a volume.
      *
      * @param \Docker\API\Model\VolumeConfig $volumeConfig Volume configuration
-     * @param array                          $parameters   List of parameters
-     * @param string                         $fetch        Fetch mode (object or response)
+     * @param array                          $parameters   {
+     *
+     *     @var string $Content-Type Content Type of input
+     * }
+     *
+     * @param string $fetch Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\Model\Volume
      */
     public function create(\Docker\API\Model\VolumeConfig $volumeConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/volumes/create';
-        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body       = $this->serializer->serialize($volumeConfig, 'json');
-        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $queryParam->setDefault('Content-Type', 'application/json');
+        $queryParam->setHeaderParameters(['Content-Type']);
+        $url      = '/volumes/create';
+        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body     = $this->serializer->serialize($volumeConfig, 'json');
+        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $response = $this->httpClient->sendRequest($request);
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Volume', 'json');

@@ -50,7 +50,7 @@
         }
       }
     },
-    "port": {
+    "Port": {
       "type": "object",
       "properties": {
         "PrivatePort": {
@@ -172,7 +172,7 @@
           }
         },
         "LxcConf": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "string"
           }
@@ -196,6 +196,12 @@
         },
         "CpusetMems": {
           "type": "string"
+        },
+        "MaximumIOps": {
+          "type": "integer"
+        },
+        "MaximumIOBps": {
+          "type": "integer"
         },
         "BlkioWeight": {
           "type": "integer"
@@ -259,6 +265,18 @@
         },
         "ReadonlyRootfs": {
           "type": "boolean"
+        },
+        "Sysctls": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "StorageOpt": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "Dns": {
           "type": ["array", "null"],
@@ -371,7 +389,7 @@
         }
       }
     },
-    "ContainerConfig": {
+    "ContainerInfo": {
       "type": "object",
       "properties": {
         "Id": {
@@ -387,7 +405,7 @@
           "type": "string"
         },
         "ImageID": {
-           "type": "string"
+          "type": "string"
         },
         "Command": {
           "type": "string"
@@ -404,11 +422,11 @@
         "Ports": {
           "type": ["array", "null"],
           "items": {
-            "$ref": "#/definitions/port"
+            "$ref": "#/definitions/Port"
           }
         },
         "Labels": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "string"
           }
@@ -419,14 +437,34 @@
         "SizeRootFs": {
           "type": "integer"
         },
+        "HostConfig": {
+          "$ref": "#/definitions/HostConfig"
+        },
+        "NetworkSettings": {
+          "$ref": "#/definitions/NetworkConfig"
+        },
+        "Mounts": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/Mount"
+          }
+        },
+        "Node": {
+          "$ref": "#/definitions/ContainerNode"
+        }
+      }
+    },
+    "ContainerConfig": {
+      "type": "object",
+      "properties": {
         "Hostname": {
-          "type": "integer"
+          "type": "string"
         },
         "Domainname": {
-          "type": "integer"
+          "type": "string"
         },
         "User": {
-          "type": "integer"
+          "type": "string"
         },
         "AttachStdin": {
           "type": "boolean",
@@ -470,10 +508,19 @@
             "type": "string"
           }
         },
-        "Mounts": {
-          "type": ["array", "null"],
-          "items": {
-            "$ref": "#/definitions/Mount"
+        "Image": {
+          "type": "string"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Volumes": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "object"
           }
         },
         "WorkingDir": {
@@ -486,18 +533,96 @@
           "type": "string"
         },
         "ExposedPorts": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "object",
             "enum": [{}],
             "default": {}
           }
         },
-        "NetworkSettings": {
-          "$ref": "#/definitions/NetworkConfig"
+        "StopSignal": {
+          "type": "string"
         },
         "HostConfig": {
           "$ref": "#/definitions/HostConfig"
+        },
+        "NetworkingConfig": {
+          "$ref": "#/definitions/NetworkingConfig"
+        }
+      }
+    },
+    "NetworkingConfig": {
+      "type": "object",
+      "properties": {
+        "EndpointsConfig": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/EndpointSettings"
+          }
+        }
+      }
+    },
+    "EndpointSettings": {
+      "type": "object",
+      "properties": {
+        "IPAMConfig": {
+          "$ref": "#/definitions/EndpointIPAMConfig"
+        },
+        "Links": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "NetworkID": {
+          "type": "string"
+        },
+        "EndpointID": {
+          "type": "string"
+        },
+        "Gateway": {
+          "type": "string"
+        },
+        "IPAddress": {
+          "type": "string"
+        },
+        "IPPrefixLen": {
+          "type": "integer"
+        },
+        "IPv6Gateway": {
+          "type": "string"
+        },
+        "GlobalIPv6Address": {
+          "type": "string"
+        },
+        "GlobalIPv6PrefixLen": {
+          "type": "integer"
+        },
+        "MacAddress": {
+          "type": "string"
+        }
+      }
+    },
+    "EndpointIPAMConfig": {
+      "type": "object",
+      "properties": {
+        "IPv4Address": {
+          "type": "string"
+        },
+        "IPv6Address": {
+          "type": "string"
+        },
+        "LinkLocalIPs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -529,7 +654,7 @@
           }
         },
         "Ports": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": ["array", "null"],
             "items": {
@@ -953,9 +1078,6 @@
             }
           }
         },
-        "ExecutionDriver": {
-          "type": "string"
-        },
         "ExperimentalBuild": {
           "type": "boolean"
         },
@@ -990,8 +1112,8 @@
           "type": "string"
         },
         "Labels": {
-          "type": ["array", "null"],
-          "items": {
+          "type": ["object", "null"],
+          "additionalProperties": {
             "type": "string"
           }
         },
@@ -1030,6 +1152,12 @@
         },
         "RegistryConfig": {
           "$ref": "#/definitions/RegistryConfig"
+        },
+        "SecurityOptions": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
         },
         "SwapLimit": {
           "type": "boolean"
@@ -1121,6 +1249,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "DetachKeys": {
+          "type": "string"
         }
       }
     },
@@ -1161,6 +1292,9 @@
         },
         "Container": {
           "$ref": "#/definitions/Container"
+        },
+        "DetachKeys": {
+          "type": "string"
         }
       }
     },
@@ -1254,13 +1388,19 @@
           "type": "boolean"
         },
         "Containers": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "$ref": "#/definitions/NetworkContainer"
           }
         },
         "Options": {
           "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Labels": {
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "string"
           }
@@ -1360,7 +1500,7 @@
           }
         },
         "Labels": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": {
             "type": "string"
           }
@@ -1578,6 +1718,873 @@
           "type": "string"
         }
       }
+    },
+    "ContainerNode": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Ip": {
+          "type": "string"
+        },
+        "Addr": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        }
+      }
+    },
+    "Node": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Version": {
+          "$ref": "#/definitions/NodeVersion"
+        },
+        "CreatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UpdatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Spec": {
+          "$ref": "#/definitions/NodeSpec"
+        },
+        "Description": {
+          "$ref": "#/definitions/NodeDescription"
+        },
+        "Status": {
+          "$ref": "#/definitions/NodeStatus"
+        },
+        "ManagerStatus": {
+          "$ref": "#/definitions/NodeManagerStatus"
+        }
+      }
+    },
+    "NodeVersion": {
+      "type": "object",
+      "properties": {
+        "Index": {
+          "type": "string"
+        }
+      }
+    },
+    "NodeSpec": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Role": {
+          "type": "string"
+        },
+        "Availability": {
+          "type": "string"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "NodeDescription": {
+      "type": "object",
+      "properties": {
+        "Hostname": {
+          "type": "string"
+        },
+        "Platform": {
+          "$ref": "#/definitions/NodePlatform"
+        },
+        "Resources": {
+          "$ref": "#/definitions/NodeResources"
+        },
+        "Engine": {
+          "$ref": "#/definitions/NodeEngine"
+        }
+      }
+    },
+    "NodeStatus": {
+      "type": "object",
+      "properties": {
+        "State": {
+          "type": "string"
+        }
+      }
+    },
+    "NodeManagerStatus": {
+      "type": "object",
+      "properties": {
+        "Leader": {
+          "type": "boolean"
+        },
+        "Reachability": {
+          "type": "string"
+        },
+        "Addr": {
+          "type": "string"
+        }
+      }
+    },
+    "NodePlatform": {
+      "type": "object",
+      "properties": {
+        "Architecture": {
+          "type": "string"
+        },
+        "OS": {
+          "type": "string"
+        }
+      }
+    },
+    "NodeResources": {
+      "type": "object",
+      "properties": {
+        "NanoCPUs": {
+          "type": "integer"
+        },
+        "MemoryBytes": {
+          "type": "integer"
+        }
+      }
+    },
+    "NodeEngine": {
+      "type": "object",
+      "properties": {
+        "EngineVersion": {
+          "type": "boolean"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Plugins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NodePlugin"
+          }
+        }
+      }
+    },
+    "NodePlugin": {
+      "type": "object",
+      "properties": {
+        "Type": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        }
+      }
+    },
+    "SwarmConfig": {
+      "type": "object",
+      "properties": {
+        "ListenAddr": {
+          "type": "string"
+        },
+        "AdvertiseAddr": {
+          "type": "string"
+        },
+        "ForceNewCluster": {
+          "type": "boolean"
+        },
+        "Spec": {
+          "$ref": "#/definitions/SwarmConfigSpec"
+        }
+      }
+    },
+    "SwarmConfigSpec": {
+      "type": "object",
+      "properties": {
+        "Orchestration": {
+          "$ref": "#/definitions/SwarmConfigSpecOrchestration"
+        },
+        "Raft": {
+          "$ref": "#/definitions/SwarmConfigSpecRaft"
+        },
+        "Dispatcher": {
+          "$ref": "#/definitions/SwarmConfigSpecDispatcher"
+        },
+        "CAConfig": {
+          "$ref": "#/definitions/SwarmConfigSpecCAConfig"
+        }
+      }
+    },
+    "SwarmConfigSpecOrchestration": {
+      "type": "object",
+      "properties": {
+        "TaskHistoryRetentionLimit": {
+          "type": "integer"
+        }
+      }
+    },
+    "SwarmConfigSpecRaft": {
+      "type": "object",
+      "properties": {
+        "SnapshotInterval": {
+          "type": "integer"
+        },
+        "KeepOldSnapshots": {
+          "type": "integer"
+        },
+        "LogEntriesForSlowFollowers": {
+          "type": "integer"
+        },
+        "HeartbeatTick": {
+          "type": "integer"
+        },
+        "ElectionTick": {
+          "type": "integer"
+        }
+      }
+    },
+    "SwarmConfigSpecDispatcher": {
+      "type": "object",
+      "properties": {
+        "HeartbeatPeriod": {
+          "type": "integer"
+        }
+      }
+    },
+    "SwarmConfigSpecCAConfig": {
+      "type": "object",
+      "properties": {
+        "NodeCertExpiry": {
+          "type": "boolean"
+        },
+        "ExternalCA": {
+          "$ref": "#/definitions/SwarmConfigSpecCAConfigExternalCA"
+        }
+      }
+    },
+    "SwarmConfigSpecCAConfigExternalCA": {
+      "type": "object",
+      "properties": {
+        "Protocol": {
+          "type": "string"
+        },
+        "URL": {
+          "type": "string"
+        },
+        "Options": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "SwarmJoinConfig": {
+      "type": "object",
+      "properties": {
+        "ListenAddr": {
+          "type": "string"
+        },
+        "AdvertiseAddr": {
+          "type": "string"
+        },
+        "RemoteAddrs": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "JoinToken": {
+          "type": "string"
+        }
+      }
+    },
+    "SwarmUpdateConfig": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Orchestration": {
+          "$ref": "#/definitions/SwarmConfigSpecOrchestration"
+        },
+        "Raft": {
+          "$ref": "#/definitions/SwarmConfigSpecRaft"
+        },
+        "Dispatcher": {
+          "$ref": "#/definitions/SwarmConfigSpecDispatcher"
+        },
+        "CAConfig": {
+          "$ref": "#/definitions/SwarmConfigSpecCAConfig"
+        },
+        "JoinTokens": {
+          "$ref": "#/definitions/SwarmJoinTokens"
+        }
+      }
+    },
+    "SwarmJoinTokens": {
+      "type": "object",
+      "properties": {
+        "Worker": {
+          "type": "string"
+        },
+        "Manager": {
+          "type": "string"
+        }
+      }
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Version": {
+          "$ref": "#/definitions/NodeVersion"
+        },
+        "CreatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UpdatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Spec": {
+          "$ref": "#/definitions/TaskSpec"
+        },
+        "ServiceID": {
+          "type": "string"
+        },
+        "Instance": {
+          "type": "integer"
+        },
+        "NodeID": {
+          "type": "string"
+        },
+        "ServiceAnnotations": {
+          "$ref": "#/definitions/Annotations"
+        },
+        "Status": {
+          "$ref": "#/definitions/TaskStatus"
+        },
+        "DesiredState": {
+          "type": "string"
+        },
+        "NetworksAttachments": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/NetworkAttachment"
+          }
+        },
+        "Endpoint": {
+          "$ref": "#/definitions/Endpoint"
+        }
+      }
+    },
+    "TaskSpec": {
+      "type": "object",
+      "properties": {
+        "ContainerSpec": {
+          "$ref": "#/definitions/ContainerSpec"
+        },
+        "Resources": {
+          "$ref": "#/definitions/TaskSpecResourceRequirements"
+        },
+        "RestartPolicy": {
+          "$ref": "#/definitions/TaskSpecRestartPolicy"
+        },
+        "Placement": {
+          "$ref": "#/definitions/TaskSpecPlacement"
+        }
+      }
+    },
+    "TaskStatus": {
+      "type": "object",
+      "properties": {
+        "Timestamp": {
+          "type": "string"
+        },
+        "State": {
+          "type": "string"
+        },
+        "Message": {
+          "type": "string"
+        },
+        "Err": {
+          "type": "string"
+        },
+        "ContainerStatus": {
+          "$ref": "#/definitions/ContainerStatus"
+        }
+      }
+    },
+    "NetworkAttachment": {
+      "type": "object",
+      "properties": {
+        "Network": {
+          "$ref": "#/definitions/SwarmNetwork"
+        },
+        "Addresses": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "SwarmNetwork": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Version": {
+          "$ref": "#/definitions/NodeVersion"
+        },
+        "CreatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UpdatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Spec": {
+          "$ref": "#/definitions/SwarmNetworkSpec"
+        },
+        "DriverState": {
+          "$ref": "#/definitions/Driver"
+        },
+        "IPAM": {
+          "$ref": "#/definitions/SwarmIPAMOptions"
+        }
+      }
+    },
+    "SwarmNetworkSpec": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "DriverConfiguration": {
+          "$ref": "#/definitions/Driver"
+        },
+        "IPv6Enabled": {
+          "type": "boolean"
+        },
+        "Internal": {
+          "type": "boolean"
+        },
+        "IPAM": {
+          "$ref": "#/definitions/SwarmIPAMOptions"
+        }
+      }
+    },
+    "SwarmIPAMOptions": {
+      "type": "object",
+      "properties": {
+        "Driver": {
+          "$ref": "#/definitions/Driver"
+        },
+        "Configs": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/IPAMConfig"
+          }
+        }
+      }
+    },
+    "TaskSpecResourceRequirements": {
+      "type": "object",
+      "properties": {
+        "Limits": {
+          "$ref": "#/definitions/NodeResources"
+        },
+        "Reservations": {
+          "$ref": "#/definitions/NodeResources"
+        }
+      }
+    },
+    "TaskSpecRestartPolicy": {
+      "type": "object",
+      "properties": {
+        "Condition": {
+          "type": "string"
+        },
+        "Delay": {
+          "type": "integer"
+        },
+        "MaxAttempts": {
+          "type": "integer"
+        },
+        "Window": {
+          "type": "integer"
+        }
+      }
+    },
+    "TaskSpecPlacement": {
+      "type": "object",
+      "properties": {
+        "Constraints": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Annotations": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Endpoint": {
+      "type": "object",
+      "properties": {
+        "Spec": {
+          "$ref": "#/definitions/EndpointSpec"
+        },
+        "ExposedPorts": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/PortConfig"
+          }
+        },
+        "VirtualIPs": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/EndpointVirtualIP"
+          }
+        }
+      }
+    },
+    "EndpointSpec": {
+      "type": "object",
+      "properties": {
+        "Mode": {
+          "type": "string"
+        },
+        "Ports": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/PortConfig"
+          }
+        }
+      }
+    },
+    "PortConfig": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Protocol": {
+          "type": "string"
+        },
+        "TargetPort": {
+          "type": "integer"
+        },
+        "PublishedPort": {
+          "type": "integer"
+        }
+      }
+    },
+    "EndpointVirtualIP": {
+      "type": "object",
+      "properties": {
+        "NetworkID": {
+          "type": "string"
+        },
+        "Addr": {
+          "type": "string"
+        }
+      }
+    },
+    "ContainerSpec": {
+      "type": "object",
+      "properties": {
+        "Image": {
+          "type": "string"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Command": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "Args": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "Env": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "Dir": {
+          "type": "string"
+        },
+        "User": {
+          "type": "string"
+        },
+        "Mounts": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/ContainerSpecMount"
+          }
+        },
+        "StopGracePeriod": {
+          "type": "integer"
+        }
+      }
+    },
+    "ContainerSpecMount": {
+      "type": "object",
+      "properties": {
+        "Type": {
+          "type": "string"
+        },
+        "Source": {
+          "type": "string"
+        },
+        "Target": {
+          "type": "string"
+        },
+        "ReadOnly": {
+          "type": "boolean"
+        },
+        "BindOptions": {
+          "$ref": "#/definitions/ContainerSpecMountBindOptions"
+        },
+        "VolumeOptions": {
+          "$ref": "#/definitions/ContainerSpecMountVolumeOptions"
+        }
+      }
+    },
+    "ContainerSpecMountBindOptions": {
+      "type": "object",
+      "properties": {
+        "Propagation": {
+          "type": "string"
+        }
+      }
+    },
+    "ContainerSpecMountVolumeOptions": {
+      "type": "object",
+      "properties": {
+        "NoCopy": {
+          "type": "boolean"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "DriverConfig": {
+          "$ref": "#/definitions/Driver"
+        }
+      }
+    },
+    "ContainerStatus": {
+      "type": "object",
+      "properties": {
+        "ContainerID": {
+          "type": "string"
+        },
+        "PID": {
+          "type": "integer"
+        },
+        "ExitCode": {
+          "type": "integer"
+        }
+      }
+    },
+    "Driver": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Options": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Service": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Version": {
+          "$ref": "#/definitions/NodeVersion"
+        },
+        "CreatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UpdatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Spec": {
+          "$ref": "#/definitions/ServiceSpec"
+        },
+        "Endpoint": {
+          "$ref": "#/definitions/Endpoint"
+        },
+        "UpdateStatus": {
+          "$ref": "#/definitions/UpdateStatus"
+        }
+      }
+    },
+    "UpdateStatus": {
+      "type": "object",
+      "properties": {
+        "State": {
+          "type": "string"
+        },
+        "StartedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "CompletedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Message": {
+          "type": "string"
+        }
+      }
+    },
+    "ServiceSpec": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Labels": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "TaskTemplate": {
+          "$ref": "#/definitions/TaskSpec"
+        },
+        "Mode": {
+          "$ref": "#/definitions/ServiceSpecMode"
+        },
+        "UpdateConfig": {
+          "$ref": "#/definitions/UpdateConfig"
+        },
+        "Networks": {
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/NetworkAttachmentConfig"
+          }
+        },
+        "EndpointSpec": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateConfig": {
+      "type": "object",
+      "properties": {
+        "Parallelism": {
+          "type": "integer"
+        },
+        "Delay": {
+          "type": "integer"
+        },
+        "FailureAction": {
+          "type": "string"
+        }
+      }
+    },
+    "NetworkAttachmentConfig": {
+      "type": "object",
+      "properties": {
+        "Target": {
+          "type": "string"
+        },
+        "Aliases": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ServiceSpecMode": {
+      "type": "object",
+      "properties": {
+        "Replicated": {
+          "$ref": "#/definitions/ReplicatedService"
+        },
+        "Global": {
+          "$ref": "#/definitions/GlobalService"
+        }
+      }
+    },
+    "ReplicatedService": {
+      "type": "object",
+      "properties": {
+        "Replicas": {
+          "type": "integer"
+        }
+      }
+    },
+    "GlobalService": {
+      "type": "object",
+      "properties": {}
+    },
+    "ServiceCreateResponse": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        }
+      }
     }
   },
   "paths": {
@@ -1627,7 +2634,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/ContainerConfig"
+                "$ref": "#/definitions/ContainerInfo"
               }
             }
           },
@@ -1675,6 +2682,9 @@
             "schema": {
               "$ref": "#/definitions/ContainerCreateResult"
             }
+          },
+          "400": {
+            "description": "bad parameter"
           },
           "404": {
             "description": "no such container"
@@ -2000,6 +3010,11 @@
           "required": true,
           "description": "The container id or name",
           "type": "string"
+        }, {
+          "name": "detachKeys",
+          "in": "query",
+          "description": "Override the key sequence for detaching a container. Format is a single character [a-Z] or ctrl-<value> where <value> is one of: a-z, @, ^, [, , or _.",
+          "type": "string"
         }],
         "tags": [
           "Container"
@@ -2292,6 +3307,11 @@
           "in": "query",
           "description": "1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.",
           "type": "string"
+        }, {
+          "name": "detachKeys",
+          "in": "query",
+          "description": "Override the key sequence for detaching a container. Format is a single character [a-Z] or ctrl-<value> where <value> is one of: a-z, @, ^, [, , or _.",
+          "type": "string"
         }],
         "tags": [
           "Container"
@@ -2350,6 +3370,11 @@
           "name": "stderr",
           "in": "query",
           "description": "1/True/true or 0/False/false, if logs=true, return stderr log, if stream=true, attach to stderr. Default false.",
+          "type": "string"
+        }, {
+          "name": "detachKeys",
+          "in": "query",
+          "description": "Override the key sequence for detaching a container. Format is a single character [a-Z] or ctrl-<value> where <value> is one of: a-z, @, ^, [, , or _.",
           "type": "string"
         }],
         "tags": [
@@ -2721,6 +3746,9 @@
           "200": {
             "description": "no error"
           },
+          "404": {
+            "description": "'docker import' flow not implement"
+          },
           "500": {
             "description": "server error"
           }
@@ -2902,11 +3930,6 @@
           "description": "The repository to tag in.",
           "type": "string"
         }, {
-          "name": "force",
-          "in": "query",
-          "description": "1/True/true or 0/False/false, default false",
-          "type": "string"
-        }, {
           "name": "tag",
           "in": "query",
           "description": "The new tag name.",
@@ -2981,6 +4004,16 @@
           "name": "term",
           "in": "query",
           "description": "Term to search",
+          "type": "string"
+        }, {
+          "name": "limit",
+          "in": "query",
+          "description": "Maximum returned search results",
+          "type": "integer"
+        }, {
+          "name": "filters",
+          "in": "query",
+          "description": "A JSON encoded value of the filters (a map[string][]string) to process on the images list.",
           "type": "string"
         }],
         "tags": [
@@ -3482,6 +4515,13 @@
           "schema": {
             "$ref": "#/definitions/VolumeConfig"
           }
+        }, {
+          "name": "Content-Type",
+          "required": true,
+          "in": "header",
+          "type": "string",
+          "default": "application/json",
+          "description": "Content Type of input"
         }],
         "tags": [
           "Volume"
@@ -3685,6 +4725,9 @@
           "201": {
             "description": "No error"
           },
+          "403": {
+            "description": "Operation not supported for swarm scoped networks"
+          },
           "404": {
             "description": "Network or container not found"
           },
@@ -3728,6 +4771,9 @@
           "201": {
             "description": "No error"
           },
+          "403": {
+            "description": "Operation not supported for swarm scoped networks"
+          },
           "404": {
             "description": "Network or container not found"
           },
@@ -3759,6 +4805,430 @@
         }],
         "tags": [
           "Network"
+        ]
+      }
+    },
+    "/nodes": {
+      "get": {
+        "summary": "List nodes",
+        "description": "List nodes.",
+        "operationId": "findAll",
+        "responses": {
+          "200": {
+            "description": "No error",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Node"
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "filters",
+          "in": "query",
+          "description": "A JSON encoded value of the filters (a map[string][]string) to process on the nodes list.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }],
+        "tags": [
+          "Node"
+        ]
+      }
+    },
+    "/nodes/{id}": {
+      "get": {
+        "summary": "Inspect a node",
+        "description": "Return low-level information on the node id.",
+        "operationId": "find",
+        "responses": {
+          "200": {
+            "description": "No error",
+            "schema": {
+              "$ref": "#/definitions/Node"
+            }
+          },
+          "404": {
+            "description": "No such node"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "description": "Node id or name",
+          "required": true,
+          "type": "string"
+        }],
+        "tags": [
+          "Node"
+        ]
+      }
+    },
+    "/swarm/init": {
+      "post": {
+        "summary": "Initialize a new Swarm",
+        "description": "Initialize a new Swarm",
+        "operationId": "initialize",
+        "responses": {
+          "200": {
+            "description": "No error"
+          },
+          "400": {
+            "description": "Bad parameter"
+          },
+          "406": {
+            "description": "Node is already part of a Swarm"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "swarmConfig",
+          "in": "body",
+          "description": "Config for the Swarm",
+          "schema": {
+            "$ref": "#/definitions/SwarmConfig"
+          }
+        }],
+        "tags": [
+          "Swarm"
+        ]
+      }
+    },
+    "/swarm/join": {
+      "post": {
+        "summary": "Join an existing new Swarm",
+        "description": "Join an existing new Swarm",
+        "operationId": "join",
+        "responses": {
+          "200": {
+            "description": "No error"
+          },
+          "400": {
+            "description": "Bad parameter"
+          },
+          "406": {
+            "description": "Node is already part of a Swarm"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "swarmJoinConfig",
+          "in": "body",
+          "description": "Config for joining the Swarm",
+          "schema": {
+            "$ref": "#/definitions/SwarmJoinConfig"
+          }
+        }],
+        "tags": [
+          "Swarm"
+        ]
+      }
+    },
+    "/swarm/leave": {
+      "post": {
+        "summary": "Leave a Swarm",
+        "description": "Leave a Swarm",
+        "operationId": "leave",
+        "responses": {
+          "200": {
+            "description": "No error"
+          },
+          "406": {
+            "description": "Node is not part of a Swarm"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "tags": [
+          "Swarm"
+        ]
+      }
+    },
+    "/swarm/update": {
+      "post": {
+        "summary": "Update a Swarm",
+        "description": "Update a Swarm",
+        "operationId": "update",
+        "responses": {
+          "200": {
+            "description": "No error"
+          },
+          "406": {
+            "description": "Node is not part of a Swarm"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "swarmUpdateConfig",
+          "in": "body",
+          "description": "Config for updating the Swarm",
+          "schema": {
+            "$ref": "#/definitions/SwarmUpdateConfig"
+          }
+        }, {
+          "name": "version",
+          "in": "query",
+          "description": "The version number of the swarm object being updated. This is required to avoid conflicting writes.",
+          "required": true,
+          "type": "integer"
+        }, {
+          "name": "rotateWorkerToken",
+          "in": "query",
+          "description": "Set to true (or 1) to rotate the worker join token.",
+          "type": "boolean"
+        }, {
+          "name": "rotateManagerToken",
+          "in": "query",
+          "description": "Set to true (or 1) to rotate the manager join token.",
+          "type": "boolean"
+        }],
+        "tags": [
+          "Swarm"
+        ]
+      }
+    },
+    "/services": {
+      "get": {
+        "summary": "List services",
+        "description": "List services",
+        "operationId": "findAll",
+        "responses": {
+          "200": {
+            "description": "No error",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Service"
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "filters",
+          "in": "query",
+          "description": "A JSON encoded value of the filters (a map[string][]string) to process on the services list.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }],
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/services/create": {
+      "post": {
+        "summary": "Create a service",
+        "description": "Create a service",
+        "operationId": "create",
+        "responses": {
+          "201": {
+            "description": "No error",
+            "schema": {
+              "$ref": "#/definitions/ServiceCreateResponse"
+            }
+          },
+          "406": {
+            "description": "Server error or node is not part of a Swarm"
+          },
+          "409": {
+            "description": "Name conflicts with an existing object"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "serviceSpec",
+          "in": "body",
+          "description": "Service specification to create",
+          "schema": {
+            "$ref": "#/definitions/ServiceSpec"
+          }
+        }],
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/service/{id}": {
+      "delete": {
+        "summary": "Remove a service",
+        "description": "Stop and remove the service id",
+        "operationId": "remove",
+        "responses": {
+          "204": {
+            "description": "No error"
+          },
+          "404": {
+            "description": "No such service"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "description": "Service id or name",
+          "required": true,
+          "type": "string"
+        }],
+        "tags": [
+          "Service"
+        ]
+      },
+      "get": {
+        "summary": "Inspect a service",
+        "description": "Get details on a service",
+        "operationId": "find",
+        "responses": {
+          "200": {
+            "description": "No error",
+            "schema": {
+              "$ref": "#/definitions/Service"
+            }
+          },
+          "404": {
+            "description": "No such service"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "description": "Service id or name",
+          "required": true,
+          "type": "string"
+        }],
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/services/{id}/update": {
+      "post": {
+        "summary": "Update a service",
+        "description": "Update the service id.",
+        "operationId": "update",
+        "responses": {
+          "200": {
+            "description": "No error"
+          },
+          "404": {
+            "description": "No such service"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "description": "Service id or name",
+          "required": true,
+          "type": "string"
+        }, {
+          "name": "version",
+          "in": "query",
+          "description": " The version number of the service object being updated. This is required to avoid conflicting writes.",
+          "required": true,
+          "type": "integer"
+        }, {
+          "name": "serviceSpec",
+          "in": "body",
+          "description": "Service specification to update",
+          "schema": {
+            "$ref": "#/definitions/ServiceSpec"
+          }
+        }],
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/tasks": {
+      "get": {
+        "summary": "List tasks",
+        "description": "List tasks",
+        "operationId": "findAll",
+        "responses": {
+          "200": {
+            "description": "No error",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "filters",
+          "in": "query",
+          "description": "A JSON encoded value of the filters (a map[string][]string) to process on the tasks list.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }],
+        "tags": [
+          "Task"
+        ]
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "summary": "Inspect a task",
+        "description": "Get details on a task",
+        "operationId": "find",
+        "responses": {
+          "200": {
+            "description": "No error",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
+          "404": {
+            "description": "Unknown task"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "description": "Task id or name",
+          "required": true,
+          "type": "string"
+        }],
+        "tags": [
+          "Task"
         ]
       }
     }

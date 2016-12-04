@@ -33,7 +33,7 @@ class NetworkCreateConfig
      */
     protected $options;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $labels;
 
@@ -178,7 +178,7 @@ class NetworkCreateConfig
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getLabels()
     {
@@ -186,11 +186,11 @@ class NetworkCreateConfig
     }
 
     /**
-     * @param string[] $labels
+     * @param string[]|null $labels
      *
      * @return self
      */
-    public function setLabels(\ArrayObject $labels = null)
+    public function setLabels($labels = null)
     {
         $this->labels = $labels;
 

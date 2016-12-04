@@ -3,12 +3,12 @@
 namespace Docker;
 
 use GuzzleHttp\Psr7\Uri;
+use Http\Client\Common\Plugin\AddHostPlugin;
+use Http\Client\Common\Plugin\ContentLengthPlugin;
+use Http\Client\Common\Plugin\DecoderPlugin;
+use Http\Client\Common\Plugin\ErrorPlugin;
+use Http\Client\Common\PluginClient;
 use Http\Client\HttpClient;
-use Http\Client\Plugin\AddHostPlugin;
-use Http\Client\Plugin\ContentLengthPlugin;
-use Http\Client\Plugin\DecoderPlugin;
-use Http\Client\Plugin\ErrorPlugin;
-use Http\Client\Plugin\PluginClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Client\Socket\Client as SocketHttpClient;
 use Psr\Http\Message\RequestInterface;
@@ -24,16 +24,13 @@ class DockerClient implements HttpClient
     {
         $messageFactory = new GuzzleMessageFactory();
         $socketClient = new SocketHttpClient($messageFactory, $socketClientOptions);
-        $lengthPlugin = new ContentLengthPlugin();
-        $decodingPlugin = new DecoderPlugin();
-        $errorPlugin = new ErrorPlugin();
-        $hostPlugin = new AddHostPlugin(new Uri('http://localhost'));
+        $host = preg_match('/unix:\/\//', $socketClientOptions['remote_socket']) ? 'http://localhost' : $socketClientOptions['remote_socket'];
 
         $this->httpClient = new PluginClient($socketClient, [
-            $errorPlugin,
-            $lengthPlugin,
-            $decodingPlugin,
-            $hostPlugin
+            new ErrorPlugin(),
+            new ContentLengthPlugin(),
+            new DecoderPlugin(),
+            new AddHostPlugin(new Uri($host)),
         ]);
     }
 

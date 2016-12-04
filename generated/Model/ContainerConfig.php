@@ -7,61 +7,13 @@ class ContainerConfig
     /**
      * @var string
      */
-    protected $id;
-    /**
-     * @var string[]|null
-     */
-    protected $names;
-    /**
-     * @var string
-     */
-    protected $image;
-    /**
-     * @var string
-     */
-    protected $imageID;
-    /**
-     * @var string
-     */
-    protected $command;
-    /**
-     * @var int
-     */
-    protected $created;
-    /**
-     * @var string
-     */
-    protected $state;
-    /**
-     * @var string
-     */
-    protected $status;
-    /**
-     * @var Port[]|null
-     */
-    protected $ports;
-    /**
-     * @var string[]
-     */
-    protected $labels;
-    /**
-     * @var int
-     */
-    protected $sizeRw;
-    /**
-     * @var int
-     */
-    protected $sizeRootFs;
-    /**
-     * @var int
-     */
     protected $hostname;
     /**
-     * @var int
+     * @var string
      */
     protected $domainname;
     /**
-     * @var int
+     * @var string
      */
     protected $user;
     /**
@@ -101,9 +53,17 @@ class ContainerConfig
      */
     protected $entrypoint;
     /**
-     * @var Mount[]|null
+     * @var string
      */
-    protected $mounts;
+    protected $image;
+    /**
+     * @var string[]|null
+     */
+    protected $labels;
+    /**
+     * @var mixed[]|null
+     */
+    protected $volumes;
     /**
      * @var string
      */
@@ -117,260 +77,24 @@ class ContainerConfig
      */
     protected $macAddress;
     /**
-     * @var mixed[]
+     * @var mixed[]|null
      */
     protected $exposedPorts;
     /**
-     * @var NetworkConfig
+     * @var string
      */
-    protected $networkSettings;
+    protected $stopSignal;
     /**
      * @var HostConfig
      */
     protected $hostConfig;
+    /**
+     * @var NetworkingConfig
+     */
+    protected $networkingConfig;
 
     /**
      * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return self
-     */
-    public function setId($id = null)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]|null
-     */
-    public function getNames()
-    {
-        return $this->names;
-    }
-
-    /**
-     * @param string[]|null $names
-     *
-     * @return self
-     */
-    public function setNames($names = null)
-    {
-        $this->names = $names;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-    /**
-     * @param string $image
-     *
-     * @return self
-     */
-    public function setImage($image = null)
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getImageID()
-    {
-        return $this->imageID;
-    }
-
-    /**
-     * @param string $imageID
-     *
-     * @return self
-     */
-    public function setImageID($imageID = null)
-    {
-        $this->imageID = $imageID;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCommand()
-    {
-        return $this->command;
-    }
-
-    /**
-     * @param string $command
-     *
-     * @return self
-     */
-    public function setCommand($command = null)
-    {
-        $this->command = $command;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * @param int $created
-     *
-     * @return self
-     */
-    public function setCreated($created = null)
-    {
-        $this->created = $created;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param string $state
-     *
-     * @return self
-     */
-    public function setState($state = null)
-    {
-        $this->state = $state;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * @param string $status
-     *
-     * @return self
-     */
-    public function setStatus($status = null)
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * @return Port[]|null
-     */
-    public function getPorts()
-    {
-        return $this->ports;
-    }
-
-    /**
-     * @param Port[]|null $ports
-     *
-     * @return self
-     */
-    public function setPorts($ports = null)
-    {
-        $this->ports = $ports;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getLabels()
-    {
-        return $this->labels;
-    }
-
-    /**
-     * @param string[] $labels
-     *
-     * @return self
-     */
-    public function setLabels(\ArrayObject $labels = null)
-    {
-        $this->labels = $labels;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSizeRw()
-    {
-        return $this->sizeRw;
-    }
-
-    /**
-     * @param int $sizeRw
-     *
-     * @return self
-     */
-    public function setSizeRw($sizeRw = null)
-    {
-        $this->sizeRw = $sizeRw;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSizeRootFs()
-    {
-        return $this->sizeRootFs;
-    }
-
-    /**
-     * @param int $sizeRootFs
-     *
-     * @return self
-     */
-    public function setSizeRootFs($sizeRootFs = null)
-    {
-        $this->sizeRootFs = $sizeRootFs;
-
-        return $this;
-    }
-
-    /**
-     * @return int
      */
     public function getHostname()
     {
@@ -378,7 +102,7 @@ class ContainerConfig
     }
 
     /**
-     * @param int $hostname
+     * @param string $hostname
      *
      * @return self
      */
@@ -390,7 +114,7 @@ class ContainerConfig
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getDomainname()
     {
@@ -398,7 +122,7 @@ class ContainerConfig
     }
 
     /**
-     * @param int $domainname
+     * @param string $domainname
      *
      * @return self
      */
@@ -410,7 +134,7 @@ class ContainerConfig
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getUser()
     {
@@ -418,7 +142,7 @@ class ContainerConfig
     }
 
     /**
-     * @param int $user
+     * @param string $user
      *
      * @return self
      */
@@ -610,21 +334,61 @@ class ContainerConfig
     }
 
     /**
-     * @return Mount[]|null
+     * @return string
      */
-    public function getMounts()
+    public function getImage()
     {
-        return $this->mounts;
+        return $this->image;
     }
 
     /**
-     * @param Mount[]|null $mounts
+     * @param string $image
      *
      * @return self
      */
-    public function setMounts($mounts = null)
+    public function setImage($image = null)
     {
-        $this->mounts = $mounts;
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getLabels()
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @param string[]|null $labels
+     *
+     * @return self
+     */
+    public function setLabels($labels = null)
+    {
+        $this->labels = $labels;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed[]|null
+     */
+    public function getVolumes()
+    {
+        return $this->volumes;
+    }
+
+    /**
+     * @param mixed[]|null $volumes
+     *
+     * @return self
+     */
+    public function setVolumes($volumes = null)
+    {
+        $this->volumes = $volumes;
 
         return $this;
     }
@@ -690,7 +454,7 @@ class ContainerConfig
     }
 
     /**
-     * @return mixed[]
+     * @return mixed[]|null
      */
     public function getExposedPorts()
     {
@@ -698,11 +462,11 @@ class ContainerConfig
     }
 
     /**
-     * @param mixed[] $exposedPorts
+     * @param mixed[]|null $exposedPorts
      *
      * @return self
      */
-    public function setExposedPorts(\ArrayObject $exposedPorts = null)
+    public function setExposedPorts($exposedPorts = null)
     {
         $this->exposedPorts = $exposedPorts;
 
@@ -710,21 +474,21 @@ class ContainerConfig
     }
 
     /**
-     * @return NetworkConfig
+     * @return string
      */
-    public function getNetworkSettings()
+    public function getStopSignal()
     {
-        return $this->networkSettings;
+        return $this->stopSignal;
     }
 
     /**
-     * @param NetworkConfig $networkSettings
+     * @param string $stopSignal
      *
      * @return self
      */
-    public function setNetworkSettings(NetworkConfig $networkSettings = null)
+    public function setStopSignal($stopSignal = null)
     {
-        $this->networkSettings = $networkSettings;
+        $this->stopSignal = $stopSignal;
 
         return $this;
     }
@@ -745,6 +509,26 @@ class ContainerConfig
     public function setHostConfig(HostConfig $hostConfig = null)
     {
         $this->hostConfig = $hostConfig;
+
+        return $this;
+    }
+
+    /**
+     * @return NetworkingConfig
+     */
+    public function getNetworkingConfig()
+    {
+        return $this->networkingConfig;
+    }
+
+    /**
+     * @param NetworkingConfig $networkingConfig
+     *
+     * @return self
+     */
+    public function setNetworkingConfig(NetworkingConfig $networkingConfig = null)
+    {
+        $this->networkingConfig = $networkingConfig;
 
         return $this;
     }

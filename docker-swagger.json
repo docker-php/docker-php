@@ -5031,7 +5031,7 @@
     },
     "/services/create": {
       "post": {
-        "summary": "Create a service",
+        "summary": "Create a service.When using this endpoint to create a service using a private repository from the registry, the X-Registry-Auth header must be used to include a base64-encoded AuthConfig object.",
         "description": "Create a service",
         "operationId": "create",
         "responses": {
@@ -5058,6 +5058,11 @@
           "schema": {
             "$ref": "#/definitions/ServiceSpec"
           }
+        }, {
+          "name": "X-Registry-Auth",
+          "in": "header",
+          "description": "A base64-encoded AuthConfig object",
+          "type": "string"
         }],
         "tags": [
           "Service"

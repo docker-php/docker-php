@@ -45,6 +45,12 @@ class ProgressDetailNormalizer extends SerializerAwareNormalizer implements Deno
         if (property_exists($data, 'message')) {
             $object->setMessage($data->{'message'});
         }
+        if (property_exists($data, 'current')) {
+            $object->setCurrent($data->{'current'});
+        }
+        if (property_exists($data, 'total')) {
+            $object->setTotal($data->{'total'});
+        }
 
         return $object;
     }
@@ -57,6 +63,12 @@ class ProgressDetailNormalizer extends SerializerAwareNormalizer implements Deno
         }
         if (null !== $object->getMessage()) {
             $data->{'message'} = $object->getMessage();
+        }
+        if (null !== $object->getCurrent()) {
+            $data->{'current'} = $object->getCurrent();
+        }
+        if (null !== $object->getTotal()) {
+            $data->{'total'} = $object->getTotal();
         }
 
         return $data;

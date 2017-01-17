@@ -46,10 +46,14 @@ class NodeNormalizer extends SerializerAwareNormalizer implements DenormalizerIn
             $object->setVersion($this->serializer->deserialize($data->{'Version'}, 'Docker\\API\\Model\\NodeVersion', 'raw', $context));
         }
         if (property_exists($data, 'CreatedAt')) {
-            $object->setCreatedAt(\DateTime::createFromFormat("Y-m-d\TH:i:sP", $data->{'CreatedAt'}));
+            $time = $data->{'CreatedAt'};
+            $time = preg_replace("/\.\d+/", "", $time);
+            $object->setCreatedAt(\DateTime::createFromFormat("Y-m-d\TH:i:sP", $time));
         }
         if (property_exists($data, 'UpdatedAt')) {
-            $object->setUpdatedAt(\DateTime::createFromFormat("Y-m-d\TH:i:sP", $data->{'UpdatedAt'}));
+            $time = $data->{'UpdatedAt'};
+            $time = preg_replace("/\.\d+/", "", $time);
+            $object->setUpdatedAt(\DateTime::createFromFormat("Y-m-d\TH:i:sP", $time));
         }
         if (property_exists($data, 'Spec')) {
             $object->setSpec($this->serializer->deserialize($data->{'Spec'}, 'Docker\\API\\Model\\NodeSpec', 'raw', $context));

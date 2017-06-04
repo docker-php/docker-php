@@ -77,7 +77,7 @@ class ServiceResource extends Resource
     public function remove($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/service/{id}';
+        $url        = '/services/{id}';
         $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
@@ -100,7 +100,7 @@ class ServiceResource extends Resource
     public function find($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/service/{id}';
+        $url        = '/services/{id}';
         $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));

@@ -33,12 +33,16 @@ class ContainerResource extends Resource
         $queryParam->setDefault('before', null);
         $queryParam->setDefault('size', null);
         $queryParam->setDefault('filters', null);
-        $url      = '/containers/json';
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/json';
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('GET', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerInfo[]', 'json');
@@ -68,12 +72,16 @@ class ContainerResource extends Resource
         $queryParam->setDefault('name', null);
         $queryParam->setDefault('Content-Type', 'application/json');
         $queryParam->setHeaderParameters(['Content-Type']);
-        $url      = '/containers/create';
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $this->serializer->serialize($container, 'json');
-        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/create';
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $this->serializer->serialize($container, 'json');
+        $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerCreateResult', 'json');
@@ -101,7 +109,11 @@ class ContainerResource extends Resource
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
         $request    = $this->messageFactory->createRequest('GET', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $promise    = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\Container', 'json');
@@ -128,13 +140,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('ps_args', null);
-        $url      = '/containers/{id}/top';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/top';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('GET', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerTop', 'json');
@@ -171,13 +187,17 @@ class ContainerResource extends Resource
         $queryParam->setDefault('since', 0);
         $queryParam->setDefault('timestamps', false);
         $queryParam->setDefault('tail', null);
-        $url      = '/containers/{id}/logs';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/logs';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('GET', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -199,13 +219,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('kind', null);
-        $url      = '/containers/{id}/changes';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/changes';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('GET', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerChange[]', 'json');
@@ -233,7 +257,11 @@ class ContainerResource extends Resource
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
         $request    = $this->messageFactory->createRequest('GET', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $promise    = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -255,13 +283,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('stream', null);
-        $url      = '/containers/{id}/stats';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/stats';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('GET', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -285,13 +317,17 @@ class ContainerResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setDefault('h', null);
         $queryParam->setDefault('w', null);
-        $url      = '/containers/{id}/resize';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/resize';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -313,13 +349,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('detachKeys', null);
-        $url      = '/containers/{id}/start';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/start';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -341,13 +381,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('t', null);
-        $url      = '/containers/{id}/stop';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/stop';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -369,13 +413,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('t', null);
-        $url      = '/containers/{id}/restart';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/restart';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -397,13 +445,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('signal', null);
-        $url      = '/containers/{id}/kill';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/kill';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -427,7 +479,11 @@ class ContainerResource extends Resource
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($resourceConfig, 'json');
         $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $promise    = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerUpdateResult', 'json');
@@ -454,13 +510,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('name');
-        $url      = '/containers/{id}/rename';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/rename';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -483,7 +543,11 @@ class ContainerResource extends Resource
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
         $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $promise    = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -506,7 +570,11 @@ class ContainerResource extends Resource
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
         $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $promise    = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -538,13 +606,17 @@ class ContainerResource extends Resource
         $queryParam->setDefault('stdout', null);
         $queryParam->setDefault('stderr', null);
         $queryParam->setDefault('detachKeys', null);
-        $url      = '/containers/{id}/attach';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/attach';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -576,13 +648,17 @@ class ContainerResource extends Resource
         $queryParam->setDefault('stdout', null);
         $queryParam->setDefault('stderr', null);
         $queryParam->setDefault('detachKeys', null);
-        $url      = '/containers/{id}/attach/ws';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/attach/ws';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('GET', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -605,7 +681,11 @@ class ContainerResource extends Resource
         $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
         $body       = $queryParam->buildFormDataString($parameters);
         $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
-        $response   = $this->httpClient->sendRequest($request);
+        $promise    = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\Model\\ContainerWait', 'json');
@@ -634,13 +714,17 @@ class ContainerResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setDefault('v', null);
         $queryParam->setDefault('force', null);
-        $url      = '/containers/{id}';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('DELETE', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('DELETE', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -662,13 +746,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');
-        $url      = '/containers/{id}/archive';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('GET', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/archive';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('GET', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -690,13 +778,17 @@ class ContainerResource extends Resource
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');
-        $url      = '/containers/{id}/archive';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $queryParam->buildFormDataString($parameters);
-        $request  = $this->messageFactory->createRequest('HEAD', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/archive';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $queryParam->buildFormDataString($parameters);
+        $request = $this->messageFactory->createRequest('HEAD', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }
@@ -721,13 +813,17 @@ class ContainerResource extends Resource
         $queryParam = new QueryParam();
         $queryParam->setRequired('path');
         $queryParam->setDefault('noOverwriteDirNonDir', null);
-        $url      = '/containers/{id}/archive';
-        $url      = str_replace('{id}', urlencode($id), $url);
-        $url      = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers  = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
-        $body     = $inputStream;
-        $request  = $this->messageFactory->createRequest('PUT', $url, $headers, $body);
-        $response = $this->httpClient->sendRequest($request);
+        $url     = '/containers/{id}/archive';
+        $url     = str_replace('{id}', urlencode($id), $url);
+        $url     = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $body    = $inputStream;
+        $request = $this->messageFactory->createRequest('PUT', $url, $headers, $body);
+        $promise = $this->httpClient->sendAsyncRequest($request);
+        if (self::FETCH_PROMISE === $fetch) {
+            return $promise;
+        }
+        $response = $promise->wait();
 
         return $response;
     }

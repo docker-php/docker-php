@@ -1,0 +1,8 @@
+<?php
+
+return [
+    'openapi-file' => __DIR__ . '/docker-swagger.json', // Location of our OpenAPI Specification
+    'namespace' => 'Docker\API', // namespace of the generated code
+    'directory' => __DIR__ . '/generated', // directory where the code will be output
+    'reference' => true, // Add the JSON Reference specification to the generated library (so data on the API can use reference like described in https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
+];

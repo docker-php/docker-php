@@ -11,6 +11,10 @@ class HostConfig
     /**
      * @var string[]|null
      */
+    protected $tmpfs;
+    /**
+     * @var string[]|null
+     */
     protected $links;
     /**
      * @var string[]|null
@@ -27,11 +31,23 @@ class HostConfig
     /**
      * @var int
      */
+    protected $memoryReservation;
+    /**
+     * @var int
+     */
+    protected $kernelMemory;
+    /**
+     * @var int
+     */
     protected $cpuShares;
     /**
      * @var int
      */
     protected $cpuPeriod;
+    /**
+     * @var int
+     */
+    protected $cpuQuota;
     /**
      * @var string
      */
@@ -208,6 +224,26 @@ class HostConfig
     /**
      * @return string[]|null
      */
+    public function getTmpfs()
+    {
+        return $this->tmpfs;
+    }
+
+    /**
+     * @param string[]|null $tmpfs
+     *
+     * @return self
+     */
+    public function setTmpfs($tmpfs = null)
+    {
+        $this->tmpfs = $tmpfs;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]|null
+     */
     public function getLinks()
     {
         return $this->links;
@@ -288,6 +324,46 @@ class HostConfig
     /**
      * @return int
      */
+    public function getMemoryReservation()
+    {
+        return $this->memoryReservation;
+    }
+
+    /**
+     * @param int $memoryReservation
+     *
+     * @return self
+     */
+    public function setMemoryReservation($memoryReservation = null)
+    {
+        $this->memoryReservation = $memoryReservation;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getKernelMemory()
+    {
+        return $this->kernelMemory;
+    }
+
+    /**
+     * @param int $kernelMemory
+     *
+     * @return self
+     */
+    public function setKernelMemory($kernelMemory = null)
+    {
+        $this->kernelMemory = $kernelMemory;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
     public function getCpuShares()
     {
         return $this->cpuShares;
@@ -321,6 +397,26 @@ class HostConfig
     public function setCpuPeriod($cpuPeriod = null)
     {
         $this->cpuPeriod = $cpuPeriod;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCpuQuota()
+    {
+        return $this->cpuQuota;
+    }
+
+    /**
+     * @param int $cpuQuota
+     *
+     * @return self
+     */
+    public function setCpuQuota($cpuQuota = null)
+    {
+        $this->cpuQuota = $cpuQuota;
 
         return $this;
     }

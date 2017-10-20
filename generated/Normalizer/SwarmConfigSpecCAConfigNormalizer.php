@@ -2,7 +2,6 @@
 
 namespace Docker\API\Normalizer;
 
-use Joli\Jane\Reference\Reference;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\SerializerAwareNormalizer;
@@ -29,16 +28,7 @@ class SwarmConfigSpecCAConfigNormalizer extends SerializerAwareNormalizer implem
 
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        if (empty($data)) {
-            return null;
-        }
-        if (isset($data->{'$ref'})) {
-            return new Reference($data->{'$ref'}, $context['rootSchema'] ?: null);
-        }
         $object = new \Docker\API\Model\SwarmConfigSpecCAConfig();
-        if (!isset($context['rootSchema'])) {
-            $context['rootSchema'] = $object;
-        }
         if (property_exists($data, 'NodeCertExpiry')) {
             $object->setNodeCertExpiry($data->{'NodeCertExpiry'});
         }

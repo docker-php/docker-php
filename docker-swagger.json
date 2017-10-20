@@ -5070,7 +5070,7 @@
         ]
       }
     },
-    "/service/{id}": {
+    "/services/{id}": {
       "delete": {
         "summary": "Remove a service",
         "description": "Stop and remove the service id",

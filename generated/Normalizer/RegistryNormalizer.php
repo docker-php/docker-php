@@ -2,7 +2,6 @@
 
 namespace Docker\API\Normalizer;
 
-use Joli\Jane\Reference\Reference;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\SerializerAwareNormalizer;
@@ -29,16 +28,7 @@ class RegistryNormalizer extends SerializerAwareNormalizer implements Denormaliz
 
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        if (empty($data)) {
-            return null;
-        }
-        if (isset($data->{'$ref'})) {
-            return new Reference($data->{'$ref'}, $context['rootSchema'] ?: null);
-        }
         $object = new \Docker\API\Model\Registry();
-        if (!isset($context['rootSchema'])) {
-            $context['rootSchema'] = $object;
-        }
         if (property_exists($data, 'Mirrors')) {
             $value = $data->{'Mirrors'};
             if (is_array($data->{'Mirrors'})) {

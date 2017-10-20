@@ -76,7 +76,7 @@ stream in real time.
 The callback will receive a `BuildInfo` object once a line is available:
 
 ```php
-$buildStream = $imageManager->build($inputStream, [], ContainerManager::FETCH_STREAM);
+$buildStream = $imageManager->build($inputStream, [], ImageManager::FETCH_STREAM);
 $buildStream->onFrame(function (BuildInfo $buildInfo) {
     echo $buildInfo->getStream();
 });

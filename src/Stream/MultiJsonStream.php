@@ -12,11 +12,15 @@ abstract class MultiJsonStream extends CallbackStream
     /** @var SerializerInterface Serializer to decode incoming json object */
     private $serializer;
 
-    public function __construct(StreamInterface $stream, SerializerInterface $serializer)
+    /** @var string */
+    private $version;
+
+    public function __construct(StreamInterface $stream, SerializerInterface $serializer, $version)
     {
         parent::__construct($stream);
 
         $this->serializer = $serializer;
+        $this->version = $version;
     }
 
     /**
@@ -64,7 +68,7 @@ abstract class MultiJsonStream extends CallbackStream
             return null;
         }
 
-        return $this->serializer->deserialize($jsonFrame, $this->getDecodeClass(), 'json');
+        return $this->serializer->deserialize($jsonFrame, 'Docker\\API\\' . $this->version . '\\Model\\' . $this->getDecodeClass(), 'json');
     }
 
     /**

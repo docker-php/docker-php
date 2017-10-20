@@ -1,7 +1,0 @@
-<?php
-
-return [
-    'directory' => 'generated/',
-    'namespace' => 'Docker\\API',
-    'openapi-file' => __DIR__ . '/docker-swagger.json',
-];

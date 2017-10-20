@@ -27,7 +27,6 @@ class DockerClient implements HttpClient
         $host = preg_match('/unix:\/\//', $socketClientOptions['remote_socket']) ? 'http://localhost' : $socketClientOptions['remote_socket'];
 
         $this->httpClient = new PluginClient($socketClient, [
-            new ErrorPlugin(),
             new ContentLengthPlugin(),
             new DecoderPlugin(),
             new AddHostPlugin(new Uri($host)),

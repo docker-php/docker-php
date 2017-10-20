@@ -14,6 +14,6 @@ class PushStream extends MultiJsonStream
      */
     protected function getDecodeClass()
     {
-        return 'Docker\API\Model\PushImageInfo';
+        return 'PushImageInfo';
     }
 }

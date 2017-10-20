@@ -6,7 +6,15 @@
     "autoload": {
         "psr-4": {
             "Docker\\": "src/",
-            "Docker\\API\\": "generated/"
+            "Docker\\API\\V1_25\\": "generated/1.25",
+            "Docker\\API\\V1_26\\": "generated/1.26",
+            "Docker\\API\\V1_27\\": "generated/1.27",
+            "Docker\\API\\V1_28\\": "generated/1.28",
+            "Docker\\API\\V1_29\\": "generated/1.29",
+            "Docker\\API\\V1_30\\": "generated/1.30",
+            "Docker\\API\\V1_31\\": "generated/1.31",
+            "Docker\\API\\V1_32\\": "generated/1.32",
+            "Docker\\API\\V1_33\\": "generated/1.33"
         }
     },
     "autoload-dev": {
@@ -15,18 +23,20 @@
         }
     },
     "require": {
-        "php": ">=5.4",
+        "php": ">=7.0",
         "symfony/filesystem": "^2.3 || ^3.0",
         "symfony/process": "^2.3 || ^3.0",
-        "jane/open-api": "^1.3",
-        "php-http/socket-client": "^1.0",
         "php-http/client-common": "^1.1",
+        "php-http/socket-client": "^1.3",
         "php-http/message": "^1.0",
-        "guzzlehttp/psr7": "^1.2"
+        "guzzlehttp/psr7": "^1.2",
+        "jane/openapi-runtime": "^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.7",
-        "friendsofphp/php-cs-fixer": "^2.0"
+        "phpunit/phpunit": "^6.0",
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "php-http/artax-adapter": "dev-feature/async",
+        "jane/open-api": "^3.0"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",

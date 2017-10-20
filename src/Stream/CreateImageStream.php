@@ -14,6 +14,6 @@ class CreateImageStream extends MultiJsonStream
      */
     protected function getDecodeClass()
     {
-        return 'Docker\API\Model\CreateImageInfo';
+        return 'CreateImageInfo';
     }
 }

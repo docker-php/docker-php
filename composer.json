@@ -30,7 +30,7 @@
         "php-http/socket-client": "^1.3",
         "php-http/message": "^1.0",
         "guzzlehttp/psr7": "^1.2",
-        "jane/openapi-runtime": "^2.0"
+        "jane/openapi-runtime": "^2.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",

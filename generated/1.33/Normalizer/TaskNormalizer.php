@@ -23,7 +23,7 @@ class TaskNormalizer implements DenormalizerInterface, NormalizerInterface, Deno
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\Task' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\Task') {
             return false;
         }
 

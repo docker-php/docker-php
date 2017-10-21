@@ -23,7 +23,7 @@ class ContainerSummaryItemHostConfigNormalizer implements DenormalizerInterface,
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\ContainerSummaryItemHostConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\ContainerSummaryItemHostConfig') {
             return false;
         }
 

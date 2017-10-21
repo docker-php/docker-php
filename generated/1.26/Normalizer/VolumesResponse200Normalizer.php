@@ -23,7 +23,7 @@ class VolumesResponse200Normalizer implements DenormalizerInterface, NormalizerI
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_26\\Model\\VolumesResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_26\\Model\\VolumesResponse200') {
             return false;
         }
 

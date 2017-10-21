@@ -23,7 +23,7 @@ class DistributionNameJsonResponse200DescriptorNormalizer implements Denormalize
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\DistributionNameJsonResponse200Descriptor' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\DistributionNameJsonResponse200Descriptor') {
             return false;
         }
 

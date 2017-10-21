@@ -23,7 +23,7 @@ class TaskSpecContainerSpecPrivilegesCredentialSpecNormalizer implements Denorma
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\TaskSpecContainerSpecPrivilegesCredentialSpec' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\TaskSpecContainerSpecPrivilegesCredentialSpec') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class ClusterInfoVersionNormalizer implements DenormalizerInterface, NormalizerI
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\ClusterInfoVersion' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\ClusterInfoVersion') {
             return false;
         }
 

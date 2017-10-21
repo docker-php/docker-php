@@ -23,7 +23,7 @@ class ConfigVolumesNormalizer implements DenormalizerInterface, NormalizerInterf
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\ConfigVolumes' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\ConfigVolumes') {
             return false;
         }
 

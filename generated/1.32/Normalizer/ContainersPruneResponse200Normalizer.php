@@ -23,7 +23,7 @@ class ContainersPruneResponse200Normalizer implements DenormalizerInterface, Nor
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\ContainersPruneResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\ContainersPruneResponse200') {
             return false;
         }
 

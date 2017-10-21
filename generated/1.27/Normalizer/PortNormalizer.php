@@ -23,7 +23,7 @@ class PortNormalizer implements DenormalizerInterface, NormalizerInterface, Deno
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\Port' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\Port') {
             return false;
         }
 

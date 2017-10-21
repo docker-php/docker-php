@@ -23,7 +23,7 @@ class EngineDescriptionNormalizer implements DenormalizerInterface, NormalizerIn
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\EngineDescription' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\EngineDescription') {
             return false;
         }
 

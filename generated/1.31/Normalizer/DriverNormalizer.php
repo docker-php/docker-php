@@ -23,7 +23,7 @@ class DriverNormalizer implements DenormalizerInterface, NormalizerInterface, De
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\Driver' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\Driver') {
             return false;
         }
 

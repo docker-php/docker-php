@@ -23,7 +23,7 @@ class TLSInfoNormalizer implements DenormalizerInterface, NormalizerInterface, D
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\TLSInfo' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\TLSInfo') {
             return false;
         }
 

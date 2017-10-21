@@ -23,7 +23,7 @@ class PlatformNormalizer implements DenormalizerInterface, NormalizerInterface, 
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\Platform' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\Platform') {
             return false;
         }
 

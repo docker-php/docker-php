@@ -23,7 +23,7 @@ class ResourcesUlimitsItemNormalizer implements DenormalizerInterface, Normalize
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\ResourcesUlimitsItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\ResourcesUlimitsItem') {
             return false;
         }
 

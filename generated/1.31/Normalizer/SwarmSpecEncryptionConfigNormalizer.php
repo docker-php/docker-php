@@ -23,7 +23,7 @@ class SwarmSpecEncryptionConfigNormalizer implements DenormalizerInterface, Norm
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\SwarmSpecEncryptionConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\SwarmSpecEncryptionConfig') {
             return false;
         }
 

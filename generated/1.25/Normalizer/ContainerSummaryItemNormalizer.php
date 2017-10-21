@@ -23,7 +23,7 @@ class ContainerSummaryItemNormalizer implements DenormalizerInterface, Normalize
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\ContainerSummaryItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\ContainerSummaryItem') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class ConfigsCreateBodyNormalizer implements DenormalizerInterface, NormalizerIn
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\ConfigsCreateBody' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\ConfigsCreateBody') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class ServiceEndpointVirtualIPsItemNormalizer implements DenormalizerInterface, 
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\ServiceEndpointVirtualIPsItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\ServiceEndpointVirtualIPsItem') {
             return false;
         }
 

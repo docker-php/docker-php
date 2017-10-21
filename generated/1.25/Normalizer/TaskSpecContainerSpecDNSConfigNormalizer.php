@@ -23,7 +23,7 @@ class TaskSpecContainerSpecDNSConfigNormalizer implements DenormalizerInterface,
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\TaskSpecContainerSpecDNSConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\TaskSpecContainerSpecDNSConfig') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class InfoResponse200Normalizer implements DenormalizerInterface, NormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\InfoResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\InfoResponse200') {
             return false;
         }
 

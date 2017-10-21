@@ -23,7 +23,7 @@ class NetworksPruneResponse200Normalizer implements DenormalizerInterface, Norma
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\NetworksPruneResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\NetworksPruneResponse200') {
             return false;
         }
 

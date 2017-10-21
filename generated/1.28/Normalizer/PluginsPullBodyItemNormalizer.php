@@ -23,7 +23,7 @@ class PluginsPullBodyItemNormalizer implements DenormalizerInterface, Normalizer
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_28\\Model\\PluginsPullBodyItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_28\\Model\\PluginsPullBodyItem') {
             return false;
         }
 

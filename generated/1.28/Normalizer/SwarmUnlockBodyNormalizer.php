@@ -23,7 +23,7 @@ class SwarmUnlockBodyNormalizer implements DenormalizerInterface, NormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_28\\Model\\SwarmUnlockBody' !== $type) {
+        if ($type !== 'Docker\\API\\V1_28\\Model\\SwarmUnlockBody') {
             return false;
         }
 

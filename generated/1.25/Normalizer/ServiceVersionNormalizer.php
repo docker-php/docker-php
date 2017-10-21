@@ -23,7 +23,7 @@ class ServiceVersionNormalizer implements DenormalizerInterface, NormalizerInter
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\ServiceVersion' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\ServiceVersion') {
             return false;
         }
 

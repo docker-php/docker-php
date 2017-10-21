@@ -23,7 +23,7 @@ class SwarmSpecNormalizer implements DenormalizerInterface, NormalizerInterface,
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\SwarmSpec' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\SwarmSpec') {
             return false;
         }
 

@@ -36,7 +36,7 @@
         "phpunit/phpunit": "^6.0",
         "friendsofphp/php-cs-fixer": "^2.0",
         "php-http/artax-adapter": "dev-feature/async",
-        "jane/open-api": "^3.0"
+        "jane/open-api": "dev-master"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
@@ -44,7 +44,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.24-dev"
+            "dev-master": "2-dev"
         }
     },
     "prefer-stable": true,

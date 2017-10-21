@@ -23,7 +23,7 @@ class ContainerConfigNormalizer implements DenormalizerInterface, NormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\ContainerConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\ContainerConfig') {
             return false;
         }
 

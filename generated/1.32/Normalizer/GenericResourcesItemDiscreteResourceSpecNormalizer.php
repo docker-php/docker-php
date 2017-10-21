@@ -23,7 +23,7 @@ class GenericResourcesItemDiscreteResourceSpecNormalizer implements Denormalizer
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\GenericResourcesItemDiscreteResourceSpec' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\GenericResourcesItemDiscreteResourceSpec') {
             return false;
         }
 

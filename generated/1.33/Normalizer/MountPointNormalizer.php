@@ -23,7 +23,7 @@ class MountPointNormalizer implements DenormalizerInterface, NormalizerInterface
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\MountPoint' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\MountPoint') {
             return false;
         }
 

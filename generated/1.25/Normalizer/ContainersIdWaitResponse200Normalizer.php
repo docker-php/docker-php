@@ -23,7 +23,7 @@ class ContainersIdWaitResponse200Normalizer implements DenormalizerInterface, No
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\ContainersIdWaitResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\ContainersIdWaitResponse200') {
             return false;
         }
 

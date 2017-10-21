@@ -23,7 +23,7 @@ class InfoResponse200RegistryConfigIndexConfigsItemNormalizer implements Denorma
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\InfoResponse200RegistryConfigIndexConfigsItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\InfoResponse200RegistryConfigIndexConfigsItem') {
             return false;
         }
 

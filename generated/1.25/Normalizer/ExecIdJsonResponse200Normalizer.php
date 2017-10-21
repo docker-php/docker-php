@@ -23,7 +23,7 @@ class ExecIdJsonResponse200Normalizer implements DenormalizerInterface, Normaliz
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\ExecIdJsonResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\ExecIdJsonResponse200') {
             return false;
         }
 

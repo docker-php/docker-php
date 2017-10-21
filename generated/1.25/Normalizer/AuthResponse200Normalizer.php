@@ -23,7 +23,7 @@ class AuthResponse200Normalizer implements DenormalizerInterface, NormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\AuthResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\AuthResponse200') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class TaskSpecPluginSpecNormalizer implements DenormalizerInterface, NormalizerI
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\TaskSpecPluginSpec' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\TaskSpecPluginSpec') {
             return false;
         }
 

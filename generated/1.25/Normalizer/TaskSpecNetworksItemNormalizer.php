@@ -23,7 +23,7 @@ class TaskSpecNetworksItemNormalizer implements DenormalizerInterface, Normalize
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\TaskSpecNetworksItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\TaskSpecNetworksItem') {
             return false;
         }
 

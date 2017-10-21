@@ -23,7 +23,7 @@ class ServicesIdUpdateBodyNormalizer implements DenormalizerInterface, Normalize
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\ServicesIdUpdateBody' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\ServicesIdUpdateBody') {
             return false;
         }
 

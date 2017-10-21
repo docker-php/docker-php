@@ -23,7 +23,7 @@ class NodeDescriptionEnginePluginsItemNormalizer implements DenormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\NodeDescriptionEnginePluginsItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\NodeDescriptionEnginePluginsItem') {
             return false;
         }
 

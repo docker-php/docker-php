@@ -23,7 +23,7 @@ class HostConfigPortBindingsItemNormalizer implements DenormalizerInterface, Nor
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\HostConfigPortBindingsItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\HostConfigPortBindingsItem') {
             return false;
         }
 

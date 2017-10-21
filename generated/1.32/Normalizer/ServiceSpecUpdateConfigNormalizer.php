@@ -23,7 +23,7 @@ class ServiceSpecUpdateConfigNormalizer implements DenormalizerInterface, Normal
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\ServiceSpecUpdateConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\ServiceSpecUpdateConfig') {
             return false;
         }
 

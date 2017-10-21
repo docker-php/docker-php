@@ -23,7 +23,7 @@ class MountVolumeOptionsNormalizer implements DenormalizerInterface, NormalizerI
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\MountVolumeOptions' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\MountVolumeOptions') {
             return false;
         }
 

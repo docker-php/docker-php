@@ -23,7 +23,7 @@ class ImagesPruneResponse200Normalizer implements DenormalizerInterface, Normali
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\ImagesPruneResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\ImagesPruneResponse200') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class MountBindOptionsNormalizer implements DenormalizerInterface, NormalizerInt
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\MountBindOptions' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\MountBindOptions') {
             return false;
         }
 

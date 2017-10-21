@@ -23,7 +23,7 @@ class SwarmSpecCAConfigExternalCAsItemNormalizer implements DenormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\SwarmSpecCAConfigExternalCAsItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\SwarmSpecCAConfigExternalCAsItem') {
             return false;
         }
 

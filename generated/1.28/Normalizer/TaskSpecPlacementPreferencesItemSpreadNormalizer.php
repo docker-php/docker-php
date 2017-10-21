@@ -23,7 +23,7 @@ class TaskSpecPlacementPreferencesItemSpreadNormalizer implements DenormalizerIn
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_28\\Model\\TaskSpecPlacementPreferencesItemSpread' !== $type) {
+        if ($type !== 'Docker\\API\\V1_28\\Model\\TaskSpecPlacementPreferencesItemSpread') {
             return false;
         }
 

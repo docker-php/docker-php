@@ -15,7 +15,7 @@ class ContainersCreateResponse201
      */
     protected $id;
     /**
-     * @var string[]
+     * @var string[]|null
      */
     protected $warnings;
 
@@ -40,7 +40,7 @@ class ContainersCreateResponse201
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
     public function getWarnings()
     {
@@ -48,11 +48,11 @@ class ContainersCreateResponse201
     }
 
     /**
-     * @param string[] $warnings
+     * @param string[]|null $warnings
      *
      * @return self
      */
-    public function setWarnings(array $warnings = null)
+    public function setWarnings($warnings = null)
     {
         $this->warnings = $warnings;
 

@@ -9,12 +9,9 @@ cache:
     - $HOME/.composer/cache
 
 php:
-  - 5.4
-  - 5.5
-  - 5.6
   - 7.0
   - 7.1
-  - hhvm
+  - 7.2
 
 env:
   global:
@@ -33,8 +30,8 @@ matrix:
       env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true TEST_COMMAND="composer test-ci"
 
 before_install:
-  - sudo apt-cache madison docker-engine
-  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y --force-yes docker-engine=${DOCKER_VERSION}
+  - sudo apt-cache madison docker-ce
+  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y --force-yes docker-ce=${DOCKER_VERSION}
   - travis_retry composer self-update
 
 install:

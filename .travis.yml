@@ -17,7 +17,7 @@ env:
     - DOCKER_API_VERSION=V1_33 DOCKER_VERSION=17.10.0~ce-0~ubuntu
     - DOCKER_API_VERSION=V1_32 DOCKER_VERSION=17.09.0~ce-0~ubuntu
     - DOCKER_API_VERSION=V1_31 DOCKER_VERSION=17.07.0~ce-0~ubuntu
-    - DOCKER_API_VERSION=V1_30 DOCKER_VERSION=17.06.3~ce-0~ubuntu
+    - DOCKER_API_VERSION=V1_30 DOCKER_VERSION=17.06.2~ce-0~ubuntu
     - DOCKER_API_VERSION=V1_29 DOCKER_VERSION=17.05.0~ce-0~ubuntu-trusty
     - DOCKER_API_VERSION=V1_28 DOCKER_VERSION=17.04.0~ce-0~ubuntu-trusty
     - DOCKER_API_VERSION=V1_27 DOCKER_VERSION=17.03.2~ce-0~ubuntu-trusty
@@ -46,7 +46,7 @@ before_install:
   - travis_retry composer self-update
 
 install:
-  - travis_retry composer update ${COMPOSER_FLAGS} --prefer-source --no-interaction
+  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction
 
 script:
   - $TEST_COMMAND

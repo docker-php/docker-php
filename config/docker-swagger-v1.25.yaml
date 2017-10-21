@@ -2772,7 +2772,7 @@ paths:
                 x-nullable: false
               Warnings:
                 description: "Warnings encountered when creating the container"
-                type: "array"
+                type: ["array", "null"]
                 x-nullable: false
                 items:
                   type: "string"

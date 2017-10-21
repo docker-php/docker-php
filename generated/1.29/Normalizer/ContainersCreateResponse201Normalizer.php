@@ -23,7 +23,7 @@ class ContainersCreateResponse201Normalizer implements DenormalizerInterface, No
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\ContainersCreateResponse201' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\ContainersCreateResponse201') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class CreateImageInfoNormalizer implements DenormalizerInterface, NormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\CreateImageInfo' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\CreateImageInfo') {
             return false;
         }
 

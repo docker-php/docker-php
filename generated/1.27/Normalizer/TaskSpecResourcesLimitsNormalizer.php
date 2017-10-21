@@ -23,7 +23,7 @@ class TaskSpecResourcesLimitsNormalizer implements DenormalizerInterface, Normal
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\TaskSpecResourcesLimits' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\TaskSpecResourcesLimits') {
             return false;
         }
 

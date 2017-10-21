@@ -23,7 +23,7 @@ class TaskSpecPlacementPlatformsItemNormalizer implements DenormalizerInterface,
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\TaskSpecPlacementPlatformsItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\TaskSpecPlacementPlatformsItem') {
             return false;
         }
 

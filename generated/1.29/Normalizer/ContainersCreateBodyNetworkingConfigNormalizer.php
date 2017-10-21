@@ -23,7 +23,7 @@ class ContainersCreateBodyNetworkingConfigNormalizer implements DenormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\ContainersCreateBodyNetworkingConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\ContainersCreateBodyNetworkingConfig') {
             return false;
         }
 

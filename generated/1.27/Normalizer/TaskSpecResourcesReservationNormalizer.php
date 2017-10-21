@@ -23,7 +23,7 @@ class TaskSpecResourcesReservationNormalizer implements DenormalizerInterface, N
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\TaskSpecResourcesReservation' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\TaskSpecResourcesReservation') {
             return false;
         }
 

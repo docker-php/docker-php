@@ -23,7 +23,7 @@ class ProcessConfigNormalizer implements DenormalizerInterface, NormalizerInterf
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\ProcessConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\ProcessConfig') {
             return false;
         }
 

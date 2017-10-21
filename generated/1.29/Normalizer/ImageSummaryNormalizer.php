@@ -23,7 +23,7 @@ class ImageSummaryNormalizer implements DenormalizerInterface, NormalizerInterfa
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\ImageSummary' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\ImageSummary') {
             return false;
         }
 

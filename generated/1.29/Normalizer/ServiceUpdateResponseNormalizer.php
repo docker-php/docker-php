@@ -23,7 +23,7 @@ class ServiceUpdateResponseNormalizer implements DenormalizerInterface, Normaliz
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\ServiceUpdateResponse' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\ServiceUpdateResponse') {
             return false;
         }
 

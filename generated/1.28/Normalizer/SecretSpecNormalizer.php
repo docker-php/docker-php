@@ -23,7 +23,7 @@ class SecretSpecNormalizer implements DenormalizerInterface, NormalizerInterface
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_28\\Model\\SecretSpec' !== $type) {
+        if ($type !== 'Docker\\API\\V1_28\\Model\\SecretSpec') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class ImagesSearchResponse200ItemNormalizer implements DenormalizerInterface, No
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_28\\Model\\ImagesSearchResponse200Item' !== $type) {
+        if ($type !== 'Docker\\API\\V1_28\\Model\\ImagesSearchResponse200Item') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class ThrottleDeviceNormalizer implements DenormalizerInterface, NormalizerInter
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\ThrottleDevice' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\ThrottleDevice') {
             return false;
         }
 

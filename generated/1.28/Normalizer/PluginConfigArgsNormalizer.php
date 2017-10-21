@@ -23,7 +23,7 @@ class PluginConfigArgsNormalizer implements DenormalizerInterface, NormalizerInt
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_28\\Model\\PluginConfigArgs' !== $type) {
+        if ($type !== 'Docker\\API\\V1_28\\Model\\PluginConfigArgs') {
             return false;
         }
 

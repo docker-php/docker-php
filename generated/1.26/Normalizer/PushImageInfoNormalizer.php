@@ -23,7 +23,7 @@ class PushImageInfoNormalizer implements DenormalizerInterface, NormalizerInterf
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_26\\Model\\PushImageInfo' !== $type) {
+        if ($type !== 'Docker\\API\\V1_26\\Model\\PushImageInfo') {
             return false;
         }
 

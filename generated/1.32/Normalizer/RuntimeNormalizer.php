@@ -23,7 +23,7 @@ class RuntimeNormalizer implements DenormalizerInterface, NormalizerInterface, D
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\Runtime' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\Runtime') {
             return false;
         }
 

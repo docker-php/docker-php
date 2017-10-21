@@ -23,7 +23,7 @@ class HostConfigNormalizer implements DenormalizerInterface, NormalizerInterface
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\HostConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\HostConfig') {
             return false;
         }
 

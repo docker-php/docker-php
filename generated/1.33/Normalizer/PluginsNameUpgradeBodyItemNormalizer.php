@@ -23,7 +23,7 @@ class PluginsNameUpgradeBodyItemNormalizer implements DenormalizerInterface, Nor
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\PluginsNameUpgradeBodyItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\PluginsNameUpgradeBodyItem') {
             return false;
         }
 

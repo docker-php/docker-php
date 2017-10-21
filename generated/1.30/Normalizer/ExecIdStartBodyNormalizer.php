@@ -23,7 +23,7 @@ class ExecIdStartBodyNormalizer implements DenormalizerInterface, NormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\ExecIdStartBody' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\ExecIdStartBody') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class ServiceSpecRollbackConfigNormalizer implements DenormalizerInterface, Norm
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\ServiceSpecRollbackConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\ServiceSpecRollbackConfig') {
             return false;
         }
 

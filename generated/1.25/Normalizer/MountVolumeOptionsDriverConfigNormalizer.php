@@ -23,7 +23,7 @@ class MountVolumeOptionsDriverConfigNormalizer implements DenormalizerInterface,
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\MountVolumeOptionsDriverConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\MountVolumeOptionsDriverConfig') {
             return false;
         }
 

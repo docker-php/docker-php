@@ -23,7 +23,7 @@ class EndpointSettingsNormalizer implements DenormalizerInterface, NormalizerInt
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_28\\Model\\EndpointSettings' !== $type) {
+        if ($type !== 'Docker\\API\\V1_28\\Model\\EndpointSettings') {
             return false;
         }
 

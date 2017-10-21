@@ -23,7 +23,7 @@ class ProgressDetailNormalizer implements DenormalizerInterface, NormalizerInter
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\ProgressDetail' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\ProgressDetail') {
             return false;
         }
 

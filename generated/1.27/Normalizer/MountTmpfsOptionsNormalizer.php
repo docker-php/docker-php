@@ -23,7 +23,7 @@ class MountTmpfsOptionsNormalizer implements DenormalizerInterface, NormalizerIn
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\MountTmpfsOptions' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\MountTmpfsOptions') {
             return false;
         }
 

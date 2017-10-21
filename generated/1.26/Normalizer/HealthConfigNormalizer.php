@@ -23,7 +23,7 @@ class HealthConfigNormalizer implements DenormalizerInterface, NormalizerInterfa
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_26\\Model\\HealthConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_26\\Model\\HealthConfig') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class SwarmSpecOrchestrationNormalizer implements DenormalizerInterface, Normali
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\SwarmSpecOrchestration' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\SwarmSpecOrchestration') {
             return false;
         }
 

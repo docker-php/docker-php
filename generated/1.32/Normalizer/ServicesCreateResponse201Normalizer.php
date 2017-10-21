@@ -23,7 +23,7 @@ class ServicesCreateResponse201Normalizer implements DenormalizerInterface, Norm
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\ServicesCreateResponse201' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\ServicesCreateResponse201') {
             return false;
         }
 

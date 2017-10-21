@@ -23,7 +23,7 @@ class TaskSpecContainerSpecPrivilegesSELinuxContextNormalizer implements Denorma
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\TaskSpecContainerSpecPrivilegesSELinuxContext' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\TaskSpecContainerSpecPrivilegesSELinuxContext') {
             return false;
         }
 

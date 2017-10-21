@@ -23,7 +23,7 @@ class ContainerSummaryItemNetworkSettingsNormalizer implements DenormalizerInter
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\ContainerSummaryItemNetworkSettings' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\ContainerSummaryItemNetworkSettings') {
             return false;
         }
 

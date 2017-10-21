@@ -23,7 +23,7 @@ class BuildInfoNormalizer implements DenormalizerInterface, NormalizerInterface,
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\BuildInfo' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\BuildInfo') {
             return false;
         }
 

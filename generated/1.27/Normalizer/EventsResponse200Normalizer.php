@@ -23,7 +23,7 @@ class EventsResponse200Normalizer implements DenormalizerInterface, NormalizerIn
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\EventsResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\EventsResponse200') {
             return false;
         }
 

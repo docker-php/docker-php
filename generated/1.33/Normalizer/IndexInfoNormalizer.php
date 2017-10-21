@@ -23,7 +23,7 @@ class IndexInfoNormalizer implements DenormalizerInterface, NormalizerInterface,
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\IndexInfo' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\IndexInfo') {
             return false;
         }
 

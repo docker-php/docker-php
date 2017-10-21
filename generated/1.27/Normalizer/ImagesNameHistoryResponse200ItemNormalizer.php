@@ -23,7 +23,7 @@ class ImagesNameHistoryResponse200ItemNormalizer implements DenormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\ImagesNameHistoryResponse200Item' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\ImagesNameHistoryResponse200Item') {
             return false;
         }
 

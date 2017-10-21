@@ -278,7 +278,7 @@ class ImageResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_31\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_31\Model\ImagesNameHistoryResponse200Item[]|\Docker\API\V1_31\Model\ErrorResponse
      */
     public function imageHistory($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -296,7 +296,7 @@ class ImageResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return null;
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\ImagesNameHistoryResponse200Item[]', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\ErrorResponse', 'json');
@@ -476,7 +476,7 @@ class ImageResource extends Resource
      * }
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_31\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_31\Model\ImagesSearchResponse200Item[]|\Docker\API\V1_31\Model\ErrorResponse
      */
     public function imageSearch($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -496,7 +496,7 @@ class ImageResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return null;
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\ImagesSearchResponse200Item[]', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\ErrorResponse', 'json');

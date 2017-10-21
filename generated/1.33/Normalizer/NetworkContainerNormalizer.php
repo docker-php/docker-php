@@ -23,7 +23,7 @@ class NetworkContainerNormalizer implements DenormalizerInterface, NormalizerInt
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\NetworkContainer' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\NetworkContainer') {
             return false;
         }
 

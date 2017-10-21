@@ -23,7 +23,7 @@ class ServiceEndpointNormalizer implements DenormalizerInterface, NormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\ServiceEndpoint' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\ServiceEndpoint') {
             return false;
         }
 

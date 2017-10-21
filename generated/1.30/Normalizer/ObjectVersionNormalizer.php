@@ -23,7 +23,7 @@ class ObjectVersionNormalizer implements DenormalizerInterface, NormalizerInterf
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\ObjectVersion' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\ObjectVersion') {
             return false;
         }
 

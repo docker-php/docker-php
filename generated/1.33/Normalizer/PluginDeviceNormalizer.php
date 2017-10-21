@@ -23,7 +23,7 @@ class PluginDeviceNormalizer implements DenormalizerInterface, NormalizerInterfa
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\PluginDevice' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\PluginDevice') {
             return false;
         }
 

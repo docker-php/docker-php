@@ -23,7 +23,7 @@ class ServiceSpecModeReplicatedNormalizer implements DenormalizerInterface, Norm
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\ServiceSpecModeReplicated' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\ServiceSpecModeReplicated') {
             return false;
         }
 

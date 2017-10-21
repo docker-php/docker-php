@@ -23,7 +23,7 @@ class NetworkSettingsNormalizer implements DenormalizerInterface, NormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\NetworkSettings' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\NetworkSettings') {
             return false;
         }
 

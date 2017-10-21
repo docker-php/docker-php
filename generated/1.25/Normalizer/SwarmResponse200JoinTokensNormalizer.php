@@ -23,7 +23,7 @@ class SwarmResponse200JoinTokensNormalizer implements DenormalizerInterface, Nor
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\SwarmResponse200JoinTokens' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\SwarmResponse200JoinTokens') {
             return false;
         }
 

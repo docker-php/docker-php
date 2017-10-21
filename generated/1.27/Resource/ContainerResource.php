@@ -24,7 +24,7 @@ class ContainerResource extends Resource
      * }
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_27\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\ContainerSummaryItem[]|\Docker\API\V1_27\Model\ErrorResponse
      */
     public function containerList($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -45,7 +45,7 @@ class ContainerResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return null;
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\ContainerSummaryItem[]', 'json');
             }
             if ('400' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\ErrorResponse', 'json');
@@ -265,7 +265,7 @@ class ContainerResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_27\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\ContainersIdChangesResponse200Item[]|\Docker\API\V1_27\Model\ErrorResponse
      */
     public function containerChanges($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -283,7 +283,7 @@ class ContainerResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return null;
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\ContainersIdChangesResponse200Item[]', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\ErrorResponse', 'json');

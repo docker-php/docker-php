@@ -23,7 +23,7 @@ class ImageDeleteResponseNormalizer implements DenormalizerInterface, Normalizer
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_26\\Model\\ImageDeleteResponse' !== $type) {
+        if ($type !== 'Docker\\API\\V1_26\\Model\\ImageDeleteResponse') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class InfoResponse200RegistryConfigNormalizer implements DenormalizerInterface, 
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_28\\Model\\InfoResponse200RegistryConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_28\\Model\\InfoResponse200RegistryConfig') {
             return false;
         }
 

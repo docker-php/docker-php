@@ -23,7 +23,7 @@ class TaskSpecRestartPolicyNormalizer implements DenormalizerInterface, Normaliz
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\TaskSpecRestartPolicy' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\TaskSpecRestartPolicy') {
             return false;
         }
 

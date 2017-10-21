@@ -23,7 +23,7 @@ class ContainersIdJsonResponse200StateNormalizer implements DenormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\ContainersIdJsonResponse200State' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\ContainersIdJsonResponse200State') {
             return false;
         }
 

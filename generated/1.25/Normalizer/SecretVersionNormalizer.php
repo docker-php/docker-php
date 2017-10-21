@@ -23,7 +23,7 @@ class SecretVersionNormalizer implements DenormalizerInterface, NormalizerInterf
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\SecretVersion' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\SecretVersion') {
             return false;
         }
 

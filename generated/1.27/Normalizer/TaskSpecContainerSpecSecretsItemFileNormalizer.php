@@ -23,7 +23,7 @@ class TaskSpecContainerSpecSecretsItemFileNormalizer implements DenormalizerInte
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\TaskSpecContainerSpecSecretsItemFile' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\TaskSpecContainerSpecSecretsItemFile') {
             return false;
         }
 

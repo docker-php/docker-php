@@ -23,7 +23,7 @@ class EndpointIPAMConfigNormalizer implements DenormalizerInterface, NormalizerI
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\EndpointIPAMConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\EndpointIPAMConfig') {
             return false;
         }
 

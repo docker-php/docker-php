@@ -23,7 +23,7 @@ class GraphDriverNormalizer implements DenormalizerInterface, NormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\GraphDriver' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\GraphDriver') {
             return false;
         }
 

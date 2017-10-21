@@ -23,7 +23,7 @@ class TaskStatusContainerStatusNormalizer implements DenormalizerInterface, Norm
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\TaskStatusContainerStatus' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\TaskStatusContainerStatus') {
             return false;
         }
 

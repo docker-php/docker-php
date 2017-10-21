@@ -23,7 +23,7 @@ class SecretsCreateResponse201Normalizer implements DenormalizerInterface, Norma
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\SecretsCreateResponse201' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\SecretsCreateResponse201') {
             return false;
         }
 

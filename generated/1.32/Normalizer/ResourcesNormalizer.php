@@ -23,7 +23,7 @@ class ResourcesNormalizer implements DenormalizerInterface, NormalizerInterface,
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\Resources' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\Resources') {
             return false;
         }
 

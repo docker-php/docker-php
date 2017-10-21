@@ -23,7 +23,7 @@ class ContainersIdExecBodyNormalizer implements DenormalizerInterface, Normalize
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\ContainersIdExecBody' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\ContainersIdExecBody') {
             return false;
         }
 

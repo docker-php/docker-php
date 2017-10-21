@@ -23,7 +23,7 @@ class ServiceSpecNormalizer implements DenormalizerInterface, NormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\ServiceSpec' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\ServiceSpec') {
             return false;
         }
 

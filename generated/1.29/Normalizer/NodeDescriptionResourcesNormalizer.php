@@ -23,7 +23,7 @@ class NodeDescriptionResourcesNormalizer implements DenormalizerInterface, Norma
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\NodeDescriptionResources' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\NodeDescriptionResources') {
             return false;
         }
 

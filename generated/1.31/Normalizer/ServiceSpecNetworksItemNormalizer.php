@@ -23,7 +23,7 @@ class ServiceSpecNetworksItemNormalizer implements DenormalizerInterface, Normal
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\ServiceSpecNetworksItem' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\ServiceSpecNetworksItem') {
             return false;
         }
 

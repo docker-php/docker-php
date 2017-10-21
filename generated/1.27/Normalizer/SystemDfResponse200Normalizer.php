@@ -23,7 +23,7 @@ class SystemDfResponse200Normalizer implements DenormalizerInterface, Normalizer
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\SystemDfResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\SystemDfResponse200') {
             return false;
         }
 

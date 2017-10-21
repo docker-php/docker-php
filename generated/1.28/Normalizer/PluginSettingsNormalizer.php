@@ -23,7 +23,7 @@ class PluginSettingsNormalizer implements DenormalizerInterface, NormalizerInter
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_28\\Model\\PluginSettings' !== $type) {
+        if ($type !== 'Docker\\API\\V1_28\\Model\\PluginSettings') {
             return false;
         }
 

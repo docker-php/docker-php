@@ -23,7 +23,7 @@ class ImageRootFSNormalizer implements DenormalizerInterface, NormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\ImageRootFS' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\ImageRootFS') {
             return false;
         }
 

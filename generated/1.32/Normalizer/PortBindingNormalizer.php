@@ -23,7 +23,7 @@ class PortBindingNormalizer implements DenormalizerInterface, NormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_32\\Model\\PortBinding' !== $type) {
+        if ($type !== 'Docker\\API\\V1_32\\Model\\PortBinding') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class AddressNormalizer implements DenormalizerInterface, NormalizerInterface, D
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\Address' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\Address') {
             return false;
         }
 

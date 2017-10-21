@@ -23,7 +23,7 @@ class NodeSpecNormalizer implements DenormalizerInterface, NormalizerInterface, 
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_31\\Model\\NodeSpec' !== $type) {
+        if ($type !== 'Docker\\API\\V1_31\\Model\\NodeSpec') {
             return false;
         }
 

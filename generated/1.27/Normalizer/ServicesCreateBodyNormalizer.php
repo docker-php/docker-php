@@ -23,7 +23,7 @@ class ServicesCreateBodyNormalizer implements DenormalizerInterface, NormalizerI
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_27\\Model\\ServicesCreateBody' !== $type) {
+        if ($type !== 'Docker\\API\\V1_27\\Model\\ServicesCreateBody') {
             return false;
         }
 

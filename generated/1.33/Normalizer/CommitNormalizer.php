@@ -23,7 +23,7 @@ class CommitNormalizer implements DenormalizerInterface, NormalizerInterface, De
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\Commit' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\Commit') {
             return false;
         }
 

@@ -23,7 +23,7 @@ class TaskVersionNormalizer implements DenormalizerInterface, NormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_25\\Model\\TaskVersion' !== $type) {
+        if ($type !== 'Docker\\API\\V1_25\\Model\\TaskVersion') {
             return false;
         }
 

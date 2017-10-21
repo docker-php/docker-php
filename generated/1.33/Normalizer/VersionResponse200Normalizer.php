@@ -23,7 +23,7 @@ class VersionResponse200Normalizer implements DenormalizerInterface, NormalizerI
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_33\\Model\\VersionResponse200' !== $type) {
+        if ($type !== 'Docker\\API\\V1_33\\Model\\VersionResponse200') {
             return false;
         }
 

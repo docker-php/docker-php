@@ -23,7 +23,7 @@ class EndpointPortConfigNormalizer implements DenormalizerInterface, NormalizerI
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_30\\Model\\EndpointPortConfig' !== $type) {
+        if ($type !== 'Docker\\API\\V1_30\\Model\\EndpointPortConfig') {
             return false;
         }
 

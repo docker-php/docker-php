@@ -23,7 +23,7 @@ class SwarmInitBodyNormalizer implements DenormalizerInterface, NormalizerInterf
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if ('Docker\\API\\V1_29\\Model\\SwarmInitBody' !== $type) {
+        if ($type !== 'Docker\\API\\V1_29\\Model\\SwarmInitBody') {
             return false;
         }
 

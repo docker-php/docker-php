@@ -35,7 +35,7 @@ class SystemResourceTest extends TestCase
         ]);
         $stream->wait();
 
-        $this->assertInstanceOf('Docker\\API\\'.self::getVersion().'\\Model\\EventsResponse200', $lastEvent);
+        $this->assertInstanceOf('Docker\\API\\'.self::getVersion().'\\Model\\EventsGetResponse200', $lastEvent);
     }
 
     public function testGetEventsObject()
@@ -46,6 +46,6 @@ class SystemResourceTest extends TestCase
         ], Resource::FETCH_OBJECT);
 
         $this->assertInternalType('array', $events);
-        $this->assertInstanceOf('Docker\\API\\'.self::getVersion().'\\Model\\EventsResponse200', $events[0]);
+        $this->assertInstanceOf('Docker\\API\\'.self::getVersion().'\\Model\\EventsGetResponse200', $events[0]);
     }
 }

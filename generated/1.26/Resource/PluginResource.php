@@ -54,7 +54,7 @@ class PluginResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_26\Model\PluginsPrivilegesResponse200Item[]|\Docker\API\V1_26\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_26\Model\PluginsPrivilegesGetResponse200Item[]|\Docker\API\V1_26\Model\ErrorResponse
      */
     public function getPluginPrivileges($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -72,7 +72,7 @@ class PluginResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_26\\Model\\PluginsPrivilegesResponse200Item[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_26\\Model\\PluginsPrivilegesGetResponse200Item[]', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_26\\Model\\ErrorResponse', 'json');

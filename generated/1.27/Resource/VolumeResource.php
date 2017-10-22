@@ -20,7 +20,7 @@ class VolumeResource extends Resource
      * }
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\VolumesResponse200|\Docker\API\V1_27\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\VolumesGetResponse200|\Docker\API\V1_27\Model\ErrorResponse
      */
     public function volumeList($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -38,7 +38,7 @@ class VolumeResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\VolumesResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\VolumesGetResponse200', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\ErrorResponse', 'json');
@@ -49,13 +49,13 @@ class VolumeResource extends Resource
     }
 
     /**
-     * @param \Docker\API\V1_27\Model\VolumesCreateBody $volumeConfig Volume configuration
-     * @param array                                     $parameters   List of parameters
-     * @param string                                    $fetch        Fetch mode (object or response)
+     * @param \Docker\API\V1_27\Model\VolumesCreatePostBody $volumeConfig Volume configuration
+     * @param array                                         $parameters   List of parameters
+     * @param string                                        $fetch        Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\Volume|\Docker\API\V1_27\Model\ErrorResponse
      */
-    public function volumeCreate(\Docker\API\V1_27\Model\VolumesCreateBody $volumeConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function volumeCreate(\Docker\API\V1_27\Model\VolumesCreatePostBody $volumeConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.27/volumes/create';
@@ -173,7 +173,7 @@ class VolumeResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\VolumesPruneResponse200|\Docker\API\V1_27\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\VolumesPrunePostResponse200|\Docker\API\V1_27\Model\ErrorResponse
      */
     public function volumePrune($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -191,7 +191,7 @@ class VolumeResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\VolumesPruneResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\VolumesPrunePostResponse200', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\ErrorResponse', 'json');

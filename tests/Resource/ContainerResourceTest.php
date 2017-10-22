@@ -26,7 +26,7 @@ class ContainerResourceTest extends TestCase
 
     public function testAttach()
     {
-        $containerConfig = self::createModel('ContainersCreateBody');
+        $containerConfig = self::createModel('ContainersCreatePostBody');
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['echo', '-n', 'output']);
         $containerConfig->setAttachStdout(true);
@@ -53,7 +53,7 @@ class ContainerResourceTest extends TestCase
 
     public function testAttachWebsocket()
     {
-        $containerConfig = self::createModel('ContainersCreateBody');
+        $containerConfig = self::createModel('ContainersCreatePostBody');
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['sh']);
         $containerConfig->setAttachStdout(true);
@@ -97,7 +97,7 @@ class ContainerResourceTest extends TestCase
 
     public function testLogs()
     {
-        $containerConfig = self::createModel('ContainersCreateBody');
+        $containerConfig = self::createModel('ContainersCreatePostBody');
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['echo', '-n', 'output']);
         $containerConfig->setAttachStdout(true);

@@ -53,17 +53,17 @@ class ServiceResource extends Resource
     }
 
     /**
-     * @param \Docker\API\V1_32\Model\ServicesCreateBody $body
-     * @param array                                      $parameters {
+     * @param \Docker\API\V1_32\Model\ServicesCreatePostBody $body
+     * @param array                                          $parameters {
      *
      *     @var string $X-Registry-Auth A base64-encoded auth configuration for pulling from private registries. [See the authentication section for details.](#section/Authentication)
      * }
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_32\Model\ServicesCreateResponse201|\Docker\API\V1_32\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_32\Model\ServicesCreatePostResponse201|\Docker\API\V1_32\Model\ErrorResponse
      */
-    public function serviceCreate(\Docker\API\V1_32\Model\ServicesCreateBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function serviceCreate(\Docker\API\V1_32\Model\ServicesCreatePostBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('X-Registry-Auth', null);
@@ -80,7 +80,7 @@ class ServiceResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_32\\Model\\ServicesCreateResponse201', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_32\\Model\\ServicesCreatePostResponse201', 'json');
             }
             if ('400' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_32\\Model\\ErrorResponse', 'json');
@@ -186,9 +186,9 @@ class ServiceResource extends Resource
     }
 
     /**
-     * @param string                                       $id         ID or name of service
-     * @param \Docker\API\V1_32\Model\ServicesIdUpdateBody $body
-     * @param array                                        $parameters {
+     * @param string                                           $id         ID or name of service
+     * @param \Docker\API\V1_32\Model\ServicesIdUpdatePostBody $body
+     * @param array                                            $parameters {
      *
      *     @var int $version The version number of the service object being updated. This is required to avoid conflicting writes.
      *     @var string $registryAuthFrom If the X-Registry-Auth header is not specified, this parameter indicates where to find registry authorization credentials. The valid values are `spec` and `previous-spec`.
@@ -200,7 +200,7 @@ class ServiceResource extends Resource
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_32\Model\ServiceUpdateResponse|\Docker\API\V1_32\Model\ErrorResponse
      */
-    public function serviceUpdate($id, \Docker\API\V1_32\Model\ServicesIdUpdateBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function serviceUpdate($id, \Docker\API\V1_32\Model\ServicesIdUpdatePostBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setRequired('version');

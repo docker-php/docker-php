@@ -14,6 +14,6 @@ class EventStream extends MultiJsonStream
      */
     protected function getDecodeClass()
     {
-        return 'EventsResponse200';
+        return 'EventsGetResponse200';
     }
 }

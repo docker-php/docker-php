@@ -51,13 +51,13 @@ class SwarmResource extends Resource
     }
 
     /**
-     * @param \Docker\API\V1_32\Model\SwarmInitBody $body
-     * @param array                                 $parameters List of parameters
-     * @param string                                $fetch      Fetch mode (object or response)
+     * @param \Docker\API\V1_32\Model\SwarmInitPostBody $body
+     * @param array                                     $parameters List of parameters
+     * @param string                                    $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_32\Model\ErrorResponse
      */
-    public function swarmInit(\Docker\API\V1_32\Model\SwarmInitBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function swarmInit(\Docker\API\V1_32\Model\SwarmInitPostBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.32/swarm/init';
@@ -89,13 +89,13 @@ class SwarmResource extends Resource
     }
 
     /**
-     * @param \Docker\API\V1_32\Model\SwarmJoinBody $body
-     * @param array                                 $parameters List of parameters
-     * @param string                                $fetch      Fetch mode (object or response)
+     * @param \Docker\API\V1_32\Model\SwarmJoinPostBody $body
+     * @param array                                     $parameters List of parameters
+     * @param string                                    $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_32\Model\ErrorResponse
      */
-    public function swarmJoin(\Docker\API\V1_32\Model\SwarmJoinBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function swarmJoin(\Docker\API\V1_32\Model\SwarmJoinPostBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.32/swarm/join';
@@ -218,7 +218,7 @@ class SwarmResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_32\Model\SwarmUnlockkeyResponse200|\Docker\API\V1_32\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_32\Model\SwarmUnlockkeyGetResponse200|\Docker\API\V1_32\Model\ErrorResponse
      */
     public function swarmUnlockkey($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -235,7 +235,7 @@ class SwarmResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_32\\Model\\SwarmUnlockkeyResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_32\\Model\\SwarmUnlockkeyGetResponse200', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_32\\Model\\ErrorResponse', 'json');
@@ -249,13 +249,13 @@ class SwarmResource extends Resource
     }
 
     /**
-     * @param \Docker\API\V1_32\Model\SwarmUnlockBody $body
-     * @param array                                   $parameters List of parameters
-     * @param string                                  $fetch      Fetch mode (object or response)
+     * @param \Docker\API\V1_32\Model\SwarmUnlockPostBody $body
+     * @param array                                       $parameters List of parameters
+     * @param string                                      $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_32\Model\ErrorResponse
      */
-    public function swarmUnlock(\Docker\API\V1_32\Model\SwarmUnlockBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function swarmUnlock(\Docker\API\V1_32\Model\SwarmUnlockPostBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.32/swarm/unlock';

@@ -16,14 +16,14 @@ class ExecResource extends Resource
     /**
      * Run a command inside a running container.
      *
-     * @param string                                       $id         ID or name of container
-     * @param \Docker\API\V1_31\Model\ContainersIdExecBody $execConfig Exec configuration
-     * @param array                                        $parameters List of parameters
-     * @param string                                       $fetch      Fetch mode (object or response)
+     * @param string                                           $id         ID or name of container
+     * @param \Docker\API\V1_31\Model\ContainersIdExecPostBody $execConfig Exec configuration
+     * @param array                                            $parameters List of parameters
+     * @param string                                           $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_31\Model\IdResponse|\Docker\API\V1_31\Model\ErrorResponse
      */
-    public function containerExec($id, \Docker\API\V1_31\Model\ContainersIdExecBody $execConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function containerExec($id, \Docker\API\V1_31\Model\ContainersIdExecPostBody $execConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.31/containers/{id}/exec';
@@ -58,14 +58,14 @@ class ExecResource extends Resource
     /**
      * Starts a previously set up exec instance. If detach is true, this endpoint returns immediately after starting the command. Otherwise, it sets up an interactive session with the command.
      *
-     * @param string                                  $id              Exec instance ID
-     * @param \Docker\API\V1_31\Model\ExecIdStartBody $execStartConfig
-     * @param array                                   $parameters      List of parameters
-     * @param string                                  $fetch           Fetch mode (object or response)
+     * @param string                                      $id              Exec instance ID
+     * @param \Docker\API\V1_31\Model\ExecIdStartPostBody $execStartConfig
+     * @param array                                       $parameters      List of parameters
+     * @param string                                      $fetch           Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_31\Model\ErrorResponse
      */
-    public function execStart($id, \Docker\API\V1_31\Model\ExecIdStartBody $execStartConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function execStart($id, \Docker\API\V1_31\Model\ExecIdStartPostBody $execStartConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.31/exec/{id}/start';
@@ -143,7 +143,7 @@ class ExecResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_31\Model\ExecIdJsonResponse200|\Docker\API\V1_31\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_31\Model\ExecIdJsonGetResponse200|\Docker\API\V1_31\Model\ErrorResponse
      */
     public function execInspect($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -161,7 +161,7 @@ class ExecResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\ExecIdJsonResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\ExecIdJsonGetResponse200', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\ErrorResponse', 'json');

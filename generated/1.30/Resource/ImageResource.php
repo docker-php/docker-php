@@ -247,7 +247,7 @@ class ImageResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\ImagesNameHistoryResponse200Item[]|\Docker\API\V1_30\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\ImagesNameHistoryGetResponse200Item[]|\Docker\API\V1_30\Model\ErrorResponse
      */
     public function imageHistory($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -265,7 +265,7 @@ class ImageResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ImagesNameHistoryResponse200Item[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ImagesNameHistoryGetResponse200Item[]', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ErrorResponse', 'json');
@@ -445,7 +445,7 @@ class ImageResource extends Resource
      * }
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\ImagesSearchResponse200Item[]|\Docker\API\V1_30\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\ImagesSearchGetResponse200Item[]|\Docker\API\V1_30\Model\ErrorResponse
      */
     public function imageSearch($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -465,7 +465,7 @@ class ImageResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ImagesSearchResponse200Item[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ImagesSearchGetResponse200Item[]', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ErrorResponse', 'json');
@@ -485,7 +485,7 @@ class ImageResource extends Resource
      * }
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\ImagesPruneResponse200|\Docker\API\V1_30\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\ImagesPrunePostResponse200|\Docker\API\V1_30\Model\ErrorResponse
      */
     public function imagePrune($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -503,7 +503,7 @@ class ImageResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ImagesPruneResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ImagesPrunePostResponse200', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ErrorResponse', 'json');

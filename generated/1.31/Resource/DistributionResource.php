@@ -20,7 +20,7 @@ class DistributionResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_31\Model\DistributionNameJsonResponse200|\Docker\API\V1_31\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_31\Model\DistributionNameJsonGetResponse200|\Docker\API\V1_31\Model\ErrorResponse
      */
     public function distributionInspect($name, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -38,7 +38,7 @@ class DistributionResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\DistributionNameJsonResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\DistributionNameJsonGetResponse200', 'json');
             }
             if ('401' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\ErrorResponse', 'json');

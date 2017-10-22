@@ -26,17 +26,19 @@
         "php": ">=7.0",
         "symfony/filesystem": "^2.3 || ^3.0",
         "symfony/process": "^2.3 || ^3.0",
-        "php-http/client-common": "^1.1",
+        "php-http/client-common": "^1.6",
         "php-http/socket-client": "^1.3",
         "php-http/message": "^1.0",
         "guzzlehttp/psr7": "^1.2",
         "jane/openapi-runtime": "^2.0"
     },
+    "suggest": {
+        "php-http/httplug-bundle": "For integration with Symfony"
+    },
     "require-dev": {
         "phpunit/phpunit": "^6.0",
         "friendsofphp/php-cs-fixer": "^2.0",
-        "php-http/artax-adapter": "dev-feature/async",
-        "jane/open-api": "dev-master"
+        "jane/open-api": "^3.1"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",

@@ -8,6 +8,7 @@ use Http\Client\Common\Plugin\ContentLengthPlugin;
 use Http\Client\Common\Plugin\DecoderPlugin;
 use Http\Client\Common\Plugin\ErrorPlugin;
 use Http\Client\Common\PluginClient;
+use Http\Client\Common\PluginClientFactory;
 use Http\Client\HttpClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Client\Socket\Client as SocketHttpClient;
@@ -20,13 +21,13 @@ class DockerClient implements HttpClient
      */
     private $httpClient;
 
-    public function __construct($socketClientOptions = [])
+    public function __construct(PluginClientFactory $pluginClientFactory, $socketClientOptions = [])
     {
         $messageFactory = new GuzzleMessageFactory();
         $socketClient = new SocketHttpClient($messageFactory, $socketClientOptions);
         $host = preg_match('/unix:\/\//', $socketClientOptions['remote_socket']) ? 'http://localhost' : $socketClientOptions['remote_socket'];
 
-        $this->httpClient = new PluginClient($socketClient, [
+        $this->httpClient = $pluginClientFactory->createClient($socketClient, [
             new ContentLengthPlugin(),
             new DecoderPlugin(),
             new AddHostPlugin(new Uri($host)),
@@ -44,9 +45,11 @@ class DockerClient implements HttpClient
     /**
      * @return DockerClient
      */
-    public static function create()
+    public static function create(PluginClientFactory $pluginClientFactory = null)
     {
-        return new self([
+        $pluginClientFactory = $pluginClientFactory ?? new PluginClientFactory();
+
+        return new self($pluginClientFactory, [
             'remote_socket' => 'unix:///var/run/docker.sock'
         ]);
     }
@@ -58,8 +61,9 @@ class DockerClient implements HttpClient
      *
      * @throws \RuntimeException Throw exception when invalid environment variables are given
      */
-    public static function createFromEnv()
+    public static function createFromEnv(PluginClientFactory $pluginClientFactory = null)
     {
+        $pluginClientFactory = $pluginClientFactory ?? new PluginClientFactory();
         $options = [
             'remote_socket' => getenv('DOCKER_HOST') ? getenv('DOCKER_HOST') : 'unix:///var/run/docker.sock'
         ];
@@ -89,6 +93,6 @@ class DockerClient implements HttpClient
             ];
         }
 
-        return new self($options);
+        return new self($pluginClientFactory, $options);
     }
 }

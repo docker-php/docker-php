@@ -119,13 +119,13 @@ class NetworkResource extends Resource
     }
 
     /**
-     * @param \Docker\API\V1_27\Model\NetworksCreateBody $networkConfig Network configuration
-     * @param array                                      $parameters    List of parameters
-     * @param string                                     $fetch         Fetch mode (object or response)
+     * @param \Docker\API\V1_27\Model\NetworksCreatePostBody $networkConfig Network configuration
+     * @param array                                          $parameters    List of parameters
+     * @param string                                         $fetch         Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\NetworksCreateResponse201|\Docker\API\V1_27\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\NetworksCreatePostResponse201|\Docker\API\V1_27\Model\ErrorResponse
      */
-    public function networkCreate(\Docker\API\V1_27\Model\NetworksCreateBody $networkConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function networkCreate(\Docker\API\V1_27\Model\NetworksCreatePostBody $networkConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.27/networks/create';
@@ -140,7 +140,7 @@ class NetworkResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\NetworksCreateResponse201', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\NetworksCreatePostResponse201', 'json');
             }
             if ('403' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\ErrorResponse', 'json');
@@ -157,14 +157,14 @@ class NetworkResource extends Resource
     }
 
     /**
-     * @param string                                        $id         Network ID or name
-     * @param \Docker\API\V1_27\Model\NetworksIdConnectBody $container
-     * @param array                                         $parameters List of parameters
-     * @param string                                        $fetch      Fetch mode (object or response)
+     * @param string                                            $id         Network ID or name
+     * @param \Docker\API\V1_27\Model\NetworksIdConnectPostBody $container
+     * @param array                                             $parameters List of parameters
+     * @param string                                            $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_27\Model\ErrorResponse
      */
-    public function networkConnect($id, \Docker\API\V1_27\Model\NetworksIdConnectBody $container, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function networkConnect($id, \Docker\API\V1_27\Model\NetworksIdConnectPostBody $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.27/networks/{id}/connect';
@@ -197,14 +197,14 @@ class NetworkResource extends Resource
     }
 
     /**
-     * @param string                                           $id         Network ID or name
-     * @param \Docker\API\V1_27\Model\NetworksIdDisconnectBody $container
-     * @param array                                            $parameters List of parameters
-     * @param string                                           $fetch      Fetch mode (object or response)
+     * @param string                                               $id         Network ID or name
+     * @param \Docker\API\V1_27\Model\NetworksIdDisconnectPostBody $container
+     * @param array                                                $parameters List of parameters
+     * @param string                                               $fetch      Fetch mode (object or response)
      *
      * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_27\Model\ErrorResponse
      */
-    public function networkDisconnect($id, \Docker\API\V1_27\Model\NetworksIdDisconnectBody $container, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function networkDisconnect($id, \Docker\API\V1_27\Model\NetworksIdDisconnectPostBody $container, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.27/networks/{id}/disconnect';
@@ -247,7 +247,7 @@ class NetworkResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\NetworksPruneResponse200|\Docker\API\V1_27\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_27\Model\NetworksPrunePostResponse200|\Docker\API\V1_27\Model\ErrorResponse
      */
     public function networkPrune($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -265,7 +265,7 @@ class NetworkResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\NetworksPruneResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\NetworksPrunePostResponse200', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_27\\Model\\ErrorResponse', 'json');

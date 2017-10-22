@@ -20,7 +20,7 @@ class SystemResource extends Resource
      * @param array                              $parameters List of parameters
      * @param string                             $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\AuthResponse200|null|\Docker\API\V1_30\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\AuthPostResponse200|null|\Docker\API\V1_30\Model\ErrorResponse
      */
     public function systemAuth(\Docker\API\V1_30\Model\AuthConfig $authConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -37,7 +37,7 @@ class SystemResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\AuthResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\AuthPostResponse200', 'json');
             }
             if ('204' == $response->getStatusCode()) {
                 return null;
@@ -54,7 +54,7 @@ class SystemResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\InfoResponse200|\Docker\API\V1_30\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\InfoGetResponse200|\Docker\API\V1_30\Model\ErrorResponse
      */
     public function systemInfo($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -71,7 +71,7 @@ class SystemResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\InfoResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\InfoGetResponse200', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ErrorResponse', 'json');
@@ -87,7 +87,7 @@ class SystemResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\VersionResponse200|\Docker\API\V1_30\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\VersionGetResponse200|\Docker\API\V1_30\Model\ErrorResponse
      */
     public function systemVersion($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -104,7 +104,7 @@ class SystemResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\VersionResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\VersionGetResponse200', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ErrorResponse', 'json');
@@ -178,7 +178,7 @@ class SystemResource extends Resource
      * }
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\EventsResponse200|\Docker\API\V1_30\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\EventsGetResponse200|\Docker\API\V1_30\Model\ErrorResponse
      */
     public function systemEvents($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -198,7 +198,7 @@ class SystemResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\EventsResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\EventsGetResponse200', 'json');
             }
             if ('400' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ErrorResponse', 'json');
@@ -215,7 +215,7 @@ class SystemResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\SystemDfResponse200|\Docker\API\V1_30\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\SystemDfGetResponse200|\Docker\API\V1_30\Model\ErrorResponse
      */
     public function systemDataUsage($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -232,7 +232,7 @@ class SystemResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\SystemDfResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\SystemDfGetResponse200', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ErrorResponse', 'json');

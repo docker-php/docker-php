@@ -59,17 +59,17 @@ class ContainerResource extends Resource
     }
 
     /**
-     * @param \Docker\API\V1_25\Model\ContainersCreateBody $body       Container to create
-     * @param array                                        $parameters {
+     * @param \Docker\API\V1_25\Model\ContainersCreatePostBody $body       Container to create
+     * @param array                                            $parameters {
      *
      *     @var string $name Assign the specified name to the container. Must match `/?[a-zA-Z0-9_-]+`.
      * }
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersCreateResponse201|\Docker\API\V1_25\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersCreatePostResponse201|\Docker\API\V1_25\Model\ErrorResponse
      */
-    public function containerCreate(\Docker\API\V1_25\Model\ContainersCreateBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function containerCreate(\Docker\API\V1_25\Model\ContainersCreatePostBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('name', null);
@@ -85,7 +85,7 @@ class ContainerResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersCreateResponse201', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersCreatePostResponse201', 'json');
             }
             if ('400' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ErrorResponse', 'json');
@@ -118,7 +118,7 @@ class ContainerResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdJsonResponse200|\Docker\API\V1_25\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdJsonGetResponse200|\Docker\API\V1_25\Model\ErrorResponse
      */
     public function containerInspect($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -137,7 +137,7 @@ class ContainerResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdJsonResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdJsonGetResponse200', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ErrorResponse', 'json');
@@ -161,7 +161,7 @@ class ContainerResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdTopResponse200|\Docker\API\V1_25\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdTopGetResponse200|\Docker\API\V1_25\Model\ErrorResponse
      */
     public function containerTop($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -180,7 +180,7 @@ class ContainerResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdTopResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdTopGetResponse200', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ErrorResponse', 'json');
@@ -265,7 +265,7 @@ class ContainerResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdChangesResponse200Item[]|\Docker\API\V1_25\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdChangesGetResponse200Item[]|\Docker\API\V1_25\Model\ErrorResponse
      */
     public function containerChanges($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -283,7 +283,7 @@ class ContainerResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdChangesResponse200Item[]', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdChangesGetResponse200Item[]', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ErrorResponse', 'json');
@@ -600,14 +600,14 @@ class ContainerResource extends Resource
     /**
      * Change various configuration options of a container without having to recreate it.
      *
-     * @param string                                         $id         ID or name of the container
-     * @param \Docker\API\V1_25\Model\ContainersIdUpdateBody $update
-     * @param array                                          $parameters List of parameters
-     * @param string                                         $fetch      Fetch mode (object or response)
+     * @param string                                             $id         ID or name of the container
+     * @param \Docker\API\V1_25\Model\ContainersIdUpdatePostBody $update
+     * @param array                                              $parameters List of parameters
+     * @param string                                             $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdUpdateResponse200|\Docker\API\V1_25\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdUpdatePostResponse200|\Docker\API\V1_25\Model\ErrorResponse
      */
-    public function containerUpdate($id, \Docker\API\V1_25\Model\ContainersIdUpdateBody $update, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function containerUpdate($id, \Docker\API\V1_25\Model\ContainersIdUpdatePostBody $update, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.25/containers/{id}/update';
@@ -623,7 +623,7 @@ class ContainerResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdUpdateResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdUpdatePostResponse200', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ErrorResponse', 'json');
@@ -958,7 +958,7 @@ class ContainerResource extends Resource
      * @param array  $parameters List of parameters
      * @param string $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdWaitResponse200|\Docker\API\V1_25\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersIdWaitPostResponse200|\Docker\API\V1_25\Model\ErrorResponse
      */
     public function containerWait($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -976,7 +976,7 @@ class ContainerResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdWaitResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdWaitPostResponse200', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ErrorResponse', 'json');
@@ -1046,7 +1046,7 @@ class ContainerResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_25\Model\ContainersIdArchiveResponse400|\Docker\API\V1_25\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_25\Model\ContainersIdArchiveGetResponse400|\Docker\API\V1_25\Model\ErrorResponse
      */
     public function containerGetArchive($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -1068,7 +1068,7 @@ class ContainerResource extends Resource
                 return null;
             }
             if ('400' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdArchiveResponse400', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdArchiveGetResponse400', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ErrorResponse', 'json');
@@ -1092,7 +1092,7 @@ class ContainerResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_25\Model\ContainersIdArchiveResponse400|\Docker\API\V1_25\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|null|\Docker\API\V1_25\Model\ContainersIdArchiveHeadResponse400|\Docker\API\V1_25\Model\ErrorResponse
      */
     public function containerArchiveHead($id, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -1114,7 +1114,7 @@ class ContainerResource extends Resource
                 return null;
             }
             if ('400' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdArchiveResponse400', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersIdArchiveHeadResponse400', 'json');
             }
             if ('404' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ErrorResponse', 'json');
@@ -1190,7 +1190,7 @@ class ContainerResource extends Resource
      *
      * @param string $fetch Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersPruneResponse200|\Docker\API\V1_25\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_25\Model\ContainersPrunePostResponse200|\Docker\API\V1_25\Model\ErrorResponse
      */
     public function containerPrune($parameters = [], $fetch = self::FETCH_OBJECT)
     {
@@ -1208,7 +1208,7 @@ class ContainerResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('200' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersPruneResponse200', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ContainersPrunePostResponse200', 'json');
             }
             if ('500' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_25\\Model\\ErrorResponse', 'json');

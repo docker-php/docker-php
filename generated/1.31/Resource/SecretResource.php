@@ -53,13 +53,13 @@ class SecretResource extends Resource
     }
 
     /**
-     * @param \Docker\API\V1_31\Model\SecretsCreateBody $body
-     * @param array                                     $parameters List of parameters
-     * @param string                                    $fetch      Fetch mode (object or response)
+     * @param \Docker\API\V1_31\Model\SecretsCreatePostBody $body
+     * @param array                                         $parameters List of parameters
+     * @param string                                        $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_31\Model\SecretsCreateResponse201|\Docker\API\V1_31\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_31\Model\SecretsCreatePostResponse201|\Docker\API\V1_31\Model\ErrorResponse
      */
-    public function secretCreate(\Docker\API\V1_31\Model\SecretsCreateBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function secretCreate(\Docker\API\V1_31\Model\SecretsCreatePostBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.31/secrets/create';
@@ -74,7 +74,7 @@ class SecretResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\SecretsCreateResponse201', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\SecretsCreatePostResponse201', 'json');
             }
             if ('409' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_31\\Model\\ErrorResponse', 'json');

@@ -19,14 +19,14 @@ class ExecResourceTest extends TestCase
     {
         $createContainerResult = $this->createContainer();
 
-        $execConfig = self::createModel('ContainersIdExecBody');
+        $execConfig = self::createModel('ContainersIdExecPostBody');
         $execConfig->setAttachStdout(true);
         $execConfig->setAttachStderr(true);
         $execConfig->setCmd(["echo", "output"]);
 
         $execCreateResult = $this->getManager()->containerExec($createContainerResult->getId(), $execConfig);
 
-        $execStartConfig = self::createModel('ExecIdStartBody');
+        $execStartConfig = self::createModel('ExecIdStartPostBody');
         $execStartConfig->setDetach(false);
         $execStartConfig->setTty(false);
 
@@ -51,11 +51,11 @@ class ExecResourceTest extends TestCase
     {
         $createContainerResult = $this->createContainer();
 
-        $execConfig = self::createModel('ContainersIdExecBody');
+        $execConfig = self::createModel('ContainersIdExecPostBody');
         $execConfig->setCmd(["/bin/true"]);
         $execCreateResult = $this->getManager()->containerExec($createContainerResult->getId(), $execConfig);
 
-        $execStartConfig = self::createModel('ExecIdStartBody');
+        $execStartConfig = self::createModel('ExecIdStartPostBody');
         $execStartConfig->setDetach(false);
         $execStartConfig->setTty(false);
 
@@ -63,7 +63,7 @@ class ExecResourceTest extends TestCase
 
         $execFindResult = $this->getManager()->execInspect($execCreateResult->getId());
 
-        $this->assertInstanceOf('Docker\\API\\'.self::getVersion().'\\Model\\ExecIdJsonResponse200', $execFindResult);
+        $this->assertInstanceOf('Docker\\API\\'.self::getVersion().'\\Model\\ExecIdJsonGetResponse200', $execFindResult);
 
         self::getDocker()->container()->containerKill($createContainerResult->getId(), [
             'signal' => 'SIGKILL'
@@ -72,7 +72,7 @@ class ExecResourceTest extends TestCase
 
     private function createContainer()
     {
-        $containerConfig = self::createModel('ContainersCreateBody');
+        $containerConfig = self::createModel('ContainersCreatePostBody');
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['sh']);
         $containerConfig->setOpenStdin(true);

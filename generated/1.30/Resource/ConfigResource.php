@@ -53,13 +53,13 @@ class ConfigResource extends Resource
     }
 
     /**
-     * @param \Docker\API\V1_30\Model\ConfigsCreateBody $body
-     * @param array                                     $parameters List of parameters
-     * @param string                                    $fetch      Fetch mode (object or response)
+     * @param \Docker\API\V1_30\Model\ConfigsCreatePostBody $body
+     * @param array                                         $parameters List of parameters
+     * @param string                                        $fetch      Fetch mode (object or response)
      *
-     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\ConfigsCreateResponse201|\Docker\API\V1_30\Model\ErrorResponse
+     * @return \Psr\Http\Message\ResponseInterface|\Docker\API\V1_30\Model\ConfigsCreatePostResponse201|\Docker\API\V1_30\Model\ErrorResponse
      */
-    public function configCreate(\Docker\API\V1_30\Model\ConfigsCreateBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
+    public function configCreate(\Docker\API\V1_30\Model\ConfigsCreatePostBody $body, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url        = '/v1.30/configs/create';
@@ -74,7 +74,7 @@ class ConfigResource extends Resource
         $response = $promise->wait();
         if (self::FETCH_OBJECT == $fetch) {
             if ('201' == $response->getStatusCode()) {
-                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ConfigsCreateResponse201', 'json');
+                return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ConfigsCreatePostResponse201', 'json');
             }
             if ('409' == $response->getStatusCode()) {
                 return $this->serializer->deserialize((string) $response->getBody(), 'Docker\\API\\V1_30\\Model\\ErrorResponse', 'json');

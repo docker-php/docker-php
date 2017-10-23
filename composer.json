@@ -23,7 +23,7 @@
         }
     },
     "require": {
-        "php": ">=7.0",
+        "php": "^7.1",
         "symfony/filesystem": "^2.3 || ^3.0",
         "symfony/process": "^2.3 || ^3.0",
         "php-http/client-common": "^1.6",

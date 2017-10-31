@@ -93,7 +93,10 @@ class ImageManagerTest extends TestCase
         $contextBuilder->add('/test', 'test file content');
 
         $context = $contextBuilder->getContext();
-        $this->getManager()->build($context->read(), ['t' => 'localhost:5000/test-image'], ImageManager::FETCH_OBJECT);
+        $this->getManager()->build($context->read(), [
+            't' => 'localhost:5000/test-image',
+            'labels' => [ 'test-label' => 'yes' ]
+        ], ImageManager::FETCH_OBJECT);
 
         $registryConfig = new AuthConfig();
         $registryConfig->setServeraddress('localhost:5000');

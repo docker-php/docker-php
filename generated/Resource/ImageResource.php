@@ -62,6 +62,7 @@ class ImageResource extends Resource
      *     @var string $pull Attempt to pull the image even if an older image exists locally
      *     @var bool $rm Remove intermediate containers after a successful build (default behavior).
      *     @var bool $forcerm always remove intermediate containers (includes rm)
+     *     @var array $label Set labels for an image.
      *     @var int $memory Set memory limit for build.
      *     @var int $memswap Total memory (memory + swap), -1 to disable swap.
      *     @var int $cpushares CPU shares (relative weight).
@@ -88,6 +89,7 @@ class ImageResource extends Resource
         $queryParam->setDefault('pull', null);
         $queryParam->setDefault('rm', true);
         $queryParam->setDefault('forcerm', false);
+        $queryParam->setDefault('labels', null);
         $queryParam->setDefault('memory', null);
         $queryParam->setDefault('memswap', null);
         $queryParam->setDefault('cpushares', null);

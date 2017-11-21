@@ -50,6 +50,9 @@ class MountNormalizer extends SerializerAwareNormalizer implements DenormalizerI
         if (property_exists($data, 'Propagation')) {
             $object->setPropagation($data->{'Propagation'});
         }
+        if (property_exists($data, 'Type')) {
+            $object->setType($data->{'Type'});
+        }
 
         return $object;
     }
@@ -77,6 +80,9 @@ class MountNormalizer extends SerializerAwareNormalizer implements DenormalizerI
         }
         if (null !== $object->getPropagation()) {
             $data->{'Propagation'} = $object->getPropagation();
+        }
+        if (null !== $object->getType()) {
+            $data->{'Type'} = $object->getType();
         }
 
         return $data;

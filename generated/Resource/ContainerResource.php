@@ -473,6 +473,8 @@ class ContainerResource extends Resource
     public function update($id, \Docker\API\Model\ResourceUpdate $resourceConfig, $parameters = [], $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
+        $queryParam->setDefault('Content-Type', 'application/json');
+        $queryParam->setHeaderParameters(['Content-Type']);
         $url        = '/containers/{id}/update';
         $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));

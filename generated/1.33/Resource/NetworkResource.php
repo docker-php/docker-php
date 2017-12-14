@@ -189,7 +189,7 @@ class NetworkResource extends Resource
         $url        = '/v1.33/networks/{id}/connect';
         $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $headers    = array_merge(['Host' => 'localhost', 'Accept' => ['application/json']], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($container, 'json');
         $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $promise    = $this->httpClient->sendAsyncRequest($request);
@@ -229,7 +229,7 @@ class NetworkResource extends Resource
         $url        = '/v1.33/networks/{id}/disconnect';
         $url        = str_replace('{id}', urlencode($id), $url);
         $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers    = array_merge(['Host' => 'localhost'], $queryParam->buildHeaders($parameters));
+        $headers    = array_merge(['Host' => 'localhost', 'Accept' => ['application/json']], $queryParam->buildHeaders($parameters));
         $body       = $this->serializer->serialize($container, 'json');
         $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $promise    = $this->httpClient->sendAsyncRequest($request);

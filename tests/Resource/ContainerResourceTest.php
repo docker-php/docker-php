@@ -2,6 +2,8 @@
 
 namespace Docker\Tests\Resource;
 
+use Docker\API\Model\ContainersCreatePostBody;
+use Docker\Docker;
 use Docker\Tests\TestCase;
 
 class ContainerResourceTest extends TestCase
@@ -11,7 +13,7 @@ class ContainerResourceTest extends TestCase
      */
     private function getManager()
     {
-        return self::getDocker()->container();
+        return self::getDocker();
     }
 
     /**
@@ -19,14 +21,14 @@ class ContainerResourceTest extends TestCase
      */
     public static function setUpBeforeClass()
     {
-        self::getDocker()->image()->imageCreate(null, [
+        self::getDocker()->imageCreate(null, [
             'fromImage' => 'busybox:latest'
         ]);
     }
 
     public function testAttach()
     {
-        $containerConfig = self::createModel('ContainersCreatePostBody');
+        $containerConfig = new ContainersCreatePostBody();
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['echo', '-n', 'output']);
         $containerConfig->setAttachStdout(true);
@@ -53,7 +55,7 @@ class ContainerResourceTest extends TestCase
 
     public function testAttachWebsocket()
     {
-        $containerConfig = self::createModel('ContainersCreatePostBody');
+        $containerConfig = new ContainersCreatePostBody();
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['sh']);
         $containerConfig->setAttachStdout(true);
@@ -97,7 +99,7 @@ class ContainerResourceTest extends TestCase
 
     public function testLogs()
     {
-        $containerConfig = self::createModel('ContainersCreatePostBody');
+        $containerConfig = new ContainersCreatePostBody();
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['echo', '-n', 'output']);
         $containerConfig->setAttachStdout(true);
@@ -111,7 +113,7 @@ class ContainerResourceTest extends TestCase
         $logs = $this->getManager()->containerLogs($containerCreateResult->getId(), [
             'stdout' => true,
             'stderr' => true,
-        ]);
+        ], Docker::FETCH_OBJECT);
 
 
         $this->assertContains("output", $logs['stdout'][0]);

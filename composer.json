@@ -5,16 +5,7 @@
     "description": "A Docker PHP client",
     "autoload": {
         "psr-4": {
-            "Docker\\": "src/",
-            "Docker\\API\\V1_25\\": "generated/1.25",
-            "Docker\\API\\V1_26\\": "generated/1.26",
-            "Docker\\API\\V1_27\\": "generated/1.27",
-            "Docker\\API\\V1_28\\": "generated/1.28",
-            "Docker\\API\\V1_29\\": "generated/1.29",
-            "Docker\\API\\V1_30\\": "generated/1.30",
-            "Docker\\API\\V1_31\\": "generated/1.31",
-            "Docker\\API\\V1_32\\": "generated/1.32",
-            "Docker\\API\\V1_33\\": "generated/1.33"
+            "Docker\\": "src/"
         }
     },
     "autoload-dev": {
@@ -23,22 +14,25 @@
         }
     },
     "require": {
-        "php": ">=7.0",
-        "symfony/filesystem": "^2.3 || ^3.0",
-        "symfony/process": "^2.3 || ^3.0",
+        "php": ">=7.1",
+        "docker-php/docker-php-api": "4.1.*",
+        "guzzlehttp/psr7": "^1.2",
+        "jane/openapi-runtime": "^2.0",
         "php-http/client-common": "^1.6",
         "php-http/socket-client": "^1.3",
         "php-http/message": "^1.0",
-        "guzzlehttp/psr7": "^1.2",
-        "jane/openapi-runtime": "^2.0"
+        "symfony/filesystem": "^2.3 || ^3.0 || ^4.0",
+        "symfony/process": "^2.3 || ^3.0 || ^4.0"
     },
     "suggest": {
-        "php-http/httplug-bundle": "For integration with Symfony"
+        "php-http/httplug-bundle": "For integration with Symfony",
+        "amphp/artax": "To use the async api"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",
         "friendsofphp/php-cs-fixer": "^2.0",
-        "jane/open-api": "^3.1"
+        "jane/open-api": "^3.1",
+        "amphp/artax": "^3.0"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",

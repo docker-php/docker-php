@@ -2,7 +2,9 @@
 
 namespace Docker\Tests\Resource;
 
+use Docker\API\Model\AuthConfig;
 use Docker\Context\ContextBuilder;
+use Docker\Docker;
 use Docker\Resource\ImageResource;
 use Docker\Tests\TestCase;
 use Joli\Jane\OpenApi\Runtime\Client\Resource;
@@ -14,7 +16,7 @@ class ImageResourceTest extends TestCase
      */
     private function getManager()
     {
-        return self::getDocker()->image();
+        return self::getDocker();
     }
 
     public function testBuildStream()
@@ -24,7 +26,7 @@ class ImageResourceTest extends TestCase
         $contextBuilder->add('/test', 'test file content');
 
         $context = $contextBuilder->getContext();
-        $buildStream = $this->getManager()->imageBuild($context->read(), ['t' => 'test-image'], ImageResource::FETCH_STREAM);
+        $buildStream = $this->getManager()->imageBuild($context->read(), ['t' => 'test-image'], Docker::FETCH_STREAM);
 
         $this->assertInstanceOf('Docker\Stream\BuildStream', $buildStream);
 
@@ -45,7 +47,7 @@ class ImageResourceTest extends TestCase
         $contextBuilder->add('/test', 'test file content');
 
         $context = $contextBuilder->getContext();
-        $buildInfos = $this->getManager()->imageBuild($context->read(), ['t' => 'test-image'], Resource::FETCH_OBJECT);
+        $buildInfos = $this->getManager()->imageBuild($context->read(), ['t' => 'test-image']);
 
         $this->assertInternalType('array', $buildInfos);
         $this->assertContains("Successfully", $buildInfos[count($buildInfos) - 1]->getStream());
@@ -55,7 +57,7 @@ class ImageResourceTest extends TestCase
     {
         $createImageStream = $this->getManager()->imageCreate(null, [
             'fromImage' => 'registry:latest'
-        ], ImageResource::FETCH_STREAM);
+        ], Docker::FETCH_STREAM);
 
         $this->assertInstanceOf('Docker\Stream\CreateImageStream', $createImageStream);
 
@@ -90,11 +92,11 @@ class ImageResourceTest extends TestCase
         $context = $contextBuilder->getContext();
         $this->getManager()->imageBuild($context->read(), ['t' => 'localhost:5000/test-image'], Resource::FETCH_OBJECT);
 
-        $registryConfig = self::createModel('AuthConfig');
+        $registryConfig = new AuthConfig();
         $registryConfig->setServeraddress('localhost:5000');
         $pushImageStream = $this->getManager()->imagePush('localhost:5000/test-image', [
             'X-Registry-Auth' => $registryConfig
-        ], ImageResource::FETCH_STREAM);
+        ], Docker::FETCH_STREAM);
 
         $this->assertInstanceOf('Docker\Stream\PushStream', $pushImageStream);
 
@@ -107,7 +109,7 @@ class ImageResourceTest extends TestCase
         });
         $pushImageStream->wait();
 
-        $this->assertContains("The push refers to a repository [localhost:5000/test-image]", $firstMessage);
+        $this->assertContains("repository [localhost:5000/test-image]", $firstMessage);
     }
 
     public function testPushObject()
@@ -119,13 +121,13 @@ class ImageResourceTest extends TestCase
         $context = $contextBuilder->getContext();
         $this->getManager()->imageBuild($context->read(), ['t' => 'localhost:5000/test-image'], Resource::FETCH_OBJECT);
 
-        $registryConfig = self::createModel('AuthConfig');
+        $registryConfig = new AuthConfig();
         $registryConfig->setServeraddress('localhost:5000');
         $pushImageInfos = $this->getManager()->imagePush('localhost:5000/test-image', [
             'X-Registry-Auth' => $registryConfig
         ], Resource::FETCH_OBJECT);
 
         $this->assertInternalType('array', $pushImageInfos);
-        $this->assertContains("The push refers to a repository [localhost:5000/test-image]", $pushImageInfos[0]->getStatus());
+        $this->assertContains("repository [localhost:5000/test-image]", $pushImageInfos[0]->getStatus());
     }
 }

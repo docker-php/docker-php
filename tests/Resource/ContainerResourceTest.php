@@ -66,7 +66,7 @@ class ContainerResourceTest extends TestCase
         $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
 
         $containerCreateResult = $this->getManager()->containerCreate($containerConfig);
-        $webSocketStream       = $this->getManager()->containerAttachWebsocket($containerCreateResult->getId(), [
+        $webSocketStream = $this->getManager()->containerAttachWebsocket($containerCreateResult->getId(), [
             'stream' => true,
             'stdout' => true,
             'stderr' => true,

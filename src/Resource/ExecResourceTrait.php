@@ -9,15 +9,15 @@ use Joli\Jane\OpenApi\Runtime\Client\Resource;
 
 trait ExecResourceTrait
 {
-    public function execStart($id, $execStartConfig, $parameters = [], $fetch = Docker::FETCH_OBJECT)
+    public function execStart(string $id, \Docker\API\Model\ExecIdStartPostBody $execStartConfig, array $parameters = [], string $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
-        $url        = '/exec/{id}/start';
-        $url        = str_replace('{id}', urlencode($id), $url);
-        $url        = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers    = array_merge(['Host' => 'localhost', 'Content-Type' => 'application/json'], $queryParam->buildHeaders($parameters));
-        $body       = $this->serializer->serialize($execStartConfig, 'json');
-        $request    = $this->messageFactory->createRequest('POST', $url, $headers, $body);
+        $url = '/exec/{id}/start';
+        $url = str_replace('{id}', urlencode($id), $url);
+        $url = $url . ('?' . $queryParam->buildQueryString($parameters));
+        $headers = array_merge(['Host' => 'localhost', 'Content-Type' => 'application/json'], $queryParam->buildHeaders($parameters));
+        $body = $this->serializer->serialize($execStartConfig, 'json');
+        $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
 
         if ($response->getStatusCode() === 200 && DockerRawStream::HEADER === $response->getHeaderLine('Content-Type')) {

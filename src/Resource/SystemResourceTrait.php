@@ -13,7 +13,7 @@ trait SystemResourceTrait
         systemEvents as systemEventsLegacy;
     }
 
-    public function systemEvents($parameters = [], $fetch = Docker::FETCH_OBJECT)
+    public function systemEvents(array $parameters = [], string $fetch = self::FETCH_OBJECT)
     {
         $response = $this->systemEventsLegacy($parameters, Docker::FETCH_RESPONSE);
 

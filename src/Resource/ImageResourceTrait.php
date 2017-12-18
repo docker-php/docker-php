@@ -17,7 +17,7 @@ trait ImageResourceTrait
         imageCreate as imageCreateLegacy;
     }
 
-    public function imageBuild($inputStream, $parameters = [], $fetch = Resource::FETCH_OBJECT)
+    public function imageBuild($inputStream, array $parameters = [], string $fetch = self::FETCH_OBJECT)
     {
         if (is_resource($inputStream)) {
             $inputStream = new TarStream($inputStream);
@@ -46,13 +46,13 @@ trait ImageResourceTrait
         return $response;
     }
 
-    public function imageCreate($inputStream = null, $parameters = [], $fetch = Resource::FETCH_OBJECT)
+    public function imageCreate($inputImage, array $parameters = [], string $fetch = self::FETCH_OBJECT)
     {
         if (isset($parameters['X-Registry-Auth']) && is_object($parameters['X-Registry-Auth'])) {
             $parameters['X-Registry-Auth'] = base64_encode($this->serializer->serialize($parameters['X-Registry-Auth'], 'json'));
         }
 
-        $response = $this->imageCreateLegacy($inputStream, $parameters, Resource::FETCH_RESPONSE);
+        $response = $this->imageCreateLegacy($inputImage, $parameters, Resource::FETCH_RESPONSE);
 
         if (200 === $response->getStatusCode()) {
             if (self::FETCH_STREAM === $fetch) {
@@ -75,7 +75,7 @@ trait ImageResourceTrait
         return $response;
     }
 
-    public function imagePush($name, $parameters = [], $fetch = Resource::FETCH_OBJECT)
+    public function imagePush(string $name, array $parameters = [], string $fetch = self::FETCH_OBJECT)
     {
         if (isset($parameters['X-Registry-Auth']) && is_object($parameters['X-Registry-Auth'])) {
             $parameters['X-Registry-Auth'] = base64_encode($this->serializer->serialize($parameters['X-Registry-Auth'], 'json'));

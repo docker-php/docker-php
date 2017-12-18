@@ -32,7 +32,7 @@ trait ContainerResourceTrait
         return $response;
     }
 
-    public function containerAttachWebsocket(string $id, array $parameters = [], string $fetch = self::FETCH_OBJECT)
+    public function containerAttachWebsocket(string $id, array $parameters = [], string $fetch = self::FETCH_STREAM)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('logs', null);

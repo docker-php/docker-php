@@ -5,6 +5,7 @@ namespace Docker;
 use Amp\Artax\Client;
 use Amp\Artax\DefaultClient;
 use Amp\Artax\HttpSocketPool;
+use Amp\Artax\Request;
 use Amp\CancellationToken;
 use Amp\Promise;
 use Amp\Socket\BasicSocketPool;
@@ -25,6 +26,10 @@ class DockerAsyncClient implements Client
 
     public function request($uriOrRequest, array $options = [], CancellationToken $cancellation = null): Promise
     {
+        if ($uriOrRequest instanceof Request) {
+            $uriOrRequest = $uriOrRequest->withUri('http://localhost' . $uriOrRequest->getUri());
+        }
+
         return $this->client->request($uriOrRequest, $options, $cancellation);
     }
 

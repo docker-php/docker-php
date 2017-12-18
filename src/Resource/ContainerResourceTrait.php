@@ -19,7 +19,7 @@ trait ContainerResourceTrait
         containerLogs as containerLogsLegacy;
     }
 
-    public function containerAttach($id, $parameters = [], $fetch = Docker::FETCH_OBJECT)
+    public function containerAttach(string $id, array $parameters = [], string $fetch = self::FETCH_OBJECT)
     {
         $response = $this->containerAttachLegacy($id, $parameters, Docker::FETCH_RESPONSE);
 
@@ -32,7 +32,7 @@ trait ContainerResourceTrait
         return $response;
     }
 
-    public function containerAttachWebsocket(string $id, $parameters = [], $fetch = Docker::FETCH_STREAM)
+    public function containerAttachWebsocket(string $id, array $parameters = [], string $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $queryParam->setDefault('logs', null);
@@ -68,7 +68,8 @@ trait ContainerResourceTrait
         return $response;
     }
 
-    public function containerLogs($id, $parameters = [], $fetch = Docker::FETCH_STREAM) {
+    public function containerLogs(string $id, array $parameters = [], string $fetch = self::FETCH_OBJECT)
+    {
         $response = $this->containerLogsLegacy($id, $parameters, Docker::FETCH_RESPONSE);
 
         if ($response->getStatusCode() === 200) {

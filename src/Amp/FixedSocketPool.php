@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Amp;
 
 use Amp\CancellationToken;
@@ -16,7 +18,7 @@ class FixedSocketPool implements SocketPool
 
     public function __construct(string $uri, SocketPool $socketPool = null)
     {
-        if ($socketPool === null) {
+        if (null === $socketPool) {
             $socketPool = new BasicSocketPool();
         }
 
@@ -29,12 +31,12 @@ class FixedSocketPool implements SocketPool
         return $this->socketPool->checkout($this->uri, $token);
     }
 
-    public function checkin(ClientSocket $socket)
+    public function checkin(ClientSocket $socket): void
     {
         $this->socketPool->checkin($socket);
     }
 
-    public function clear(ClientSocket $socket)
+    public function clear(ClientSocket $socket): void
     {
         $this->socketPool->clear($socket);
     }

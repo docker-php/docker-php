@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Context;
 
-use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 /**
- * Docker\Context\Context
+ * Docker\Context\Context.
  */
 class Context implements ContextInterface
 {
-    const FORMAT_STREAM = 'stream';
+    public const FORMAT_STREAM = 'stream';
 
-    const FORMAT_TAR = 'tar';
+    public const FORMAT_TAR = 'tar';
 
     /**
      * @var string
@@ -35,8 +37,8 @@ class Context implements ContextInterface
     private $format = self::FORMAT_STREAM;
 
     /**
-     * @param string     $directory Directory of context
-     * @param string     $format    Format to use when sending the call (stream or tar: string)
+     * @param string $directory Directory of context
+     * @param string $format    Format to use when sending the call (stream or tar: string)
      */
     public function __construct($directory, $format = self::FORMAT_STREAM)
     {
@@ -45,7 +47,7 @@ class Context implements ContextInterface
     }
 
     /**
-     * Get directory of Context
+     * Get directory of Context.
      *
      * @return string
      */
@@ -55,31 +57,31 @@ class Context implements ContextInterface
     }
 
     /**
-     * Set directory of Context
+     * Set directory of Context.
      *
      * @param string $directory Targeted directory
      */
-    public function setDirectory($directory)
+    public function setDirectory($directory): void
     {
         $this->directory = $directory;
     }
 
     /**
-     * Return content of Dockerfile of this context
+     * Return content of Dockerfile of this context.
      *
      * @return string Content of dockerfile
      */
     public function getDockerfileContent()
     {
-        return file_get_contents($this->directory.DIRECTORY_SEPARATOR.'Dockerfile');
+        return \file_get_contents($this->directory.DIRECTORY_SEPARATOR.'Dockerfile');
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isStreamed()
     {
-        return $this->format === self::FORMAT_STREAM;
+        return self::FORMAT_STREAM === $this->format;
     }
 
     /**
@@ -91,7 +93,7 @@ class Context implements ContextInterface
     }
 
     /**
-     * Return the context as a tar archive
+     * Return the context as a tar archive.
      *
      * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      *
@@ -110,15 +112,15 @@ class Context implements ContextInterface
     }
 
     /**
-     * Return a stream for this context
+     * Return a stream for this context.
      *
      * @return resource Stream resource in memory
      */
     public function toStream()
     {
-        if (!is_resource($this->process)) {
-            $this->process = proc_open("/usr/bin/env tar c .", [["pipe", "r"], ["pipe", "w"], ["pipe", "w"]], $pipes, $this->directory);
-            $this->stream  = $pipes[1];
+        if (!\is_resource($this->process)) {
+            $this->process = \proc_open('/usr/bin/env tar c .', [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']], $pipes, $this->directory);
+            $this->stream = $pipes[1];
         }
 
         return $this->stream;
@@ -126,12 +128,12 @@ class Context implements ContextInterface
 
     public function __destruct()
     {
-        if (is_resource($this->process)) {
-            proc_close($this->process);
+        if (\is_resource($this->process)) {
+            \proc_close($this->process);
         }
 
-        if (is_resource($this->stream)) {
-            fclose($this->stream);
+        if (\is_resource($this->stream)) {
+            \fclose($this->stream);
         }
     }
 }

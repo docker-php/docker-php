@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Stream;
 
 use Psr\Http\Message\StreamInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * Represent a stream that decode a stream with multiple json in it
+ * Represent a stream that decode a stream with multiple json in it.
  */
 abstract class MultiJsonStream extends CallbackStream
 {
@@ -27,29 +29,29 @@ abstract class MultiJsonStream extends CallbackStream
     {
         $jsonFrameEnd = false;
         $lastJsonChar = '';
-        $inquote      = false;
-        $jsonFrame    = "";
-        $level        = 0;
+        $inquote = false;
+        $jsonFrame = '';
+        $level = 0;
 
         while (!$jsonFrameEnd && !$this->stream->eof()) {
-            $jsonChar   = $this->stream->read(1);
+            $jsonChar = $this->stream->read(1);
 
-            if ($jsonChar === '"' && $lastJsonChar !== '\\') {
+            if ('"' === $jsonChar && '\\' !== $lastJsonChar) {
                 $inquote = !$inquote;
             }
 
-            if (!$inquote && in_array($jsonChar, [" ", "\r", "\n", "\t"])) {
+            if (!$inquote && \in_array($jsonChar, [' ', "\r", "\n", "\t"], true)) {
                 continue;
             }
 
-            if (!$inquote && in_array($jsonChar, ['{', '['])) {
-                $level++;
+            if (!$inquote && \in_array($jsonChar, ['{', '['], true)) {
+                ++$level;
             }
 
-            if (!$inquote && in_array($jsonChar, ['}', ']'])) {
-                $level--;
+            if (!$inquote && \in_array($jsonChar, ['}', ']'], true)) {
+                --$level;
 
-                if ($level == 0) {
+                if (0 === $level) {
                     $jsonFrameEnd = true;
                     $jsonFrame .= $jsonChar;
 
@@ -65,11 +67,11 @@ abstract class MultiJsonStream extends CallbackStream
             return null;
         }
 
-        return $this->serializer->deserialize($jsonFrame, 'Docker\\API\\Model\\' . $this->getDecodeClass(), 'json');
+        return $this->serializer->deserialize($jsonFrame, 'Docker\\API\\Model\\'.$this->getDecodeClass(), 'json');
     }
 
     /**
-     * Get the decode class to pass to serializer
+     * Get the decode class to pass to serializer.
      *
      * @return string
      */

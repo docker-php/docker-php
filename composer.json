@@ -36,7 +36,9 @@
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "test-ci": "vendor/bin/phpunit --coverage-clover build/coverage.xml"
+        "test-ci": "vendor/bin/phpunit --coverage-clover build/coverage.xml",
+        "lint": "vendor/bin/php-cs-fixer fix --dry-run --verbose --diff",
+        "lint-fix": "vendor/bin/php-cs-fixer fix --verbose"
     },
     "extra": {
         "branch-alias": {

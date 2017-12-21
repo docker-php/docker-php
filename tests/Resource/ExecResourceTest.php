@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Tests\Resource;
 
 use Docker\API\Model\ContainersCreatePostBody;
@@ -13,21 +15,21 @@ use Docker\Tests\TestCase;
 class ExecResourceTest extends TestCase
 {
     /**
-     * Return the container manager
+     * Return the container manager.
      */
     private function getManager()
     {
         return self::getDocker();
     }
 
-    public function testStartStream()
+    public function testStartStream(): void
     {
         $createContainerResult = $this->createContainer();
 
         $execConfig = new ContainersIdExecPostBody();
         $execConfig->setAttachStdout(true);
         $execConfig->setAttachStderr(true);
-        $execConfig->setCmd(["echo", "output"]);
+        $execConfig->setCmd(['echo', 'output']);
 
         $execCreateResult = $this->getManager()->containerExec($createContainerResult->getId(), $execConfig);
 
@@ -39,25 +41,25 @@ class ExecResourceTest extends TestCase
 
         $this->assertInstanceOf(DockerRawStream::class, $stream);
 
-        $stdoutFull = "";
-        $stream->onStdout(function ($stdout) use (&$stdoutFull) {
+        $stdoutFull = '';
+        $stream->onStdout(function ($stdout) use (&$stdoutFull): void {
             $stdoutFull .= $stdout;
         });
         $stream->wait();
 
-        $this->assertEquals("output\n", $stdoutFull);
+        $this->assertSame("output\n", $stdoutFull);
 
         self::getDocker()->containerKill($createContainerResult->getId(), [
-            'signal' => 'SIGKILL'
+            'signal' => 'SIGKILL',
         ]);
     }
 
-    public function testExecFind()
+    public function testExecFind(): void
     {
         $createContainerResult = $this->createContainer();
 
         $execConfig = new ContainersIdExecPostBody();
-        $execConfig->setCmd(["/bin/true"]);
+        $execConfig->setCmd(['/bin/true']);
         $execCreateResult = $this->getManager()->containerExec($createContainerResult->getId(), $execConfig);
 
         $execStartConfig = new ExecIdStartPostBody();
@@ -71,7 +73,7 @@ class ExecResourceTest extends TestCase
         $this->assertInstanceOf(ExecIdJsonGetResponse200::class, $execFindResult);
 
         self::getDocker()->containerKill($createContainerResult->getId(), [
-            'signal' => 'SIGKILL'
+            'signal' => 'SIGKILL',
         ]);
     }
 

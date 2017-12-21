@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker;
 
 use Docker\API\Client;
@@ -9,7 +11,7 @@ use Docker\Resource\ImageResourceTrait;
 use Docker\Resource\SystemResourceTrait;
 
 /**
- * Docker\Docker
+ * Docker\Docker.
  */
 class Docker extends Client
 {
@@ -22,7 +24,7 @@ class Docker extends Client
 
     public static function create($httpClient = null)
     {
-        if ($httpClient === null) {
+        if (null === $httpClient) {
             $httpClient = DockerClient::createFromEnv();
         }
 

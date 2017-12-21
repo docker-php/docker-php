@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Resource;
 
+use Docker\API\Resource\SystemResourceTrait as BaseSystemResourceTrait;
 use Docker\Docker;
 use Docker\Stream\EventStream;
 use Joli\Jane\OpenApi\Runtime\Client\Resource;
-use Docker\API\Resource\SystemResourceTrait as BaseSystemResourceTrait;
 
 trait SystemResourceTrait
 {
@@ -26,7 +28,7 @@ trait SystemResourceTrait
                 $eventList = [];
 
                 $stream = new EventStream($response->getBody(), $this->serializer);
-                $stream->onFrame(function ($event) use (&$eventList) {
+                $stream->onFrame(function ($event) use (&$eventList): void {
                     $eventList[] = $event;
                 });
                 $stream->wait();

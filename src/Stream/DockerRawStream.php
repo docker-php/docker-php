@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Stream;
 
 use Psr\Http\Message\StreamInterface;
 
 class DockerRawStream
 {
-    const HEADER = 'application/vnd.docker.raw-stream';
+    public const HEADER = 'application/vnd.docker.raw-stream';
 
     /** @var StreamInterface Stream for the response */
     protected $stream;
@@ -26,59 +28,59 @@ class DockerRawStream
     }
 
     /**
-     * Add a callable to read stdin
+     * Add a callable to read stdin.
      *
      * @param callable $callback
      */
-    public function onStdin(callable $callback)
+    public function onStdin(callable $callback): void
     {
         $this->onStdinCallables[] = $callback;
     }
 
     /**
-     * Add a callable to read stdout
+     * Add a callable to read stdout.
      *
      * @param callable $callback
      */
-    public function onStdout(callable $callback)
+    public function onStdout(callable $callback): void
     {
         $this->onStdoutCallables[] = $callback;
     }
 
     /**
-     * Add a callable to read stderr
+     * Add a callable to read stderr.
      *
      * @param callable $callback
      */
-    public function onStderr(callable $callback)
+    public function onStderr(callable $callback): void
     {
         $this->onStderrCallables[] = $callback;
     }
 
     /**
-     * Read a frame in the stream
+     * Read a frame in the stream.
      */
-    protected function readFrame()
+    protected function readFrame(): void
     {
-        $header  = $this->forceRead(8);
+        $header = $this->forceRead(8);
 
-        if (strlen($header) < 8) {
+        if (\strlen($header) < 8) {
             return;
         }
 
-        $decoded = unpack('C1type/C3/N1size', $header);
-        $output  = $this->forceRead($decoded['size']);
+        $decoded = \unpack('C1type/C3/N1size', $header);
+        $output = $this->forceRead($decoded['size']);
         $callbackList = [];
 
-        if ($decoded['type'] == 0) {
+        if (0 === $decoded['type']) {
             $callbackList = $this->onStdinCallables;
         }
 
-        if ($decoded['type'] == 1) {
+        if (1 === $decoded['type']) {
             $callbackList = $this->onStdoutCallables;
         }
 
-        if ($decoded['type'] == 2) {
+        if (2 === $decoded['type']) {
             $callbackList = $this->onStderrCallables;
         }
 
@@ -88,7 +90,7 @@ class DockerRawStream
     }
 
     /**
-     * Force to have something of the expected size (block)
+     * Force to have something of the expected size (block).
      *
      * @param $length
      *
@@ -96,19 +98,19 @@ class DockerRawStream
      */
     private function forceRead($length)
     {
-        $read = "";
+        $read = '';
 
         do {
-            $read .= $this->stream->read($length - strlen($read));
-        } while (strlen($read) < $length && !$this->stream->eof());
+            $read .= $this->stream->read($length - \strlen($read));
+        } while (\strlen($read) < $length && !$this->stream->eof());
 
         return $read;
     }
 
     /**
-     * Wait for stream to finish and call callables if defined
+     * Wait for stream to finish and call callables if defined.
      */
-    public function wait()
+    public function wait(): void
     {
         while (!$this->stream->eof()) {
             $this->readFrame();

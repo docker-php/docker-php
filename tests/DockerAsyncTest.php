@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Tests;
 
 use Amp\Loop;
@@ -8,7 +10,7 @@ use Docker\DockerAsync;
 
 class DockerAsyncTest extends \PHPUnit\Framework\TestCase
 {
-    public function testAsync()
+    public function testAsync(): void
     {
         $this->markTestSkipped('Need update of socket library');
 
@@ -25,7 +27,7 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
             $containerStart = yield $docker->containerStart($containerCreate->getId());
             $containerInfo = yield $docker->containerInspect($containerCreate->getId());
 
-            $this->assertEquals($containerCreate->getId(), $containerInfo->getId());
+            $this->assertSame($containerCreate->getId(), $containerInfo->getId());
         });
     }
 }

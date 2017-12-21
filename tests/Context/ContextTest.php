@@ -51,11 +51,4 @@ class ContextTest extends TestCase
             putenv("PATH=$path");
         }
     }
-
-//    public function testToStream()
-//    {
-//        $directory = __DIR__.DIRECTORY_SEPARATOR."context-test";
-//        $context = new Context($directory);
-//        $this->assertInternalType('resource', $context->toStream());
-//    }
 }

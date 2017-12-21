@@ -126,12 +126,14 @@ class Context implements ContextInterface
 
     public function __destruct()
     {
+        if (is_resource($this->stream)) {
+            fclose($this->stream);
+        }
+
         if (is_resource($this->process)) {
             proc_close($this->process);
         }
 
-        if (is_resource($this->stream)) {
-            fclose($this->stream);
-        }
+
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Tests\Resource;
 
 use Docker\API\Model\ContainersCreatePostBody;
@@ -9,7 +11,7 @@ use Docker\Tests\TestCase;
 class ContainerResourceTest extends TestCase
 {
     /**
-     * Return the container manager
+     * Return the container manager.
      */
     private function getManager()
     {
@@ -17,16 +19,16 @@ class ContainerResourceTest extends TestCase
     }
 
     /**
-     * Be sure to have image before doing test
+     * Be sure to have image before doing test.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::getDocker()->imageCreate(null, [
-            'fromImage' => 'busybox:latest'
+            'fromImage' => 'busybox:latest',
         ]);
     }
 
-    public function testAttach()
+    public function testAttach(): void
     {
         $containerConfig = new ContainersCreatePostBody();
         $containerConfig->setImage('busybox:latest');
@@ -40,8 +42,8 @@ class ContainerResourceTest extends TestCase
             'stdout' => true,
         ]);
 
-        $stdoutFull = "";
-        $dockerRawStream->onStdout(function ($stdout) use (&$stdoutFull) {
+        $stdoutFull = '';
+        $dockerRawStream->onStdout(function ($stdout) use (&$stdoutFull): void {
             $stdoutFull .= $stdout;
         });
 
@@ -50,10 +52,10 @@ class ContainerResourceTest extends TestCase
 
         $dockerRawStream->wait();
 
-        $this->assertEquals("output", $stdoutFull);
+        $this->assertSame('output', $stdoutFull);
     }
 
-    public function testAttachWebsocket()
+    public function testAttachWebsocket(): void
     {
         $containerConfig = new ContainersCreatePostBody();
         $containerConfig->setImage('busybox:latest');
@@ -70,7 +72,7 @@ class ContainerResourceTest extends TestCase
             'stream' => true,
             'stdout' => true,
             'stderr' => true,
-            'stdin'  => true,
+            'stdin' => true,
         ]);
 
         $this->getManager()->containerStart($containerCreateResult->getId());
@@ -85,19 +87,19 @@ class ContainerResourceTest extends TestCase
         $webSocketStream->write("echo test\n");
 
         // Test for echo present (stdin)
-        $output = "";
+        $output = '';
 
-        while (($data = $webSocketStream->read()) != false) {
+        while (false !== ($data = $webSocketStream->read())) {
             $output .= $data;
         }
 
-        $this->assertContains("echo", $output);
+        $this->assertContains('echo', $output);
 
         // Exit the container
         $webSocketStream->write("exit\n");
     }
 
-    public function testLogs()
+    public function testLogs(): void
     {
         $containerConfig = new ContainersCreatePostBody();
         $containerConfig->setImage('busybox:latest');
@@ -115,7 +117,6 @@ class ContainerResourceTest extends TestCase
             'stderr' => true,
         ], Docker::FETCH_OBJECT);
 
-
-        $this->assertContains("output", $logs['stdout'][0]);
+        $this->assertContains('output', $logs['stdout'][0]);
     }
 }

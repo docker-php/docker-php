@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Stream;
 
 use Psr\Http\Message\StreamInterface;
@@ -16,43 +18,43 @@ abstract class CallbackStream
     }
 
     /**
-     * Called when there is a new frame from the stream
+     * Called when there is a new frame from the stream.
      *
      * @param callable $onNewFrame
      */
-    public function onFrame(callable $onNewFrame)
+    public function onFrame(callable $onNewFrame): void
     {
         $this->onNewFrameCallables[] = $onNewFrame;
     }
 
     /**
-     * Read a frame in the stream
+     * Read a frame in the stream.
      *
      * @return mixed
      */
     abstract protected function readFrame();
 
     /**
-     * Wait for stream to finish and call callables if defined
+     * Wait for stream to finish and call callables if defined.
      */
-    public function wait()
+    public function wait(): void
     {
         while (!$this->stream->eof()) {
             $frame = $this->readFrame();
 
-            if ($frame !== null) {
-                if (!is_array($frame)) {
+            if (null !== $frame) {
+                if (!\is_array($frame)) {
                     $frame = [$frame];
                 }
 
                 foreach ($this->onNewFrameCallables as $newFrameCallable) {
-                    call_user_func_array($newFrameCallable, $frame);
+                    \call_user_func_array($newFrameCallable, $frame);
                 }
             }
         }
     }
 
-    public function closeAndRead()
+    public function closeAndRead(): void
     {
         $this->stream->close();
         $this->wait();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Resource;
 
 use Docker\Docker;
@@ -13,15 +15,15 @@ trait ExecResourceTrait
     {
         $queryParam = new QueryParam();
         $url = '/exec/{id}/start';
-        $url = str_replace('{id}', urlencode($id), $url);
-        $url = $url . ('?' . $queryParam->buildQueryString($parameters));
-        $headers = array_merge(['Host' => 'localhost', 'Content-Type' => 'application/json'], $queryParam->buildHeaders($parameters));
+        $url = \str_replace('{id}', \urlencode($id), $url);
+        $url = $url.('?'.$queryParam->buildQueryString($parameters));
+        $headers = \array_merge(['Host' => 'localhost', 'Content-Type' => 'application/json'], $queryParam->buildHeaders($parameters));
         $body = $this->serializer->serialize($execStartConfig, 'json');
         $request = $this->messageFactory->createRequest('POST', $url, $headers, $body);
         $response = $this->httpClient->sendRequest($request);
 
-        if ($response->getStatusCode() === 200 && DockerRawStream::HEADER === $response->getHeaderLine('Content-Type')) {
-            if ($fetch === Docker::FETCH_STREAM) {
+        if (200 === $response->getStatusCode() && DockerRawStream::HEADER === $response->getHeaderLine('Content-Type')) {
+            if (Docker::FETCH_STREAM === $fetch) {
                 return new DockerRawStream($response->getBody());
             }
         }

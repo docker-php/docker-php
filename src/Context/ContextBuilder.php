@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Context;
 
 use Symfony\Component\Filesystem\Filesystem;
@@ -56,7 +58,7 @@ class ContextBuilder
     }
 
     /**
-     * Sets the format of the Context output
+     * Sets the format of the Context output.
      *
      * @param string $format
      *
@@ -70,7 +72,7 @@ class ContextBuilder
     }
 
     /**
-     * Set the FROM instruction of Dockerfile
+     * Set the FROM instruction of Dockerfile.
      *
      * @param string $from From which image we start
      *
@@ -84,7 +86,7 @@ class ContextBuilder
     }
 
     /**
-     * Set the CMD instruction in the Dockerfile
+     * Set the CMD instruction in the Dockerfile.
      *
      * @param string $command Command to execute
      *
@@ -98,7 +100,7 @@ class ContextBuilder
     }
 
     /**
-     * Set the ENTRYPOINT instruction in the Dockerfile
+     * Set the ENTRYPOINT instruction in the Dockerfile.
      *
      * @param string $entrypoint The entrypoint
      *
@@ -112,7 +114,7 @@ class ContextBuilder
     }
 
     /**
-     * Add a ADD instruction to Dockerfile
+     * Add a ADD instruction to Dockerfile.
      *
      * @param string $path    Path wanted on the image
      * @param string $content Content of file
@@ -127,7 +129,7 @@ class ContextBuilder
     }
 
     /**
-     * Add a RUN instruction to Dockerfile
+     * Add a RUN instruction to Dockerfile.
      *
      * @param string $command Command to run
      *
@@ -141,9 +143,9 @@ class ContextBuilder
     }
 
     /**
-     * Add a ENV instruction to Dockerfile
+     * Add a ENV instruction to Dockerfile.
      *
-     * @param string $name Name of the environment variable
+     * @param string $name  Name of the environment variable
      * @param string $value Value of the environment variable
      *
      * @return \Docker\Context\ContextBuilder
@@ -156,10 +158,10 @@ class ContextBuilder
     }
 
     /**
-     * Add a COPY instruction to Dockerfile
+     * Add a COPY instruction to Dockerfile.
      *
      * @param string $from Path of folder or file to copy
-     * @param string $to Path of destination
+     * @param string $to   Path of destination
      *
      * @return \Docker\Context\ContextBuilder
      */
@@ -171,7 +173,7 @@ class ContextBuilder
     }
 
     /**
-     * Add a WORKDIR instruction to Dockerfile
+     * Add a WORKDIR instruction to Dockerfile.
      *
      * @param string $workdir Working directory
      *
@@ -185,7 +187,7 @@ class ContextBuilder
     }
 
     /**
-     * Add a EXPOSE instruction to Dockerfile
+     * Add a EXPOSE instruction to Dockerfile.
      *
      * @param int $port Port to expose
      *
@@ -199,7 +201,7 @@ class ContextBuilder
     }
 
     /**
-     * Adds an USER instruction to the Dockerfile
+     * Adds an USER instruction to the Dockerfile.
      *
      * @param string $user User to switch to
      *
@@ -213,7 +215,7 @@ class ContextBuilder
     }
 
     /**
-     * Adds a VOLUME instruction to the Dockerfile
+     * Adds a VOLUME instruction to the Dockerfile.
      *
      * @param string $volume Volume path to add
      *
@@ -227,17 +229,17 @@ class ContextBuilder
     }
 
     /**
-     * Create context given the state of builder
+     * Create context given the state of builder.
      *
      * @return \Docker\Context\Context
      */
     public function getContext()
     {
-        if ($this->directory !== null) {
+        if (null !== $this->directory) {
             $this->cleanDirectory();
         }
 
-        $this->directory = sys_get_temp_dir().'/'.md5($this->from.serialize($this->commands));
+        $this->directory = \sys_get_temp_dir().'/'.\md5($this->from.\serialize($this->commands));
         $this->fs->mkdir($this->directory);
         $this->write($this->directory);
 
@@ -253,13 +255,13 @@ class ContextBuilder
     }
 
     /**
-     * Write docker file and associated files in a directory
+     * Write docker file and associated files in a directory.
      *
      * @param string $directory Target directory
      *
      * @void
      */
-    private function write($directory)
+    private function write($directory): void
     {
         $dockerfile = [];
         $dockerfile[] = 'FROM '.$this->from;
@@ -285,27 +287,27 @@ class ContextBuilder
                     $dockerfile[] = 'EXPOSE '.$command['port'];
                     break;
                 case 'VOLUME':
-                    $dockerfile[] = 'VOLUME ' . $command['volume'];
+                    $dockerfile[] = 'VOLUME '.$command['volume'];
                     break;
                 case 'USER':
-                    $dockerfile[] = 'USER ' . $command['user'];
+                    $dockerfile[] = 'USER '.$command['user'];
                     break;
             }
         }
 
         if (!empty($this->entrypoint)) {
-            $dockerfile[] = 'ENTRYPOINT ' . $this->entrypoint;
+            $dockerfile[] = 'ENTRYPOINT '.$this->entrypoint;
         }
 
         if (!empty($this->command)) {
-            $dockerfile[] = 'CMD ' . $this->command;
+            $dockerfile[] = 'CMD '.$this->command;
         }
 
-        $this->fs->dumpFile($directory.DIRECTORY_SEPARATOR.'Dockerfile', implode(PHP_EOL, $dockerfile));
+        $this->fs->dumpFile($directory.DIRECTORY_SEPARATOR.'Dockerfile', \implode(PHP_EOL, $dockerfile));
     }
 
     /**
-     * Generated a file in a directory
+     * Generated a file in a directory.
      *
      * @param string $directory Targeted directory
      * @param string $content   Content of file
@@ -314,21 +316,21 @@ class ContextBuilder
      */
     private function getFile($directory, $content)
     {
-        $hash = md5($content);
+        $hash = \md5($content);
 
-        if (!array_key_exists($hash, $this->files)) {
-            $file = tempnam($directory, '');
+        if (!\array_key_exists($hash, $this->files)) {
+            $file = \tempnam($directory, '');
             $this->fs->dumpFile($file, $content);
-            $this->files[$hash] = basename($file);
+            $this->files[$hash] = \basename($file);
         }
 
         return $this->files[$hash];
     }
 
     /**
-     * Clean directory generated
+     * Clean directory generated.
      */
-    private function cleanDirectory()
+    private function cleanDirectory(): void
     {
         $this->fs->remove($this->directory);
     }

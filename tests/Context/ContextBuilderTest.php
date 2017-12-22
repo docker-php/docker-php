@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Docker\Tests\Context;
 
 use Docker\Context\Context;
@@ -8,7 +10,7 @@ use Docker\Tests\TestCase;
 
 class ContextBuilderTest extends TestCase
 {
-    public function testRemovesFilesOnDestruct()
+    public function testRemovesFilesOnDestruct(): void
     {
         $contextBuilder = new ContextBuilder();
         $context = $contextBuilder->getContext();
@@ -20,7 +22,7 @@ class ContextBuilderTest extends TestCase
         $this->assertFileNotExists($context->getDirectory().'/Dockerfile');
     }
 
-    public function testWritesContextToDisk()
+    public function testWritesContextToDisk(): void
     {
         $contextBuilder = new ContextBuilder();
         $context = $contextBuilder->getContext();
@@ -28,7 +30,7 @@ class ContextBuilderTest extends TestCase
         $this->assertFileExists($context->getDirectory().'/Dockerfile');
     }
 
-    public function testHasDefaultFrom()
+    public function testHasDefaultFrom(): void
     {
         $contextBuilder = new ContextBuilder();
         $context = $contextBuilder->getContext();
@@ -36,7 +38,7 @@ class ContextBuilderTest extends TestCase
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', 'FROM base');
     }
 
-    public function testUsesCustomFrom()
+    public function testUsesCustomFrom(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->from('ubuntu:precise');
@@ -46,7 +48,7 @@ class ContextBuilderTest extends TestCase
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', 'FROM ubuntu:precise');
     }
 
-    public function testCreatesTmpDirectory()
+    public function testCreatesTmpDirectory(): void
     {
         $contextBuilder = new ContextBuilder();
         $context = $contextBuilder->getContext();
@@ -54,27 +56,27 @@ class ContextBuilderTest extends TestCase
         $this->assertFileExists($context->getDirectory());
     }
 
-    public function testWriteTmpFiles()
+    public function testWriteTmpFiles(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->add('/foo', 'random content');
 
-        $context  = $contextBuilder->getContext();
-        $filename = preg_replace(<<<DOCKERFILE
+        $context = $contextBuilder->getContext();
+        $filename = \preg_replace(<<<DOCKERFILE
 #FROM base
 ADD (.+?) /foo#
 DOCKERFILE
-            , "$1", $context->getDockerfileContent());
+            , '$1', $context->getDockerfileContent());
 
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'random content');
     }
 
-    public function testWritesAddCommands()
+    public function testWritesAddCommands(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->add('/foo', 'foo file content');
 
-        $context  = $contextBuilder->getContext();
+        $context = $contextBuilder->getContext();
 
         $this->assertRegExp(<<<DOCKERFILE
 #FROM base
@@ -84,12 +86,12 @@ DOCKERFILE
         );
     }
 
-    public function testWritesRunCommands()
+    public function testWritesRunCommands(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->run('foo command');
 
-        $context  = $contextBuilder->getContext();
+        $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
 FROM base
@@ -98,12 +100,12 @@ DOCKERFILE
         );
     }
 
-    public function testWritesEnvCommands()
+    public function testWritesEnvCommands(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->env('foo', 'bar');
 
-        $context  = $contextBuilder->getContext();
+        $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
 FROM base
@@ -112,12 +114,12 @@ DOCKERFILE
         );
     }
 
-    public function testWritesCopyCommands()
+    public function testWritesCopyCommands(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->copy('/foo', '/bar');
 
-        $context  = $contextBuilder->getContext();
+        $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
 FROM base
@@ -126,12 +128,12 @@ DOCKERFILE
         );
     }
 
-    public function testWritesWorkdirCommands()
+    public function testWritesWorkdirCommands(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->workdir('/foo');
 
-        $context  = $contextBuilder->getContext();
+        $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
 FROM base
@@ -140,12 +142,12 @@ DOCKERFILE
         );
     }
 
-    public function testWritesExposeCommands()
+    public function testWritesExposeCommands(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->expose('80');
 
-        $context  = $contextBuilder->getContext();
+        $context = $contextBuilder->getContext();
 
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', <<<DOCKERFILE
 FROM base

@@ -2,3 +2,4 @@ vendor/
 bin/
 composer.lock
 .vagrant
+/.php_cs.cache

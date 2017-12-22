@@ -14,11 +14,6 @@ class ContextBuilder
     private $directory;
 
     /**
-     * @var string
-     */
-    private $from = 'base';
-
-    /**
      * @var array
      */
     private $commands = [];
@@ -72,7 +67,7 @@ class ContextBuilder
     }
 
     /**
-     * Set the FROM instruction of Dockerfile.
+     * Add a FROM instruction of Dockerfile.
      *
      * @param string $from From which image we start
      *
@@ -80,8 +75,7 @@ class ContextBuilder
      */
     public function from($from)
     {
-        $this->from = $from;
-
+        $this->commands[] = ['type' => 'FROM', 'image' => $from];
         return $this;
     }
 
@@ -239,7 +233,7 @@ class ContextBuilder
             $this->cleanDirectory();
         }
 
-        $this->directory = \sys_get_temp_dir().'/'.\md5($this->from.\serialize($this->commands));
+        $this->directory = \sys_get_temp_dir().'/'.\md5(\serialize($this->commands));
         $this->fs->mkdir($this->directory);
         $this->write($this->directory);
 
@@ -264,10 +258,15 @@ class ContextBuilder
     private function write($directory): void
     {
         $dockerfile = [];
-        $dockerfile[] = 'FROM '.$this->from;
-
+        // Insert a FROM instruction if the file does not start with one.
+        if (empty($this->commands) || $this->commands[0]['type'] != 'FROM') {
+            $dockerfile[] = 'FROM base';
+        }
         foreach ($this->commands as $command) {
             switch ($command['type']) {
+                case 'FROM':
+                    $dockerfile[] = 'FROM '.$command['image'];
+                    break;
                 case 'RUN':
                     $dockerfile[] = 'RUN '.$command['command'];
                     break;

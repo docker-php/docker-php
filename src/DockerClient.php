@@ -68,7 +68,8 @@ class DockerClient implements HttpClient
             'remote_socket' => \getenv('DOCKER_HOST') ? \getenv('DOCKER_HOST') : 'unix:///var/run/docker.sock',
         ];
 
-        if (\getenv('DOCKER_TLS_VERIFY') && 1 === \getenv('DOCKER_TLS_VERIFY')) {
+        if (\getenv('DOCKER_TLS_VERIFY') && 1 == \getenv('DOCKER_TLS_VERIFY')) {
+
             if (!\getenv('DOCKER_CERT_PATH')) {
                 throw new \RuntimeException('Connection to docker has been set to use TLS, but no PATH is defined for certificate in DOCKER_CERT_PATH docker environnement variable');
             }

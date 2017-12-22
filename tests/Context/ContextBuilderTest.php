@@ -216,7 +216,7 @@ DOCKERFILE
         $context  = $contextBuilder->getContext();
         $content = $context->read();
         $this->assertInternalType('string', $content);
-        $this->assertEquals($context->toTar(), $content);
+        $this->assertSame($context->toTar(), $content);
 
     }
 }

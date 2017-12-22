@@ -48,9 +48,9 @@ class DockerTestClient extends TestCase
 
         // Get the last stream context.
         $context = stream_context_get_options(end($contexts));
-        $this->assertEquals('/tmp/ca.pem', $context['ssl']['cafile']);
-        $this->assertEquals('/tmp/cert.pem', $context['ssl']['local_cert']);
-        $this->assertEquals('/tmp/key.pem', $context['ssl']['local_pk']);
+        $this->assertSame('/tmp/ca.pem', $context['ssl']['cafile']);
+        $this->assertSame('/tmp/cert.pem', $context['ssl']['local_cert']);
+        $this->assertSame('/tmp/key.pem', $context['ssl']['local_pk']);
     }
 
     public function testCreateCustomPeerName()
@@ -68,10 +68,10 @@ class DockerTestClient extends TestCase
 
         // Get the last stream context.
         $context = stream_context_get_options(end($contexts));
-        $this->assertEquals('/abc/ca.pem', $context['ssl']['cafile']);
-        $this->assertEquals('/abc/cert.pem', $context['ssl']['local_cert']);
-        $this->assertEquals('/abc/key.pem', $context['ssl']['local_pk']);
-        $this->assertEquals('test', $context['ssl']['peer_name']);
+        $this->assertSame('/abc/ca.pem', $context['ssl']['cafile']);
+        $this->assertSame('/abc/cert.pem', $context['ssl']['local_cert']);
+        $this->assertSame('/abc/key.pem', $context['ssl']['local_pk']);
+        $this->assertSame('test', $context['ssl']['peer_name']);
     }
 
 

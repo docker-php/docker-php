@@ -103,6 +103,25 @@ DOCKERFILE
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'abc');
     }
 
+    public function testWriteTmpDirFromDisk(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $dir = \tempnam(\sys_get_temp_dir(), '');
+        \unlink($dir);
+        \mkdir($dir);
+        \file_put_contents($dir.'/test', 'abc');
+        $this->assertStringEqualsFile($dir.'/test', 'abc');
+        $contextBuilder->addFile('/foo', $dir);
+
+        $context = $contextBuilder->getContext();
+        $filename = \preg_replace(<<<DOCKERFILE
+#FROM base
+ADD (.+?) /foo#
+DOCKERFILE
+            , '$1', $context->getDockerfileContent());
+        $this->assertStringEqualsFile($context->getDirectory().'/'.$filename.'/test', 'abc');
+    }
+
     public function testWritesAddCommands(): void
     {
         $contextBuilder = new ContextBuilder();

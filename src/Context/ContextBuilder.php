@@ -109,7 +109,7 @@ class ContextBuilder
     }
 
     /**
-     * Add a ADD instruction to Dockerfile.
+     * Add an ADD instruction to Dockerfile.
      *
      * @param string $path    Path wanted on the image
      * @param string $content Content of file
@@ -119,6 +119,36 @@ class ContextBuilder
     public function add($path, $content)
     {
         $this->commands[] = ['type' => 'ADD', 'path' => $path, 'content' => $content];
+
+        return $this;
+    }
+
+    /**
+     * Add an ADD instruction to Dockerfile.
+     *
+     * @param string   $path   Path wanted on the image
+     * @param resource $stream stream that contains file content
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function addStream($path, $stream)
+    {
+        $this->commands[] = ['type' => 'ADDSTREAM', 'path' => $path, 'stream' => $stream];
+
+        return $this;
+    }
+
+    /**
+     * Add an ADD instruction to Dockerfile.
+     *
+     * @param string $path Path wanted on the image
+     * @param string $file Source file name
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function addFile($path, $file)
+    {
+        $this->commands[] = ['type' => 'ADDFILE', 'path' => $path, 'file' => $file];
 
         return $this;
     }
@@ -274,6 +304,12 @@ class ContextBuilder
                 case 'ADD':
                     $dockerfile[] = 'ADD '.$this->getFile($directory, $command['content']).' '.$command['path'];
                     break;
+                case 'ADDFILE':
+                    $dockerfile[] = 'ADD '.$this->getFileFromDisk($directory, $command['file']).' '.$command['path'];
+                    break;
+                case 'ADDSTREAM':
+                    $dockerfile[] = 'ADD '.$this->getFileFromStream($directory, $command['stream']).' '.$command['path'];
+                    break;
                 case 'COPY':
                     $dockerfile[] = 'COPY '.$command['from'].' '.$command['to'];
                     break;
@@ -307,7 +343,7 @@ class ContextBuilder
     }
 
     /**
-     * Generated a file in a directory.
+     * Generate a file in a directory.
      *
      * @param string $directory Targeted directory
      * @param string $content   Content of file
@@ -321,6 +357,46 @@ class ContextBuilder
         if (!\array_key_exists($hash, $this->files)) {
             $file = \tempnam($directory, '');
             $this->fs->dumpFile($file, $content);
+            $this->files[$hash] = \basename($file);
+        }
+
+        return $this->files[$hash];
+    }
+
+    /**
+     * Generated a file in a directory from a stream.
+     *
+     * @param string   $directory Targeted directory
+     * @param resource $stream    Stream containing file contents
+     *
+     * @return string Name of file generated
+     */
+    private function getFileFromStream($directory, $stream)
+    {
+        $file = \tempnam($directory, '');
+        $target = \fopen($file, 'w');
+        if (0 === \stream_copy_to_stream($stream, $target)) {
+            throw new \RuntimeException('Failed to write stream to file');
+        }
+        \fclose($target);
+
+        return \basename($file);
+    }
+
+    /**
+     * Generated a file in a directory from an existing file.
+     *
+     * @param string $directory Targeted directory
+     * @param string $source    Path to the source file
+     *
+     * @return string Name of file generated
+     */
+    private function getFileFromDisk($directory, $source)
+    {
+        $hash = 'DISK:'.\realpath($source);
+        if (!\array_key_exists($hash, $this->files)) {
+            $file = \tempnam($directory, '');
+            $this->fs->copy($source, $file, true);
             $this->files[$hash] = \basename($file);
         }
 

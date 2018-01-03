@@ -76,6 +76,7 @@ class ContextBuilder
     public function from($from)
     {
         $this->commands[] = ['type' => 'FROM', 'image' => $from];
+
         return $this;
     }
 
@@ -259,7 +260,7 @@ class ContextBuilder
     {
         $dockerfile = [];
         // Insert a FROM instruction if the file does not start with one.
-        if (empty($this->commands) || $this->commands[0]['type'] != 'FROM') {
+        if (empty($this->commands) || $this->commands[0]['type'] !== 'FROM') {
             $dockerfile[] = 'FROM base';
         }
         foreach ($this->commands as $command) {

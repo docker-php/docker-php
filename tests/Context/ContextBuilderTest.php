@@ -55,7 +55,7 @@ class ContextBuilderTest extends TestCase
         $contextBuilder->from('test');
 
         $content = $contextBuilder->getContext()->getDockerfileContent();
-        $this->assertEquals("FROM ubuntu:precise\nFROM test", $content);
+        $this->assertSame("FROM ubuntu:precise\nFROM test", $content);
     }
 
     public function testCreatesTmpDirectory(): void

@@ -10,18 +10,6 @@ use Docker\Tests\TestCase;
 
 class ContextBuilderTest extends TestCase
 {
-    public function testRemovesFilesOnDestruct(): void
-    {
-        $contextBuilder = new ContextBuilder();
-        $context = $contextBuilder->getContext();
-
-        $this->assertFileExists($context->getDirectory().'/Dockerfile');
-
-        unset($contextBuilder);
-
-        $this->assertFileNotExists($context->getDirectory().'/Dockerfile');
-    }
-
     public function testWritesContextToDisk(): void
     {
         $contextBuilder = new ContextBuilder();
@@ -48,6 +36,17 @@ class ContextBuilderTest extends TestCase
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', 'FROM ubuntu:precise');
     }
 
+    public function testMultipleFrom(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->from('ubuntu:precise');
+
+        $contextBuilder->from('test');
+
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertSame("FROM ubuntu:precise\nFROM test", $content);
+    }
+
     public function testCreatesTmpDirectory(): void
     {
         $contextBuilder = new ContextBuilder();
@@ -69,6 +68,59 @@ DOCKERFILE
             , '$1', $context->getDockerfileContent());
 
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'random content');
+    }
+
+    public function testWriteTmpFileFromStream(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $stream = \fopen('php://temp', 'r+');
+        $this->assertSame(7, \fwrite($stream, 'test123'));
+        \rewind($stream);
+        $contextBuilder->addStream('/foo', $stream);
+
+        $context = $contextBuilder->getContext();
+        $filename = \preg_replace(<<<DOCKERFILE
+#FROM base
+ADD (.+?) /foo#
+DOCKERFILE
+            , '$1', $context->getDockerfileContent());
+        $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'test123');
+    }
+
+    public function testWriteTmpFileFromDisk(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $file = \tempnam('', '');
+        \file_put_contents($file, 'abc');
+        $this->assertStringEqualsFile($file, 'abc');
+        $contextBuilder->addFile('/foo', $file);
+
+        $context = $contextBuilder->getContext();
+        $filename = \preg_replace(<<<DOCKERFILE
+#FROM base
+ADD (.+?) /foo#
+DOCKERFILE
+            , '$1', $context->getDockerfileContent());
+        $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'abc');
+    }
+
+    public function testWriteTmpDirFromDisk(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $dir = \tempnam(\sys_get_temp_dir(), '');
+        \unlink($dir);
+        \mkdir($dir);
+        \file_put_contents($dir.'/test', 'abc');
+        $this->assertStringEqualsFile($dir.'/test', 'abc');
+        $contextBuilder->addFile('/foo', $dir);
+
+        $context = $contextBuilder->getContext();
+        $filename = \preg_replace(<<<DOCKERFILE
+#FROM base
+ADD (.+?) /foo#
+DOCKERFILE
+            , '$1', $context->getDockerfileContent());
+        $this->assertStringEqualsFile($context->getDirectory().'/'.$filename.'/test', 'abc');
     }
 
     public function testWritesAddCommands(): void

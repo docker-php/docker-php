@@ -9,16 +9,6 @@ use Symfony\Component\Filesystem\Filesystem;
 class ContextBuilder
 {
     /**
-     * @var string
-     */
-    private $directory;
-
-    /**
-     * @var string
-     */
-    private $from = 'base';
-
-    /**
      * @var array
      */
     private $commands = [];
@@ -29,7 +19,7 @@ class ContextBuilder
     private $files = [];
 
     /**
-     * @var \Symfony\Component\Filesystem\Filesystem
+     * @var Filesystem
      */
     private $fs;
 
@@ -72,7 +62,7 @@ class ContextBuilder
     }
 
     /**
-     * Set the FROM instruction of Dockerfile.
+     * Add a FROM instruction of Dockerfile.
      *
      * @param string $from From which image we start
      *
@@ -80,7 +70,7 @@ class ContextBuilder
      */
     public function from($from)
     {
-        $this->from = $from;
+        $this->commands[] = ['type' => 'FROM', 'image' => $from];
 
         return $this;
     }
@@ -114,7 +104,7 @@ class ContextBuilder
     }
 
     /**
-     * Add a ADD instruction to Dockerfile.
+     * Add an ADD instruction to Dockerfile.
      *
      * @param string $path    Path wanted on the image
      * @param string $content Content of file
@@ -124,6 +114,36 @@ class ContextBuilder
     public function add($path, $content)
     {
         $this->commands[] = ['type' => 'ADD', 'path' => $path, 'content' => $content];
+
+        return $this;
+    }
+
+    /**
+     * Add an ADD instruction to Dockerfile.
+     *
+     * @param string   $path   Path wanted on the image
+     * @param resource $stream stream that contains file content
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function addStream($path, $stream)
+    {
+        $this->commands[] = ['type' => 'ADDSTREAM', 'path' => $path, 'stream' => $stream];
+
+        return $this;
+    }
+
+    /**
+     * Add an ADD instruction to Dockerfile.
+     *
+     * @param string $path Path wanted on the image
+     * @param string $file Source file (or directory) name
+     *
+     * @return \Docker\Context\ContextBuilder
+     */
+    public function addFile($path, $file)
+    {
+        $this->commands[] = ['type' => 'ADDFILE', 'path' => $path, 'file' => $file];
 
         return $this;
     }
@@ -235,23 +255,14 @@ class ContextBuilder
      */
     public function getContext()
     {
-        if (null !== $this->directory) {
-            $this->cleanDirectory();
-        }
+        $directory = \sys_get_temp_dir().'/ctb-'.\microtime();
+        $this->fs->mkdir($directory);
+        $this->write($directory);
 
-        $this->directory = \sys_get_temp_dir().'/'.\md5($this->from.\serialize($this->commands));
-        $this->fs->mkdir($this->directory);
-        $this->write($this->directory);
+        $result = new Context($directory, $this->format, $this->fs);
+        $result->setCleanup(true);
 
-        return new Context($this->directory, $this->format);
-    }
-
-    /**
-     * @void
-     */
-    public function __destruct()
-    {
-        $this->cleanDirectory();
+        return $result;
     }
 
     /**
@@ -264,15 +275,26 @@ class ContextBuilder
     private function write($directory): void
     {
         $dockerfile = [];
-        $dockerfile[] = 'FROM '.$this->from;
-
+        // Insert a FROM instruction if the file does not start with one.
+        if (empty($this->commands) || $this->commands[0]['type'] !== 'FROM') {
+            $dockerfile[] = 'FROM base';
+        }
         foreach ($this->commands as $command) {
             switch ($command['type']) {
+                case 'FROM':
+                    $dockerfile[] = 'FROM '.$command['image'];
+                    break;
                 case 'RUN':
                     $dockerfile[] = 'RUN '.$command['command'];
                     break;
                 case 'ADD':
                     $dockerfile[] = 'ADD '.$this->getFile($directory, $command['content']).' '.$command['path'];
+                    break;
+                case 'ADDFILE':
+                    $dockerfile[] = 'ADD '.$this->getFileFromDisk($directory, $command['file']).' '.$command['path'];
+                    break;
+                case 'ADDSTREAM':
+                    $dockerfile[] = 'ADD '.$this->getFileFromStream($directory, $command['stream']).' '.$command['path'];
                     break;
                 case 'COPY':
                     $dockerfile[] = 'COPY '.$command['from'].' '.$command['to'];
@@ -307,7 +329,7 @@ class ContextBuilder
     }
 
     /**
-     * Generated a file in a directory.
+     * Generate a file in a directory.
      *
      * @param string $directory Targeted directory
      * @param string $content   Content of file
@@ -328,10 +350,47 @@ class ContextBuilder
     }
 
     /**
-     * Clean directory generated.
+     * Generated a file in a directory from a stream.
+     *
+     * @param string   $directory Targeted directory
+     * @param resource $stream    Stream containing file contents
+     *
+     * @return string Name of file generated
      */
-    private function cleanDirectory(): void
+    private function getFileFromStream($directory, $stream)
     {
-        $this->fs->remove($this->directory);
+        $file = \tempnam($directory, '');
+        $target = \fopen($file, 'w');
+        if (0 === \stream_copy_to_stream($stream, $target)) {
+            throw new \RuntimeException('Failed to write stream to file');
+        }
+        \fclose($target);
+
+        return \basename($file);
+    }
+
+    /**
+     * Generated a file in a directory from an existing file.
+     *
+     * @param string $directory Targeted directory
+     * @param string $source    Path to the source file
+     *
+     * @return string Name of file generated
+     */
+    private function getFileFromDisk($directory, $source)
+    {
+        $hash = 'DISK-'.\md5(\realpath($source));
+        if (!\array_key_exists($hash, $this->files)) {
+            // Check if source is a directory or a file.
+            if (\is_dir($source)) {
+                $this->fs->mirror($source, $directory.'/'.$hash);
+            } else {
+                $this->fs->copy($source, $directory.'/'.$hash);
+            }
+
+            $this->files[$hash] = $hash;
+        }
+
+        return $this->files[$hash];
     }
 }

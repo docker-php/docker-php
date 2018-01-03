@@ -142,7 +142,7 @@ class ContextBuilder
      * Add an ADD instruction to Dockerfile.
      *
      * @param string $path Path wanted on the image
-     * @param string $file Source file name
+     * @param string $file Source file (or directory) name
      *
      * @return \Docker\Context\ContextBuilder
      */
@@ -393,11 +393,16 @@ class ContextBuilder
      */
     private function getFileFromDisk($directory, $source)
     {
-        $hash = 'DISK:'.\realpath($source);
+        $hash = 'DISK-'.\md5(\realpath($source));
         if (!\array_key_exists($hash, $this->files)) {
-            $file = \tempnam($directory, '');
-            $this->fs->copy($source, $file, true);
-            $this->files[$hash] = \basename($file);
+            // Check if source is a directory or a file.
+            if (\is_dir($source)) {
+                $this->fs->mirror($source, $directory.'/'.$hash);
+            } else {
+                $this->fs->copy($source, $directory.'/'.$hash);
+            }
+
+            $this->files[$hash] = $hash;
         }
 
         return $this->files[$hash];

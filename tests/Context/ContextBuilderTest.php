@@ -81,6 +81,40 @@ DOCKERFILE
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'random content');
     }
 
+    public function testWriteTmpFileFromStream(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $stream = \fopen('php://temp', 'r+');
+        $this->assertSame(7, \fwrite($stream, 'test123'));
+        \rewind($stream);
+        $contextBuilder->addStream('/foo', $stream);
+
+        $context = $contextBuilder->getContext();
+        $filename = \preg_replace(<<<DOCKERFILE
+#FROM base
+ADD (.+?) /foo#
+DOCKERFILE
+            , '$1', $context->getDockerfileContent());
+        $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'test123');
+    }
+
+    public function testWriteTmpFileFromDisk(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $file = \tempnam('', '');
+        \file_put_contents($file, 'abc');
+        $this->assertStringEqualsFile($file, 'abc');
+        $contextBuilder->addFile('/foo', $file);
+
+        $context = $contextBuilder->getContext();
+        $filename = \preg_replace(<<<DOCKERFILE
+#FROM base
+ADD (.+?) /foo#
+DOCKERFILE
+            , '$1', $context->getDockerfileContent());
+        $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'abc');
+    }
+
     public function testWritesAddCommands(): void
     {
         $contextBuilder = new ContextBuilder();

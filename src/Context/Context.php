@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Docker\Context;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -17,6 +18,11 @@ class Context implements ContextInterface
     public const FORMAT_TAR = 'tar';
 
     /**
+     * @var bool Whether to remove the context directory
+     */
+    private $cleanup = false;
+
+    /**
      * @var string
      */
     private $directory;
@@ -25,6 +31,11 @@ class Context implements ContextInterface
      * @var process Tar process
      */
     private $process;
+
+    /**
+     * @var Filesystem
+     */
+    private $fs;
 
     /**
      * @var resource Tar stream
@@ -39,11 +50,13 @@ class Context implements ContextInterface
     /**
      * @param string $directory Directory of context
      * @param string $format    Format to use when sending the call (stream or tar: string)
+     * @param Filesystem $fs Filesystem object for cleaning the context directory on destruction.
      */
-    public function __construct($directory, $format = self::FORMAT_STREAM)
+    public function __construct($directory, $format = self::FORMAT_STREAM, Filesystem $fs = null)
     {
         $this->directory = $directory;
         $this->format = $format;
+        $this->fs = $fs ?? new Filesystem();
     }
 
     /**
@@ -135,5 +148,17 @@ class Context implements ContextInterface
         if (\is_resource($this->stream)) {
             \fclose($this->stream);
         }
+
+        if ($this->cleanup) {
+            $this->fs->remove($this->directory);
+        }
+    }
+
+    /**
+     * @param bool $value Whether to remove the context directory.
+     */
+    public function setCleanup(bool $value)
+    {
+        $this->cleanup = $value;
     }
 }

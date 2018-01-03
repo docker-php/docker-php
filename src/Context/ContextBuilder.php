@@ -9,11 +9,6 @@ use Symfony\Component\Filesystem\Filesystem;
 class ContextBuilder
 {
     /**
-     * @var string
-     */
-    private $directory;
-
-    /**
      * @var array
      */
     private $commands = [];
@@ -24,7 +19,7 @@ class ContextBuilder
     private $files = [];
 
     /**
-     * @var \Symfony\Component\Filesystem\Filesystem
+     * @var Filesystem
      */
     private $fs;
 
@@ -260,23 +255,13 @@ class ContextBuilder
      */
     public function getContext()
     {
-        if (null !== $this->directory) {
-            $this->cleanDirectory();
-        }
+        $directory = \sys_get_temp_dir() . '/ctb-' . microtime();
+        $this->fs->mkdir($directory);
+        $this->write($directory);
 
-        $this->directory = \sys_get_temp_dir().'/'.\md5(\serialize($this->commands));
-        $this->fs->mkdir($this->directory);
-        $this->write($this->directory);
-
-        return new Context($this->directory, $this->format);
-    }
-
-    /**
-     * @void
-     */
-    public function __destruct()
-    {
-        $this->cleanDirectory();
+        $result = new Context($directory, $this->format, $this->fs);
+        $result->setCleanup(true);
+        return $result;
     }
 
     /**
@@ -403,11 +388,4 @@ class ContextBuilder
         return $this->files[$hash];
     }
 
-    /**
-     * Clean directory generated.
-     */
-    private function cleanDirectory(): void
-    {
-        $this->fs->remove($this->directory);
-    }
 }

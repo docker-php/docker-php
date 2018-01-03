@@ -9,18 +9,6 @@ use Docker\Tests\TestCase;
 
 class ContextBuilderTest extends TestCase
 {
-    public function testRemovesFilesOnDestruct(): void
-    {
-        $contextBuilder = new ContextBuilder();
-        $context = $contextBuilder->getContext();
-
-        $this->assertFileExists($context->getDirectory().'/Dockerfile');
-
-        unset($contextBuilder);
-
-        $this->assertFileNotExists($context->getDirectory().'/Dockerfile');
-    }
-
     public function testWritesContextToDisk(): void
     {
         $contextBuilder = new ContextBuilder();

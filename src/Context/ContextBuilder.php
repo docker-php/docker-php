@@ -255,12 +255,13 @@ class ContextBuilder
      */
     public function getContext()
     {
-        $directory = \sys_get_temp_dir() . '/ctb-' . microtime();
+        $directory = \sys_get_temp_dir().'/ctb-'.\microtime();
         $this->fs->mkdir($directory);
         $this->write($directory);
 
         $result = new Context($directory, $this->format, $this->fs);
         $result->setCleanup(true);
+
         return $result;
     }
 
@@ -387,5 +388,4 @@ class ContextBuilder
 
         return $this->files[$hash];
     }
-
 }

@@ -48,9 +48,9 @@ class Context implements ContextInterface
     private $format = self::FORMAT_STREAM;
 
     /**
-     * @param string $directory Directory of context
-     * @param string $format    Format to use when sending the call (stream or tar: string)
-     * @param Filesystem $fs Filesystem object for cleaning the context directory on destruction.
+     * @param string     $directory Directory of context
+     * @param string     $format    Format to use when sending the call (stream or tar: string)
+     * @param Filesystem $fs        filesystem object for cleaning the context directory on destruction
      */
     public function __construct($directory, $format = self::FORMAT_STREAM, Filesystem $fs = null)
     {
@@ -155,9 +155,9 @@ class Context implements ContextInterface
     }
 
     /**
-     * @param bool $value Whether to remove the context directory.
+     * @param bool $value whether to remove the context directory
      */
-    public function setCleanup(bool $value)
+    public function setCleanup(bool $value): void
     {
         $this->cleanup = $value;
     }

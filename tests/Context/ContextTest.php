@@ -40,6 +40,4 @@ class ContextTest extends TestCase
 
         $this->assertFileNotExists($file);
     }
-
-
 }

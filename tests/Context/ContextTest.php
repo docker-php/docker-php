@@ -6,7 +6,6 @@ namespace Docker\Tests\Context;
 
 use Docker\Context\Context;
 use Docker\Tests\TestCase;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class ContextTest extends TestCase

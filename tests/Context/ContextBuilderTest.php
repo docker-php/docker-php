@@ -73,9 +73,9 @@ DOCKERFILE
     public function testWriteTmpFileFromStream(): void
     {
         $contextBuilder = new ContextBuilder();
-        $stream = fopen('php://temp', 'r+');
-        $this->assertSame(7, fwrite($stream, 'test123'));
-        rewind($stream);
+        $stream = \fopen('php://temp', 'r+');
+        $this->assertSame(7, \fwrite($stream, 'test123'));
+        \rewind($stream);
         $contextBuilder->addStream('/foo', $stream);
 
         $context = $contextBuilder->getContext();
@@ -90,8 +90,8 @@ DOCKERFILE
     public function testWriteTmpFileFromDisk(): void
     {
         $contextBuilder = new ContextBuilder();
-        $file = tempnam('', '');
-        file_put_contents($file, 'abc');
+        $file = \tempnam('', '');
+        \file_put_contents($file, 'abc');
         $this->assertStringEqualsFile($file, 'abc');
         $contextBuilder->addFile('/foo', $file);
 
@@ -103,7 +103,6 @@ DOCKERFILE
             , '$1', $context->getDockerfileContent());
         $this->assertStringEqualsFile($context->getDirectory().'/'.$filename, 'abc');
     }
-
 
     public function testWritesAddCommands(): void
     {

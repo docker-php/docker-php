@@ -131,8 +131,8 @@ class ContextBuilder
     /**
      * Add an ADD instruction to Dockerfile.
      *
-     * @param string $path    Path wanted on the image
-     * @param resource $stream  Stream that contains file content.
+     * @param string   $path   Path wanted on the image
+     * @param resource $stream stream that contains file content
      *
      * @return \Docker\Context\ContextBuilder
      */
@@ -146,7 +146,7 @@ class ContextBuilder
     /**
      * Add an ADD instruction to Dockerfile.
      *
-     * @param string $path    Path wanted on the image
+     * @param string $path Path wanted on the image
      * @param string $file Source file name
      *
      * @return \Docker\Context\ContextBuilder
@@ -157,6 +157,7 @@ class ContextBuilder
 
         return $this;
     }
+
     /**
      * Add a RUN instruction to Dockerfile.
      *
@@ -365,20 +366,19 @@ class ContextBuilder
     /**
      * Generated a file in a directory from a stream.
      *
-     * @param string $directory Targeted directory
-     * @param resource $stream Stream containing file contents
+     * @param string   $directory Targeted directory
+     * @param resource $stream    Stream containing file contents
      *
      * @return string Name of file generated
      */
     private function getFileFromStream($directory, $stream)
     {
-
         $file = \tempnam($directory, '');
-        $target = fopen($file, 'w');
-        if (stream_copy_to_stream($stream, $target) ===0) {
-            throw new \RuntimeException("Failed to write stream to file");
+        $target = \fopen($file, 'w');
+        if (0 === \stream_copy_to_stream($stream, $target)) {
+            throw new \RuntimeException('Failed to write stream to file');
         }
-        fclose($target);
+        \fclose($target);
 
         return \basename($file);
     }
@@ -387,13 +387,13 @@ class ContextBuilder
      * Generated a file in a directory from an existing file.
      *
      * @param string $directory Targeted directory
-     * @param string $source Path to the source file
+     * @param string $source    Path to the source file
      *
      * @return string Name of file generated
      */
     private function getFileFromDisk($directory, $source)
     {
-        $hash = 'DISK:' . realpath($source);
+        $hash = 'DISK:'.\realpath($source);
         if (!\array_key_exists($hash, $this->files)) {
             $file = \tempnam($directory, '');
             $this->fs->copy($source, $file, true);

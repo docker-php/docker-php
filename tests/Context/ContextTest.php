@@ -52,6 +52,7 @@ class ContextTest extends TestCase
         } finally {
             \putenv("PATH=$path");
         }
+    }
       
     public function testRemovesFilesOnDestruct(): void
     {

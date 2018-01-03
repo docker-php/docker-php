@@ -47,6 +47,17 @@ class ContextBuilderTest extends TestCase
         $this->assertStringEqualsFile($context->getDirectory().'/Dockerfile', 'FROM ubuntu:precise');
     }
 
+    public function testMultipleFrom(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->from('ubuntu:precise');
+
+        $contextBuilder->from('test');
+
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertSame("FROM ubuntu:precise\nFROM test", $content);
+    }
+
     public function testCreatesTmpDirectory(): void
     {
         $contextBuilder = new ContextBuilder();

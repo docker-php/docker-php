@@ -30,27 +30,27 @@ class ContextTest extends TestCase
         $this->assertInternalType('resource', $context->toStream());
     }
 
-    public function testDirectorySetter()
+    public function testDirectorySetter(): void
     {
         $context = new Context('abc');
-        $this->assertEquals('abc', $context->getDirectory());
+        $this->assertSame('abc', $context->getDirectory());
         $context->setDirectory('def');
-        $this->assertEquals('def', $context->getDirectory());
+        $this->assertSame('def', $context->getDirectory());
     }
 
     /**
      * @expectedException \Symfony\Component\Process\Exception\ProcessFailedException
      */
-    public function testTarFailed()
+    public function testTarFailed(): void
     {
-        $directory = __DIR__.DIRECTORY_SEPARATOR."context-test";
-        $path = getenv('PATH');
-        putenv('PATH=/');
+        $directory = __DIR__.DIRECTORY_SEPARATOR.'context-test';
+        $path = \getenv('PATH');
+        \putenv('PATH=/');
         $context = new Context($directory);
         try {
             $context->toTar();
         } finally {
-            putenv("PATH=$path");
+            \putenv("PATH=$path");
         }
     }
 }

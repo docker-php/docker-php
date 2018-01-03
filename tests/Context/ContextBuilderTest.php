@@ -156,7 +156,7 @@ DOCKERFILE
         );
     }
 
-    public function testWritesUserCommands()
+    public function testWritesUserCommands(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->user('user1');
@@ -168,7 +168,7 @@ DOCKERFILE
         $this->assertStringEndsWith("\nUSER user1\nUSER user2", $content);
     }
 
-    public function testWritesVolumeCommands()
+    public function testWritesVolumeCommands(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->volume('volume1');
@@ -180,7 +180,7 @@ DOCKERFILE
         $this->assertStringEndsWith("\nVOLUME volume1\nVOLUME volume2", $content);
     }
 
-    public function testWritesCommandCommand()
+    public function testWritesCommandCommand(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->command('test123');
@@ -190,12 +190,11 @@ DOCKERFILE
 
         $contextBuilder->command('changed');
         $content = $contextBuilder->getContext()->getDockerfileContent();
-        $this->assertNotContains("CMD test123", $content);
+        $this->assertNotContains('CMD test123', $content);
         $this->assertStringEndsWith("\nCMD changed", $content);
-
     }
 
-    public function testWritesEntrypointCommand()
+    public function testWritesEntrypointCommand(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->entrypoint('test123');
@@ -205,18 +204,17 @@ DOCKERFILE
 
         $contextBuilder->entrypoint('changed');
         $content = $contextBuilder->getContext()->getDockerfileContent();
-        $this->assertNotContains("ENTRYPOINT test123", $content);
+        $this->assertNotContains('ENTRYPOINT test123', $content);
         $this->assertStringEndsWith("\nENTRYPOINT changed", $content);
     }
 
-    public function testTar()
+    public function testTar(): void
     {
         $contextBuilder = new ContextBuilder();
         $contextBuilder->setFormat(Context::FORMAT_TAR);
-        $context  = $contextBuilder->getContext();
+        $context = $contextBuilder->getContext();
         $content = $context->read();
         $this->assertInternalType('string', $content);
         $this->assertSame($context->toTar(), $content);
-
     }
 }

@@ -1,16 +1,14 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Docker\Tests;
 
-
-use Docker\API\Model\ContainerSummaryItem;
 use Docker\Docker;
 
 class DockerTest extends TestCase
 {
-
-    public function testCreate()
+    public function testCreate(): void
     {
         $this->assertInstanceOf(Docker::class, Docker::create());
     }

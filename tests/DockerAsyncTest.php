@@ -10,7 +10,7 @@ use Docker\DockerAsync;
 
 class DockerAsyncTest extends \PHPUnit\Framework\TestCase
 {
-    public function testStaticConstructor()
+    public function testStaticConstructor(): void
     {
         $this->assertInstanceOf(DockerAsync::class, DockerAsync::create());
     }

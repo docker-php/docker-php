@@ -31,13 +31,13 @@ class ExecResourceTest extends TestCase
         $execConfig->setAttachStderr(true);
         $execConfig->setCmd(['echo', 'output']);
 
-        $execCreateResult = $this->getManager()->containerExec($createContainerResult->getId(), $execConfig);
+        $execCreateResult = $this->getManager()->containerExec($execConfig, $createContainerResult->getId());
 
         $execStartConfig = new ExecIdStartPostBody();
         $execStartConfig->setDetach(false);
         $execStartConfig->setTty(false);
 
-        $stream = $this->getManager()->execStart($execCreateResult->getId(), $execStartConfig, [], Docker::FETCH_STREAM);
+        $stream = $this->getManager()->execStart($execStartConfig, $execCreateResult->getId(), [], Docker::FETCH_STREAM);
 
         $this->assertInstanceOf(DockerRawStream::class, $stream);
 
@@ -60,13 +60,13 @@ class ExecResourceTest extends TestCase
 
         $execConfig = new ContainersIdExecPostBody();
         $execConfig->setCmd(['/bin/true']);
-        $execCreateResult = $this->getManager()->containerExec($createContainerResult->getId(), $execConfig);
+        $execCreateResult = $this->getManager()->containerExec($execConfig, $createContainerResult->getId());
 
         $execStartConfig = new ExecIdStartPostBody();
         $execStartConfig->setDetach(false);
         $execStartConfig->setTty(false);
 
-        $this->getManager()->execStart($execCreateResult->getId(), $execStartConfig);
+        $this->getManager()->execStart($execStartConfig, $execCreateResult->getId());
 
         $execFindResult = $this->getManager()->execInspect($execCreateResult->getId());
 

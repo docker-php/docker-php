@@ -11,7 +11,9 @@ use Amp\Artax\Request;
 use Amp\CancellationToken;
 use Amp\Promise;
 use Amp\Socket\BasicSocketPool;
+use Amp\Socket\Certificate;
 use Amp\Socket\ClientTlsContext;
+use Amp\Socket\StaticSocketPool;
 use Docker\Amp\FixedSocketPool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,7 +24,7 @@ class DockerAsyncClient implements Client
     public function __construct(array $options = [])
     {
         $options = $this->resolveOptions($options);
-        $socketPool = new HttpSocketPool(new FixedSocketPool($options['remote_socket'], new BasicSocketPool()));
+        $socketPool = new HttpSocketPool(new StaticSocketPool($options['remote_socket'], new BasicSocketPool()));
         $this->client = new DefaultClient(null, $socketPool, $options['ssl']);
     }
 
@@ -69,13 +71,10 @@ class DockerAsyncClient implements Client
             $certfile = \getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'cert.pem';
             $keyfile = \getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'key.pem';
 
-            $tlsContext = $tlsContext->withCaFile($cafile);
+            $certificate = new Certificate($certfile, $keyfile);
 
-//            $stream_context = [
-//                'cafile'        => $cafile,
-//                'local_cert'    => $certfile,
-//                'local_pk'      => $keyfile,
-//            ];
+            $tlsContext = $tlsContext->withCaFile($cafile);
+            $tlsContext = $tlsContext->withCertificate($certificate);
 
             if (\getenv('DOCKER_PEER_NAME')) {
                 $tlsContext = $tlsContext->withPeerName(\getenv('DOCKER_PEER_NAME'));

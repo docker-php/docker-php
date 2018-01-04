@@ -11,7 +11,7 @@ use Joli\Jane\OpenApi\Runtime\Client\Resource;
 
 trait ExecResourceTrait
 {
-    public function execStart(string $id, \Docker\API\Model\ExecIdStartPostBody $execStartConfig, array $parameters = [], string $fetch = self::FETCH_OBJECT)
+    public function execStart(\Docker\API\Model\ExecIdStartPostBody $execStartConfig, string $id, array $parameters = [], string $fetch = self::FETCH_OBJECT)
     {
         $queryParam = new QueryParam();
         $url = '/exec/{id}/start';

@@ -17,8 +17,6 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
 
     public function testAsync(): void
     {
-        $this->markTestSkipped('Need update of socket library');
-
         Loop::run(function () {
             $docker = DockerAsync::create();
 

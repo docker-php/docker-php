@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Docker\Tests\Context;
 
+use Docker\Context\Context;
 use Docker\Context\ContextBuilder;
 use Docker\Tests\TestCase;
 
@@ -205,5 +206,67 @@ FROM base
 EXPOSE 80
 DOCKERFILE
         );
+    }
+
+    public function testWritesUserCommands(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->user('user1');
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertStringEndsWith("\nUSER user1", $content);
+
+        $contextBuilder->user('user2');
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertStringEndsWith("\nUSER user1\nUSER user2", $content);
+    }
+
+    public function testWritesVolumeCommands(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->volume('volume1');
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertStringEndsWith("\nVOLUME volume1", $content);
+
+        $contextBuilder->volume('volume2');
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertStringEndsWith("\nVOLUME volume1\nVOLUME volume2", $content);
+    }
+
+    public function testWritesCommandCommand(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->command('test123');
+
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertStringEndsWith("\nCMD test123", $content);
+
+        $contextBuilder->command('changed');
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertNotContains('CMD test123', $content);
+        $this->assertStringEndsWith("\nCMD changed", $content);
+    }
+
+    public function testWritesEntrypointCommand(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->entrypoint('test123');
+
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertStringEndsWith("\nENTRYPOINT test123", $content);
+
+        $contextBuilder->entrypoint('changed');
+        $content = $contextBuilder->getContext()->getDockerfileContent();
+        $this->assertNotContains('ENTRYPOINT test123', $content);
+        $this->assertStringEndsWith("\nENTRYPOINT changed", $content);
+    }
+
+    public function testTar(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->setFormat(Context::FORMAT_TAR);
+        $context = $contextBuilder->getContext();
+        $content = $context->read();
+        $this->assertInternalType('string', $content);
+        $this->assertSame($context->toTar(), $content);
     }
 }

@@ -30,6 +30,30 @@ class ContextTest extends TestCase
         $this->assertInternalType('resource', $context->toStream());
     }
 
+    public function testDirectorySetter(): void
+    {
+        $context = new Context('abc');
+        $this->assertSame('abc', $context->getDirectory());
+        $context->setDirectory('def');
+        $this->assertSame('def', $context->getDirectory());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Process\Exception\ProcessFailedException
+     */
+    public function testTarFailed(): void
+    {
+        $directory = __DIR__.DIRECTORY_SEPARATOR.'context-test';
+        $path = \getenv('PATH');
+        \putenv('PATH=/');
+        $context = new Context($directory);
+        try {
+            $context->toTar();
+        } finally {
+            \putenv("PATH=$path");
+        }
+    }
+
     public function testRemovesFilesOnDestruct(): void
     {
         $context = (new ContextBuilder())->getContext();

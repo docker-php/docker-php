@@ -32,7 +32,11 @@
         "phpunit/phpunit": "^6.0",
         "friendsofphp/php-cs-fixer": "2.8.1",
         "jane/open-api": "^3.1",
-        "amphp/artax": "^3.0"
+        "amphp/artax": "^3.0",
+        "amphp/socket": "^0.10.5"
+    },
+    "conflict": {
+        "amphp/socket": "<0.10.5"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",

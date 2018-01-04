@@ -10,6 +10,11 @@ use Docker\DockerAsync;
 
 class DockerAsyncTest extends \PHPUnit\Framework\TestCase
 {
+    public function testStaticConstructor(): void
+    {
+        $this->assertInstanceOf(DockerAsync::class, DockerAsync::create());
+    }
+
     public function testAsync(): void
     {
         $this->markTestSkipped('Need update of socket library');

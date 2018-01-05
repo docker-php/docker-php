@@ -14,6 +14,8 @@ env:
   global:
     - TEST_COMMAND="composer test"
   matrix:
+    - DOCKER_API_VERSION=1.35 DOCKER_VERSION=17.12.0~ce-0~ubuntu
+    - DOCKER_API_VERSION=1.34 DOCKER_VERSION=17.11.0~ce-0~ubuntu
     - DOCKER_API_VERSION=1.33 DOCKER_VERSION=17.10.0~ce-0~ubuntu
     - DOCKER_API_VERSION=1.32 DOCKER_VERSION=17.09.0~ce-0~ubuntu
     - DOCKER_API_VERSION=1.31 DOCKER_VERSION=17.07.0~ce-0~ubuntu
@@ -51,6 +53,7 @@ before_install:
 install:
   - travis_retry composer install
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction
+  - travis_retry composer require docker-php/docker-php-api:4.${DOCKER_API_VERSION}.*
 
 script:
   - $TEST_COMMAND

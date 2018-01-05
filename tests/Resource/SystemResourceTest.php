@@ -21,8 +21,8 @@ class SystemResourceTest extends TestCase
     public function testGetEventsStream(): void
     {
         $stream = $this->getManager()->systemEvents([
-            'since' => \time() - 1,
-            'until' => \time() + 4,
+            'since' => (string) (\time() - 1),
+            'until' => (string) (\time() + 4),
         ], Docker::FETCH_STREAM);
         $lastEvent = null;
 
@@ -41,8 +41,8 @@ class SystemResourceTest extends TestCase
     public function testGetEventsObject(): void
     {
         $events = $this->getManager()->systemEvents([
-            'since' => \time() - (60 * 60 * 24),
-            'until' => \time(),
+            'since' => (string) (\time() - (60 * 60 * 24)),
+            'until' => (string) \time(),
         ], Docker::FETCH_OBJECT);
 
         $this->assertInternalType('array', $events);

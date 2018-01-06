@@ -9,24 +9,25 @@ First step is to create a container and its associated configuration, by creatin
 passing to the `create` api endpoint.
 
 ```php
-use Docker\Docker;                   
-use Docker\API\Model\ContainerConfig;
+<?php
 
-$docker = new Docker();
-$containerManager = $docker->getContainerManager();
+use Docker\API\Model\ContainersCreatePostBody;
+use Docker\Docker;
 
-$containerConfig = new ContainerConfig();
+$docker = Docker::create();
+
+$containerConfig = new ContainersCreatePostBody();
 $containerConfig->setImage('busybox:latest');
 $containerConfig->setCmd(['echo', 'I am running a command']);
 
-$containerCreateResult = $containerManager->create($containerConfig);
+$containerCreateResult = $docker->containerCreate($containerConfig);
 ```
 
-This will return a `ContainerCreateResult` object with the id of the created container. If you don't want to use 
+This will return a `ContainersCreatePostResponse201` object with the id of the created container. If you don't want to use 
 container id you can also specify a unique name for this container:
 
 ```php
-$containerCreateResult = $containerManager->create($containerConfig, ['name' => 'my-container-unique-name']);
+$containerCreateResult = $docker->containerCreate($containerConfig, ['name' => 'my-container-unique-name']);
 ```
 
 Be aware that the container is immutable if you need to change a configuration for a container, you will need to remove
@@ -35,13 +36,13 @@ the existing one and create it again with the new configuration.
 ## Starting the container
 
 Once a container has been created, you can start it, this will in fact, only launch the process inside the isolated 
-container. This is done with the `start` method of the `ContainerManager`, you can use the id of the container or the
+container. This is done with the `containerStart` method, you can use the id of the container or the
 name:
 
 ```php
-$containerManager->start($containerCreateResult->getId());
+$docker->containerStart($containerCreateResult->getId());
 // Or
-$containerManager->start('my-container-unique-name');
+$docker->containerStart('my-container-unique-name');
 ```
 
 The start method will always return the raw [PSR7](http://www.php-fig.org/psr/psr-7/) Response, but you don't need 
@@ -49,22 +50,22 @@ to check it as on failure it will throw an exception.
 
 ## Waiting for the container to end
 
-Once your container is started you can wait for it end by using the `wait` method, be aware that your PHP script will
+Once your container is started you can wait for it end by using the `containerWait` method, be aware that your PHP script will
 block until the container has stopped or that the default timeout set on the client has been reached (default to 60 
 seconds)
 
 ```php
-$containerManager->wait('my-container-unique-name');
+$docker->containerWait('my-container-unique-name');
 ```
 
 ## Reading logs in real time
 
-Sometimes you will need to read logs in real time for a container. You can use the `attach` method for that. 
+Sometimes you will need to read logs in real time for a container. You can use the `containerAttach` method for that. 
 Be aware that you will only receive them if you configure the container with 
 [json log driver](https://docs.docker.com/engine/reference/logging/overview/), which is the default configuration.
 
 ```php
-$attachStream = $containerManager->attach('my-container-unique-name');
+$attachStream = $docker->containerAttach('my-container-unique-name');
 ```
 
 The `$attachStream` returned will be an instance of a `DockerRawStream`. You can use this object afterwards to add 
@@ -94,7 +95,7 @@ If you follow all the example, you will not see the log and this normal. In fact
 method need extra configuration:
 
 ```php
-$containerConfig = new ContainerConfig();
+$containerConfig = new ContainersCreatePostBody();
 $containerConfig->setImage('busybox:latest');
 $containerConfig->setCmd(['echo', 'I am running a command']);
 $containerConfig->setNames(['my-container-unique-name']]);
@@ -103,16 +104,16 @@ $containerConfig->setAttachStdin(true);
 $containerConfig->setAttachStdout(true);
 $containerConfig->setAttachStderr(true);
 
-$containerManager->create($containerConfig);
+$docker->containerCreate($containerConfig);
 
 // You also need to set stream to true to get the logs, and tell which stream you want to attach
-$attachStream = $containerManager->attach('my-container-unique-name', [
+$attachStream = $docker->containerAttach('my-container-unique-name', [
     'stream' => true,
     'stdin' => true,
     'stdout' => true,
     'stderr' => true
 ]);
-$containerManager->start('my-container-unique-name');
+$docker->containerStart('my-container-unique-name');
 
 $attachStream->onStdout(function ($stdout) {
     echo $stdout;
@@ -124,18 +125,18 @@ $attachStream->onStderr(function ($stderr) {
 $attachStream->wait();
 ```
 
-If you read the following example, you will notice that we call the `attach` method before starting the container with
-`start`. This is normal, as otherwise during the time the container is started and the call to the `attach` endpoint
+If you read the following example, you will notice that we call the `containerAttach` method before starting the container with
+`containerStart`. This is normal, as otherwise during the time the container is started and the call to the `containerAttach` endpoint
 some logs may have been processed and you will loose this information. That's why it is strongly recommended to attach 
 the container before starting it.
 
 ## Interacting with a container
 
 WIth the last example we can now read the log a container in real time. However you may need to send input to this 
-container. This can be done by attaching a websocket with the `attachWebsocket` method of the `ContainerManager`
+container. This can be done by attaching a websocket with the `containerAttachWebsocket` method:`
 
 ```php
-$webSocketStream = $containerManager->attachWebsocket('my-container-unique-name', [
+$webSocketStream = $docker->containerAttachWebsocket('my-container-unique-name', [
     'stream' => true,
     'stdout' => true,
     'stderr' => true,
@@ -167,28 +168,23 @@ $containerConfig->setTty(true);
 
 Be aware that there is no distinction between stdout and stderr in this mode.
 
-
-## Mounting a Volume
-
-This example shows you can map your host volume `/home/myuser/myapp` to a container at `/app`
-
-```php
-$containerConfig->setVolumes(['/home/myuser/myapp' => (object) []]);
-
-$hostConfig = new HostConfig();
-// hostpath:containerpath
-$hostConfig->setBinds(['/home/myuser/myapp:/app']);
-
-$containerConfig->setHostConfig($hostConfig);
-```
-
 ## Port Mapping
 
 This example shows how you can map port 8080 on your host machine to port 80 on the container.
 
 ```php
+<?php
+
+use Docker\API\Model\ContainersCreatePostBody;
+use Docker\API\Model\HostConfig;
+use Docker\API\Model\PortBinding;
+use Docker\Docker;
+
+$docker = Docker::create();
+
+$containerConfig = new ContainersCreatePostBody();
 $containerConfig->setTty(true);
-$containerConfig->setExposedPorts(['80/tcp' => (object)[]]);
+$containerConfig->setExposedPorts(['80/tcp' => new \stdClass]);
 
 $portBinding = new PortBinding();
 $portBinding->setHostPort('8080');
@@ -199,4 +195,6 @@ $portMap['80/tcp'] = [$portBinding];
 
 $hostConfig = new HostConfig();
 $hostConfig->setPortBindings($portMap);
+
+$containerConfig->setHostConfig($hostConfig);
 ```

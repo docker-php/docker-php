@@ -36,7 +36,8 @@
         "amphp/socket": "^0.10.5"
     },
     "conflict": {
-        "amphp/socket": "<0.10.5"
+        "amphp/socket": "<0.10.5",
+        "amphp/artax": "<3.0"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",

@@ -12,58 +12,35 @@ use Http\Client\Common\PluginClientFactory;
 use Http\Client\HttpClient;
 use Http\Client\Socket\Client as SocketHttpClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
-use Psr\Http\Message\RequestInterface;
 
-class DockerClient implements HttpClient
+final class DockerClientFactory
 {
     /**
-     * @var HttpClient
+     * ( .
      */
-    private $httpClient;
-
-    public function __construct(PluginClientFactory $pluginClientFactory, $socketClientOptions = [])
+    public static function create(array $config = [], PluginClientFactory $pluginClientFactory = null): HttpClient
     {
-        $messageFactory = new GuzzleMessageFactory();
-        $socketClient = new SocketHttpClient($messageFactory, $socketClientOptions);
-        $host = \preg_match('/unix:\/\//', $socketClientOptions['remote_socket']) ? 'http://localhost' : $socketClientOptions['remote_socket'];
+        if (!\array_key_exists('remote_socket', $config)) {
+            $config['remote_socket'] = 'unix:///var/run/docker.sock';
+        }
 
-        $this->httpClient = $pluginClientFactory->createClient($socketClient, [
+        $messageFactory = new GuzzleMessageFactory();
+        $socketClient = new SocketHttpClient($messageFactory, $config);
+        $host = \preg_match('/unix:\/\//', $config['remote_socket']) ? 'http://localhost' : $config['remote_socket'];
+
+        $pluginClientFactory = $pluginClientFactory ?? new PluginClientFactory();
+
+        return $pluginClientFactory->createClient($socketClient, [
             new ContentLengthPlugin(),
             new DecoderPlugin(),
             new AddHostPlugin(new Uri($host)),
+        ], [
+            'client_name' => 'docker-client',
         ]);
     }
 
-    /**
-     * (@inheritdoc}.
-     */
-    public function sendRequest(RequestInterface $request)
+    public static function createFromEnv(PluginClientFactory $pluginClientFactory = null): HttpClient
     {
-        return $this->httpClient->sendRequest($request);
-    }
-
-    /**
-     * @return DockerClient
-     */
-    public static function create(PluginClientFactory $pluginClientFactory = null)
-    {
-        $pluginClientFactory = $pluginClientFactory ?? new PluginClientFactory();
-
-        return new self($pluginClientFactory, [
-            'remote_socket' => 'unix:///var/run/docker.sock',
-        ]);
-    }
-
-    /**
-     * Create a docker client from environment variables.
-     *
-     * @throws \RuntimeException Throw exception when invalid environment variables are given
-     *
-     * @return DockerClient
-     */
-    public static function createFromEnv(PluginClientFactory $pluginClientFactory = null)
-    {
-        $pluginClientFactory = $pluginClientFactory ?? new PluginClientFactory();
         $options = [
             'remote_socket' => \getenv('DOCKER_HOST') ? \getenv('DOCKER_HOST') : 'unix:///var/run/docker.sock',
         ];
@@ -93,6 +70,6 @@ class DockerClient implements HttpClient
             ];
         }
 
-        return new self($pluginClientFactory, $options);
+        return self::create($options, $pluginClientFactory);
     }
 }

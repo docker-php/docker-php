@@ -1,23 +1,19 @@
 # Basic Usage
 
-Once you have a instance of `Docker\Docker` you can get one the `Docker\Manager\*Manager` to call the API.
+`Docker\Docker` API Client offers all endpoints available for your version of Docker. Each endpoint as a strong PHPDoc
+documentation in its comment, so the best way to know what values to set for an endpoint and what it returns, is to go
+directly to the endpoint documentation in the code.
+
+As an example for listing container you can do:
 
 ```php
-
+<?php
 use Docker\Docker;
 
-$docker = new Docker();
-$containers = $docker->getContainerManager()->findAll();
+$docker = Docker::create();
+$containers = $this->getManager()->containerList();
+
+foreach ($containers as $container) {
+    var_dump($container->getNames());
+}
 ```
-
-There is 6 different manager:
-
- * `ContainerManager`: Handle calls against containers (find, create, attach, pause, ...)
- * `ImageManager`:  Calls for image (find, build, create, commit, ...)
- * `ExecManager`: Manage exec process in a container (create, start, kill, ...)
- * `VolumeManager`: Manage docker volumes (create, remove, find, ...)
- * `NetworkManager`: Manage docker network (create, remove, find, ...)
- * `MiscManager`: All other calls not corresponding to a previous Manager (authentication, version, events, ...)
- 
-You can check the [reference documentation](@TODO PHPDOC) for a list of all methods of each manager.
-

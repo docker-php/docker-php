@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Docker\Tests;
 
-use Docker\DockerClient;
+use Docker\DockerClientFactory;
+use Http\Client\HttpClient;
 
-class DockerClientTest extends TestCase
+class DockerClientFactoryTest extends TestCase
 {
     protected function tearDown(): void
     {
@@ -16,7 +17,7 @@ class DockerClientTest extends TestCase
 
     public function testStaticConstructor(): void
     {
-        $this->assertInstanceOf(DockerClient::class, DockerClient::create());
+        $this->assertInstanceOf(HttpClient::class, DockerClientFactory::create());
     }
 
     /**
@@ -26,7 +27,7 @@ class DockerClientTest extends TestCase
     public function testCreateFromEnvWithoutCertPath(): void
     {
         \putenv('DOCKER_TLS_VERIFY=1');
-        DockerClient::createFromEnv();
+        DockerClientFactory::createFromEnv();
     }
 
     public function testCreateCustomCa(): void
@@ -35,8 +36,8 @@ class DockerClientTest extends TestCase
         \putenv('DOCKER_CERT_PATH=/tmp');
 
         $count = \count(\get_resources('stream-context'));
-        $client = DockerClient::createFromEnv();
-        $this->assertInstanceOf(DockerClient::class, $client);
+        $client = DockerClientFactory::createFromEnv();
+        $this->assertInstanceOf(HttpClient::class, $client);
 
         $contexts = \get_resources('stream-context');
         $this->assertCount($count + 1, $contexts);
@@ -55,8 +56,8 @@ class DockerClientTest extends TestCase
         \putenv('DOCKER_PEER_NAME=test');
 
         $count = \count(\get_resources('stream-context'));
-        $client = DockerClient::createFromEnv();
-        $this->assertInstanceOf(DockerClient::class, $client);
+        $client = DockerClientFactory::createFromEnv();
+        $this->assertInstanceOf(HttpClient::class, $client);
 
         $contexts = \get_resources('stream-context');
         $this->assertCount($count + 1, $contexts);

@@ -25,7 +25,7 @@ class Docker extends Client
     public static function create($httpClient = null)
     {
         if (null === $httpClient) {
-            $httpClient = DockerClient::createFromEnv();
+            $httpClient = DockerClientFactory::createFromEnv();
         }
 
         return parent::create($httpClient);

@@ -14,7 +14,6 @@ use Amp\Socket\BasicSocketPool;
 use Amp\Socket\Certificate;
 use Amp\Socket\ClientTlsContext;
 use Amp\Socket\StaticSocketPool;
-use Docker\Amp\FixedSocketPool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DockerAsyncClient implements Client

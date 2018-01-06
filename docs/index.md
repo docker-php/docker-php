@@ -11,6 +11,7 @@ First you need to learn the basics of this library :
 * [Installation](installation.md)
 * [Connecting to Docker](connection.md)
 * [Basic usage](basic.md)
+* [Asynchronous Client](async.md)
 
 ## Cookbook
 

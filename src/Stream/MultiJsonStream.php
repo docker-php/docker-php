@@ -33,6 +33,7 @@ abstract class MultiJsonStream extends CallbackStream
         $jsonFrame = '';
         $level = 0;
 
+        // This is a
         while (!$jsonFrameEnd && !$this->stream->eof()) {
             $jsonChar = $this->stream->read(1);
 
@@ -40,6 +41,7 @@ abstract class MultiJsonStream extends CallbackStream
                 $inquote = !$inquote;
             }
 
+            // We ignore white space when it is not part of a quoted string.
             if (!$inquote && \in_array($jsonChar, [' ', "\r", "\n", "\t"], true)) {
                 continue;
             }
@@ -54,12 +56,13 @@ abstract class MultiJsonStream extends CallbackStream
                 if (0 === $level) {
                     $jsonFrameEnd = true;
                     $jsonFrame .= $jsonChar;
-
+                    $lastJsonChar = '';
                     continue;
                 }
             }
 
             $jsonFrame .= $jsonChar;
+            $lastJsonChar = $jsonChar;
         }
 
         // Invalid last json, or timeout, or connection close before receiving

@@ -383,7 +383,7 @@ class ContextBuilder
         if (!\array_key_exists($hash, $this->files)) {
             // Check if source is a directory or a file.
             if (\is_dir($source)) {
-                $this->fs->mirror($source, $directory.'/'.$hash);
+                $this->fs->mirror($source, $directory.'/'.$hash, null, ['copy_on_windows' => true]);
             } else {
                 $this->fs->copy($source, $directory.'/'.$hash);
             }

@@ -269,4 +269,31 @@ DOCKERFILE
         $this->assertInternalType('string', $content);
         $this->assertSame($context->toTar(), $content);
     }
+
+    public function testTraverseSymlinks(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $dir = \tempnam('', '');
+        \unlink($dir);
+        \mkdir($dir);
+        $file = $dir.'/test';
+
+        \file_put_contents($file, 'abc');
+
+        $linkFile = $file.'-symlink';
+        \symlink($file, $linkFile);
+
+        $contextBuilder->addFile('/foo', $dir);
+
+        $context = $contextBuilder->getContext();
+
+        $filename = \preg_replace(<<<DOCKERFILE
+#FROM base
+ADD (.+?) /foo#
+DOCKERFILE
+            , '$1', $context->getDockerfileContent());
+        \unlink($file);
+        $context->setCleanup(false);
+        $this->assertStringEqualsFile($context->getDirectory().'/'.$filename.'/test-symlink', 'abc');
+    }
 }

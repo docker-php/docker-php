@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace Docker\Resource;
 
-use Docker\API\Resource\SystemResourceTrait as BaseSystemResourceTrait;
+use Docker\API\Endpoint\SystemEvents;
 use Docker\Docker;
 use Docker\Stream\EventStream;
 use Joli\Jane\OpenApi\Runtime\Client\Resource;
 
 trait SystemResourceTrait
 {
-    use BaseSystemResourceTrait {
-        systemEvents as systemEventsLegacy;
-    }
-
-    public function systemEvents(array $parameters = [], string $fetch = self::FETCH_OBJECT)
+    /**
+     * @see \Docker\API\Resource\SystemResourceTrait::systemEvents
+     * {@inheritdoc}
+     */
+    public function systemEvents(array $queryParameters = [], string $fetch = self::FETCH_OBJECT)
     {
-        $response = $this->systemEventsLegacy($parameters, Docker::FETCH_RESPONSE);
+        $endpoint = new SystemEvents($queryParameters);
+        $response = $this->executePsr7Endpoint($endpoint, Docker::FETCH_RESPONSE);
 
         if (200 === $response->getStatusCode()) {
             if (self::FETCH_STREAM === $fetch) {
@@ -35,6 +36,10 @@ trait SystemResourceTrait
 
                 return $eventList;
             }
+        }
+
+        if (Resource::FETCH_OBJECT === $fetch) {
+            return $endpoint->transformResponseBody((string) $response->getBody(), $response->getStatusCode(), $this->serializer);
         }
 
         return $response;

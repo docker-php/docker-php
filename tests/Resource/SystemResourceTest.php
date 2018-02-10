@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Docker\Tests\Resource;
 
 use Docker\API\Model\EventsGetResponse200;
-use Docker\Docker;
 use Docker\Tests\TestCase;
 
 class SystemResourceTest extends TestCase
@@ -18,34 +17,25 @@ class SystemResourceTest extends TestCase
         return self::getDocker();
     }
 
-    public function testGetEventsStream(): void
+    public function testGetEvents(): void
     {
         $stream = $this->getManager()->systemEvents([
             'since' => (string) (\time() - 1),
             'until' => (string) (\time() + 4),
-        ], Docker::FETCH_STREAM);
+        ]);
+
         $lastEvent = null;
 
         $stream->onFrame(function ($event) use (&$lastEvent): void {
             $lastEvent = $event;
         });
 
-        self::getDocker()->imageCreate(null, [
+        self::getDocker()->imageCreate('', [
             'fromImage' => 'busybox:latest',
         ]);
+
         $stream->wait();
 
         $this->assertInstanceOf(EventsGetResponse200::class, $lastEvent);
-    }
-
-    public function testGetEventsObject(): void
-    {
-        $events = $this->getManager()->systemEvents([
-            'since' => (string) (\time() - (60 * 60 * 24)),
-            'until' => (string) \time(),
-        ], Docker::FETCH_OBJECT);
-
-        $this->assertInternalType('array', $events);
-        $this->assertInstanceOf(EventsGetResponse200::class, $events[0]);
     }
 }

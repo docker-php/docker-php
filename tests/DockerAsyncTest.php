@@ -26,9 +26,9 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
             $containerConfig->setAttachStdout(true);
             $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
 
-            $response = yield $docker->imageCreate(null, [
+            $response = yield $docker->imageCreate('', [
                 'fromImage' => 'busybox:latest',
-            ], DockerAsync::FETCH_RESPONSE);
+            ], [], DockerAsync::FETCH_RESPONSE);
 
             yield $response->getBody();
 

@@ -11,8 +11,6 @@ use Docker\API\ClientAsync;
  */
 class DockerAsync extends ClientAsync
 {
-    public const FETCH_STREAM = 'stream';
-
     public static function create($httpClient = null)
     {
         if (null === $httpClient) {

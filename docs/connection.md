@@ -60,7 +60,7 @@ $config = [
 ];
 $guzzle = new GuzzleClient($config);
 $adapter = new GuzzleAdapter($guzzle);
-$docker = Docker::create(($adapter);
+$docker = Docker::create($adapter);
 ```
 
 However not all clients fully support Docker daemon features, such as unix socket domain connection, real time streaming, ...

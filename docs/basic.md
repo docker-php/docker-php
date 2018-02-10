@@ -11,7 +11,7 @@ As an example for listing container you can do:
 use Docker\Docker;
 
 $docker = Docker::create();
-$containers = $this->getManager()->containerList();
+$containers = $docker->containerList();
 
 foreach ($containers as $container) {
     var_dump($container->getNames());

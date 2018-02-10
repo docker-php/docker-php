@@ -27,41 +27,13 @@ use Docker\Docker;
 $inputStream = create_tar_stream_resource();
 $docker = Docker::create();
 
-$buildInfos = $docker->imageBuild($inputStream);
-
-foreach ($buildInfos as $buildInfo) {
-    echo $buildInfo->getStream();
-}
-```
-
-### Docker::FETCH_STREAM
-
-Use this mode if you want to stream, in real time, the log, of your build. It returns a `BuildStream` which accept to 
-add callback with the `onFrame` method. Once all callback have been set you need to call the `wait` to really read the
-stream in real time.
-
-The callback will receive a `BuildInfo` object once a line is available:
-
-```php
-<?php
-
-use Docker\Docker;
-
-$inputStream = create_tar_stream_resource();
-$docker = Docker::create();
-
-$buildStream = $docker->imageBuild($inputStream, [], Docker::FETCH_STREAM);
+$buildStream = $docker->imageBuild($inputStream);
 $buildStream->onFrame(function (BuildInfo $buildInfo) {
     echo $buildInfo->getStream();
 });
 
 $buildStream->wait();
 ```
-
-Since the build stream does not wait by default the end of the response, you can use this mode to do others things 
-while your image is being built. However if you never call the wait method, and build is not finish before the 
-execution of your PHP script, it will be canceled as the connection will be terminated.
-
 
 ### Docker::FETCH_RESPONSE
 

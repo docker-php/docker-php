@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Docker\Tests\Resource;
 
+use Docker\API\Client;
 use Docker\API\Model\AuthConfig;
 use Docker\Context\ContextBuilder;
-use Docker\Docker;
 use Docker\Tests\TestCase;
-use Joli\Jane\OpenApi\Runtime\Client\Resource;
 
 class ImageResourceTest extends TestCase
 {
@@ -68,7 +67,7 @@ class ImageResourceTest extends TestCase
         $contextBuilder->add('/test', 'test file content');
 
         $context = $contextBuilder->getContext();
-        $this->getManager()->imageBuild($context->read(), ['t' => 'localhost:5000/test-image'], [], Resource::FETCH_OBJECT);
+        $this->getManager()->imageBuild($context->read(), ['t' => 'localhost:5000/test-image'], [], Client::FETCH_OBJECT);
 
         $registryConfig = new AuthConfig();
         $registryConfig->setServeraddress('localhost:5000');

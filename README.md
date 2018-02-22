@@ -13,6 +13,7 @@ The test suite currently passes against Docker Remote API v1.25 to v1.36.
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/docker-php/docker-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/docker-php/docker-php)
 [![Quality Score](https://img.shields.io/scrutinizer/g/docker-php/docker-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/docker-php/docker-php)
 [![Total Downloads](https://img.shields.io/packagist/dt/docker-php/docker-php.svg?style=flat-square)](https://packagist.org/packages/docker-php/docker-php)
+[![#docker-php on Slack](http://slack.httplug.io/badge.svg)](http://slack.httplug.io)
 
 Installation
 ------------

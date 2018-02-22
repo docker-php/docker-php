@@ -4,7 +4,7 @@ Docker PHP
 **Docker PHP** (for lack of a better name) is a [Docker](http://docker.com/) client written in PHP.
 This library aim to reach 100% API support of the Docker Engine.
 
-The test suite currently passes against the [Docker Remote API v1.24](http://docs.docker.com/reference/api/docker_remote_api_v1.24/).
+The test suite currently passes against Docker Remote API v1.25 to v1.36.
 
 [![Documentation Status](https://readthedocs.org/projects/docker-php/badge/?version=latest)](http://docker-php.readthedocs.org/en/latest/)
 [![Latest Version](https://img.shields.io/github/release/docker-php/docker-php.svg?style=flat-square)](https://github.com/docker-php/docker-php/releases)
@@ -14,8 +14,6 @@ The test suite currently passes against the [Docker Remote API v1.24](http://doc
 [![Quality Score](https://img.shields.io/scrutinizer/g/docker-php/docker-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/docker-php/docker-php)
 [![Total Downloads](https://img.shields.io/packagist/dt/docker-php/docker-php.svg?style=flat-square)](https://packagist.org/packages/docker-php/docker-php)
 
-
-
 Installation
 ------------
 
@@ -23,6 +21,16 @@ The recommended way to install Docker PHP is of course to use [Composer](http://
 
 ```bash
 composer require docker-php/docker-php
+```
+
+Docker API Version
+------------------
+
+By default it will use the last version of docker api available, if you want to fix a version (like 1.25) you can add this 
+requirement to composer:
+
+```bash
+composer require "docker-php/docker-php-api:4.1.25.*"
 ```
 
 Usage
@@ -50,21 +58,10 @@ Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-
-Versioning
-----------
-
-Docker PHP does not follow the classic [semver versioning](http://semver.org/), but follow the Docker Remote API
-versioning starting at the v1.21, the master branch will follow the next major release on the Docker Remote API.
-
-Changes on the core of this library not related to the API, will be merged back to previous versions
-on a best effort basis.
-
 Credits
 -------
 
 This README heavily inspired by [willdurand/Negotiation](https://github.com/willdurand/Negotiation) by @willdurand. This guy is pretty awesome.
-
 
 License
 -------

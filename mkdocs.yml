@@ -9,6 +9,7 @@ pages:
       - Installation: installation.md
       - Connecting to Docker: connection.md
       - Basic Usage: basic.md
+      - Asynchronous Client: async.md
   - Cookbook:
       - Running a container: cookbook/container-run.md
       - Build an image: cookbook/build-image.md

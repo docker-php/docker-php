@@ -14,6 +14,8 @@ env:
   global:
     - TEST_COMMAND="composer test"
   matrix:
+    - DOCKER_API_VERSION=1.36 DOCKER_VERSION=18.02.0~ce-0~ubuntu
+    - DOCKER_API_VERSION=1.36 DOCKER_VERSION=18.01.0~ce-0~ubuntu
     - DOCKER_API_VERSION=1.35 DOCKER_VERSION=17.12.0~ce-0~ubuntu
     - DOCKER_API_VERSION=1.34 DOCKER_VERSION=17.11.0~ce-0~ubuntu
     - DOCKER_API_VERSION=1.33 DOCKER_VERSION=17.10.0~ce-0~ubuntu
@@ -37,12 +39,12 @@ matrix:
           - docker
       env: DOCKER_API_VERSION=1.25 DOCKER_VERSION=17.03.2~ce-0~ubuntu-trusty COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true TEST_COMMAND="composer test-ci"
     - php: 7.1
-      env: DOCKER_API_VERSION=1.35 DOCKER_VERSION=17.12.0~ce-0~ubuntu TEST_COMMAND="composer lint"
+      env: DOCKER_API_VERSION=1.36 DOCKER_VERSION=18.02.0~ce-0~ubuntu TEST_COMMAND="composer lint"
     - php: 7.2
       sudo: required
       services:
           - docker
-      env: DOCKER_API_VERSION=1.35 DOCKER_VERSION=17.12.0~ce-0~ubuntu
+      env: DOCKER_API_VERSION=1.36 DOCKER_VERSION=18.02.0~ce-0~ubuntu
 
 before_install:
   - sudo apt-get update

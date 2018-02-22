@@ -39,9 +39,10 @@ Loop::run(function () {
 
     $containerCreate = yield $docker->containerCreate($containerConfig);
     $containerStart = yield $docker->containerStart($containerCreate->getId());
+    /** @var \Docker\API\Model\ContainersIdJsonGetResponse200 $containerInfo */
     $containerInfo = yield $docker->containerInspect($containerCreate->getId());
 
-    $this->assertSame($containerCreate->getId(), $containerInfo->getId());
+    var_dump($containerInfo->getName());
 });
 ```
 

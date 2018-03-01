@@ -1,6 +1,6 @@
 # Asynchronous Client
 
-Starting from 2.0 Docker-PHP propose an Asynchronous PHP Client using [Amp](https://amphp.org/) and 
+Starting from 2.0, Docker-PHP proposes an Asynchronous PHP Client using [Amp](https://amphp.org/) and 
 [Artax](https://amphp.org/artax/).
 
 ## Installation

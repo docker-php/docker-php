@@ -42,7 +42,7 @@ to learn about possible options.
 
 ## Custom client
 
-In fact `Docker\Docker` accept any client from [Httplug](http://httplug.io/) (respecting the `Http\Client\HttpClient` interface).
+In fact `Docker\Docker` accepts any client from [Httplug](http://httplug.io/) (respecting the `Http\Client\HttpClient` interface).
 
 So you can use [React](https://github.com/reactphp/http-client), [Guzzle](http://docs.guzzlephp.org/en/latest/) 
 or any [other adapters / clients](http://docs.php-http.org/en/latest/clients.html).
@@ -65,10 +65,10 @@ $docker = Docker::create($adapter);
 
 However not all clients fully support Docker daemon features, such as unix socket domain connection, real time streaming, ...
 That's why it's strongly encouraged to use the [Socket Http Client](http://docs.php-http.org/en/latest/clients/socket-client.html)
-which support all the docker daemon features.
+which supports all the docker daemon features.
 
 Also this client needs to be decorated by [a plugin system](http://docs.php-http.org/en/latest/plugins/index.html). 
 At least 2 plugins are required:
 
  * [Content-Length Plugin](http://docs.php-http.org/en/latest/plugins/content-length.html): Which will set correct header `Content-Length` header for the request;
- * [Decoder Plugin](http://docs.php-http.org/en/latest/plugins/decoder.html): Which allow to manipulate chunked and/or encoded response
+ * [Decoder Plugin](http://docs.php-http.org/en/latest/plugins/decoder.html): Which can manipulate a chunked and/or encoded response

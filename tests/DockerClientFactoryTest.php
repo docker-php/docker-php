@@ -22,7 +22,7 @@ class DockerClientFactoryTest extends TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Connection to docker has been set to use TLS, but no PATH is defined for certificate in DOCKER_CERT_PATH docker environnement variable
+     * @expectedExceptionMessage Connection to docker has been set to use TLS, but no PATH is defined for certificate in DOCKER_CERT_PATH docker environment variable
      */
     public function testCreateFromEnvWithoutCertPath(): void
     {

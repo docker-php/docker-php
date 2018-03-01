@@ -13,7 +13,7 @@ To use the 1.29 version you can do the following:
 composer require docker-php/docker-php-api:4.1.29.*
 ```
 
-Do not use `^4.1.29.0`; otherwise, you will also depend on the lastest version. The first digit of this version number matches the 
+Do not use `^4.1.29.0`; otherwise, you will also depend on the latest version. The first digit of this version number matches the 
 major version of [Jane PHP](https://github.com/janephp/janephp), which is the lib generating the API Client code.
 
 Note that some endpoints of the Docker API may have BC breaks during minor version updates. This library may

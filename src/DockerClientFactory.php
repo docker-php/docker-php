@@ -47,7 +47,7 @@ final class DockerClientFactory
 
         if (\getenv('DOCKER_TLS_VERIFY') && '1' === \getenv('DOCKER_TLS_VERIFY')) {
             if (!\getenv('DOCKER_CERT_PATH')) {
-                throw new \RuntimeException('Connection to docker has been set to use TLS, but no PATH is defined for certificate in DOCKER_CERT_PATH docker environnement variable');
+                throw new \RuntimeException('Connection to docker has been set to use TLS, but no PATH is defined for certificate in DOCKER_CERT_PATH docker environment variable');
             }
 
             $cafile = \getenv('DOCKER_CERT_PATH').DIRECTORY_SEPARATOR.'ca.pem';

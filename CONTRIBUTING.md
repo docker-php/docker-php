@@ -10,7 +10,7 @@ please be as precise as possible. Here is a little list of required information:
 
  - Precise description of the bug
  - Details of your environment (for example: OS, PHP version, installed extensions)
- - Backtrace which might help identifing the bug
+ - Backtrace which might help identifying the bug
 
 
 ## Feature requests
@@ -75,7 +75,7 @@ endpoint or requested / returned object, you will need to update the `docker-swa
 There is a bash script at the root of this repository `generate.sh` which helps launching the command to generate files according to the
 specification.
 
-When changing the specification don't hesite to do 2 commits for better reading:
+When changing the specification don't hesitate to do 2 commits for better reading:
 
  * One with only changes to the specification
  * One with changes on the generated code

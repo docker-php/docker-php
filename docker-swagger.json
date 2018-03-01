@@ -87,6 +87,9 @@
         },
         "Propagation": {
           "type": "string"
+        },
+        "Type": {
+          "type": "string"
         }
       }
     },

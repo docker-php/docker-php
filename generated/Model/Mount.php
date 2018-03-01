@@ -32,6 +32,10 @@ class Mount
      * @var string
      */
     protected $propagation;
+    /**
+     * @var string
+     */
+    protected $type;
 
     /**
      * @return string
@@ -169,6 +173,26 @@ class Mount
     public function setPropagation($propagation = null)
     {
         $this->propagation = $propagation;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return self
+     */
+    public function setType($type = null)
+    {
+        $this->type = $type;
 
         return $this;
     }

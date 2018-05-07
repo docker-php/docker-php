@@ -58,6 +58,17 @@ seconds)
 $docker->containerWait('my-container-unique-name');
 ```
 
+## Stopping the container
+
+Once your container is started you can stop it by using the `containerStop` method. You can use the id of the container or the name:
+
+```php
+$docker->containerStop($containerCreateResult->getId());
+// Or
+$docker->containerStop('my-container-unique-name');
+```
+
+
 ## Reading logs in real time
 
 Sometimes you will need to read logs in real time for a container. You can use the `containerAttach` method for that. 

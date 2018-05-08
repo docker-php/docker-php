@@ -58,6 +58,17 @@ seconds)
 $docker->containerWait('my-container-unique-name');
 ```
 
+## Stopping the container
+
+Once your container is started you can stop it by using the `containerStop` method. You can use the id of the container or the name:
+
+```php
+$docker->containerStop($containerCreateResult->getId());
+// Or
+$docker->containerStop('my-container-unique-name');
+```
+
+
 ## Reading logs in real time
 
 Sometimes you will need to read logs in real time for a container. You can use the `containerAttach` method for that. 
@@ -98,13 +109,12 @@ method need extra configuration:
 $containerConfig = new ContainersCreatePostBody();
 $containerConfig->setImage('busybox:latest');
 $containerConfig->setCmd(['echo', 'I am running a command']);
-$containerConfig->setNames(['my-container-unique-name']]);
 // You need to attach stream of the container to docker
 $containerConfig->setAttachStdin(true);
 $containerConfig->setAttachStdout(true);
 $containerConfig->setAttachStderr(true);
 
-$docker->containerCreate($containerConfig);
+$docker->containerCreate($containerConfig, ['name' => 'my-container-unique-name']);
 
 // You also need to set stream to true to get the logs, and tell which stream you want to attach
 $attachStream = $docker->containerAttach('my-container-unique-name', [

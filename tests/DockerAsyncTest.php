@@ -48,11 +48,15 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
         Loop::run(function () {
             $docker = DockerAsync::create();
 
-            $actualEvent = null;
+            $receivedEvents = [];
             /** @var ArtaxCallbackStream $events */
-            $events = yield $docker->systemEvents();
-            $events->onFrame(function ($event) use (&$actualEvent): void {
-                $actualEvent = $event;
+            $events = yield $docker->systemEvents(
+                [
+                    'filters' => json_encode(['type' => ['container'], 'action' => ['create']])
+                ]
+            );
+            $events->onFrame(function ($event) use (&$receivedEvents): void {
+                $receivedEvents[] = $event;
             });
             $events->listen();
 
@@ -67,8 +71,9 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
 
             $events->cancel();
 
-            $this->assertInstanceOf(EventsGetResponse200::class, $actualEvent);
-            $this->assertSame($actualEvent->getActor()->getId(), $containerCreate->getId());
+            $this->assertCount(1, $receivedEvents);
+            $this->assertInstanceOf(EventsGetResponse200::class, current($receivedEvents));
+            $this->assertSame(current($receivedEvents)->getActor()->getId(), $containerCreate->getId());
         });
     }
 }

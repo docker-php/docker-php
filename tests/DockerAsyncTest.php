@@ -9,6 +9,7 @@ use Amp\Loop;
 use Docker\API\Model\ContainersCreatePostBody;
 use Docker\API\Model\EventsGetResponse200;
 use Docker\DockerAsync;
+use Docker\Stream\ArtaxCallbackStream;
 
 class DockerAsyncTest extends \PHPUnit\Framework\TestCase
 {
@@ -48,7 +49,7 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
             $docker = DockerAsync::create();
 
             $actualEvent = null;
-
+            /** @var ArtaxCallbackStream $events */
             $events = yield $docker->systemEvents();
             $events->onFrame(function ($event) use (&$actualEvent): void {
                 $actualEvent = $event;
@@ -62,7 +63,7 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
             $containerCreate = yield $docker->containerCreate($containerConfig);
 
             // Let a chance for the container create event to be dispatched to the consumer
-            yield new Delayed(100);
+            yield new Delayed(1000);
 
             $events->cancel();
 

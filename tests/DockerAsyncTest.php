@@ -53,7 +53,7 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
             /** @var ArtaxCallbackStream $events */
             $events = yield $docker->systemEvents(
                 [
-                    'filters' => json_encode(['type' => ['container'], 'action' => ['create']])
+                    'filters' => \json_encode(['type' => ['container'], 'action' => ['create']]),
                 ]
             );
             $events->onFrame(function ($event) use (&$receivedEvents): void {
@@ -73,14 +73,14 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
 
             $events->cancel();
 
-            $matchedEvents = array_filter(
+            $matchedEvents = \array_filter(
                 $receivedEvents,
                 function ($event) use ($containerCreate) {
                     return \is_object($event)
                         && $event instanceof EventsGetResponse200
-                        && $event->getAction() === 'create'
-                        && $event->getType() === 'container'
-                        && $event->getActor() !== null
+                        && 'create' === $event->getAction()
+                        && 'container' === $event->getType()
+                        && null !== $event->getActor()
                         && $event->getActor()->getID() === $containerCreate->getId();
                 }
             );

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Docker\Tests;
 
+use Amp\Delayed;
 use Amp\Loop;
 use Docker\API\Model\ContainersCreatePostBody;
+use Docker\API\Model\EventsGetResponse200;
 use Docker\DockerAsync;
 
 class DockerAsyncTest extends \PHPUnit\Framework\TestCase
@@ -37,6 +39,35 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
             $containerInfo = yield $docker->containerInspect($containerCreate->getId());
 
             $this->assertSame($containerCreate->getId(), $containerInfo->getId());
+        });
+    }
+
+    public function testSystemEventsAllowTheConsumptionOfDockerEvents(): void
+    {
+        Loop::run(function () {
+            $docker = DockerAsync::create();
+
+            $actualEvent = null;
+
+            $events = yield $docker->systemEvents();
+            $events->onFrame(function ($event) use (&$actualEvent): void {
+                $actualEvent = $event;
+            });
+            $events->listen();
+
+            $containerConfig = new ContainersCreatePostBody();
+            $containerConfig->setImage('busybox:latest');
+            $containerConfig->setCmd(['echo', '-n', 'output']);
+
+            $containerCreate = yield $docker->containerCreate($containerConfig);
+
+            // Let a chance for the container create event to be dispatched to the consumer
+            yield new Delayed(100);
+
+            $events->cancel();
+
+            $this->assertInstanceOf(EventsGetResponse200::class, $actualEvent);
+            $this->assertSame($actualEvent->getActor()->getId(), $containerCreate->getId());
         });
     }
 }

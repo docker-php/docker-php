@@ -7,6 +7,7 @@ namespace Docker\Tests;
 use Amp\Delayed;
 use Amp\Loop;
 use Docker\API\Model\ContainersCreatePostBody;
+use Docker\API\Model\ContainersCreatePostResponse201;
 use Docker\API\Model\EventsGetResponse200;
 use Docker\DockerAsync;
 use Docker\Stream\ArtaxCallbackStream;
@@ -64,6 +65,7 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
             $containerConfig->setImage('busybox:latest');
             $containerConfig->setCmd(['echo', '-n', 'output']);
 
+            /** @var ContainersCreatePostResponse201 $containerCreate */
             $containerCreate = yield $docker->containerCreate($containerConfig);
 
             // Let a chance for the container create event to be dispatched to the consumer
@@ -71,9 +73,19 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
 
             $events->cancel();
 
-            $this->assertCount(1, $receivedEvents);
-            $this->assertInstanceOf(EventsGetResponse200::class, current($receivedEvents));
-            $this->assertSame(current($receivedEvents)->getActor()->getId(), $containerCreate->getId());
+            $matchedEvents = array_filter(
+                $receivedEvents,
+                function ($event) use ($containerCreate) {
+                    return \is_object($event)
+                        && $event instanceof EventsGetResponse200
+                        && $event->getAction() === 'create'
+                        && $event->getType() === 'container'
+                        && $event->getActor() !== null
+                        && $event->getActor()->getID() === $containerCreate->getId();
+                }
+            );
+
+            $this->assertCount(1, $matchedEvents);
         });
     }
 }

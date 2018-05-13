@@ -42,10 +42,8 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
         });
     }
 
-    /** @group sys */
     public function testSystemEventsAllowTheConsumptionOfDockerEvents(): void
     {
-        \putenv('AMP_DEBUG=1');
         $matchedEvents = [];
 
         Loop::run(function () use (&$matchedEvents) {
@@ -78,8 +76,8 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
 
             yield $docker->containerCreate($containerConfig);
 
-            Loop::delay(1000, function () use ($events): void {
-                $events->cancel();
+            Loop::delay(1000, function (): void {
+                Loop::stop();
             });
         });
 

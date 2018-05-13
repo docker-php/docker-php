@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Docker\Tests;
 
-use Amp\Delayed;
 use Amp\Loop;
 use Docker\API\Model\ContainersCreatePostBody;
-use Docker\API\Model\ContainersCreatePostResponse201;
 use Docker\API\Model\EventsGetResponse200;
 use Docker\DockerAsync;
 use Docker\Stream\ArtaxCallbackStream;
@@ -44,48 +42,47 @@ class DockerAsyncTest extends \PHPUnit\Framework\TestCase
         });
     }
 
+    /** @group sys */
     public function testSystemEventsAllowTheConsumptionOfDockerEvents(): void
     {
-        Loop::run(function () {
+        \putenv('AMP_DEBUG=1');
+        $matchedEvents = [];
+
+        Loop::run(function () use (&$matchedEvents) {
             $docker = DockerAsync::create();
 
-            $receivedEvents = [];
             /** @var ArtaxCallbackStream $events */
-            $events = yield $docker->systemEvents(
-                [
-                    'filters' => \json_encode(['type' => ['container'], 'action' => ['create']]),
-                ]
-            );
-            $events->onFrame(function ($event) use (&$receivedEvents): void {
-                $receivedEvents[] = $event;
+            $events = yield $docker->systemEvents([
+                'filters' => \json_encode(
+                    [
+                        'type' => ['container'],
+                        'action' => ['create'],
+                    ]
+                ),
+            ]);
+            $events->onFrame(function ($event) use (&$matchedEvents): void {
+                if (\is_object($event)
+                    && $event instanceof EventsGetResponse200
+                    && 'create' === $event->getAction()
+                    && 'container' === $event->getType()
+                ) {
+                    $matchedEvents[] = $event;
+                }
             });
+
             $events->listen();
 
             $containerConfig = new ContainersCreatePostBody();
             $containerConfig->setImage('busybox:latest');
             $containerConfig->setCmd(['echo', '-n', 'output']);
 
-            /** @var ContainersCreatePostResponse201 $containerCreate */
-            $containerCreate = yield $docker->containerCreate($containerConfig);
+            yield $docker->containerCreate($containerConfig);
 
-            // Let a chance for the container create event to be dispatched to the consumer
-            yield new Delayed(1000);
-
-            $events->cancel();
-
-            $matchedEvents = \array_filter(
-                $receivedEvents,
-                function ($event) use ($containerCreate) {
-                    return \is_object($event)
-                        && $event instanceof EventsGetResponse200
-                        && 'create' === $event->getAction()
-                        && 'container' === $event->getType()
-                        && null !== $event->getActor()
-                        && $event->getActor()->getID() === $containerCreate->getId();
-                }
-            );
-
-            $this->assertCount(1, $matchedEvents);
+            Loop::delay(1000, function () use ($events): void {
+                $events->cancel();
+            });
         });
+
+        $this->assertCount(1, $matchedEvents);
     }
 }

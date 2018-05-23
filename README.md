@@ -54,6 +54,10 @@ Run it using [PHPUnit](http://phpunit.de/):
 $ composer test
 ```
 
+Modifications
+-------
+Please checkout branch 1.25 - tag v2.0.1 "Generated/Normalized fixed".
+
 Contributing
 ------------
 

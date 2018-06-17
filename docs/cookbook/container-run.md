@@ -208,3 +208,29 @@ $hostConfig->setPortBindings($portMap);
 
 $containerConfig->setHostConfig($hostConfig);
 ```
+
+## Executing a command on a running container 
+
+This example shows how you can execute an command on any running container. It is same as `docker exec CONTAINER_ID some_command `.
+
+```php
+<?php
+use Docker\Docker;
+use Docker\API\Model\ContainersIdExecPostBody;
+use Docker\API\Model\ExecIdStartPostBody;
+
+$docker = Docker::create();
+
+$execConfig = new ContainersIdExecPostBody();
+$execConfig->setTty(true);
+$execConfig->setAttachStdout(true);
+$execConfig->setAttachStderr(true);
+$execConfig->setCmd(['mkdir', '/tmp/testDir']);
+
+$execid = $docker->containerExec('android',$execConfig)->getId();
+$execStartConfig = new ExecIdStartPostBody();
+$execStartConfig->setDetach(false);
+$output = $docker->execStart($execid,$execStartConfig);
+
+var_dump($output);
+```

@@ -230,7 +230,22 @@ $execConfig->setCmd(['mkdir', '/tmp/testDir']);
 $execid = $docker->containerExec('android',$execConfig)->getId();
 $execStartConfig = new ExecIdStartPostBody();
 $execStartConfig->setDetach(false);
-$output = $docker->execStart($execid,$execStartConfig);
 
-var_dump($output);
+// Execute the command 
+$stream = $docker->execStart($execid,$execStartConfig);
+
+// To see the output stream of the 'exec' command
+$stdoutText = "";
+$stderrText = "";
+
+$stream->onStdout(function ($stdout) use (&$stdoutText) {
+    $stdoutText .= $stdout;
+});
+
+$stream->onStderr(function ($stderr) use (&$stderrText) {
+    $stderrText .= $stderr;
+});
+
+$stream->wait();
+var_dump([ "stdout" => $stdoutText, "stderr" => $stderrText ]) ;
 ```

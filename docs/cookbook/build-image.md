@@ -37,7 +37,7 @@ $buildStream->wait();
 
 ### Docker::FETCH_RESPONSE
 
-The build function will return the raw [PSR7](http://www.php-fig.org/psr/psr-7/) Response. It's up too you handle 
+The build function will return the raw [PSR7](http://www.php-fig.org/psr/psr-7/) Response. It's up to you handle 
 decoding and receiving correct output in this case.
 
 ## Context

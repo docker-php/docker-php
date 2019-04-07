@@ -28,7 +28,7 @@
         "amphp/artax": "To use the async api"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0",
+        "phpunit/phpunit": "^7.0",
         "friendsofphp/php-cs-fixer": "2.8.1",
         "amphp/artax": "^3.0",
         "amphp/socket": "^0.10.5"

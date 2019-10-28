@@ -21,7 +21,8 @@
         "php-http/socket-client": "^1.3",
         "php-http/message": "^1.0",
         "symfony/filesystem": "^2.3 || ^3.0 || ^4.0",
-        "symfony/process": "^2.3 || ^3.0 || ^4.0"
+        "symfony/process": "^2.3 || ^3.0 || ^4.0",
+        "jane-php/open-api-runtime": "4.2"
     },
     "suggest": {
         "php-http/httplug-bundle": "For integration with Symfony",

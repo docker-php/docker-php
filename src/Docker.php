@@ -6,7 +6,6 @@ namespace Docker;
 
 use Docker\API\Client;
 use Docker\API\Endpoint\SystemInfo;
-use Docker\API\Exception\BadRequestException;
 use Docker\API\Model\AuthConfig;
 use Docker\API\Model\ExecIdStartPostBody;
 use Docker\Endpoint\ContainerAttach;
@@ -17,6 +16,7 @@ use Docker\Endpoint\ImageBuild;
 use Docker\Endpoint\ImageCreate;
 use Docker\Endpoint\ImagePush;
 use Docker\Endpoint\SystemEvents;
+use Docker\Exception\BadRequestException;
 
 /**
  * Docker\Docker.
@@ -90,28 +90,31 @@ class Docker extends Client
     public static function create(
         $httpClient = null,
         array $additionalPlugins = [],
-        array $additionalNormalizers = []
+        array $additionalNormalizers = [],
+        bool $applyServerPlugins = true
     ): self
     {
         if (null === $httpClient) {
             $httpClient = DockerClientFactory::createFromEnv();
+            $applyServerPlugins = false;
         }
 
-        $client = parent::create($httpClient, $additionalPlugins, $additionalNormalizers);
-        $testClient = $client->executeRawEndpoint(new SystemInfo())->getBody()->getContents();
+        $client = parent::create($httpClient, $additionalPlugins, $additionalNormalizers, $applyServerPlugins);
+        $response = $client->executeRawEndpoint(new SystemInfo());
+        $testClient = $response->getBody()->getContents();
         $jsonObj = json_decode($testClient);
 
         if ($jsonObj !== null) {
             if (isset($jsonObj->message)) {
                 // Check if the client is too new
                 if (strpos($jsonObj->message, 'client version') !== false && strpos($jsonObj->message, 'is too new') !== false) {
-                    throw new BadRequestException("The client version is not supported by your version of Docker. Message: {$jsonObj->message}");
+                    throw new BadRequestException("The client version is not supported by your version of Docker. Message: {$jsonObj->message}", $response);
                 } else {
-                    throw new BadRequestException($jsonObj->message);
+                    throw new BadRequestException($jsonObj->message, $response);
                 }
             }
         } else {
-            throw new BadRequestException("Failed to decode JSON.");
+            throw new BadRequestException("Failed to decode JSON.", $response);
         }
         return $client;
     }

@@ -20,8 +20,17 @@ composer require beluga-php/docker-php
 
 ## Docker API Version
 
-By default it will use the last version of docker api available, if you want to fix a version (like 1.41) you can add this
-requirement to composer:
+Each release line targets a Docker API version. The 1.45 client uses API v1.45 by default.
+
+You can override the version used in request URLs when connecting to a Docker daemon that no longer accepts v1.45:
+
+```bash
+DOCKER_API_VERSION=1.52 php your-script.php
+```
+
+This only changes the API version in request URLs. The generated models and endpoints still use the v1.45 specification.
+
+To use an older API specification, install the matching API package:
 
 ```bash
 composer require "beluga-php/docker-php-api:6.1.41.*"

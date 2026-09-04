@@ -26,6 +26,10 @@ final class DockerClientFactory
 
         $uriFactory = Psr17FactoryDiscovery::findUriFactory();
         $host = preg_match('/unix:\/\//', $config['remote_socket']) ? 'http://localhost' : $config['remote_socket'];
+        $dockerApiVersion = ltrim(getenv('DOCKER_API_VERSION') ?: 'v1.45', '/');
+        if (!str_starts_with($dockerApiVersion, 'v')) {
+            $dockerApiVersion = 'v'.$dockerApiVersion;
+        }
 
         $pluginClientFactory ??= new PluginClientFactory();
 
@@ -34,7 +38,7 @@ final class DockerClientFactory
             [
                 new ContentLengthPlugin(),
                 new DecoderPlugin(),
-                new AddPathPlugin($uriFactory->createUri('/v1.45')),
+                new AddPathPlugin($uriFactory->createUri('/'.$dockerApiVersion)),
                 new AddHostPlugin($uriFactory->createUri($host)),
                 new HeaderDefaultsPlugin([
                     'host' => parse_url($host, \PHP_URL_HOST),

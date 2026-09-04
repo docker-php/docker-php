@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Docker\Tests;
 
 use Docker\DockerClientFactory;
+use Http\Client\Common\Plugin\AddPathPlugin;
+use Http\Client\Common\PluginClient;
+use Http\Client\Common\PluginClientFactory;
 use Psr\Http\Client\ClientInterface;
 
 class DockerClientFactoryTest extends TestCase
@@ -12,12 +15,44 @@ class DockerClientFactoryTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        PluginClientFactory::setFactory(static function ($client, array $plugins, array $options): PluginClient {
+            unset($options['client_name']);
+
+            return new PluginClient($client, $plugins, $options);
+        });
+        putenv('DOCKER_API_VERSION');
         putenv('DOCKER_TLS_VERIFY');
     }
 
     public function testStaticConstructor(): void
     {
         $this->assertInstanceOf(ClientInterface::class, DockerClientFactory::create());
+    }
+
+    public function testDefaultApiVersion(): void
+    {
+        $this->assertSame('/v1.45', $this->getApiPath());
+    }
+
+    public function testApiVersionFromEnvironment(): void
+    {
+        putenv('DOCKER_API_VERSION=v1.52');
+
+        $this->assertSame('/v1.52', $this->getApiPath());
+    }
+
+    public function testApiVersionWithLeadingSlash(): void
+    {
+        putenv('DOCKER_API_VERSION=/v1.52');
+
+        $this->assertSame('/v1.52', $this->getApiPath());
+    }
+
+    public function testApiVersionWithoutVersionPrefix(): void
+    {
+        putenv('DOCKER_API_VERSION=1.52');
+
+        $this->assertSame('/v1.52', $this->getApiPath());
     }
 
     public function testCreateFromEnvWithoutCertPath(): void
@@ -67,5 +102,28 @@ class DockerClientFactoryTest extends TestCase
         $this->assertSame('/abc/cert.pem', $context['ssl']['local_cert']);
         $this->assertSame('/abc/key.pem', $context['ssl']['local_pk']);
         $this->assertSame('test', $context['ssl']['peer_name']);
+    }
+
+    private function getApiPath(): string
+    {
+        $plugins = [];
+        PluginClientFactory::setFactory(static function ($client, array $createdPlugins, array $options) use (&$plugins): PluginClient {
+            $plugins = $createdPlugins;
+            unset($options['client_name']);
+
+            return new PluginClient($client, $createdPlugins, $options);
+        });
+
+        DockerClientFactory::create();
+
+        foreach ($plugins as $plugin) {
+            if ($plugin instanceof AddPathPlugin) {
+                $uri = (new \ReflectionProperty($plugin, 'uri'))->getValue($plugin);
+
+                return $uri->getPath();
+            }
+        }
+
+        $this->fail('The Docker API path plugin was not configured.');
     }
 }

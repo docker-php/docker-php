@@ -9,9 +9,12 @@ use Psr\Http\Message\StreamInterface;
 class DockerRawStream
 {
     public const HEADER = 'application/vnd.docker.raw-stream';
+    public const MULTIPLEXED_HEADER = 'application/vnd.docker.multiplexed-stream';
 
     /** @var StreamInterface Stream for the response */
     protected $stream;
+
+    private bool $multiplexed;
 
     /** @var callable[] A list of callable to call when there is a stdin output */
     protected $onStdinCallables = [];
@@ -22,9 +25,10 @@ class DockerRawStream
     /** @var callable[] A list of callable to call when there is a stderr output */
     protected $onStderrCallables = [];
 
-    public function __construct(StreamInterface $stream)
+    public function __construct(StreamInterface $stream, bool $multiplexed = true)
     {
         $this->stream = $stream;
+        $this->multiplexed = $multiplexed;
     }
 
     /**
@@ -56,6 +60,17 @@ class DockerRawStream
      */
     protected function readFrame(): void
     {
+        if (!$this->multiplexed) {
+            $output = $this->stream->read(8192);
+            if ('' !== $output) {
+                foreach ($this->onStdoutCallables as $callback) {
+                    $callback($output);
+                }
+            }
+
+            return;
+        }
+
         $header = $this->forceRead(8);
 
         if (\strlen($header) < 8) {
@@ -90,6 +105,10 @@ class DockerRawStream
      */
     private function forceRead($length)
     {
+        if (0 === $length) {
+            return '';
+        }
+
         $read = '';
 
         do {

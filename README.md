@@ -40,6 +40,27 @@ composer require "beluga-php/docker-php-api:6.1.41.*"
 
 See [the documentation](http://docker-php.readthedocs.org/en/latest/).
 
+### Container logs
+
+`containerLogs()` returns a stream. Register callbacks and call `wait()` to read it:
+
+```php
+$logs = $docker->containerLogs('test', ['stdout' => true, 'stderr' => true]);
+$logs->onStdout(function (string $output): void {
+    echo $output;
+});
+$logs->onStderr(function (string $output): void {
+    fwrite(STDERR, $output);
+});
+$logs->wait();
+```
+
+TTY containers combine stdout and stderr; their output goes to `onStdout`.
+For responses with the `application/vnd.docker.raw-stream` content type, the
+client inspects the container's TTY setting to distinguish terminal output from
+the framed logs returned by older Docker APIs. Responses marked
+`application/vnd.docker.multiplexed-stream` do not need this extra request.
+
 ## Unit Tests
 
 Setup the test suite using [Composer](http://getcomposer.org/) if not already done:

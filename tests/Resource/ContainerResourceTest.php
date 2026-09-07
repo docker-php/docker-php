@@ -108,31 +108,55 @@ class ContainerResourceTest extends TestCase
         $webSocketStream->write("exit\n");
     }
 
-    public function testLogs(): void
+    public static function logsProvider(): iterable
     {
-        $this->markTestSkipped('Since at least 1.43 docker API does not return a `application/vnd.docker.raw-stream` ' .
-            'but a `application/vnd.docker.multiplexed-stream` so this needs review. '.
-            'See https://github.com/beluga-php/docker-php/issues/19');
+        yield 'separate stdout and stderr' => [false, 'printf stdout; printf stderr >&2', 'stdout', 'stderr'];
+        yield 'TTY combines stdout and stderr' => [true, 'printf stdout; printf stderr >&2', 'stdoutstderr', ''];
+        yield 'empty non-TTY logs' => [false, 'true', '', ''];
+        yield 'empty TTY logs' => [true, 'true', '', ''];
+    }
+
+    /** @dataProvider logsProvider */
+    public function testLogs(bool $tty, string $command, string $expectedStdout, string $expectedStderr): void
+    {
         $containerConfig = new ContainersCreatePostBody();
         $containerConfig->setImage('busybox:latest');
-        $containerConfig->setCmd(['echo', '-n', 'output']);
+        $containerConfig->setCmd(['sh', '-c', $command]);
         $containerConfig->setAttachStdout(true);
+        $containerConfig->setAttachStderr(true);
+        $containerConfig->setTty($tty);
         $containerConfig->setLabels(['docker-php-test' => 'true']);
 
         $containerCreateResult = $this->getManager()->containerCreate($containerConfig);
 
-        $this->getManager()->containerStart($containerCreateResult->getId());
-        $this->getManager()->containerWait($containerCreateResult->getId());
+        try {
+            $this->getManager()->containerStart($containerCreateResult->getId());
+            $this->getManager()->containerWait($containerCreateResult->getId());
 
-        $logsStream = $this->getManager()->containerLogs(
-            $containerCreateResult->getId(),
-            [
-                'stdout' => true,
-                'stderr' => true,
-            ],
-            Docker::FETCH_OBJECT
-        );
+            $logsStream = $this->getManager()->containerLogs(
+                $containerCreateResult->getId(),
+                [
+                    'stdout' => true,
+                    'stderr' => true,
+                ],
+                Docker::FETCH_OBJECT
+            );
 
-        self::assertInstanceOf(DockerRawStream::class, $logsStream);
+            self::assertInstanceOf(DockerRawStream::class, $logsStream);
+            $stdout = '';
+            $stderr = '';
+            $logsStream->onStdout(static function (string $output) use (&$stdout): void {
+                $stdout .= $output;
+            });
+            $logsStream->onStderr(static function (string $output) use (&$stderr): void {
+                $stderr .= $output;
+            });
+            $logsStream->wait();
+
+            self::assertSame($expectedStdout, $stdout);
+            self::assertSame($expectedStderr, $stderr);
+        } finally {
+            $this->getManager()->containerDelete($containerCreateResult->getId(), ['force' => true]);
+        }
     }
 }

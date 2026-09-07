@@ -8,8 +8,13 @@ use Docker\API\Model\ContainersCreatePostBody;
 use Docker\API\Model\ContainersIdExecPostBody;
 use Docker\API\Model\ExecIdJsonGetResponse200;
 use Docker\API\Model\ExecIdStartPostBody;
+use Docker\Docker;
 use Docker\Stream\DockerRawStream;
 use Docker\Tests\TestCase;
+use Http\Client\Common\Plugin;
+use Http\Promise\Promise;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class ExecResourceTest extends TestCase
 {
@@ -21,36 +26,82 @@ class ExecResourceTest extends TestCase
         return self::getDocker();
     }
 
-    public function testStartStream(): void
+    public static function streamProvider(): iterable
+    {
+        foreach ([false, true] as $upgrade) {
+            foreach ([false, true] as $tty) {
+                foreach ([false, true] as $empty) {
+                    yield sprintf('upgrade=%d tty=%d empty=%d', $upgrade, $tty, $empty) => [$upgrade, $tty, $empty];
+                }
+            }
+        }
+    }
+
+    /** @dataProvider streamProvider */
+    public function testStartStream(bool $upgrade, bool $tty, bool $empty): void
     {
         $createContainerResult = $this->createContainer();
+        try {
+            $execConfig = new ContainersIdExecPostBody();
+            $execConfig->setAttachStdout(true);
+            $execConfig->setAttachStderr(true);
+            $execConfig->setTty($tty);
+            $execConfig->setCmd($empty ? ['true'] : ['sh', '-c', 'printf stdout; printf stderr >&2']);
 
-        $execConfig = new ContainersIdExecPostBody();
-        $execConfig->setAttachStdout(true);
-        $execConfig->setAttachStderr(true);
-        $execConfig->setCmd(['echo', 'output']);
+            $execCreateResult = $this->getManager()->containerExec($createContainerResult->getId(), $execConfig);
 
-        $execCreateResult = $this->getManager()->containerExec($createContainerResult->getId(), $execConfig);
+            $execStartConfig = new ExecIdStartPostBody();
+            $execStartConfig->setDetach(false);
+            $execStartConfig->setTty($tty);
+            $capture = new class($upgrade) implements Plugin {
+                public ?int $status = null;
 
-        $execStartConfig = new ExecIdStartPostBody();
-        $execStartConfig->setDetach(false);
-        $execStartConfig->setTty(false);
+                public function __construct(private bool $upgrade)
+                {
+                }
 
-        $stream = $this->getManager()->execStart($execCreateResult->getId(), $execStartConfig);
+                public function handleRequest(RequestInterface $request, callable $next, callable $first): Promise
+                {
+                    if (!preg_match('#/exec/[^/]+/start$#', $request->getUri()->getPath())) {
+                        return $next($request);
+                    }
+                    if ($this->upgrade) {
+                        $request = $request->withHeader('Connection', 'Upgrade')->withHeader('Upgrade', 'tcp');
+                    }
 
-        $this->assertInstanceOf(DockerRawStream::class, $stream);
+                    return $next($request)->then(function (ResponseInterface $response): ResponseInterface {
+                        $this->status = $response->getStatusCode();
 
-        $stdoutFull = '';
-        $stream->onStdout(function ($stdout) use (&$stdoutFull): void {
-            $stdoutFull .= $stdout;
-        });
-        $stream->wait();
+                        return $response;
+                    });
+                }
+            };
+            $docker = Docker::create(null, [$capture]);
 
-        $this->assertSame("output\n", $stdoutFull);
+            $stream = $docker->execStart($execCreateResult->getId(), $execStartConfig);
 
-        self::getDocker()->containerKill($createContainerResult->getId(), [
-            'signal' => 'SIGKILL',
-        ]);
+            $this->assertSame($upgrade ? 101 : 200, $capture->status);
+            $this->assertInstanceOf(DockerRawStream::class, $stream);
+
+            $stdoutFull = '';
+            $stderrFull = '';
+            $stream->onStdout(function ($stdout) use (&$stdoutFull): void {
+                $stdoutFull .= $stdout;
+            });
+            $stream->onStderr(function ($stderr) use (&$stderrFull): void {
+                $stderrFull .= $stderr;
+            });
+            $stream->wait();
+
+            $this->assertSame($empty ? '' : ($tty ? 'stdoutstderr' : 'stdout'), $stdoutFull);
+            $this->assertSame($empty || $tty ? '' : 'stderr', $stderrFull);
+
+            $execInfo = $this->getManager()->execInspect($execCreateResult->getId());
+            $this->assertFalse($execInfo->getRunning());
+            $this->assertSame(0, $execInfo->getExitCode());
+        } finally {
+            self::getDocker()->containerDelete($createContainerResult->getId(), ['force' => true]);
+        }
     }
 
     public function testExecFind(): void

@@ -61,6 +61,16 @@ client inspects the container's TTY setting to distinguish terminal output from
 the framed logs returned by older Docker APIs. Responses marked
 `application/vnd.docker.multiplexed-stream` do not need this extra request.
 
+### Command output
+
+With `Detach` set to `false`, `execStart($execId, $execStartConfig)` returns the
+same callback stream. Register `onStdout` / `onStderr` callbacks and call `wait()`.
+Use the same `Tty` setting when creating and starting the exec command; TTY output
+is combined on `onStdout`.
+
+`executeRawEndpoint()` and the deprecated `FETCH_RESPONSE` mode bypass decoding.
+Their response bodies include Docker's binary frame headers for non-TTY output.
+
 ## Unit Tests
 
 Setup the test suite using [Composer](http://getcomposer.org/) if not already done:

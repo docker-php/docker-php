@@ -4,9 +4,9 @@ The Docker PHP 3.0 documentation uses Mintlify. Its source lives in `docs/` in
 this repository, alongside the client code. This replaces the legacy MkDocs
 configuration; earlier documentation remains available in Git history.
 
-The site is being prepared. No hosted Mintlify URL or custom domain is configured
-in the repository, and the upcoming package releases are still marked as
-unpublished.
+The public site is hosted at [docker-php.mintlify.site](https://docker-php.mintlify.site/).
+It remains a work in progress for the upcoming package releases, which are still
+marked as unpublished. No custom domain is configured.
 
 ## Local preview
 
@@ -63,7 +63,7 @@ assets with the local tooling.
 
 ## Hosted setup
 
-Connect the Mintlify project to these settings when the site is ready to deploy:
+The Mintlify project is connected with these settings:
 
 | Setting | Value |
 | --- | --- |
@@ -73,25 +73,26 @@ Connect the Mintlify project to these settings when the site is ready to deploy:
 | Documentation path | `/docs` |
 | Configuration file | `docs/docs.json` |
 
-Use [Mintlify's monorepo setup](https://www.mintlify.com/docs/deploy/monorepo),
-not a new template repository. The GitHub app needs access only to this public
-repository. Check its requested permissions before authorizing installation.
-Do not grant access to the Cylo repositories.
+This uses [Mintlify's monorepo setup](https://www.mintlify.com/docs/deploy/monorepo),
+not a separate template repository. The GitHub app installation is restricted to
+`docker-php/docker-php`. Review requested permissions before changing that scope;
+do not grant access to the Cylo repositories.
 
-The configuration uses the standard theme and built-in components. Start with
-the free Starter plan; do not assume eligibility for sponsored OSS Pro access
-or enable a paid trial or subscription as part of this setup.
+The workspace uses the free Starter plan. Mintlify included a temporary Pro
+feature trial during onboarding; these docs use the standard theme and built-in
+components and do not depend on Pro features. Do not assume eligibility for
+sponsored OSS Pro access or enable a paid upgrade as part of this setup.
 
 Mintlify deploys from the connected repository. Commit and push only when you
 intend those documentation changes to reach the connected site. A dashboard
 connection, repository update or custom-domain change can publish the site;
 review the draft and confirm the destination before doing that.
 
-## Before replacing the old documentation link
+## Before publishing package releases
 
 - Review the v3.0 migration instructions and test their examples.
 - Confirm the connected repository, branch and docs path.
 - Check the hosted site's navigation, mobile layout and internal links.
-- Choose a documentation hostname and configure its DNS separately.
-- Replace the legacy README links only after the new site is reachable.
+- Configure a custom documentation hostname and DNS separately if needed.
+- Keep legacy documentation accessible for users of earlier releases.
 - Remove the unreleased notices when both package releases are published.

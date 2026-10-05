@@ -4,7 +4,7 @@ Docker PHP
 **Docker PHP** (for lack of a better name) is a [Docker](https://www.docker.com/) client written in PHP.
 This library aims to reach 100% API support of the Docker Engine.
 
-[![Documentation Status](https://readthedocs.org/projects/docker-php/badge/?version=latest)](https://docker-php.readthedocs.io/en/latest/)
+[![Documentation](https://img.shields.io/badge/docs-Mintlify-blue?style=flat-square)](https://docker-php.mintlify.site/)
 [![Latest Version](https://img.shields.io/github/release/docker-php/docker-php.svg?style=flat-square)](https://github.com/docker-php/docker-php/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Total Downloads](https://img.shields.io/packagist/dt/docker-php/docker-php.svg?style=flat-square)](https://packagist.org/packages/docker-php/docker-php)
@@ -28,11 +28,11 @@ existing releases.
 Version 3.0 has not been published yet. The installation and migration
 instructions below apply once it is available.
 
-We're updating the documentation for version 3.0 and expect to publish it soon.
-The new site is being prepared with Mintlify, with its source in [docs/](docs/).
-See [DOCUMENTATION.md](DOCUMENTATION.md) to preview and edit it locally. The
-Read the Docs link above still points to the legacy documentation until the new
-site is published.
+The [version 3.0 documentation](https://docker-php.mintlify.site/) is available
+and is still being updated ahead of the release. Its source lives in
+[docs/](docs/); see [DOCUMENTATION.md](DOCUMENTATION.md) to preview and edit it
+locally. The [legacy documentation](https://docker-php.readthedocs.io/en/latest/)
+remains available for earlier releases.
 
 ## Requirements
 

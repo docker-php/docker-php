@@ -1,12 +1,23 @@
 ---
 title: "Connection settings"
-description: "Connect through a Unix socket, a TLS endpoint, or a custom HTTP client."
+description: "Connect through Unix sockets, TCP, HTTP or HTTPS, or a custom HTTP client."
 ---
+
+Environment variables are optional. You can use the default local Docker socket
+without any configuration, set connection options through environment variables,
+or configure the connection directly in PHP using the
+[bundled factory](#factory-options) or [Guzzle](/guides/guzzle).
 
 ## Default connection
 
 `Docker::create()` uses `DockerClientFactory::createFromEnv()`. Without
 `DOCKER_HOST`, it connects to `unix:///var/run/docker.sock`.
+
+If you choose environment variables, set them on the PHP process: in its shell,
+service configuration or container environment. The library reads them when
+creating the client and does not load `.env` files itself. For connection options supplied
+directly in PHP, see [factory options](#factory-options) or
+[Guzzle connections](/guides/guzzle).
 
 To choose another socket:
 
@@ -20,7 +31,20 @@ that create containers or images, and do not expose an unauthenticated daemon
 to an untrusted network.
 </Warning>
 
-## TCP with TLS
+## TCP and HTTP
+
+The factory accepts both `tcp://` and `http://` daemon addresses:
+
+```bash
+DOCKER_HOST=tcp://docker.example.com:2375 php your-script.php
+DOCKER_HOST=http://docker.example.com:2375 php your-script.php
+```
+
+These connections are unencrypted unless TLS is enabled. An `http://` address
+without a port uses port `80`; use the daemon's configured port explicitly if
+it differs.
+
+## TLS connections
 
 Use the daemon's TCP address and its client certificates:
 
@@ -33,12 +57,24 @@ php your-script.php
 
 The certificate directory must contain `ca.pem`, `cert.pem` and `key.pem`.
 If needed, set `DOCKER_PEER_NAME` to the name used to verify the server
-certificate. The current factory enables TLS only when `DOCKER_TLS_VERIFY`
-is exactly `1`.
+certificate. Set `DOCKER_TLS_VERIFY` to exactly `1` to enable this certificate
+configuration.
+
+An `https://` address also enables TLS, even without `DOCKER_TLS_VERIFY`:
+
+```bash
+DOCKER_HOST=https://docker.example.com:2376 php your-script.php
+```
+
+Without a port, HTTPS uses port `443`. By default, the server certificate must
+be trusted by PHP's configured certificate authorities and match the daemon's
+hostname. For a private CA or mutual TLS, use `DOCKER_TLS_VERIFY=1` and
+`DOCKER_CERT_PATH` as above; `https://` works with those settings too.
 
 ## Factory options
 
-You can configure the bundled socket client directly:
+Environment variables are optional. You can configure the bundled socket
+client directly in PHP instead:
 
 ```php
 <?php
@@ -60,12 +96,60 @@ adds the daemon address and versioned path. See
 [the factory implementation](https://github.com/docker-php/docker-php/blob/main/src/DockerClientFactory.php)
 for the plugins it configures.
 
+For a private CA without client certificates, pass the CA file directly:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\DockerClientFactory;
+
+$httpClient = DockerClientFactory::create([
+    'remote_socket' => 'https://docker.example.com:2376',
+    'stream_context_options' => [
+        'ssl' => ['cafile' => '/path/to/ca.pem'],
+    ],
+]);
+```
+
+For mutual TLS, add `local_cert` and `local_pk` to the SSL options:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+use Docker\DockerClientFactory;
+
+$httpClient = DockerClientFactory::create([
+    'remote_socket' => 'https://docker.example.com:2376',
+    'stream_context_options' => [
+        'ssl' => [
+            'cafile' => '/path/to/ca.pem',
+            'local_cert' => '/path/to/cert.pem',
+            'local_pk' => '/path/to/key.pem',
+        ],
+    ],
+]);
+
+$docker = Docker::create($httpClient, [], [], false);
+```
+
+The factory keeps the socket client's options, including timeouts and SSL
+context options. An HTTPS address always enables TLS, including when `ssl`
+is set to `false`; use `http://` or `tcp://` for a plaintext connection.
+
 ## Custom HTTP clients
 
 `Docker::create($httpClient)` accepts a compatible PSR-18 HTTP client. Configure
 its daemon address, TLS options and socket support. Check that it also supports
 unbuffered responses and Docker's upgraded connections if you use log, attach
 or exec streams.
+
+See [Guzzle connections](/guides/guzzle) for complete PHP examples using custom
+Unix sockets, HTTP, private CAs and mutual TLS.
 
 `DOCKER_API_VERSION` affects the default factory's request path; it does not
 change the generated models. See [API versions](/api-versions).

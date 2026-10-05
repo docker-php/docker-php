@@ -73,7 +73,8 @@ Their PHPDoc lists accepted parameters, return types and API exceptions.
 ### Connection settings
 
 `Docker::create()` connects through `unix:///var/run/docker.sock` by default.
-Set `DOCKER_HOST` to use another Unix socket or a `tcp://` address:
+Set `DOCKER_HOST` to use another Unix socket or a `tcp://`, `http://` or `https://`
+address:
 
 ```bash
 DOCKER_HOST=unix:///run/docker.sock php your-script.php
@@ -83,10 +84,18 @@ For a TCP connection with TLS, set `DOCKER_TLS_VERIFY=1` and `DOCKER_CERT_PATH` 
 the directory containing `ca.pem`, `cert.pem` and `key.pem`. `DOCKER_PEER_NAME`
 sets the name used to verify the server certificate when needed.
 
+An `https://` address enables TLS and verifies the server certificate by default.
+HTTP and HTTPS use ports `80` and `443` when no port is given. See
+[connection settings](https://docker-php.mintlify.site/connection) for private
+CAs and client certificates.
+
 You can pass a configured PSR-18 HTTP client to `Docker::create($httpClient)`.
 Configure the daemon address, Unix socket and TLS options on that client.
 For streaming operations, check that it supports unbuffered responses and
 Docker's upgraded connections.
+
+See the [Guzzle connection examples](https://docker-php.mintlify.site/guides/guzzle)
+for PHP-configured Unix sockets, HTTP endpoints and TLS.
 
 ### Container logs
 

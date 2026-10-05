@@ -17,6 +17,7 @@
       {
         "group": "Guides",
         "pages": [
+          "guides/guzzle",
           "cookbook/container-run",
           "cookbook/container-config",
           "guides/logs",

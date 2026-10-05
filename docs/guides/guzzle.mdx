@@ -1,0 +1,180 @@
+---
+title: "Guzzle connections"
+description: "Configure custom Unix sockets, HTTP endpoints and TLS directly in PHP."
+---
+
+Docker PHP accepts a configured Guzzle 7 client. You do not need to set
+`DOCKER_HOST`, `DOCKER_TLS_VERIFY` or `DOCKER_CERT_PATH` when configuring the
+connection this way. The bundled socket client remains the default.
+
+Install Guzzle in your application:
+
+```bash
+composer require guzzlehttp/guzzle
+```
+
+These examples require PHP's cURL extension. They use an explicit cURL handler
+so Unix-socket and client-key options are handled consistently.
+
+## Custom Unix socket
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+
+$httpClient = new GuzzleClient([
+    'base_uri' => 'http://localhost',
+    'handler' => HandlerStack::create(new CurlHandler()),
+    'curl' => [
+        CURLOPT_UNIX_SOCKET_PATH => '/run/custom/docker.sock',
+    ],
+    'proxy' => '',
+    'timeout' => 10,
+]);
+
+$docker = Docker::create($httpClient);
+```
+
+`base_uri` supplies the HTTP hostname; the cURL option selects the socket.
+Use a filesystem path, not a `unix://` URL, for `CURLOPT_UNIX_SOCKET_PATH`.
+The PHP process must have permission to access that socket.
+
+Docker PHP wraps the supplied client, but does not recreate it or discard its
+configured socket options.
+
+## HTTP endpoint
+
+Use an HTTP URL for a daemon listening on TCP:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+
+$httpClient = new GuzzleClient([
+    'base_uri' => 'http://docker.example.com:2375',
+    'handler' => HandlerStack::create(new CurlHandler()),
+    'proxy' => '',
+    'timeout' => 10,
+]);
+
+$docker = Docker::create($httpClient);
+```
+
+Guzzle expects `http://` or `https://` here, not `tcp://`.
+
+<Warning>
+HTTP is unencrypted. Do not expose an unauthenticated Docker daemon to an
+untrusted network. Access to the daemon grants control over its containers
+and can grant control over its host.
+</Warning>
+
+## HTTPS with a private CA
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+
+$httpClient = new GuzzleClient([
+    'base_uri' => 'https://docker.example.com:2376',
+    'handler' => HandlerStack::create(new CurlHandler()),
+    'verify' => '/path/to/ca.pem',
+    'proxy' => '',
+    'timeout' => 10,
+]);
+
+$docker = Docker::create($httpClient);
+```
+
+`verify` selects the CA bundle used to verify the server. The certificate must
+also match the hostname in `base_uri`. For a publicly trusted certificate,
+omit `verify` to use Guzzle's default trust configuration. Do not set it to
+`false` to work around certificate errors.
+
+## Mutual TLS
+
+If the daemon also requires a client certificate, configure its certificate
+and private key:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+
+$httpClient = new GuzzleClient([
+    'base_uri' => 'https://docker.example.com:2376',
+    'handler' => HandlerStack::create(new CurlHandler()),
+    'verify' => '/path/to/ca.pem',
+    'cert' => '/path/to/cert.pem',
+    'ssl_key' => '/path/to/key.pem',
+    'proxy' => '',
+    'timeout' => 10,
+]);
+
+$docker = Docker::create($httpClient);
+```
+
+The three files correspond to the Docker client's `ca.pem`, `cert.pem` and
+`key.pem`. Keep the private key outside source control.
+
+## Paths, timeouts and proxies
+
+Use the daemon's root URL for `base_uri`, without `/v1.45` or an endpoint path.
+`Docker::create($httpClient)` keeps the generated API version plugin enabled,
+so Docker PHP adds `/v1.45` for this API package. `DOCKER_API_VERSION` is a
+bundled-factory setting; it does not override this configured Guzzle client.
+
+This differs from [the bundled factory example](/connection#factory-options),
+where the fourth argument is `false` because that factory already supplies the
+versioned path. Do not copy that `false` argument into these Guzzle examples.
+
+The examples set `proxy` to an empty string to keep daemon requests from using
+HTTP proxy environment variables. Configure a proxy explicitly if your daemon
+connection requires one.
+
+Guzzle's `timeout` is in seconds; the bundled socket client's timeout is in
+milliseconds. The ten-second limit here is for ordinary requests, not a
+long-running build or stream.
+
+## Streaming limits
+
+These examples are tested against local Unix, HTTP and HTTPS servers through
+`Docker::create()`, including request bodies, API errors and mutual TLS.
+Completed multiplexed log responses are also tested.
+
+The explicit cURL handler buffers response bodies, including when `stream`
+is set to `true`. That is not suitable for an indefinite log or event stream.
+Guzzle's default handler selection can use its PHP stream handler when
+streaming is requested, but that handler does not use
+`CURLOPT_UNIX_SOCKET_PATH`.
+
+Use the bundled socket client for live streams and upgraded attach/exec
+connections unless you have tested those operations with your chosen custom
+transport. A PSR-18 interface alone does not guarantee unbuffered reads or a
+writable upgraded connection. See [streams](/reference/streams).
+
+For the underlying options, see Guzzle's
+[request options](https://docs.guzzlephp.org/en/stable/request-options.html)
+and [handlers](https://docs.guzzlephp.org/en/stable/handlers-and-middleware.html).

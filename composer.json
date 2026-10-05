@@ -27,7 +27,7 @@
         "friendsofphp/php-cs-fixer": "^3.8",
         "guzzlehttp/guzzle": "^7.9",
         "php-parallel-lint/php-parallel-lint": "^1.2",
-        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan": "^1.10 || ^2.0",
         "phpunit/phpunit": "^10.5.46",
         "psy/psysh": "^0.12.8",
         "roave/security-advisories": "dev-latest"

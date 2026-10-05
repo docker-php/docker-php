@@ -45,11 +45,11 @@ $ composer test
 When you are ready with the code, tested it and documented it, you can commit and push it with the following commands:
 
 ``` bash
-$ git commit -m "Feature or bug fix description"
+$ git commit -m "fix(stream): decode Docker frame headers"
 $ git push origin feature-or-bug-fix-description
 ```
 
-**Note:** Please write your commit messages in the imperative and follow the [guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html) for clear and concise messages.
+**Note:** Commit messages must follow the [commit message format](#commit-messages) below. Please write descriptions in the imperative and follow the [guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html) for clear and concise messages.
 
 Then [create a pull request](https://help.github.com/articles/creating-a-pull-request/) on GitHub.
 
@@ -66,6 +66,22 @@ $ git remote add upstream git@github.com:docker-php/docker-php.git
 $ git pull --rebase upstream master
 $ git push -f origin feature-or-bug-fix-description
 ```
+
+## Commit messages
+
+All commits must follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/).
+Start the subject with a type, an optional scope in parentheses, and a colon followed by a space and a short description.
+
+Use `fix` for bug fixes and `feat` for new features. Other types, such as `docs`, `test`, `refactor`, `ci` and `chore`, are allowed where appropriate:
+
+```text
+fix(stream): decode Docker frame headers
+feat: add support for a new Docker API version
+docs: clarify the migration instructions
+```
+
+Mark breaking changes with `!` immediately before the colon or a `BREAKING CHANGE:` footer.
+Explain what breaks and how users should migrate in the commit body or footer.
 
 ## Internal
 

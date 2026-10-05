@@ -28,6 +28,8 @@ existing releases.
 Version 3.0 has not been published yet. The installation and migration
 instructions below apply once it is available.
 
+We're updating the documentation for version 3.0 and expect to publish it soon.
+
 ## Requirements
 
 - PHP 8.1 or later, with the `mbstring` extension.

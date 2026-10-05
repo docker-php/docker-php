@@ -67,6 +67,13 @@ $ git pull --rebase upstream master
 $ git push -f origin feature-or-bug-fix-description
 ```
 
+## Documentation
+
+Documentation for the upcoming 3.0 release lives in `docs/` and uses Mintlify.
+See [DOCUMENTATION.md](DOCUMENTATION.md) for the local preview, validation commands
+and hosted setup. Test examples against a development Docker daemon, and keep
+instructions for unreleased packages clearly marked.
+
 ## Commit messages
 
 All commits must follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/).

@@ -1,0 +1,88 @@
+---
+title: "Run a container"
+description: "Pull an image, create a container, start it, and read its output."
+---
+
+Docker's `run` operation involves several API calls. First make sure the image
+exists on the daemon, then create and start the container.
+
+<Warning>
+This example creates a container and pulls an image on the configured daemon.
+Run it against a development daemon.
+</Warning>
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Model\ContainersCreatePostBody;
+use Docker\API\Model\CreateImageInfo;
+use Docker\Docker;
+
+$docker = Docker::create();
+
+$pull = $docker->imageCreate(null, [
+    'fromImage' => 'busybox',
+    'tag' => 'latest',
+]);
+$pull->onFrame(function (CreateImageInfo $frame): void {
+    if ($frame->getError() !== null) {
+        throw new RuntimeException($frame->getError());
+    }
+});
+$pull->wait();
+
+$config = new ContainersCreatePostBody();
+$config->setImage('busybox:latest');
+$config->setCmd(['sh', '-c', 'printf "hello\n"']);
+$config->setAttachStdout(true);
+$config->setAttachStderr(true);
+$config->setTty(false);
+
+$container = $docker->containerCreate($config);
+$id = $container->getId();
+
+try {
+    $docker->containerStart($id);
+    $result = $docker->containerWait($id, ['condition' => 'not-running']);
+    if ($result->getError()?->getMessage() !== null) {
+        throw new RuntimeException($result->getError()->getMessage());
+    }
+
+    $logs = $docker->containerLogs($id, ['stdout' => true, 'stderr' => true]);
+    $logs->onStdout(function (string $chunk): void {
+        echo $chunk;
+    });
+    $logs->onStderr(function (string $chunk): void {
+        fwrite(STDERR, $chunk);
+    });
+    $logs->wait();
+
+    printf("Exit code: %d\n", $result->getStatusCode());
+} finally {
+    $docker->containerDelete($id, ['force' => true]);
+}
+```
+
+The cleanup removes only the container created by this example. If you need to
+inspect it afterwards, adapt the cleanup for your development workflow.
+
+Use `containerInspect($id)` for its current state and `containerStop($id)` to
+stop a running container. These endpoints throw API exceptions on errors;
+do not depend on a raw response being returned by `containerStart()`.
+
+For live output, see [Container logs](/guides/logs). To run another command in
+an existing container, see [Command output](/guides/exec).
+
+`containerWait()` blocks; it is not a background task. `not-running` waits for
+the current stopped state, while `next-exit` waits for a subsequent exit. Pick
+the condition which matches your lifecycle and configure transport timeouts
+accordingly. `getStatusCode()` on its response is the **container exit code**,
+not the HTTP status. A non-zero command exit is separate from a failed API
+request.
+
+Avoid `AutoRemove` for this particular recipe: Docker can remove the container
+before the log/inspect calls which follow the wait. For production orchestration,
+decide who owns cleanup and do not let an unconditional cleanup exception hide
+the original operation failure.

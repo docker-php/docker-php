@@ -1,0 +1,93 @@
+---
+title: "Streaming and special calls"
+description: "Find the calls which return streams, binary bodies, headers or untyped data."
+---
+
+These calls need more than the usual request-model/response-model pattern.
+The table describes the restored client with the API v1.45 package.
+
+| Call | Default result / special behavior | Guide |
+| --- | --- | --- |
+| `imageCreate()` | `CreateImageStream`; pull/import progress frames | [Registries](/guides/registry) |
+| `imageBuild()` | Tar request body and `BuildStream` | [Build an image](/cookbook/build-image) |
+| `imagePush()` | `PushStream`; optional `AuthConfig` header conversion | [Registries](/guides/registry#push-a-tagged-image) |
+| `containerLogs()` | `DockerRawStream`; TTY-aware output decoding | [Logs](/guides/logs) |
+| `execStart()` | Attached output stream, or no output when detached | [Exec](/guides/exec) |
+| `systemEvents()` | `EventStream`, not one event model | [Events and stats](/guides/events-and-stats) |
+| `containerStats()` | Plain decoded object with `stream=false`; no typed stream wrapper | [Events and stats](/guides/events-and-stats#read-one-stats-sample) |
+| `containerArchive()` / `containerExport()` | Tar response; use a raw endpoint to retain the body | [Archive transfers](/guides/archives) |
+| `containerArchiveInfo()` | Metadata in a response header, not a response model | [Archive transfers](/guides/archives#read-path-metadata) |
+| `putContainerArchive()` | Tar request body; successful typed result is `null` | [Archive transfers](/guides/archives#upload-a-tar-archive) |
+| `imageGet()` / `imageGetAll()` | Image tar archive; use a raw response | [Image transfers](/guides/image-transfer) |
+| `imageLoad()` | Tar request and JSON progress response; no custom progress wrapper | [Image transfers](/guides/image-transfer#load-an-image-archive) |
+| `containerWait()` | Blocking call returning a `ContainerWaitResponse` | [Run a container](/cookbook/container-run) |
+
+## Callback streams
+
+Register callbacks before calling `wait()`. The endpoint call obtains the
+response; `wait()` reads its body and invokes callbacks synchronously.
+Registering a callback alone does not consume output or finish the operation.
+
+`onFrame()` receives generated models for build, pull, push and event streams.
+Their responses contain multiple JSON documents, not one JSON array.
+`onStdout()` and `onStderr()` receive strings for logs and exec output.
+See [output framing](/guides/logs#output-chunks-and-tty-mode) for the difference
+between output chunks and lines.
+
+Do not decode a whole progress stream with one `json_decode()` call. Check
+`getError()` on every build, pull or push frame: HTTP 200 means the stream
+opened, not that the operation succeeded.
+
+## Lifetime, cancellation and timeouts
+
+`wait()` blocks until the stream ends or an error interrupts it. A log follow
+or event subscription can remain open indefinitely. The client does not turn
+these calls into background jobs, promises or an event loop.
+
+Use bounded event queries for batch jobs. Set transport timeouts appropriate
+to the operation, and keep long-lived readers in a supervised worker rather
+than an ordinary web request. Reconnect and reconcile state in your application
+after a connection failure; there is no automatic durable event subscription.
+
+There is no uniform public cancellation method across these wrappers. Do not
+treat `CallbackStream::closeAndRead()` as a graceful stop signal: it closes
+the underlying body before calling `wait()`. For explicit stream ownership,
+use a raw endpoint, manage its PSR-7 body and close it in a `finally` block.
+Closing a build or pull connection can cancel the daemon operation.
+
+## Raw and generated endpoints
+
+`Docker\Docker`'s convenience methods select the custom endpoint wrappers.
+Calling `executeEndpoint(new Docker\API\Endpoint\SystemEvents(...))` directly
+selects the generated endpoint, not the event-stream wrapper. Likewise, a raw
+endpoint returns bytes and headers without either wrapper's decoding.
+
+Choose deliberately between:
+
+- A `Docker\Docker` convenience method for supported callback streams.
+- A generated endpoint with `executeRawEndpoint()` for tar bodies, headers or
+  streams that your application decodes itself.
+
+See [Requests and responses](/reference/requests-and-responses#raw-responses-and-headers)
+for status checks and raw-fetch error handling.
+
+## Attach and WebSocket limitations
+
+`containerAttach()` attaches to the container's existing process; it does not
+create a new command like `containerExec()` followed by `execStart()`.
+
+The current attach wrapper recognizes HTTP 200 with the exact
+`application/vnd.docker.raw-stream` content type and creates a multiplexed
+`DockerRawStream`. Unlike the log and exec wrappers, it does not select a
+TTY-aware decoder or handle all upgraded-response variants. Do not assume
+that terminal output or HTTP 101 will work through this wrapper.
+
+`containerAttachWebsocket()` uses a separate `AttachWebsocketStream` with
+`read()` and `write()`, not `onStdout()`/`wait()`. Its response handling is also
+narrow, and the existing WebSocket integration test is skipped. Treat it as
+a feature requiring validation with your daemon and transport, not a tested
+interactive-terminal recipe.
+
+`DockerRawStream::onStdin()` is an output-channel callback; it is not a method
+for writing commands into a container. Prefer the [exec recipe](/guides/exec)
+for non-interactive command execution.

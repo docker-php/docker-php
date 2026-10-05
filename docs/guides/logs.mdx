@@ -1,0 +1,107 @@
+---
+title: "Container logs"
+description: "Read decoded stdout and stderr with callback streams."
+---
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+
+$docker = Docker::create();
+$logs = $docker->containerLogs('my-container', [
+    'stdout' => true,
+    'stderr' => true,
+    'follow' => true,
+]);
+
+$logs->onStdout(function (string $chunk): void {
+    echo $chunk;
+});
+$logs->onStderr(function (string $chunk): void {
+    fwrite(STDERR, $chunk);
+});
+$logs->wait();
+```
+
+Replace `my-container` with the ID or name of an existing container. With
+`follow` enabled, `wait()` keeps consuming output until the stream ends or the
+underlying client interrupts it. Omit `follow` to read the currently available
+logs.
+
+## Output chunks and TTY mode
+
+Callbacks receive output chunks, not necessarily complete lines. Buffer chunks
+in your application if it processes output line by line.
+
+Non-TTY output has separate stdout and stderr channels. TTY containers combine
+both on `onStdout`.
+
+For a response marked `application/vnd.docker.raw-stream`, the client inspects
+the container's TTY setting to distinguish terminal output from framed output.
+Your daemon credentials need permission to inspect the container. Responses
+marked `application/vnd.docker.multiplexed-stream` do not need that extra
+request.
+
+## Read recent output without following
+
+Continue with the `$docker` client above. This query is finite:
+
+```php
+$recent = $docker->containerLogs('my-container', [
+    'stdout' => true,
+    'stderr' => true,
+    'follow' => false,
+    'tail' => '100',
+    'timestamps' => true,
+    'since' => time() - 300,
+]);
+$recent->onStdout(function (string $chunk): void { echo $chunk; });
+$recent->onStderr(function (string $chunk): void { fwrite(STDERR, $chunk); });
+$recent->wait();
+```
+
+`tail` is a string, including numeric-looking values; `since` is an integer
+for this endpoint. That differs from the string timestamps accepted by
+`systemEvents()`. Log availability also depends on the daemon's logging driver
+and configuration; this call is not a replacement for a durable logging service.
+
+## Process output line by line
+
+Maintain separate buffers for stdout and stderr. For a single channel, a simple
+bounded line buffer can be registered as a callback:
+
+```php
+$pending = '';
+$logs = $docker->containerLogs('my-container', ['stdout' => true, 'tail' => '100']);
+$logs->onStdout(function (string $chunk) use (&$pending): void {
+    $pending .= $chunk;
+    while (($newline = strpos($pending, "\n")) !== false) {
+        $line = substr($pending, 0, $newline);
+        $pending = substr($pending, $newline + 1);
+        printf("line: %s\n", rtrim($line, "\r"));
+    }
+    if (strlen($pending) > 1024 * 1024) {
+        throw new RuntimeException('Output line exceeded the buffer limit');
+    }
+});
+$logs->wait();
+if ($pending !== '') {
+    printf("last line: %s\n", $pending);
+}
+```
+
+This handles lines split across chunks and a final line without a newline.
+It limits the incomplete-line buffer; applications should also cap or stream
+their total retained output. Use separate buffers if you add `onStderr()`.
+Terminal escape sequences are not removed by Docker frame decoding.
+
+## Raw response bodies
+
+`executeRawEndpoint()` and the deprecated `FETCH_RESPONSE` mode return the raw
+body. Non-TTY output includes Docker's binary frame headers in that body. Do
+not print it directly if you want readable output; use the callback stream.
+
+The same distinction applies to [exec output](/guides/exec).

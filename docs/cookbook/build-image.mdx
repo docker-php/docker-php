@@ -1,0 +1,157 @@
+---
+title: "Build an image"
+description: "Stream a build context and consume Docker's build output."
+---
+
+The image-build endpoint accepts a tar archive containing a Dockerfile and its
+build files. `Docker\Context\Context` can stream a directory through the system
+`tar` command without first loading the whole archive into a PHP string.
+
+Create a `build/Dockerfile` next to your PHP script:
+
+```dockerfile
+FROM busybox:latest
+CMD ["sh", "-c", "printf 'hello\\n'"]
+```
+
+Then build it on a development daemon:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Model\BuildInfo;
+use Docker\Context\Context;
+use Docker\Docker;
+
+$docker = Docker::create();
+$context = new Context(__DIR__ . '/build');
+
+$build = $docker->imageBuild($context->toStream(), ['t' => 'docker-php-example:latest']);
+$build->onFrame(function (BuildInfo $frame): void {
+    if ($frame->getError() !== null) {
+        throw new RuntimeException($frame->getError());
+    }
+
+    echo $frame->getStream() ?? '';
+});
+$build->wait();
+```
+
+`imageBuild()` returns a `BuildStream` in the default fetch mode, not an array
+of completed build results. The callback receives generated `BuildInfo` models.
+Check the frames for daemon-reported build errors as well as handling endpoint
+exceptions.
+
+`Context` requires `tar` on the machine running PHP. Keep only intended build
+files in the context directory; the current helper archives that directory
+directly and does not apply `.dockerignore` filtering for you.
+
+The example leaves the tagged image on your development daemon. Remove that
+specific image when you no longer need it.
+
+## Build arguments and other query options
+
+JSON-valued build options are strings. Continue with the `$docker` client from
+above, but create a fresh context for each request:
+
+```php
+$context = new Context(__DIR__ . '/build');
+$build = $docker->imageBuild($context->toStream(), [
+    't' => 'docker-php-example:configured',
+    'dockerfile' => 'Dockerfile',
+    'buildargs' => json_encode(['APP_MODE' => 'development'], JSON_THROW_ON_ERROR),
+    'labels' => json_encode(['docker-php-example' => 'true'], JSON_THROW_ON_ERROR),
+    'nocache' => true,
+    'pull' => 'true',
+]);
+$build->onFrame(function (BuildInfo $frame): void {
+    if ($frame->getError() !== null) {
+        throw new RuntimeException($frame->getError());
+    }
+    echo $frame->getStream() ?? '';
+});
+$build->wait();
+```
+
+`pull` is string-valued in this specification, while `nocache` is boolean.
+Do not pre-URL-encode the JSON options. Declare `ARG APP_MODE` in the Dockerfile
+if the build uses it. Build arguments are not a safe channel for secrets.
+
+A streamed context is consumed by the first request. The original tar process
+is not rewindable. Keep the context alive until the request has
+finished, and do not assume a process-backed stream has a known byte length.
+
+## Construct a small context in PHP
+
+`ContextBuilder` creates a temporary context directory and a Dockerfile. It is
+useful when the build has a few generated files, without maintaining a separate
+directory in your application:
+
+```php
+use Docker\Context\ContextBuilder;
+
+$builder = new ContextBuilder();
+$context = $builder
+    ->from('busybox:latest')
+    ->workdir('/example')
+    ->add('message.txt', "hello from the build context\n")
+    ->command('cat /example/message.txt')
+    ->getContext();
+
+$build = $docker->imageBuild($context->toStream(), ['t' => 'docker-php-example:generated']);
+$build->onFrame(function (BuildInfo $frame): void {
+    if ($frame->getError() !== null) {
+        throw new RuntimeException($frame->getError());
+    }
+    echo $frame->getStream() ?? '';
+});
+$build->wait();
+```
+
+The builder's context is cleaned up when the `Context` is destroyed. It is
+not a complete Dockerfile parser or a Buildx replacement. Prefer an ordinary
+Dockerfile when the build needs features the helper does not express.
+
+## Private base images
+
+Pass a registry credential **map** in `X-Registry-Config`, not the single
+`X-Registry-Auth` object used for pull/push. For example, construct the header
+from credentials already held in `$username` and `$token`:
+
+```php
+$registryConfig = base64_encode(json_encode([
+    'registry.example.com' => [
+        'username' => $username,
+        'password' => $token,
+    ],
+], JSON_THROW_ON_ERROR));
+
+$context = new Context(__DIR__ . '/build');
+$build = $docker->imageBuild(
+    $context->toStream(),
+    ['t' => 'docker-php-example:private-base'],
+    ['X-Registry-Config' => $registryConfig]
+);
+$build->onFrame(function (BuildInfo $frame): void {
+    if ($frame->getError() !== null) {
+        throw new RuntimeException($frame->getError());
+    }
+    echo $frame->getStream() ?? '';
+});
+$build->wait();
+```
+
+See [registry authentication](/guides/registry) for credential handling. Docker
+Hub's legacy key for this header is `https://index.docker.io/v1/`, rather than
+just its hostname. Do not include registry-config headers in request logs.
+
+## Builder backend limits
+
+The v1.45 spec defaults the `version` query parameter to the classic builder
+(`'1'`). Whether that builder is available depends on your daemon. Merely
+setting `version => '2'` does not implement BuildKit session handling, secret
+mounts, SSH forwarding or Buildx workflows in this client. Validate the backend
+and required features against your development daemon; these examples are not
+a promise of full BuildKit support.

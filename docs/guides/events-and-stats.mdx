@@ -1,0 +1,84 @@
+---
+title: "Events and resource stats"
+description: "Read bounded event history and a single stats sample without opening an unintended endless stream."
+---
+
+These calls can stay open. Decide whether you want a finite query or a live
+subscription before starting the request.
+
+## Read a bounded event window
+
+The client wraps `systemEvents()` in an `EventStream`. Its callback receives
+one `EventMessage` model per event. Query timestamps are **strings** in this
+API line, even when expressed as Unix seconds.
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Model\EventMessage;
+use Docker\Docker;
+
+$docker = Docker::create();
+$end = time();
+$events = $docker->systemEvents([
+    'since' => (string) ($end - 60),
+    'until' => (string) $end,
+    'filters' => json_encode(['type' => ['container']], JSON_THROW_ON_ERROR),
+]);
+$events->onFrame(function (EventMessage $event): void {
+    printf("%s\t%s\t%s\n",
+        (string) $event->getTime(),
+        $event->getAction() ?? '',
+        $event->getActor()?->getId() ?? ''
+    );
+});
+$events->wait();
+```
+
+Omit `until` only when you intend to keep listening. Filtering limits which
+events arrive; it does not impose a timeout. Docker event history is bounded,
+so this is not a durable audit log. Persist relevant events yourself, handle
+reconnects and reconcile current state through inspect/list calls rather than
+assuming no events were lost. Keep slow work out of the synchronous callback.
+
+## Read one stats sample
+
+`containerStats()` defaults to streaming. The generated endpoint does not have
+a custom callback wrapper and parses a whole JSON response. Explicitly set
+`stream => false` for the normal decoded-result path:
+
+```php
+$stats = $docker->containerStats('my-container', ['stream' => false]);
+if (!is_object($stats)) {
+    throw new RuntimeException('Expected a decoded stats object');
+}
+printf("Memory usage: %s bytes\n", (string) ($stats->memory_stats->usage ?? 'unavailable'));
+```
+
+This is a plain decoded object, not a generated stats model with getters.
+Use null checks: cgroup versions and daemon configuration affect which fields
+are present. `one-shot => true` can reduce waiting for a single sample, but
+must be combined with `stream => false` and may not provide the previous CPU
+sample needed for a percentage calculation.
+
+Raw memory usage is not necessarily the cache-adjusted value shown by the
+Docker CLI. Likewise, CPU percentage needs current/previous CPU counters,
+system counter deltas and a CPU count; it is not one field which can simply
+be divided by a constant. Check zero/missing counters and the daemon's cgroup
+version before calculating percentages.
+
+## Continuous stats
+
+For a live reader, use
+`executeRawEndpoint(new Docker\API\Endpoint\ContainerStats($id, ['stream' => true]))`,
+check HTTP 200, and parse JSON documents incrementally from the PSR-7 body.
+Close that body when finished. Do not call `containerStats($id)` in an ordinary
+web request and assume it will return one sample.
+
+Socket chunks are not JSON-message boundaries. Buffer incomplete documents,
+place a limit on buffered data, and handle timeouts, malformed JSON and
+disconnects. There is no `StatsStream` or `onFrame()` method provided for this
+endpoint in the current client. See
+[stream lifetime and cancellation](/reference/streams#lifetime-cancellation-and-timeouts).

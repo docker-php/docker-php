@@ -1,0 +1,95 @@
+---
+title: "Upgrade to 3.0"
+description: "Migrate from the original packages or the Beluga fork."
+---
+
+<Note>
+Docker PHP 3.0.0 and API package 7.1.45.0 have not been published yet. Prepare and
+review these changes now; resolve stable versions after both releases are
+available.
+</Note>
+
+## From the original 2.x client
+
+The new client requires PHP 8.1 or later, the `mbstring` extension, PSR-7 v2 and
+Jane 7 runtimes. Check your application's other dependencies against these
+requirements before changing its Composer constraints.
+
+Change the client requirement to `docker-php/docker-php:^3.0`. Remove an explicit
+`docker-php/docker-php-api:4.1.*` requirement, or change it to
+`>=7.1.45.0 <7.1.46.0` if your application depends on the API package directly.
+
+```json
+{
+  "require": {
+    "docker-php/docker-php": "^3.0"
+  }
+}
+```
+
+Resolve the package changes together:
+
+```bash
+composer update docker-php/docker-php docker-php/docker-php-api --with-all-dependencies
+```
+
+Review endpoint signatures and generated model types. The PHP namespaces remain
+`Docker` and `Docker\API`, but that does not make all old API models or calling
+patterns compatible. The specification changes from the old API line to v1.45.
+
+### Asynchronous client
+
+The old `DockerAsync` client and its Amp/Artax examples do not apply to 3.0.
+The maintained client uses synchronous endpoint calls and callback streams.
+Applications using `DockerAsync` need to adapt those call sites; this is not a
+drop-in replacement for the old promise-based client.
+
+### HTTP clients
+
+The default client now uses the maintained PSR-7 v2 dependency set. Review custom
+HTTP adapters for PSR-18 compatibility, daemon connection settings, unbuffered
+responses and upgraded Docker connections. See [Connection settings](/connection).
+
+### Log and exec consumers
+
+Use `onStdout()` and `onStderr()` with `wait()` to consume decoded output. Do not
+print non-TTY raw response bodies directly: they contain binary frame headers.
+TTY output combines stdout and stderr, and callbacks receive chunks rather
+than guaranteed complete lines. See [logs](/guides/logs) and
+[exec output](/guides/exec).
+
+## From Beluga
+
+The new client continues the code maintained under `beluga-php/docker-php`.
+For applications on the Beluga API v1.45 line, the package-name migration does
+not require a PHP namespace change.
+
+Remove both Beluga requirements from your application's `composer.json`, if
+present. Add `docker-php/docker-php:^3.0`. If you require the API package
+directly, add `docker-php/docker-php-api:>=7.1.45.0 <7.1.46.0` as well.
+
+Do not install both package families together: they contain the same PHP
+classes and the new packages declare conflicts with their Beluga counterparts.
+Resolve the dependency changes together, rather than installing the new client
+while keeping an old direct API requirement.
+
+```bash
+composer update --with-all-dependencies
+```
+
+Run that broader update in a test checkout, review unrelated dependency changes,
+and commit the tested lock file. If you use another Beluga Docker API line,
+review the endpoint and model changes to v1.45 before switching.
+
+## Verify the application
+
+- Confirm only the original package family is installed with `composer show`.
+- Test the daemon connection and representative inspect, list and create calls.
+- Check log and exec output, including TTY and non-TTY containers.
+- Review custom HTTP clients and nullable model fields.
+- Commit `composer.lock` and keep the prior release and lock file available for
+  rollback before deploying.
+
+Existing bounded client constraints such as `^2.0` do not automatically admit
+3.0. Existing API `4.1.*` constraints do not admit the new 7.x packages. Broad or
+unbounded requirements do not provide that protection.

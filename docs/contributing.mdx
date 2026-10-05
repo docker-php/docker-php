@@ -1,0 +1,50 @@
+---
+title: "Contribute to the docs"
+description: "Edit the Git-maintained documentation and preview it locally."
+---
+
+The documentation lives in the `docs/` directory of
+[docker-php/docker-php](https://github.com/docker-php/docker-php). Pages are MDX
+files; `docs.json` defines their navigation and site settings.
+
+## Preview locally
+
+Use Node.js 22 or 24 LTS and PHP 8.1 or later. From the repository root:
+
+```bash
+cd docs
+npm ci
+npm run dev
+```
+
+Open the localhost URL printed by Mintlify. The preview updates when you edit
+pages. Stop it with Ctrl+C.
+
+## Check changes
+
+```bash
+npm run validate
+npm run check:links
+npm run check:examples
+```
+
+The checks validate Mintlify configuration and MDX, internal links and heading
+anchors, and PHP example syntax. Syntax checks do not prove an example's daemon
+behavior. Test operational examples separately against a development daemon.
+
+Add new pages to `docs.json`, use site-relative links such as `/connection`, and
+keep examples aligned with the current API models. Do not edit generated API
+code to make an example work.
+
+Keep unreleased instructions clearly marked until their packages are published.
+Avoid documenting legacy `DockerAsync` behavior as part of 3.0.
+
+## Pull requests
+
+Commit messages must follow
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+For example, `docs: explain exec stream callbacks`.
+
+See [CONTRIBUTING.md](https://github.com/docker-php/docker-php/blob/main/CONTRIBUTING.md)
+for the library's contribution workflow. Report documentation errors through
+[GitHub issues](https://github.com/docker-php/docker-php/issues).

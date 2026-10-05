@@ -1,0 +1,42 @@
+---
+title: "Docker PHP"
+description: "Use the Docker Engine API from PHP."
+---
+
+Docker PHP is a PHP client for the Docker Engine API. It provides generated
+endpoint methods and models, connection handling, and decoded log and command
+output streams.
+
+<Note>
+These docs cover the upcoming Docker PHP 3.0 client and Docker API package
+7.1.45.0. Neither release has been published yet. The docs are still being
+prepared; installation commands for stable versions apply after release.
+</Note>
+
+The first restored release targets Docker Engine API v1.45. The PHP namespaces
+remain `Docker` and `Docker\API`, including for applications migrating from
+Beluga.
+
+<CardGroup cols={2}>
+  <Card title="Install the client" href="/installation">
+    Check the requirements and make your first request.
+  </Card>
+  <Card title="Upgrade to 3.0" href="/migration">
+    Migrate from the original packages or Beluga.
+  </Card>
+  <Card title="Read container output" href="/guides/logs">
+    Consume stdout and stderr without Docker frame headers.
+  </Card>
+  <Card title="Choose an API version" href="/api-versions">
+    Understand package versions and daemon compatibility.
+  </Card>
+  <Card title="Configure a container" href="/cookbook/container-config">
+    Set up mounts, published ports, labels and restart policies.
+  </Card>
+  <Card title="Handle unusual calls" href="/reference/streams">
+    Find the right approach for streams, archives and blocking calls.
+  </Card>
+</CardGroup>
+
+Development continues in [docker-php/docker-php](https://github.com/docker-php/docker-php).
+The generated API is maintained in [docker-php/docker-php-api](https://github.com/docker-php/docker-php-api).

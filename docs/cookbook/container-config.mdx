@@ -1,0 +1,89 @@
+---
+title: "Configure a container"
+description: "Combine ports, mounts, environment variables and restart policy in a request."
+---
+
+Container creation is a nested request. Publishing a port belongs in
+`HostConfig`, while the container-side port declaration belongs in
+`ContainersCreatePostBody`. Declaring an exposed port alone does not publish it.
+
+## Ports, a bind mount and restart policy
+
+This example creates, but does not start, a development container. Pull
+`nginx:alpine` first using the [image pull recipe](/guides/registry). Create
+`/srv/docker-php-example/html` on the **daemon host**, with an `index.html` file,
+before running it. Choose an unused example name and host port.
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Model\ContainersCreatePostBody;
+use Docker\API\Model\HostConfig;
+use Docker\API\Model\Mount;
+use Docker\API\Model\PortBinding;
+use Docker\API\Model\RestartPolicy;
+use Docker\Docker;
+
+$docker = Docker::create();
+
+$binding = new PortBinding();
+$binding->setHostIp('127.0.0.1');
+$binding->setHostPort('8080');
+
+$mount = new Mount();
+$mount->setType('bind');
+$mount->setSource('/srv/docker-php-example/html');
+$mount->setTarget('/usr/share/nginx/html');
+$mount->setReadOnly(true);
+
+$restart = new RestartPolicy();
+$restart->setName('no');
+
+$host = new HostConfig();
+$host->setPortBindings(new ArrayObject(['80/tcp' => [$binding]]));
+$host->setMounts([$mount]);
+$host->setRestartPolicy($restart);
+
+$body = new ContainersCreatePostBody();
+$body->setImage('nginx:alpine');
+$body->setEnv(['EXAMPLE_MODE=development']);
+$body->setLabels(new ArrayObject(['docker-php-example' => 'true']));
+$body->setExposedPorts(new ArrayObject(['80/tcp' => new ArrayObject()]));
+$body->setHostConfig($host);
+
+$created = $docker->containerCreate($body, ['name' => 'docker-php-example-web']);
+printf("Created %s\n", $created->getId());
+```
+
+Review the returned ID, then use `containerStart($created->getId())` to start
+that container. The example deliberately leaves it stopped. Remove only that
+created container when you are done; do not use a broad prune operation.
+
+## Details worth checking
+
+- Port keys include the protocol: `80/tcp` and `80/udp` are different entries.
+- Each port maps to a **list** of `PortBinding` models, even for one binding.
+- `HostPort` is a string. An empty string requests a daemon-assigned host port;
+  inspect the container after starting it to discover the binding.
+- `HostIp` above binds the published port to the daemon host's loopback address.
+  It does not refer to the PHP client's machine when using a remote daemon.
+- Bind-mount source paths are on the daemon host, not the PHP client. Docker
+  Desktop may add another host/VM file-sharing boundary.
+- Mounting over a container path hides its existing contents. A read-only mount
+  still exposes its files to the container, so do not mount secrets casually.
+- Environment entries are `NAME=value` strings. Do not log sensitive values or
+  treat ordinary container environment variables as a secret store.
+- `containerCreate()` does not pull a missing image. Pull and check the progress
+  stream before creating the container.
+
+An explicit restart policy makes example lifecycle behavior clear. For an
+application which should retry failed runs, use `on-failure` and set
+`MaximumRetryCount`; do not set that count as a general limit on `always` or
+`unless-stopped`.
+
+For networking beyond port publication, look at `NetworkingConfig` and its
+`EndpointsConfig` map of `EndpointSettings` models. Keep network attachment
+and port publication separate; attaching to a network does not expose a port
+on the host.

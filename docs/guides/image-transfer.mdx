@@ -1,0 +1,90 @@
+---
+title: "Save and load images"
+description: "Distinguish image archives from container exports and root-filesystem imports."
+---
+
+An image archive, a build context and a container filesystem export are not
+interchangeable. Choose the matching API operation:
+
+| Archive | Produce it with | Consume it with |
+| --- | --- | --- |
+| Image layers, configuration and tags | `imageGet()` / `imageGetAll()` or `docker image save` | `imageLoad()` |
+| Container/root filesystem | `containerExport()` or a suitable rootfs tar | `imageCreate()` with `fromSrc` |
+| Files to copy into a container | A tar created for that destination | `putContainerArchive()` |
+| Dockerfile and build files | `Context` / `ContextBuilder` | `imageBuild()` |
+
+## Save an image
+
+Use `executeRawEndpoint(new Docker\API\Endpoint\ImageGet($imageName))` and
+require HTTP 200, then save the body in chunks using the
+[archive download pattern](/guides/archives#download-an-archive). The default
+generated `imageGet()` result is `null`; it does not give you a tar stream.
+
+For more than one image, use `new ImageGetAll(['names' => ['image-a:tag',
+'image-b:tag']])` with the raw endpoint. Specify the names explicitly rather
+than accidentally exporting every image on the daemon.
+
+## Load an image archive
+
+Loading creates or updates image records and tags on the daemon. Use a tar
+produced by an image-save operation and a development daemon. This call has
+no `BuildStream`/`CreateImageStream` wrapper; its progress response must be
+handled separately.
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Endpoint\ImageLoad;
+use Docker\Docker;
+
+$docker = Docker::create();
+$archive = fopen(__DIR__ . '/saved-image.tar', 'rb');
+if ($archive === false) {
+    throw new RuntimeException('Could not open the image archive');
+}
+$body = null;
+try {
+    $response = $docker->executeRawEndpoint(new ImageLoad($archive, ['quiet' => true]));
+    $body = $response->getBody();
+    if ($response->getStatusCode() !== 200) {
+        throw new RuntimeException('Image load failed: HTTP '.$response->getStatusCode());
+    }
+    // The quiet response is finite; it can still contain several JSON lines.
+    foreach (preg_split('/\r?\n/', $body->getContents()) as $line) {
+        if (trim($line) === '') {
+            continue;
+        }
+        $frame = json_decode($line, true, 512, JSON_THROW_ON_ERROR);
+        if (isset($frame['error']) || isset($frame['errorDetail']['message'])) {
+            throw new RuntimeException($frame['error'] ?? $frame['errorDetail']['message']);
+        }
+        echo $frame['stream'] ?? '';
+    }
+} finally {
+    $body?->close();
+    if (is_resource($archive)) {
+        fclose($archive);
+    }
+}
+```
+
+The archive is sent as a resource, so PHP does not load the tar file into a
+string first. This example buffers only the quiet progress response. For a
+verbose or long-lived JSON stream, use a bounded incremental JSON-line reader
+instead. Reading the progress is necessary: HTTP 200 alone does not prove that
+the daemon accepted all of the image data.
+
+## Root-filesystem import is different
+
+`imageCreate()` with `fromSrc` imports a root filesystem, not an image-save
+archive. Use `fromSrc => '-'` for a request-body import, or a source URL for
+the daemon to download. Remote source URLs are fetched by the daemon, not PHP;
+do not accept arbitrary URLs from untrusted callers.
+
+In this API line, `imageCreate()`'s request body is `?string`, unlike the
+resource/PSR-7-stream bodies supported by `imageBuild()`, `imageLoad()` and
+`putContainerArchive()`. Do not pass a file resource to `imageCreate()` and
+expect it to behave like an image load. Choose the operation and payload type
+deliberately, especially for large archives.

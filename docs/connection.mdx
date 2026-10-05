@@ -1,0 +1,71 @@
+---
+title: "Connection settings"
+description: "Connect through a Unix socket, a TLS endpoint, or a custom HTTP client."
+---
+
+## Default connection
+
+`Docker::create()` uses `DockerClientFactory::createFromEnv()`. Without
+`DOCKER_HOST`, it connects to `unix:///var/run/docker.sock`.
+
+To choose another socket:
+
+```bash
+DOCKER_HOST=unix:///run/docker.sock php your-script.php
+```
+
+<Warning>
+Access to a Docker socket is privileged. Use a development daemon for examples
+that create containers or images, and do not expose an unauthenticated daemon
+to an untrusted network.
+</Warning>
+
+## TCP with TLS
+
+Use the daemon's TCP address and its client certificates:
+
+```bash
+export DOCKER_HOST=tcp://docker.example.com:2376
+export DOCKER_TLS_VERIFY=1
+export DOCKER_CERT_PATH=/path/to/client-certificates
+php your-script.php
+```
+
+The certificate directory must contain `ca.pem`, `cert.pem` and `key.pem`.
+If needed, set `DOCKER_PEER_NAME` to the name used to verify the server
+certificate. The current factory enables TLS only when `DOCKER_TLS_VERIFY`
+is exactly `1`.
+
+## Factory options
+
+You can configure the bundled socket client directly:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+use Docker\DockerClientFactory;
+
+$httpClient = DockerClientFactory::create([
+    'remote_socket' => 'unix:///var/run/docker.sock',
+]);
+
+$docker = Docker::create($httpClient, [], [], false);
+```
+
+The fourth argument disables the generated server plugins. The factory already
+adds the daemon address and versioned path. See
+[the factory implementation](https://github.com/docker-php/docker-php/blob/main/src/DockerClientFactory.php)
+for the plugins it configures.
+
+## Custom HTTP clients
+
+`Docker::create($httpClient)` accepts a compatible PSR-18 HTTP client. Configure
+its daemon address, TLS options and socket support. Check that it also supports
+unbuffered responses and Docker's upgraded connections if you use log, attach
+or exec streams.
+
+`DOCKER_API_VERSION` affects the default factory's request path; it does not
+change the generated models. See [API versions](/api-versions).

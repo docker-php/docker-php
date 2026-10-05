@@ -1,0 +1,109 @@
+---
+title: "Pull and push images"
+description: "Handle registry authentication and streamed progress, including daemon-side errors."
+---
+
+The daemon contacts the registry. PHP sends the registry credentials to the
+daemon in request headers; it does not perform `docker login` or read your
+Docker CLI credential helpers automatically.
+
+Use a trusted daemon connection, with TLS for remote TCP connections. Keep
+tokens out of source control, query parameters and request-header logs.
+
+## Pull a private image
+
+`imageCreate()` takes a nullable body first, then query parameters and headers.
+For a pull, pass `null` as the body and set `fromImage` and an explicit `tag`.
+`X-Registry-Auth` must be an encoded **string** on this call; it does not accept
+an `AuthConfig` model.
+
+Set `DOCKER_REGISTRY_USER` and `DOCKER_REGISTRY_TOKEN` in your process's secret
+configuration. Replace the example registry/repository with one you can access.
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Model\CreateImageInfo;
+use Docker\Docker;
+
+$docker = Docker::create();
+$username = getenv('DOCKER_REGISTRY_USER');
+$token = getenv('DOCKER_REGISTRY_TOKEN');
+if ($username === false || $token === false || $username === '' || $token === '') {
+    throw new RuntimeException('Registry credentials are missing');
+}
+
+$auth = rtrim(strtr(base64_encode(json_encode([
+    'username' => $username,
+    'password' => $token,
+    'serveraddress' => 'registry.example.com',
+], JSON_THROW_ON_ERROR)), '+/', '-_'), '=');
+
+$pull = $docker->imageCreate(null, [
+    'fromImage' => 'registry.example.com/team/app',
+    'tag' => 'example',
+], ['X-Registry-Auth' => $auth]);
+
+$pull->onFrame(function (CreateImageInfo $frame): void {
+    if ($frame->getError() !== null) {
+        throw new RuntimeException($frame->getError());
+    }
+    printf("%s %s\n", $frame->getStatus() ?? '', $frame->getProgress() ?? '');
+});
+$pull->wait();
+```
+
+For a public image, omit the authentication header. Use an explicit tag or
+digest: an empty pull tag can request all tags. The returned `CreateImageStream`
+contains progress, not a completed image model. Inspect the image separately
+if you need its metadata.
+
+## Push a tagged image
+
+Tag a local image for the target registry before pushing. This sends image
+layers and the tag to the registry, so use a repository reserved for testing.
+Keep the credentials from the pull example available in `$username` and `$token`.
+
+```php
+use Docker\API\Model\AuthConfig;
+use Docker\API\Model\PushImageInfo;
+
+$authConfig = new AuthConfig();
+$authConfig->setUsername($username);
+$authConfig->setPassword($token);
+$authConfig->setServeraddress('registry.example.com');
+
+$docker->imageTag('docker-php-example:latest', [
+    'repo' => 'registry.example.com/team/app',
+    'tag' => 'example',
+]);
+
+$push = $docker->imagePush('registry.example.com/team/app', ['tag' => 'example'], [
+    'X-Registry-Auth' => $authConfig,
+]);
+$push->onFrame(function (PushImageInfo $frame): void {
+    if ($frame->getError() !== null) {
+        throw new RuntimeException($frame->getError());
+    }
+    printf("%s %s\n", $frame->getStatus() ?? '', $frame->getProgress() ?? '');
+});
+$push->wait();
+```
+
+Unlike `imageCreate()`, the `Docker\Docker::imagePush()` convenience method
+accepts an `AuthConfig` in the exact `X-Registry-Auth` header key and serializes
+and base64-encodes it for you. Do not pre-encode that model. You can instead pass
+an already encoded string, as used in the pull example. A generated
+`Docker\API\Endpoint\ImagePush` used directly does not perform the model
+conversion.
+
+## Builds use a different authentication header
+
+Building from private base images uses `X-Registry-Config`: an encoded map of
+registry names to credential objects, rather than one auth object. See
+[private build dependencies](/cookbook/build-image#private-base-images).
+
+Authentication to a Docker daemon and authentication to an image registry are
+separate concerns. A registry token does not secure an exposed Docker socket.

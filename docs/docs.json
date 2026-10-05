@@ -1,0 +1,71 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Docker PHP",
+  "description": "Documentation for the Docker PHP 3.0 client and its generated Docker Engine API models.",
+  "colors": {
+    "primary": "#1D63ED",
+    "light": "#1D63ED",
+    "dark": "#60A5FA"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get started",
+        "pages": ["index", "installation", "connection", "basic"]
+      },
+      {
+        "group": "Guides",
+        "pages": [
+          "cookbook/container-run",
+          "cookbook/container-config",
+          "guides/logs",
+          "guides/exec",
+          "cookbook/build-image",
+          "guides/registry",
+          "guides/archives",
+          "guides/image-transfer",
+          "guides/events-and-stats"
+        ]
+      },
+      {
+        "group": "Reference",
+        "pages": [
+          "reference/requests-and-responses",
+          "reference/streams",
+          "api-versions",
+          "migration",
+          "contributing"
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Engine API v1.45",
+        "href": "https://docs.docker.com/reference/api/engine/version/v1.45/"
+      },
+      {
+        "label": "Issues",
+        "href": "https://github.com/docker-php/docker-php/issues"
+      }
+    ],
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/docker-php/docker-php"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/docker-php/docker-php"
+    }
+  },
+  "banner": {
+    "content": "Docker PHP 3.0 documentation is in progress. The new releases have not been published yet.",
+    "dismissible": false
+  },
+  "redirects": [
+    { "source": "/async", "destination": "/migration#asynchronous-client" }
+  ]
+}

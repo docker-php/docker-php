@@ -1,0 +1,97 @@
+---
+title: "Command output"
+description: "Execute a command in a running container and read decoded output."
+---
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Model\ContainersIdExecPostBody;
+use Docker\API\Model\ExecIdStartPostBody;
+use Docker\Docker;
+
+$docker = Docker::create();
+
+$command = new ContainersIdExecPostBody();
+$command->setCmd(['sh', '-c', 'printf "hello\n"']);
+$command->setAttachStdout(true);
+$command->setAttachStderr(true);
+$command->setTty(false);
+
+$exec = $docker->containerExec('my-container', $command);
+
+$start = new ExecIdStartPostBody();
+$start->setDetach(false);
+$start->setTty(false);
+
+$output = $docker->execStart($exec->getId(), $start);
+$output->onStdout(function (string $chunk): void {
+    echo $chunk;
+});
+$output->onStderr(function (string $chunk): void {
+    fwrite(STDERR, $chunk);
+});
+$output->wait();
+```
+
+Replace `my-container` with an existing running container. `Detach` must be
+`false` to consume attached output. Use the same `Tty` value when creating and
+starting the exec command.
+
+For non-TTY commands, stdout and stderr are separate. TTY commands combine both
+streams on `onStdout`. Callbacks receive chunks that may contain partial lines.
+
+To check the exit status after consuming the output, use
+`execInspect($exec->getId())` and inspect `getRunning()` and `getExitCode()`.
+
+## Exit status is separate from HTTP success
+
+Continue with the `$exec` created above, after `$output->wait()`:
+
+```php
+$result = $docker->execInspect($exec->getId());
+if ($result->getRunning() !== false) {
+    throw new RuntimeException('The command has not finished yet');
+}
+$exitCode = $result->getExitCode();
+if ($exitCode === null) {
+    throw new RuntimeException('No exit status was returned');
+}
+if ($exitCode !== 0) {
+    throw new RuntimeException('The command failed with exit status '.$exitCode);
+}
+```
+
+An HTTP-successful start can still run a command which exits non-zero. Do not
+infer success from the presence of output, the absence of stderr, or HTTP 200.
+If a connection ends early, inspect the exec state before deciding whether it
+finished or retrying a command with side effects.
+
+## Detached execution
+
+For a background command, set `Detach` to `true` on the start model. Do not
+register callbacks or call `wait()` on its result; a detached start can return
+`null` on success. Poll `execInspect()` with a bounded interval/deadline in
+your application if you need completion and an exit code. This is a different
+lifecycle from the attached example, not an asynchronous PHP promise.
+
+## TTY and upgraded connections
+
+The attached wrapper handles HTTP 200 and HTTP 101 responses when their media
+type identifies Docker raw or multiplexed output. Set `Tty` explicitly and
+consistently at creation and start; do not try to autodetect it from the bytes.
+A TTY combines stdout/stderr and may produce terminal control sequences.
+
+Custom transports and proxies must preserve upgraded connections and provide
+an unbuffered body. A normal buffered HTTP response adapter may pass list or
+inspect calls but fail on exec output.
+
+This recipe is output-only: it does not implement interactive stdin or a
+terminal UI. `onStdin()` on `DockerRawStream` is not a write method. See
+[attach limitations](/reference/streams#attach-and-websocket-limitations).
+
+Raw response bodies can contain binary frame headers. See
+[Container logs](/guides/logs#raw-response-bodies) before working with raw fetch
+modes.

@@ -1,0 +1,132 @@
+---
+title: "Copy files with tar archives"
+description: "Download files, read path metadata and upload archives without buffering whole tarballs."
+---
+
+Docker copies container files through tar archives, not JSON models or a
+multipart form. The target path belongs to the container filesystem. Local
+input/output paths belong to the machine running PHP.
+
+## Download an archive
+
+Use a raw endpoint: `containerArchive()`'s default generated result is `null`,
+so it does not retain the tar body for you. This example saves an archive of
+`/etc` from an existing development container. Pick an output filename which
+does not already exist; `xb` prevents overwriting a local file.
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Endpoint\ContainerArchive;
+use Docker\Docker;
+
+$docker = Docker::create();
+$response = $docker->executeRawEndpoint(new ContainerArchive('my-container', [
+    'path' => '/etc',
+]));
+$body = $response->getBody();
+$file = null;
+
+try {
+    if ($response->getStatusCode() !== 200) {
+        throw new RuntimeException('Archive download failed: HTTP '.$response->getStatusCode());
+    }
+    $file = fopen(__DIR__ . '/container-etc.tar', 'xb');
+    if ($file === false) {
+        throw new RuntimeException('Could not create the destination archive');
+    }
+    while (!$body->eof()) {
+        $chunk = $body->read(65536);
+        while ($chunk !== '') {
+            $written = fwrite($file, $chunk);
+            if ($written === false || $written === 0) {
+                throw new RuntimeException('Could not write the archive');
+            }
+            $chunk = substr($chunk, $written);
+        }
+    }
+} finally {
+    $body->close();
+    if (is_resource($file)) {
+        fclose($file);
+    }
+}
+```
+
+This copies in bounded chunks, including handling short file writes. Your HTTP
+client must also provide an unbuffered response for end-to-end streaming. A
+failed transfer can leave an incomplete file; do not consume it as a completed
+archive. For application downloads, write to a new temporary file and rename
+it to the final destination only after success.
+
+The result is a **tar archive**, even when the requested path is one file.
+Review the contents before extracting, and do not blindly extract an untrusted
+archive over an existing directory. `containerExport()` uses the same raw-body
+pattern for a container filesystem export; it is not an image save or a backup
+of mounted volume data.
+
+## Read path metadata
+
+The HEAD endpoint returns metadata in `X-Docker-Container-Path-Stat`, not a
+response body. Decode its base64-encoded JSON value:
+
+```php
+use Docker\API\Endpoint\ContainerArchiveInfo;
+
+$response = $docker->executeRawEndpoint(new ContainerArchiveInfo('my-container', [
+    'path' => '/etc',
+]));
+if ($response->getStatusCode() !== 200) {
+    throw new RuntimeException('Path lookup failed: HTTP '.$response->getStatusCode());
+}
+$decoded = base64_decode($response->getHeaderLine('X-Docker-Container-Path-Stat'), true);
+if ($decoded === false || $decoded === '') {
+    throw new RuntimeException('Missing or invalid path metadata');
+}
+$metadata = json_decode($decoded, true, 512, JSON_THROW_ON_ERROR);
+printf("%s\n", $metadata['name']);
+```
+
+This avoids downloading the file contents. Check the raw status explicitly;
+HEAD error responses may not have a JSON body for a generated error model.
+
+## Upload a tar archive
+
+Create `upload.tar` containing only files intended for the destination. The
+destination directory must already exist in the container. Uploading can
+overwrite files, so use a development container and a dedicated path.
+
+```php
+use Docker\API\Endpoint\PutContainerArchive;
+
+$archive = fopen(__DIR__ . '/upload.tar', 'rb');
+if ($archive === false) {
+    throw new RuntimeException('Could not open the upload archive');
+}
+$body = null;
+try {
+    $response = $docker->executeRawEndpoint(new PutContainerArchive(
+        'my-container',
+        $archive,
+        ['path' => '/tmp', 'noOverwriteDirNonDir' => 'true']
+    ));
+    $body = $response->getBody();
+    if ($response->getStatusCode() !== 200) {
+        throw new RuntimeException('Archive upload failed: HTTP '.$response->getStatusCode());
+    }
+} finally {
+    $body?->close();
+    if (is_resource($archive)) {
+        fclose($archive);
+    }
+}
+```
+
+Pass the file resource directly; do not JSON-encode or base64-encode the tar.
+`noOverwriteDirNonDir` prevents replacing a directory with a non-directory
+or vice versa. It does **not** prevent replacing an existing regular file.
+`copyUIDGID`, if needed, is also a string-valued query option in this API line.
+The convenience `putContainerArchive()` call uses the same tar request shape
+and returns `null` on successful typed parsing.

@@ -29,6 +29,10 @@ Version 3.0 has not been published yet. The installation and migration
 instructions below apply once it is available.
 
 We're updating the documentation for version 3.0 and expect to publish it soon.
+The new site is being prepared with Mintlify, with its source in [docs/](docs/).
+See [DOCUMENTATION.md](DOCUMENTATION.md) to preview and edit it locally. The
+Read the Docs link above still points to the legacy documentation until the new
+site is published.
 
 ## Requirements
 
@@ -147,6 +151,9 @@ response bodies. Non-TTY log and exec output includes binary frame headers in
 those bodies. Use the callback streams above to read decoded output.
 
 ## Docker API versions
+
+See the official [Docker Engine API v1.45 reference](https://docs.docker.com/reference/api/engine/version/v1.45/)
+for endpoint descriptions, parameters and response schemas matching this API line.
 
 The client package follows semantic versioning. The generated API package uses
 `Jane-major.Docker-major.Docker-minor.revision`: `7.1.45.0` means Docker API 1.45,

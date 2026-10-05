@@ -1,0 +1,17 @@
+{
+  "name": "docker-php-documentation",
+  "private": true,
+  "description": "Local preview and checks for the Docker PHP Mintlify documentation",
+  "engines": {
+    "node": ">=20.17 <25"
+  },
+  "scripts": {
+    "dev": "mint dev --no-open --telemetry false",
+    "validate": "mint validate --telemetry false",
+    "check:links": "mint broken-links --check-anchors --telemetry false",
+    "check:examples": "php scripts/check-php-examples.php"
+  },
+  "devDependencies": {
+    "mint": "4.2.986"
+  }
+}

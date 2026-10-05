@@ -1,0 +1,72 @@
+---
+title: "Basic usage"
+description: "Create a client, call endpoints, and work with generated models."
+---
+
+## List containers
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+
+$docker = Docker::create();
+
+foreach ($docker->containerList(['all' => true]) as $container) {
+    printf("%s\t%s\n", $container->getId(), $container->getImage());
+}
+```
+
+By default the client connects to `unix:///var/run/docker.sock`.
+See [Connection settings](/connection) for remote daemons and TLS.
+
+`Docker::create()` makes a system-info request to the daemon. Creating the
+client therefore requires a working connection and permission for that request.
+
+## Endpoint parameters
+
+Endpoint methods accept generated request models and query-parameter arrays.
+The PHPDoc in [the generated client](https://github.com/docker-php/docker-php-api/blob/main/src/Client.php)
+lists the accepted parameters, response models and API exceptions.
+
+For example, `containerList(['all' => true])` includes stopped containers.
+Filters use the JSON format accepted by Docker:
+
+```php
+$containers = $docker->containerList([
+    'filters' => json_encode(['status' => ['running']], JSON_THROW_ON_ERROR),
+]);
+```
+
+Use [generated models](https://github.com/docker-php/docker-php-api/tree/main/src/Model)
+for request bodies, such as `ContainersCreatePostBody`. Read response fields
+through their getters. Some fields are nullable or absent depending on the
+daemon response.
+
+Most methods follow this order: resource ID, request body if applicable, query
+parameters, header parameters if applicable, and fetch mode. Parameters which
+do not apply are omitted from the method signature, so do not assume the same
+argument positions for every endpoint. For example, `containerList()` takes
+query parameters first, while `containerCreate()` takes a request model first.
+
+The client sends these requests to the daemon; it does not run the Docker CLI.
+Container commands are arrays of arguments, not shell command strings. Use an
+explicit shell such as `['sh', '-c', '...']` only when you need shell behavior,
+and never interpolate untrusted input into that shell command.
+
+See [Requests and responses](/reference/requests-and-responses) for JSON-valued
+query parameters, generated models, raw responses and error handling.
+
+## Streaming endpoints
+
+Pulling or building an image, reading logs, and starting an attached exec command
+can return callback streams. Register callbacks and call `wait()` to consume
+them. See [container logs](/guides/logs), [command output](/guides/exec) and
+[image builds](/cookbook/build-image) for examples.
+
+Not every streaming endpoint has a callback wrapper. Archive downloads need a
+raw response, and continuous stats need an application-level reader. The
+[streaming reference](/reference/streams) lists the differences and links to
+the relevant recipes.

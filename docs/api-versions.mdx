@@ -1,0 +1,66 @@
+---
+title: "API versions"
+description: "Pin generated models to one Docker Engine API specification."
+---
+
+## Docker Engine API reference
+
+The official [Docker Engine API v1.45 reference](https://docs.docker.com/reference/api/engine/version/v1.45/)
+describes the endpoints, parameters and response schemas used by this API line.
+Use it alongside these PHP examples; generated method signatures and model
+setters describe how to pass those values in PHP.
+
+## Two package versions
+
+`docker-php/docker-php` follows semantic versioning. Its upcoming 3.0 release
+targets Docker Engine API v1.45.
+
+`docker-php/docker-php-api` uses a four-part scheme:
+`Jane-major.Docker-major.Docker-minor.revision`. For example, `7.1.45.0` means
+Docker Engine API v1.45, generated with Jane 7, revision 0. It is not the version
+of the high-level client.
+
+Keep generated API requirements within one specification:
+
+```json
+{
+  "require": {
+    "docker-php/docker-php": "^3.0",
+    "docker-php/docker-php-api": ">=7.1.45.0 <7.1.46.0"
+  }
+}
+```
+
+The client already requires that API range. Add a direct API requirement only
+if your application needs one. Avoid broad API constraints such as `^7.1.45.0`:
+they also allow other Docker specifications.
+
+## Request URL version
+
+The default factory uses `/v1.45` in request URLs. `DOCKER_API_VERSION` can
+override the URL version:
+
+```bash
+DOCKER_API_VERSION=1.45 php your-script.php
+```
+
+Both `1.45` and `v1.45` are accepted. Choose a version supported by your daemon
+and compatible with the endpoints you use.
+
+<Warning>
+Changing the URL version does not regenerate models or add newer fields and
+endpoints. The client does not automatically negotiate an API version with the
+daemon.
+</Warning>
+
+## Generated code
+
+The API repository contains the
+[v1.45 specification](https://github.com/docker-php/docker-php-api/blob/main/spec/v1.45.json)
+and [Jane configuration](https://github.com/docker-php/docker-php-api/blob/main/.jane-openapi).
+Generation requires Jane 7.14.4 or later within the Jane 7 release line and
+uses upstream output without local patches. See the
+[generation instructions](https://github.com/docker-php/docker-php-api#generation).
+
+Newer API lines will need their own generated code and compatible client
+requirements. They are separate work after the initial restored release.

@@ -1,0 +1,164 @@
+---
+title: "Requests and responses"
+description: "Understand models, JSON-valued parameters, raw responses and errors."
+---
+
+The generated API describes Docker Engine v1.45. `Docker\Docker` extends that
+client with connection handling and wrappers for selected streaming endpoints.
+Use `Docker\Docker`, not `Docker\API\Client`, for those wrappers.
+
+## Request models and nested configuration
+
+JSON request bodies use generated models, rather than arbitrary PHP arrays.
+Construct the outer request model and the nested models it expects. Use arrays
+for lists and maps where the setter accepts an iterable.
+
+For example, container creation combines `ContainersCreatePostBody`,
+`HostConfig`, `PortBinding` and `Mount`. See
+[Configure a container](/cookbook/container-config) for a complete example.
+
+Calling a setter marks that field as initialized. An unset field is different
+from one explicitly set to `null`, an empty list or an empty object. Leave
+optional fields unset unless you intend to send them. Nullable setters do not
+mean that every Docker operation accepts `null` in every context.
+
+Docker's JSON shapes matter:
+
+| Shape | Example | Typical use |
+| --- | --- | --- |
+| List | `["sh", "-c", "echo hello"]` | `Cmd`, `Env`, mounts |
+| Map | `{"example":"true"}` | Labels, network endpoints |
+| Map of lists | `{"80/tcp":[{"HostPort":"8080"}]}` | Port bindings |
+| Map of empty objects | `{"80/tcp":{}}` | Exposed ports |
+
+Use `new ArrayObject()` when constructing an empty object in these examples;
+an empty PHP array normally represents a JSON list. The generated normalizers
+preserve the object shapes required by the API.
+
+## JSON-valued query parameters
+
+Some query parameters are strings containing JSON, even though other query
+parameters use booleans, integers or arrays. Examples include `filters`,
+`buildargs`, `labels` on `imageBuild()`, and `cachefrom`.
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+
+$docker = Docker::create();
+$containers = $docker->containerList([
+    'all' => true,
+    'filters' => json_encode([
+        'label' => ['docker-php-example=true'],
+        'status' => ['running'],
+    ], JSON_THROW_ON_ERROR),
+]);
+```
+
+JSON-encode the value once. Do not also apply `urlencode()` or
+`http_build_query()`; the client performs query-string encoding. Pass an actual
+boolean for `all`, not the string `'true'`. Conversely, archive upload options
+such as `noOverwriteDirNonDir` are declared as strings in this API line and
+must be passed as strings.
+
+The generated endpoint's PHPDoc and options resolver are the authority for the
+parameter types accepted by this version. A CLI flag's name or apparent type
+is not enough to determine the PHP signature.
+
+## Response models and empty responses
+
+The default fetch mode returns a generated response model, a list of models,
+a callback stream, a plain decoded object, or `null`, depending on the endpoint.
+Use getters on models; do not assume every result is an array.
+
+Successful operations such as starting a container can have no response body.
+A `null` result is therefore not a general failure indicator. Check the endpoint
+contract, or use a raw response when you need the HTTP status.
+
+For absent or nullable response fields, use null checks or null-safe getters.
+Inspect responses and create request models serve different purposes; do not
+send an entire inspect response back as a creation or update payload.
+
+## Raw responses and headers
+
+Use `executeRawEndpoint()` with an endpoint object when you need the HTTP
+status, headers, tar content or an unsupported streaming response:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Endpoint\ContainerStart;
+use Docker\Docker;
+
+$docker = Docker::create();
+$response = $docker->executeRawEndpoint(new ContainerStart('my-container'));
+
+if ($response->getStatusCode() !== 204) {
+    throw new RuntimeException(sprintf(
+        'Unexpected start response: HTTP %d',
+        $response->getStatusCode()
+    ));
+}
+```
+
+This returns a PSR-7 response. It bypasses generated response parsing,
+including API exception conversion and the custom stream wrappers. Check the
+status yourself **before** treating the body as an archive, log stream or other
+successful result. Transport exceptions and request-parameter validation can
+still occur.
+
+`FETCH_RESPONSE` on the convenience methods is deprecated by Jane. Prefer
+`executeRawEndpoint()` in new code. A response body is also a cursor: reading
+it consumes bytes. Do not assume you can rewind a live socket body.
+
+## Error handling
+
+There are three separate failure paths:
+
+1. Local validation or serialization fails before the request is sent.
+2. A transport error or a documented HTTP API error occurs.
+3. An operation starts successfully but reports an error inside its progress
+   stream, such as a pull, push or build failure after HTTP 200.
+
+Handle documented API exceptions on typed calls, and inspect progress frames
+on streaming calls. For example:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Exception\ContainerInspectNotFoundException;
+use Docker\Docker;
+use Psr\Http\Client\ClientExceptionInterface;
+
+$docker = Docker::create();
+
+try {
+    $container = $docker->containerInspect('my-container');
+    printf("%s\n", $container->getId());
+} catch (ContainerInspectNotFoundException $error) {
+    throw new RuntimeException(
+        $error->getErrorResponse()->getMessage() ?? 'Container not found',
+        0,
+        $error
+    );
+} catch (ClientExceptionInterface $error) {
+    throw new RuntimeException('The Docker request could not be completed', 0, $error);
+}
+```
+
+The factory itself makes an `/info` request and can fail before the `try` block
+above. Include client creation in your application's outer connection/error
+handling. Generated exceptions cover documented status/content-type pairs;
+do not assume they validate every unexpected proxy or daemon response. Use a
+raw response when your application requires strict HTTP status handling.
+
+Do not automatically retry every failed request. A connection failure after
+submission can leave the operation's outcome unknown. Reconcile the container
+or image state before retrying a create, start, upload or other mutation.

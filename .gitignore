@@ -4,3 +4,5 @@ composer.lock
 .vagrant
 /.php-cs-fixer.cache
 /.phpunit.result.cache
+/docs/node_modules/
+/docs/.mintlify/

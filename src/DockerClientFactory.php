@@ -16,8 +16,26 @@ use Http\Discovery\Psr17FactoryDiscovery;
 
 final class DockerClientFactory
 {
+    /**
+     * The api_version option overrides DOCKER_API_VERSION; other options are
+     * passed to the socket client. Neither setting changes the generated models.
+     */
     public static function create(array $config = [], ?PluginClientFactory $pluginClientFactory = null): PluginClient
     {
+        if (\array_key_exists('api_version', $config)) {
+            if (!\is_string($config['api_version']) || !preg_match('#^/?v?[0-9]+\.[0-9]+$#D', $config['api_version'])) {
+                throw new \InvalidArgumentException('api_version must be a Docker API version such as 1.45 or v1.45.');
+            }
+            $dockerApiVersion = $config['api_version'];
+            unset($config['api_version']);
+        } else {
+            $dockerApiVersion = getenv('DOCKER_API_VERSION') ?: 'v1.45';
+        }
+        $dockerApiVersion = ltrim($dockerApiVersion, '/');
+        if (!str_starts_with($dockerApiVersion, 'v')) {
+            $dockerApiVersion = 'v'.$dockerApiVersion;
+        }
+
         if (!\array_key_exists('remote_socket', $config)) {
             $config['remote_socket'] = 'unix:///var/run/docker.sock';
         }
@@ -42,10 +60,6 @@ final class DockerClientFactory
         }
 
         $socketClient = new Client($config);
-        $dockerApiVersion = ltrim(getenv('DOCKER_API_VERSION') ?: 'v1.45', '/');
-        if (!str_starts_with($dockerApiVersion, 'v')) {
-            $dockerApiVersion = 'v'.$dockerApiVersion;
-        }
 
         $pluginClientFactory ??= new PluginClientFactory();
 

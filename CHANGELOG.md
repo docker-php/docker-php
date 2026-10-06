@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+
+- Add an explicit `api_version` factory option. It overrides `DOCKER_API_VERSION`
+  without changing the process environment or generated models.
+- Preserve the existing environment fallback and default API version 1.45.
+
 ## 2.0
 
  - [BC Break] All endpoints have new names and potentially new parameters

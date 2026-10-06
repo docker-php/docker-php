@@ -47,6 +47,25 @@ DOCKER_API_VERSION=1.45 php your-script.php
 Both `1.45` and `v1.45` are accepted. Choose a version supported by your daemon
 and compatible with the endpoints you use.
 
+Since client 3.1.0, you can pin the request version directly in PHP:
+
+```php
+<?php
+
+use Docker\Docker;
+use Docker\DockerClientFactory;
+
+$httpClient = DockerClientFactory::create([
+    'remote_socket' => 'unix:///var/run/docker.sock',
+    'api_version' => '1.45',
+]);
+$docker = Docker::create($httpClient, [], [], false);
+```
+
+An explicit `api_version` overrides `DOCKER_API_VERSION`. Without it, the
+environment setting and default remain unchanged. The fourth argument disables
+the generated server plugins because the factory already adds the API path.
+
 <Warning>
 Changing the URL version does not regenerate models or add newer fields and
 endpoints. The client does not automatically negotiate an API version with the

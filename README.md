@@ -11,7 +11,7 @@ This library aims to reach 100% API support of the Docker Engine.
 
 ## Documentation
 
-The [version 3.0 documentation](https://docker-php.mintlify.site/) is available.
+The [version 3.x documentation](https://docker-php.mintlify.site/) is available.
 Its source lives in
 [docs/](docs/); see [DOCUMENTATION.md](DOCUMENTATION.md) to preview and edit it
 locally. The [legacy documentation](https://docker-php.readthedocs.io/en/latest/)
@@ -99,6 +99,10 @@ in request URLs:
 ```bash
 DOCKER_API_VERSION=1.52 php your-script.php
 ```
+
+Since 3.1.0, the factory's `api_version` option can pin the request version
+directly in PHP. It takes precedence over `DOCKER_API_VERSION`. See
+[connection settings](https://docker-php.mintlify.site/connection#factory-options).
 
 The generated endpoints and models still describe API v1.45. Changing the URL
 version does not add newer API fields or endpoints. The client does not

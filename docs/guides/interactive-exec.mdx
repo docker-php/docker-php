@@ -103,8 +103,10 @@ ticks must return promptly. Their exceptions close the local session and propaga
 
 ## Deadlines and completion
 
-The factory's `timeout` bounds synchronous HTTP setup requests. The third argument
-to `execStartInteractive()` is a separate total streaming deadline in milliseconds,
+The factory's `timeout` controls connection and socket I/O timeouts for synchronous
+HTTP setup/status calls. It is not a total request deadline: a response that keeps
+arriving can extend a request, and application heartbeats cannot run during it.
+The third argument to `execStartInteractive()` is a total streaming deadline in milliseconds,
 starting after the HTTP upgrade. It is not reset when output arrives. Expiry throws
 `Docker\Exception\InteractiveExecTimeoutException` and closes local I/O.
 

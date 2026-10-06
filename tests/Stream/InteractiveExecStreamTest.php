@@ -147,10 +147,14 @@ class InteractiveExecStreamTest extends TestCase
     public function testHugeFrameDoesNotAllocateItsDeclaredSize(): void
     {
         $stream = $this->open();
-        $before = memory_get_usage(true);
+        // Measure used bytes, not allocator pages (which grow in 2 MiB steps),
+        // and exclude PHPUnit's own assertion/autoload allocations.
+        $before = memory_get_usage();
         fwrite($this->sockets[1], pack('CxxxN', 1, 4294967295).'x');
-        self::assertTrue($stream->poll());
-        self::assertLessThan(1048576, memory_get_usage(true) - $before);
+        $open = $stream->poll();
+        $used = memory_get_usage() - $before;
+        self::assertTrue($open);
+        self::assertLessThan(1048576, $used);
     }
 
     public function testCallbackFailureClosesConnection(): void

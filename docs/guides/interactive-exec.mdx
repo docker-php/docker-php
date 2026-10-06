@@ -118,6 +118,30 @@ application deadline if you need to poll for the final result. Never automatical
 retry a command with side effects after an ambiguous disconnect.
 </Warning>
 
+## Worker locks and retries
+
+Your application owns its queue, lock leases and execution records. Docker PHP
+provides the polling and stdin APIs; it does not acquire Redis locks, acknowledge
+jobs or deduplicate executions.
+
+Acquire the lease and persist the application execution ID and Docker exec ID
+before starting the command. Renew the lease between polls, atomically comparing
+its unique owner token so an expired worker cannot renew another worker's lock.
+Use the ten-second heartbeat hook above even when the command is silent.
+Choose a lease duration with enough margin for synchronous setup/status requests
+and delayed heartbeats; a ten-second schedule is not a guarantee of exact timing.
+
+If renewal fails, stop sending input and close the local session. A heartbeat
+exception passed through `wait($tick)` does this automatically. Record the failed
+or uncertain attempt before acknowledging its job, and retain the Docker exec ID
+for later inspection. A failed worker result does not prove the command stopped
+or that it had no side effects.
+
+Use persisted execution state to deduplicate repeated job deliveries. Before
+starting another attempt after a lost lease or disconnect, confirm the previous
+command has stopped and reconcile any side effects. A new queue delivery or an
+expired lock alone does not make another exec safe.
+
 ## Transports and TTY
 
 This feature supports the bundled Unix, TCP and TLS socket transport. Guzzle and
@@ -129,3 +153,33 @@ terminal semantics, not separate stdout/stderr pipes. `closeStdin()` deliberatel
 rejects TTY sessions: Docker can close their output when socket stdin reaches EOF.
 Use terminal input or let the command exit; use `Tty=false` for JSON-input managers.
 The `Tty` setting must match at exec creation and start.
+
+## Maintainer validation
+
+On 6 October 2026, a private application canary tested
+[client revision `fbdb2cc`](https://github.com/docker-php/docker-php/commit/fbdb2cc2432b1ba9341f144a2f551523536e4a4c)
+with API package `7.1.45.0` against Docker Engine `29.8.1`, using API `1.45`.
+Its worker sent fixed JSON stdin, closed stdin and polled a command that produced
+no output for 40 seconds.
+
+| Application check | Observed result |
+| --- | --- |
+| Silent execution | Four Redis lease renewals; completed result callback delivered; queue job acknowledged. |
+| Lease loss after the first renewal | The next renewal failed and the failed result callback was delivered. The disconnected container command later completed. |
+| Identical admission and job replay after either result | One manager start per execution, one attempt and no second command. |
+
+The locks, result callbacks and replay guards in these checks belonged to the
+application. Concurrent workers, HTTP submission retries and network-failure
+recovery still need separate tests.
+
+The library's stream and local transport-fixture tests cover partial stdin
+writes, backpressure, EOF, idle ticks, deadline expiry, callback failures and
+Unix/TCP/TLS connections. Run them without a Docker daemon:
+
+```bash
+vendor/bin/phpunit --filter 'InteractiveExec(Stream|Transport)Test' --disallow-test-output
+```
+
+`tests/Resource/InteractiveExecResourceTest.php` also exercises stdin, TTY output,
+exit codes and container-side timeouts against a development Docker daemon.
+Those resource tests create and remove their own containers.

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.2.0
 
 - Add opt-in interactive exec sessions with nonblocking stdin writes, bounded
   output polling, non-TTY stdin EOF and streaming deadlines.

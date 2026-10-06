@@ -62,10 +62,6 @@
       "github": "https://github.com/docker-php/docker-php"
     }
   },
-  "banner": {
-    "content": "Docker PHP 3.0 documentation is in progress. The new releases have not been published yet.",
-    "dismissible": false
-  },
   "redirects": [
     { "source": "/async", "destination": "/migration#asynchronous-client" }
   ]

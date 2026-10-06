@@ -11,8 +11,8 @@ This library aims to reach 100% API support of the Docker Engine.
 
 ## Documentation
 
-The [version 3.0 documentation](https://docker-php.mintlify.site/) is available
-and is still being updated ahead of the release. Its source lives in
+The [version 3.0 documentation](https://docker-php.mintlify.site/) is available.
+Its source lives in
 [docs/](docs/); see [DOCUMENTATION.md](DOCUMENTATION.md) to preview and edit it
 locally. The [legacy documentation](https://docker-php.readthedocs.io/en/latest/)
 remains available for earlier releases.
@@ -28,13 +28,10 @@ maintenance of the original `docker-php/docker-php` repository to give you a
 better upgrade path. Development will continue here, and we will archive
 `beluga-php/docker-php` once the migration is complete.
 
-We're preparing new v3.x releases, starting with Docker Engine API v1.45. We plan
+Version 3.0 targets Docker Engine API v1.45. We plan
 to add the missing API versions and bring support up to the latest Docker Engine
 API. See [Upgrading to 3.0](#upgrading-to-30) below for how to migrate from
 existing releases.
-
-Version 3.0 has not been published yet. The installation and migration
-instructions below apply once it is available.
 
 ## Requirements
 
@@ -89,7 +86,7 @@ The client package follows semantic versioning. The generated API package uses
 `Jane-major.Docker-major.Docker-minor.revision`: `7.1.45.0` means Docker API 1.45,
 generated with Jane 7, revision 0.
 
-Keep generated API dependencies within one Docker specification. The planned
+Keep generated API dependencies within one Docker specification. The
 3.0 client uses this range:
 
 ```json
@@ -159,7 +156,7 @@ contribution instructions.
 
 Docker PHP was created by [Geoffrey Bachelet](https://github.com/ubermuda) and
 [Joel Wurtz](https://github.com/joelwurtz). Development continued under
-[beluga-php](https://github.com/beluga-php) before the planned return to the
+[beluga-php](https://github.com/beluga-php) before the return to the
 original repositories.
 
 ## License

@@ -70,96 +70,15 @@ foreach ($docker->containerList(['all' => true]) as $container) {
 Endpoint methods return generated models where the API defines a response body.
 Their PHPDoc lists accepted parameters, return types and API exceptions.
 
-### Connection settings
-
 `Docker::create()` connects through `unix:///var/run/docker.sock` by default.
-Set `DOCKER_HOST` to use another Unix socket or a `tcp://`, `http://` or `https://`
-address:
+Environment variables are optional. See [connection settings](https://docker-php.mintlify.site/connection)
+and the [Guzzle examples](https://docker-php.mintlify.site/guides/guzzle) for
+custom sockets, remote daemons and TLS configuration.
 
-```bash
-DOCKER_HOST=unix:///run/docker.sock php your-script.php
-```
-
-For a TCP connection with TLS, set `DOCKER_TLS_VERIFY=1` and `DOCKER_CERT_PATH` to
-the directory containing `ca.pem`, `cert.pem` and `key.pem`. `DOCKER_PEER_NAME`
-sets the name used to verify the server certificate when needed.
-
-An `https://` address enables TLS and verifies the server certificate by default.
-HTTP and HTTPS use ports `80` and `443` when no port is given. See
-[connection settings](https://docker-php.mintlify.site/connection) for private
-CAs and client certificates.
-
-You can pass a configured PSR-18 HTTP client to `Docker::create($httpClient)`.
-Configure the daemon address, Unix socket and TLS options on that client.
-For streaming operations, check that it supports unbuffered responses and
-Docker's upgraded connections.
-
-See the [Guzzle connection examples](https://docker-php.mintlify.site/guides/guzzle)
-for PHP-configured Unix sockets, HTTP endpoints and TLS.
-
-### Container logs
-
-Register callbacks and call `wait()` to read the stream:
-
-```php
-$logs = $docker->containerLogs('my-container', [
-    'stdout' => true,
-    'stderr' => true,
-]);
-$logs->onStdout(function (string $output): void {
-    echo $output;
-});
-$logs->onStderr(function (string $output): void {
-    fwrite(STDERR, $output);
-});
-$logs->wait();
-```
-
-Callbacks receive decoded output chunks, which can contain part of a line or
-several lines. TTY containers combine stdout and stderr on `onStdout`.
-
-For responses marked `application/vnd.docker.raw-stream`, the client inspects
-the container's TTY setting to distinguish terminal output from Docker's framed
-output. This requires permission to inspect the container. Responses marked
-`application/vnd.docker.multiplexed-stream` do not need that extra request.
-
-### Command output
-
-Create an exec command in a running container, then start it with `Detach` set
-to `false`:
-
-```php
-use Docker\API\Model\ContainersIdExecPostBody;
-use Docker\API\Model\ExecIdStartPostBody;
-
-$command = new ContainersIdExecPostBody();
-$command->setCmd(['sh', '-c', 'printf "hello\n"']);
-$command->setAttachStdout(true);
-$command->setAttachStderr(true);
-$command->setTty(false);
-
-$exec = $docker->containerExec('my-container', $command);
-
-$start = new ExecIdStartPostBody();
-$start->setDetach(false);
-$start->setTty(false);
-
-$output = $docker->execStart($exec->getId(), $start);
-$output->onStdout(function (string $chunk): void {
-    echo $chunk;
-});
-$output->onStderr(function (string $chunk): void {
-    fwrite(STDERR, $chunk);
-});
-$output->wait();
-```
-
-Use the same `Tty` setting when creating and starting the command. TTY output
-combines stdout and stderr on `onStdout`.
-
-`executeRawEndpoint()` and the deprecated `FETCH_RESPONSE` mode return raw
-response bodies. Non-TTY log and exec output includes binary frame headers in
-those bodies. Use the callback streams above to read decoded output.
+For streaming output, see [container logs](https://docker-php.mintlify.site/guides/logs),
+[command output](https://docker-php.mintlify.site/guides/exec) and the
+[streaming reference](https://docker-php.mintlify.site/reference/streams).
+These guides cover callback streams, TTY output and raw response framing.
 
 ## Docker API versions
 
@@ -194,7 +113,8 @@ automatically negotiate an API version with the daemon.
 
 Version 3.0 requires PHP 8.1 or later, PSR-7 v2 and Jane 7-generated models.
 Review endpoint signatures, model types and HTTP client dependencies before
-upgrading. Check log and exec consumers against the streaming examples above.
+upgrading. Check log and exec consumers against the
+[streaming documentation](https://docker-php.mintlify.site/reference/streams).
 
 Change the client requirement to `docker-php/docker-php:^3.0`. Remove an explicit
 `docker-php/docker-php-api:4.1.*` requirement, or change it to the API 1.45 range

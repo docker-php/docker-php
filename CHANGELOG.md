@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Add opt-in interactive exec sessions with nonblocking stdin writes, bounded
+  output polling, non-TTY stdin EOF and streaming deadlines.
+- Keep existing blocking exec APIs unchanged. Interactive sessions require
+  the bundled socket transport; TTY stdin half-close is rejected.
+
 ## 3.1.0
 
 - Add an explicit `api_version` factory option. It overrides `DOCKER_API_VERSION`

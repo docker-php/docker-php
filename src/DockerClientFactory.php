@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Docker;
 
+use Docker\Http\InteractiveHttpClient;
 use Docker\Http\StreamingDecoderPlugin;
 use Http\Client\Common\Plugin\AddHostPlugin;
 use Http\Client\Common\Plugin\AddPathPlugin;
@@ -78,6 +79,17 @@ final class DockerClientFactory
                 'client_name' => 'docker-client',
             ]
         );
+    }
+
+    /** Socket transport with opt-in interactive exec support. */
+    public static function createInteractive(array $config = [], ?PluginClientFactory $pluginClientFactory = null): InteractiveHttpClient
+    {
+        return new InteractiveHttpClient(self::create($config, $pluginClientFactory));
+    }
+
+    public static function createInteractiveFromEnv(?PluginClientFactory $pluginClientFactory = null): InteractiveHttpClient
+    {
+        return new InteractiveHttpClient(self::createFromEnv($pluginClientFactory));
     }
 
     public static function createFromEnv(?PluginClientFactory $pluginClientFactory = null): PluginClient

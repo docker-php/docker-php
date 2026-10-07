@@ -55,6 +55,26 @@ class DockerClientFactoryTransportTest extends TransportTestCase
         $this->assertStringStartsWith('GET /v1.52/_ping HTTP/1.1', $this->serverResult()['request']);
     }
 
+    #[DataProvider('transports')]
+    public function testExplicitApiVersionOnRealConnection(string $scheme): void
+    {
+        putenv('DOCKER_API_VERSION=1.52');
+        $serverConfig = [];
+        $clientConfig = ['api_version' => '1.45', 'timeout' => 3000];
+        if ('https' === $scheme) {
+            $this->createCertificates();
+            $serverConfig['ssl'] = $this->serverTlsOptions();
+            $clientConfig['stream_context_options']['ssl']['cafile'] = $this->directory.'/ca.pem';
+        }
+        $address = $this->startServer($serverConfig, 'unix' === $scheme);
+        $clientConfig['remote_socket'] = $scheme.'://'.$address;
+        $response = DockerClientFactory::create($clientConfig)->sendRequest(new Request('GET', '/_ping'));
+
+        $this->assertSame('OK', $response->getBody()->getContents());
+        $this->assertStringStartsWith('GET /v1.45/_ping HTTP/1.1', $this->serverResult()['request']);
+        $this->assertSame('1.52', getenv('DOCKER_API_VERSION'));
+    }
+
     public function testHttpsDoesNotAllowPlaintextDowngrade(): void
     {
         $this->createCertificates();

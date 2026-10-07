@@ -109,6 +109,50 @@ class DockerClientFactoryTest extends TestCase
         $this->assertSame('/v1.52', $this->getApiPath());
     }
 
+    public static function explicitApiVersions(): array
+    {
+        return [['1.45'], ['v1.45'], ['/v1.45'], ['/1.45']];
+    }
+
+    #[DataProvider('explicitApiVersions')]
+    public function testExplicitApiVersionOverridesEnvironment(string $version): void
+    {
+        putenv('DOCKER_API_VERSION=1.52');
+
+        $this->assertSame('/v1.45', $this->getApiPath(['api_version' => $version]));
+        $this->assertSame('1.52', getenv('DOCKER_API_VERSION'));
+    }
+
+    public static function invalidApiVersions(): array
+    {
+        return [[''], [null], [1.45], [145], [false], [[]], ['1'], ['1.45/containers'], ['1.45?x=1'], [' 1.45'], ["1.45\n"]];
+    }
+
+    #[DataProvider('invalidApiVersions')]
+    public function testInvalidExplicitApiVersionIsRejected($version): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('api_version must be a Docker API version');
+
+        DockerClientFactory::create(['api_version' => $version]);
+    }
+
+    public function testApiVersionIsNotPassedToSocketClient(): void
+    {
+        $config = [];
+        PluginClientFactory::setFactory(static function (Client $client, array $plugins, array $options) use (&$config): PluginClient {
+            $config = (new \ReflectionProperty($client, 'config'))->getValue($client);
+            unset($options['client_name']);
+
+            return new PluginClient($client, $plugins, $options);
+        });
+
+        DockerClientFactory::create(['api_version' => '1.45', 'timeout' => 30000]);
+
+        $this->assertArrayNotHasKey('api_version', $config);
+        $this->assertSame(30000, $config['timeout']);
+    }
+
     public function testCreateFromEnvWithoutCertPath(): void
     {
         $this->expectException(\RuntimeException::class);
@@ -158,7 +202,7 @@ class DockerClientFactoryTest extends TestCase
         $this->assertSame('test', $context['ssl']['peer_name']);
     }
 
-    private function getApiPath(): string
+    private function getApiPath(array $config = []): string
     {
         $plugins = [];
         PluginClientFactory::setFactory(static function ($client, array $createdPlugins, array $options) use (&$plugins): PluginClient {
@@ -168,7 +212,7 @@ class DockerClientFactoryTest extends TestCase
             return new PluginClient($client, $createdPlugins, $options);
         });
 
-        DockerClientFactory::create();
+        DockerClientFactory::create($config);
 
         foreach ($plugins as $plugin) {
             if ($plugin instanceof AddPathPlugin) {

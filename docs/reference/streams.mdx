@@ -38,6 +38,55 @@ Do not decode a whole progress stream with one `json_decode()` call. Check
 `getError()` on every build, pull or push frame: HTTP 200 means the stream
 opened, not that the operation succeeded.
 
+## Custom socket clients
+
+`DockerClientFactory::create()` and `Docker::create()` without a supplied client
+already use `Docker\Http\StreamingDecoderPlugin`. You do not need to add it
+when using the bundled factory.
+
+If you build a socket client and its plugin chain yourself, use this plugin
+in place of `Http\Client\Common\Plugin\DecoderPlugin`. It decodes HTTP chunked
+responses incrementally and adapts socket reads so TTY output can arrive
+before the stream finishes:
+
+```php Custom socket client
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+use Docker\Http\StreamingDecoderPlugin;
+use Http\Client\Common\Plugin\AddHostPlugin;
+use Http\Client\Common\Plugin\ContentLengthPlugin;
+use Http\Client\Common\PluginClient;
+use Http\Client\Socket\Client as SocketClient;
+use Nyholm\Psr7\Uri;
+
+$httpClient = new PluginClient(
+    new SocketClient([
+        'remote_socket' => 'unix:///run/custom/docker.sock',
+        'timeout' => 10000,
+    ]),
+    [
+        new ContentLengthPlugin(),
+        new StreamingDecoderPlugin(),
+        new AddHostPlugin(new Uri('http://localhost')),
+    ]
+);
+
+$docker = Docker::create($httpClient);
+```
+
+The generated server plugin supplies `/v1.45` in this example. If your custom
+chain already supplies the versioned path, disable the server plugins with
+`Docker::create($httpClient, [], [], false)` to avoid configuring it twice.
+
+`Docker::create($httpClient)` does not replace an existing client's decoder.
+The streaming plugin handles HTTP transfer decoding, not Docker's stdout/stderr
+frames, and cannot undo buffering inside another HTTP transport. In particular,
+adding it to Guzzle's cURL handler does not make that handler stream responses.
+See [HTTP clients](/guides/guzzle) for the transport comparison.
+
 ## Lifetime, cancellation and timeouts
 
 `wait()` blocks until the stream ends or an error interrupts it. A log follow

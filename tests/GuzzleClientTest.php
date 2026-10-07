@@ -21,15 +21,15 @@ class GuzzleClientTest extends TransportTestCase
     public static function connectionExamples(): array
     {
         return [
-            'Custom Unix socket' => [0, 'unix'],
-            'HTTP endpoint' => [1, 'http'],
-            'Private CA' => [2, 'https'],
-            'Mutual TLS' => [3, 'mutual-tls'],
+            'Custom Unix socket' => ['Guzzle Unix socket', 'unix'],
+            'HTTP endpoint' => ['Guzzle Unix socket', 'http'],
+            'Private CA' => ['Guzzle HTTPS', 'https'],
+            'Mutual TLS' => ['Guzzle HTTPS', 'mutual-tls'],
         ];
     }
 
     #[DataProvider('connectionExamples')]
-    public function testDocumentationExampleUsesConfiguredConnection(int $example, string $transport): void
+    public function testDocumentationExampleUsesConfiguredConnection(string $example, string $transport): void
     {
         $serverOptions = ['responses' => [$this->jsonResponse('{}'), $this->jsonResponse('[]')]];
         if ('https' === $transport || 'mutual-tls' === $transport) {
@@ -50,7 +50,7 @@ class GuzzleClientTest extends TransportTestCase
         putenv('DOCKER_HOST=unix:///does-not-exist.sock');
         putenv('DOCKER_TLS_VERIFY=1');
         putenv('DOCKER_API_VERSION=v0.0');
-        $docker = $this->runDocumentationExample($example, $address);
+        $docker = $this->runDocumentationExample($example, $transport, $address);
 
         $this->assertSame([], $docker->containerList());
         $this->assertStringStartsWith('GET /v1.45/info HTTP/1.1', $this->serverResult()['request']);
@@ -207,13 +207,22 @@ class GuzzleClientTest extends TransportTestCase
         }
     }
 
-    private function runDocumentationExample(int $index, string $address): Docker
+    private function runDocumentationExample(string $title, string $transport, string $address): Docker
     {
         $markdown = file_get_contents(\dirname(__DIR__).'/docs/guides/guzzle.mdx');
-        preg_match_all('/^```php[^\r\n]*\R(.*?)^```/ms', $markdown, $blocks);
-        $this->assertArrayHasKey($index, $blocks[1]);
-        $code = preg_replace('/^\s*<\?php\s*/', '', $blocks[1][$index]);
+        preg_match_all('/^```php ([^\r\n]+)\R(.*?)^```/ms', $markdown, $blocks);
+        $examples = array_combine($blocks[1], $blocks[2]);
+        $this->assertArrayHasKey($title, $examples);
+        $code = preg_replace('/^\s*<\?php\s*/', '', $examples[$title]);
         $code = str_replace("require __DIR__ . '/vendor/autoload.php';", '', $code);
+        // Exercise the HTTP and CA-only variations described below the examples.
+        if ('http' === $transport) {
+            $code = preg_replace("/    'curl' => \\[\\R.*?    \\],\\R/s", '', $code);
+            $code = str_replace("'http://localhost'", "'http://docker.example.com:2375'", $code);
+        }
+        if ('https' === $transport) {
+            $code = preg_replace("/^    '(cert|ssl_key)' => [^\\r\\n]+\\R/m", '', $code);
+        }
         $code = strtr($code, [
             '/run/custom/docker.sock' => $address,
             'http://docker.example.com:2375' => 'http://'.$address,

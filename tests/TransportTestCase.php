@@ -38,11 +38,11 @@ abstract class TransportTestCase extends TestCase
         parent::tearDown();
     }
 
-    protected function startServer(array $options = [], bool $unix = false): string
+    protected function startServer(array $options = [], bool $unix = false, string $fixture = 'socket-server.php'): string
     {
         $socket = $this->directory.'/sock';
         $options['address'] = $unix ? 'unix://'.$socket : 'tcp://127.0.0.1:0';
-        $this->server = new Process([\PHP_BINARY, '-d', 'display_errors=stderr', __DIR__.'/fixtures/socket-server.php', json_encode($options, \JSON_THROW_ON_ERROR)]);
+        $this->server = new Process([\PHP_BINARY, '-d', 'display_errors=stderr', __DIR__.'/fixtures/'.$fixture, json_encode($options, \JSON_THROW_ON_ERROR)]);
         $this->server->setTimeout(10);
         $this->server->start();
         $ready = $this->server->waitUntil(fn () => str_contains($this->server->getOutput(), "\n"));

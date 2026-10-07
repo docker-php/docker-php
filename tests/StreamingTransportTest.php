@@ -36,7 +36,12 @@ class StreamingTransportTest extends TransportTestCase
             'segments_base64' => [base64_encode($first), base64_encode($last)],
             'delay_ms' => 1000,
         ]]], $unix);
-        $client = DockerClientFactory::create(['remote_socket' => ($unix ? 'unix://' : 'tcp://').$address, 'timeout' => 3000]);
+        putenv('DOCKER_API_VERSION=1.52');
+        $client = DockerClientFactory::create([
+            'remote_socket' => ($unix ? 'unix://' : 'tcp://').$address,
+            'api_version' => '1.45',
+            'timeout' => 3000,
+        ]);
         $response = $client->sendRequest(new Request('GET', '/stream'));
         $stream = new DockerRawStream($response->getBody(), $multiplexed);
         $stdout = '';

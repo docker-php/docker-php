@@ -92,6 +92,9 @@ This recipe is output-only: it does not implement interactive stdin or a
 terminal UI. `onStdin()` on `DockerRawStream` is not a write method. See
 [attach limitations](/reference/streams#attach-and-websocket-limitations).
 
+For the API added in client 3.2.0 with stdin, nonblocking polling and heartbeat hooks,
+see [interactive exec](/guides/interactive-exec).
+
 Raw response bodies can contain binary frame headers. See
 [Container logs](/guides/logs#raw-response-bodies) before working with raw fetch
 modes.

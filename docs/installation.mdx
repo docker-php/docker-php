@@ -11,11 +11,6 @@ description: "Install the client and its matching generated API package."
 
 ## Stable installation
 
-<Note>
-Docker PHP 3.0.0 and API package 7.1.45.0 have not been released yet. Use this
-command once both packages are available.
-</Note>
-
 ```bash
 composer require "docker-php/docker-php:^3.0"
 ```
@@ -26,8 +21,7 @@ application requires the API package directly, keep its constraint within one
 
 ## Test the development version
 
-For a disposable test application before release, explicitly allow both
-development packages:
+For a disposable test application, explicitly allow both development packages:
 
 ```bash
 composer require "docker-php/docker-php:3.0.x-dev" "docker-php/docker-php-api:7.1.45.x-dev" --with-all-dependencies

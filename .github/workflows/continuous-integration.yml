@@ -29,10 +29,10 @@ jobs:
 
     steps:
       - name: Repository checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup PHP with PECL extension
-        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # v2.35.5
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: ${{ matrix.php-version }}
           extensions: curl, openssl
@@ -43,7 +43,7 @@ jobs:
         run: composer validate --strict
 
       - name: Install dependencies
-        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # v4.0.0
         with:
           dependency-versions: ${{ matrix.dependency-versions }}
           composer-options: ${{ matrix.composer-options }}

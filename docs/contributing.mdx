@@ -32,6 +32,18 @@ The checks validate Mintlify configuration and MDX, internal links and heading
 anchors, and PHP example syntax. Syntax checks do not prove an example's daemon
 behavior. Test operational examples separately against a development daemon.
 
+The [Guzzle connection examples](/guides/guzzle) have a separate test suite.
+After installing the development dependencies, run it from the repository root:
+
+```bash
+composer test-guzzle
+```
+
+These tests execute the documented PHP snippets against temporary local Unix,
+HTTP and HTTPS servers. They do not need a Docker daemon. They also check
+certificate rejection, client certificates, request bodies, API errors and
+the handlers' streaming behavior.
+
 Add new pages to `docs.json`, use site-relative links such as `/connection`, and
 keep examples aligned with the current API models. Do not edit generated API
 code to make an example work.

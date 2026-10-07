@@ -22,8 +22,10 @@
         "symfony/serializer": "^6.3 || ^7.0 || ^8.0"
     },
     "require-dev": {
+        "ext-curl": "*",
         "ergebnis/composer-normalize": "^2.42",
         "friendsofphp/php-cs-fixer": "^3.8",
+        "guzzlehttp/guzzle": "^7.9",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.5.46",
@@ -58,7 +60,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "3.0.x-dev"
+            "dev-main": "3.2.x-dev"
         }
     },
     "scripts": {
@@ -73,7 +75,8 @@
             "@phpunit"
         ],
         "test-ci": "vendor/bin/phpunit ./tests/ --disallow-test-output --process-isolation",
-        "test-coverage": "vendor/bin/phpunit ./tests/ --whitelist=./src/ --coverage-clover=clover.xml"
+        "test-coverage": "vendor/bin/phpunit ./tests/ --whitelist=./src/ --coverage-clover=clover.xml",
+        "test-guzzle": "vendor/bin/phpunit ./tests/GuzzleClientTest.php --disallow-test-output --process-isolation"
     },
     "scripts-descriptions": {
         "console": "Runs PsySH Console",
@@ -81,6 +84,7 @@
         "phpunit": "Runs library test suite",
         "test": "Runs all tests",
         "test-ci": "Runs library test suite (for continuous integration)",
-        "test-coverage": "Runs test-coverage analysis"
+        "test-coverage": "Runs test-coverage analysis",
+        "test-guzzle": "Runs Guzzle connection examples against local socket fixtures"
     }
 }

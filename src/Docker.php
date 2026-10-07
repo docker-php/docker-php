@@ -15,14 +15,21 @@ use Docker\Endpoint\ExecStart;
 use Docker\Endpoint\ImageBuild;
 use Docker\Endpoint\ImageCreate;
 use Docker\Endpoint\ImagePush;
+use Docker\Endpoint\InteractiveExecStart;
 use Docker\Endpoint\SystemEvents;
 use Docker\Exception\BadRequestException;
+use Docker\Http\InteractiveHttpClient;
+use Docker\Stream\InteractiveExecStream;
+use Docker\Stream\SocketReadStream;
+use Http\Client\Socket\Stream as SocketStream;
 
 /**
  * Docker\Docker.
  */
 class Docker extends Client
 {
+    private bool $interactiveExecEnabled = false;
+
     /**
      * {@inheritdoc}
      */
@@ -61,6 +68,52 @@ class Docker extends Client
     }
 
     /**
+     * Start attached exec with nonblocking stdin/stdout/stderr. timeoutMs is a
+     * streaming deadline after upgrade; HTTP setup uses the factory timeout.
+     * Inspect the exec separately after output EOF to obtain its exit status.
+     */
+    public function execStartInteractive(string $id, ?ExecIdStartPostBody $requestBody = null, ?int $timeoutMs = null): InteractiveExecStream
+    {
+        if (!$this->interactiveExecEnabled) {
+            throw new \LogicException('Interactive exec requires DockerClientFactory::createInteractive() or the default socket client.');
+        }
+        if (null !== $timeoutMs && ($timeoutMs < 1 || $timeoutMs > 86400000)) {
+            throw new \InvalidArgumentException('Interactive exec timeout must be between 1 and 86400000 milliseconds.');
+        }
+        if ('' === $id) {
+            throw new \InvalidArgumentException('An exec ID is required.');
+        }
+        $body = null === $requestBody ? new ExecIdStartPostBody() : clone $requestBody;
+        if ($body->getDetach()) {
+            throw new \InvalidArgumentException('Interactive exec cannot be detached.');
+        }
+        $body->setDetach(false);
+        $response = $this->executeRawEndpoint(new InteractiveExecStart($id, $body));
+        $stream = $response->getBody();
+        $mediaType = strtolower(trim(explode(';', $response->getHeaderLine('Content-Type'))[0]));
+        if (101 !== $response->getStatusCode()
+            || 'tcp' !== strtolower(trim($response->getHeaderLine('Upgrade')))
+            || !preg_match('/(?:^|,)\s*upgrade\s*(?:,|$)/i', $response->getHeaderLine('Connection'))
+            || $response->hasHeader('Transfer-Encoding')
+            || $response->hasHeader('Content-Encoding')
+            || !\in_array($mediaType, [\Docker\Stream\DockerRawStream::HEADER, \Docker\Stream\DockerRawStream::MULTIPLEXED_HEADER], true)
+            || (!$stream instanceof SocketReadStream && !$stream instanceof SocketStream)) {
+            $stream->close();
+            throw new \RuntimeException('Docker did not provide a supported interactive exec upgrade (HTTP '.$response->getStatusCode().').');
+        }
+        // The detached resource keeps bytes PHP read ahead with the headers.
+        $socket = $stream->detach();
+        try {
+            return new InteractiveExecStream($socket, !(bool) $body->getTty(), $timeoutMs);
+        } catch (\Throwable $error) {
+            if (\is_resource($socket)) {
+                fclose($socket);
+            }
+            throw $error;
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function imageBuild($requestBody = null, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT)
@@ -75,6 +128,7 @@ class Docker extends Client
     {
         return $this->executeEndpoint(new ImageCreate($requestBody, $queryParameters, $headerParameters), $fetch);
     }
+
     public function imagePush(string $name, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT, array $accept = [])
     {
         if (isset($headerParameters['X-Registry-Auth']) && $headerParameters['X-Registry-Auth'] instanceof AuthConfig) {
@@ -97,14 +151,14 @@ class Docker extends Client
         array $additionalPlugins = [],
         array $additionalNormalizers = [],
         bool $applyServerPlugins = true
-    ): self
-    {
+    ): self {
         if (null === $httpClient) {
-            $httpClient = DockerClientFactory::createFromEnv();
+            $httpClient = DockerClientFactory::createInteractiveFromEnv();
             $applyServerPlugins = false;
         }
 
         $client = parent::create($httpClient, $additionalPlugins, $additionalNormalizers, $applyServerPlugins);
+        $client->interactiveExecEnabled = $httpClient instanceof InteractiveHttpClient;
         $response = $client->executeRawEndpoint(new SystemInfo());
         $testClient = $response->getBody()->getContents();
         $jsonObj = json_decode($testClient);
@@ -121,6 +175,7 @@ class Docker extends Client
         } else {
             throw new BadRequestException("Failed to decode JSON.", $response);
         }
+
         return $client;
     }
 }

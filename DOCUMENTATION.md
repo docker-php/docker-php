@@ -5,8 +5,7 @@ this repository, alongside the client code. This replaces the legacy MkDocs
 configuration; earlier documentation remains available in Git history.
 
 The public site is hosted at [docker-php.mintlify.site](https://docker-php.mintlify.site/).
-It remains a work in progress for the upcoming package releases, which are still
-marked as unpublished. No custom domain is configured.
+No custom domain is configured.
 
 ## Local preview
 
@@ -95,4 +94,3 @@ review the draft and confirm the destination before doing that.
 - Check the hosted site's navigation, mobile layout and internal links.
 - Configure a custom documentation hostname and DNS separately if needed.
 - Keep legacy documentation accessible for users of earlier releases.
-- Remove the unreleased notices when both package releases are published.

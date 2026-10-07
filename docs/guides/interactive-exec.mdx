@@ -1,0 +1,185 @@
+---
+title: "Interactive exec"
+description: "Send stdin while polling output, with application heartbeats and deadlines."
+---
+
+<Note>
+Interactive exec is available from client `3.2.0`. The existing blocking
+`execStart()` and `wait()` APIs are unchanged.
+</Note>
+
+Use interactive exec when a command needs stdin or your application must keep
+working while it runs. The session reads and writes without blocking on command
+output. A caller can renew a lock, check cancellation or enforce its own deadline
+between `poll()` calls, even if the command is silent.
+
+## Non-TTY stdin and output
+
+The default `Docker::create()` socket client supports this API. For explicit PHP
+configuration, use `DockerClientFactory::createInteractive()`:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\API\Model\ContainersIdExecPostBody;
+use Docker\API\Model\ExecIdStartPostBody;
+use Docker\Docker;
+use Docker\DockerClientFactory;
+
+$docker = Docker::create(DockerClientFactory::createInteractive([
+    'remote_socket' => 'unix:///var/run/docker.sock',
+    'api_version' => '1.45',
+    'timeout' => 2000,
+]), [], [], false);
+
+$command = new ContainersIdExecPostBody();
+$command->setCmd(['timeout', '-s', 'KILL', '30', 'cat']);
+$command->setAttachStdin(true);
+$command->setAttachStdout(true);
+$command->setAttachStderr(true);
+$command->setTty(false);
+$exec = $docker->containerExec('my-container', $command);
+
+$start = new ExecIdStartPostBody();
+$start->setTty(false);
+$session = $docker->execStartInteractive($exec->getId(), $start, 35000);
+$session->onStdout(static function (string $chunk): void {
+    echo $chunk;
+});
+$session->onStderr(static function (string $chunk): void {
+    fwrite(STDERR, $chunk);
+});
+
+$input = "{\"example\":true}\n";
+$offset = 0;
+$stdinClosed = false;
+$nextHeartbeat = 0;
+try {
+    while (!$session->isFinished()) {
+        $now = hrtime(true);
+        if ($now >= $nextHeartbeat) {
+            // Renew your application lock here; throw if ownership was lost.
+            $nextHeartbeat = $now + 10000000000;
+        }
+        if ($offset < strlen($input)) {
+            $offset += $session->writeStdin(substr($input, $offset, 16384));
+        } elseif (!$stdinClosed) {
+            $session->closeStdin();
+            $stdinClosed = true;
+        }
+        $session->poll(50);
+    }
+} finally {
+    $session->close();
+}
+
+$result = $docker->execInspect($exec->getId());
+if ($result->getRunning() !== false || $result->getExitCode() === null) {
+    throw new RuntimeException('The exec result is not known yet; inspect it before retrying');
+}
+if ($result->getExitCode() !== 0) {
+    throw new RuntimeException('The command failed with exit status '.$result->getExitCode());
+}
+```
+
+Replace `my-container` with a running development container. `timeout` must exist
+inside its image; use the image's own timeout/supervision mechanism if it does not.
+
+`writeStdin()` returns the number of bytes accepted, at most 16 KiB per call.
+Zero means backpressure: poll output, then retry the unsent suffix. The library
+does not retain or queue stdin. Once all input has been sent, `closeStdin()` sends
+EOF without closing the non-TTY output channels.
+
+`poll(50)` reads at most 16 KiB and waits at most 50 milliseconds for data. It
+returns `true` while the connection remains open, including during idle periods;
+`false` means clean output EOF. Callbacks receive chunks, which can split frames
+or lines. Without a callback, that channel is drained and discarded.
+
+If stdin is already complete, `wait($tick, 50)` is a convenience loop. `$tick`
+runs between polls even with no output; it can also send input. Callbacks and
+ticks must return promptly. Their exceptions close the local session and propagate.
+
+## Deadlines and completion
+
+The factory's `timeout` controls connection and socket I/O timeouts for synchronous
+HTTP setup/status calls. It is not a total request deadline: a response that keeps
+arriving can extend a request, and application heartbeats cannot run during it.
+The third argument to `execStartInteractive()` is a total streaming deadline in milliseconds,
+starting after the HTTP upgrade. It is not reset when output arrives. Expiry throws
+`Docker\Exception\InteractiveExecTimeoutException` and closes local I/O.
+
+<Warning>
+Closing the stream or reaching a local deadline does not guarantee that Docker
+terminated the command. Keep an in-container timeout for unattended operations.
+Output EOF is not an exit code: inspect `Running` and `ExitCode`, with a bounded
+application deadline if you need to poll for the final result. Never automatically
+retry a command with side effects after an ambiguous disconnect.
+</Warning>
+
+## Worker locks and retries
+
+Your application owns its queue, lock leases and execution records. Docker PHP
+provides the polling and stdin APIs; it does not acquire Redis locks, acknowledge
+jobs or deduplicate executions.
+
+Acquire the lease and persist the application execution ID and Docker exec ID
+before starting the command. Renew the lease between polls, atomically comparing
+its unique owner token so an expired worker cannot renew another worker's lock.
+Use the ten-second heartbeat hook above even when the command is silent.
+Choose a lease duration with enough margin for synchronous setup/status requests
+and delayed heartbeats; a ten-second schedule is not a guarantee of exact timing.
+
+If renewal fails, stop sending input and close the local session. A heartbeat
+exception passed through `wait($tick)` does this automatically. Record the failed
+or uncertain attempt before acknowledging its job, and retain the Docker exec ID
+for later inspection. A failed worker result does not prove the command stopped
+or that it had no side effects.
+
+Use persisted execution state to deduplicate repeated job deliveries. Before
+starting another attempt after a lost lease or disconnect, confirm the previous
+command has stopped and reconcile any side effects. A new queue delivery or an
+expired lock alone does not make another exec safe.
+
+## Transports and TTY
+
+This feature supports the bundled Unix, TCP and TLS socket transport. Guzzle and
+arbitrary PSR-18 clients are rejected before sending an interactive start request.
+HTTP proxies must preserve the HTTP 101 connection upgrade and bidirectional traffic.
+
+TTY sessions support stdin writes and combined output on `onStdout()`. They have
+terminal semantics, not separate stdout/stderr pipes. `closeStdin()` deliberately
+rejects TTY sessions: Docker can close their output when socket stdin reaches EOF.
+Use terminal input or let the command exit; use `Tty=false` for JSON-input managers.
+The `Tty` setting must match at exec creation and start.
+
+## Maintainer validation
+
+On 6 October 2026, a private application canary tested
+[client revision `fbdb2cc`](https://github.com/docker-php/docker-php/commit/fbdb2cc2432b1ba9341f144a2f551523536e4a4c)
+with API package `7.1.45.0` against Docker Engine `29.8.1`, using API `1.45`.
+Its worker sent fixed JSON stdin, closed stdin and polled a command that produced
+no output for 40 seconds.
+
+| Application check | Observed result |
+| --- | --- |
+| Silent execution | Four Redis lease renewals; completed result callback delivered; queue job acknowledged. |
+| Lease loss after the first renewal | The next renewal failed and the failed result callback was delivered. The disconnected container command later completed. |
+| Identical admission and job replay after either result | One manager start per execution, one attempt and no second command. |
+
+The locks, result callbacks and replay guards in these checks belonged to the
+application. Concurrent workers, HTTP submission retries and network-failure
+recovery still need separate tests.
+
+The library's stream and local transport-fixture tests cover partial stdin
+writes, backpressure, EOF, idle ticks, deadline expiry, callback failures and
+Unix/TCP/TLS connections. Run them without a Docker daemon:
+
+```bash
+vendor/bin/phpunit --filter 'InteractiveExec(Stream|Transport)Test' --disallow-test-output
+```
+
+`tests/Resource/InteractiveExecResourceTest.php` also exercises stdin, TTY output,
+exit codes and container-side timeouts against a development Docker daemon.
+Those resource tests create and remove their own containers.

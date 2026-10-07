@@ -8,10 +8,23 @@ use Docker\DockerClientFactory;
 use Http\Client\Common\Plugin\AddPathPlugin;
 use Http\Client\Common\PluginClient;
 use Http\Client\Common\PluginClientFactory;
+use Http\Client\Socket\Client;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Client\ClientInterface;
 
 class DockerClientFactoryTest extends TestCase
 {
+    private array $environment = [];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        foreach (['DOCKER_HOST', 'DOCKER_API_VERSION', 'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH', 'DOCKER_PEER_NAME'] as $name) {
+            $this->environment[$name] = getenv($name);
+            putenv($name);
+        }
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -20,13 +33,54 @@ class DockerClientFactoryTest extends TestCase
 
             return new PluginClient($client, $plugins, $options);
         });
-        putenv('DOCKER_API_VERSION');
-        putenv('DOCKER_TLS_VERIFY');
+        foreach ($this->environment as $name => $value) {
+            putenv(false === $value ? $name : $name.'='.$value);
+        }
     }
 
     public function testStaticConstructor(): void
     {
         $this->assertInstanceOf(ClientInterface::class, DockerClientFactory::create());
+    }
+
+    public static function socketAddresses(): array
+    {
+        return [
+            'Unix socket' => ['unix:///var/run/docker.sock', 'unix:///var/run/docker.sock', 'http://localhost', null],
+            'TCP socket' => ['tcp://docker.test:2375', 'tcp://docker.test:2375', 'http://docker.test:2375', null],
+            'HTTP URL' => ['http://docker.test:2375', 'tcp://docker.test:2375', 'http://docker.test:2375', null],
+            'HTTPS URL' => ['https://docker.test:2376', 'tcp://docker.test:2376', 'https://docker.test:2376', true],
+            'Default HTTP port' => ['http://docker.test', 'tcp://docker.test:80', 'http://docker.test', null],
+            'Default HTTPS port' => ['https://docker.test', 'tcp://docker.test:443', 'https://docker.test', true],
+            'Explicit default HTTPS port' => ['https://docker.test:443', 'tcp://docker.test:443', 'https://docker.test', true],
+            'IPv6 HTTP' => ['http://[::1]:2375', 'tcp://[::1]:2375', 'http://[::1]:2375', null],
+            'IPv6 HTTPS' => ['https://[::1]', 'tcp://[::1]:443', 'https://[::1]', true],
+            'Uppercase HTTPS scheme' => ['HTTPS://docker.test:2376', 'tcp://docker.test:2376', 'https://docker.test:2376', true],
+        ];
+    }
+
+    #[DataProvider('socketAddresses')]
+    public function testSocketAddressAndRequestUri(string $address, string $socket, string $host, ?bool $ssl): void
+    {
+        $config = [];
+        $uri = null;
+        PluginClientFactory::setFactory(static function (Client $client, array $plugins, array $options) use (&$config, &$uri): PluginClient {
+            $config = (new \ReflectionProperty($client, 'config'))->getValue($client);
+            foreach ($plugins as $plugin) {
+                if ($plugin instanceof \Http\Client\Common\Plugin\AddHostPlugin) {
+                    $uri = (new \ReflectionProperty($plugin, 'host'))->getValue($plugin);
+                }
+            }
+            unset($options['client_name']);
+
+            return new PluginClient($client, $plugins, $options);
+        });
+
+        DockerClientFactory::create(['remote_socket' => $address]);
+
+        $this->assertSame($socket, $config['remote_socket']);
+        $this->assertSame($ssl, $config['ssl']);
+        $this->assertSame($host, (string) $uri);
     }
 
     public function testDefaultApiVersion(): void
@@ -53,6 +107,50 @@ class DockerClientFactoryTest extends TestCase
         putenv('DOCKER_API_VERSION=1.52');
 
         $this->assertSame('/v1.52', $this->getApiPath());
+    }
+
+    public static function explicitApiVersions(): array
+    {
+        return [['1.45'], ['v1.45'], ['/v1.45'], ['/1.45']];
+    }
+
+    #[DataProvider('explicitApiVersions')]
+    public function testExplicitApiVersionOverridesEnvironment(string $version): void
+    {
+        putenv('DOCKER_API_VERSION=1.52');
+
+        $this->assertSame('/v1.45', $this->getApiPath(['api_version' => $version]));
+        $this->assertSame('1.52', getenv('DOCKER_API_VERSION'));
+    }
+
+    public static function invalidApiVersions(): array
+    {
+        return [[''], [null], [1.45], [145], [false], [[]], ['1'], ['1.45/containers'], ['1.45?x=1'], [' 1.45'], ["1.45\n"]];
+    }
+
+    #[DataProvider('invalidApiVersions')]
+    public function testInvalidExplicitApiVersionIsRejected($version): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('api_version must be a Docker API version');
+
+        DockerClientFactory::create(['api_version' => $version]);
+    }
+
+    public function testApiVersionIsNotPassedToSocketClient(): void
+    {
+        $config = [];
+        PluginClientFactory::setFactory(static function (Client $client, array $plugins, array $options) use (&$config): PluginClient {
+            $config = (new \ReflectionProperty($client, 'config'))->getValue($client);
+            unset($options['client_name']);
+
+            return new PluginClient($client, $plugins, $options);
+        });
+
+        DockerClientFactory::create(['api_version' => '1.45', 'timeout' => 30000]);
+
+        $this->assertArrayNotHasKey('api_version', $config);
+        $this->assertSame(30000, $config['timeout']);
     }
 
     public function testCreateFromEnvWithoutCertPath(): void
@@ -104,7 +202,7 @@ class DockerClientFactoryTest extends TestCase
         $this->assertSame('test', $context['ssl']['peer_name']);
     }
 
-    private function getApiPath(): string
+    private function getApiPath(array $config = []): string
     {
         $plugins = [];
         PluginClientFactory::setFactory(static function ($client, array $createdPlugins, array $options) use (&$plugins): PluginClient {
@@ -114,7 +212,7 @@ class DockerClientFactoryTest extends TestCase
             return new PluginClient($client, $createdPlugins, $options);
         });
 
-        DockerClientFactory::create();
+        DockerClientFactory::create($config);
 
         foreach ($plugins as $plugin) {
             if ($plugin instanceof AddPathPlugin) {

@@ -44,12 +44,26 @@ class ContextTest extends TestCase
 
         $directory = __DIR__.\DIRECTORY_SEPARATOR.'context-test';
         $path = getenv('PATH');
+        $serverPath = $_SERVER['PATH'] ?? null;
+        $environmentPath = $_ENV['PATH'] ?? null;
         putenv('PATH=/');
+        $_SERVER['PATH'] = '/';
+        $_ENV['PATH'] = '/';
         $context = new Context($directory);
         try {
             $context->toTar();
         } finally {
-            putenv("PATH=$path");
+            putenv(false === $path ? 'PATH' : "PATH=$path");
+            if (null === $serverPath) {
+                unset($_SERVER['PATH']);
+            } else {
+                $_SERVER['PATH'] = $serverPath;
+            }
+            if (null === $environmentPath) {
+                unset($_ENV['PATH']);
+            } else {
+                $_ENV['PATH'] = $environmentPath;
+            }
         }
     }
 

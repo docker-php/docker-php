@@ -4,17 +4,24 @@ on:
   push:
     paths-ignore:
       - 'doc/**'
-      - '.github/**'
   pull_request:
     paths-ignore:
       - 'doc/**'
-      - '.github/**'
 
 jobs:
   phpstan:
-    name: PHPStan
+    name: PHPStan (PHP ${{ matrix.php-version }}, ${{ matrix.dependency-versions }})
 
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php-version: '8.1'
+            dependency-versions: lowest
+          - php-version: '8.5'
+            dependency-versions: highest
 
     steps:
     - name: Repository checkout
@@ -23,7 +30,7 @@ jobs:
     - name: Setup PHP with PECL extension
       uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # v2.35.5
       with:
-        php-version: 8.1
+        php-version: ${{ matrix.php-version }}
         tools: composer:v2
         coverage: none
 
@@ -33,7 +40,7 @@ jobs:
     - name: Install dependencies
       uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
       with:
-        dependency-versions: lowest
+        dependency-versions: ${{ matrix.dependency-versions }}
 
     - name: Run PHPStan
       run: composer run-script phpstan -- --no-progress

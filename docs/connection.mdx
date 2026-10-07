@@ -17,7 +17,7 @@ If you choose environment variables, set them on the PHP process: in its shell,
 service configuration or container environment. The library reads them when
 creating the client and does not load `.env` files itself. For connection options supplied
 directly in PHP, see [factory options](#factory-options) or
-[Guzzle connections](/guides/guzzle).
+[HTTP client examples](/guides/guzzle).
 
 To choose another socket:
 
@@ -86,6 +86,8 @@ use Docker\DockerClientFactory;
 
 $httpClient = DockerClientFactory::create([
     'remote_socket' => 'unix:///var/run/docker.sock',
+    'api_version' => '1.45',
+    'timeout' => 10000,
 ]);
 
 $docker = Docker::create($httpClient, [], [], false);
@@ -95,6 +97,11 @@ The fourth argument disables the generated server plugins. The factory already
 adds the daemon address and versioned path. See
 [the factory implementation](https://github.com/docker-php/docker-php/blob/main/src/DockerClientFactory.php)
 for the plugins it configures.
+
+`api_version` pins the request path in PHP, even if `DOCKER_API_VERSION` is set
+on the process. It accepts `1.45`, `v1.45` or `/v1.45`. If omitted, the factory
+uses `DOCKER_API_VERSION`, falling back to `1.45`. The timeout is in milliseconds.
+The `api_version` option requires client `3.1.0` or later.
 
 For a private CA without client certificates, pass the CA file directly:
 
@@ -148,8 +155,10 @@ its daemon address, TLS options and socket support. Check that it also supports
 unbuffered responses and Docker's upgraded connections if you use log, attach
 or exec streams.
 
-See [Guzzle connections](/guides/guzzle) for complete PHP examples using custom
-Unix sockets, HTTP, private CAs and mutual TLS.
+See [HTTP clients](/guides/guzzle) for a comparison of the bundled client and
+Guzzle, with PHP examples and their streaming limits. For a socket client with
+your own plugin chain, see
+[the streaming decoder example](/reference/streams#custom-socket-clients).
 
-`DOCKER_API_VERSION` affects the default factory's request path; it does not
-change the generated models. See [API versions](/api-versions).
+`api_version` and `DOCKER_API_VERSION` affect the factory's request path; neither
+changes the generated models. See [API versions](/api-versions).

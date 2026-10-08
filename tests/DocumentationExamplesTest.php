@@ -285,7 +285,11 @@ class DocumentationExamplesTest extends TestCase
     public function testExecChecksTheCommandExitCode(): void
     {
         $client = $this->client(static fn () => new Response(200, ['Content-Type' => 'application/json'], '{"Running":false,"ExitCode":7}'));
-        $exec = new \Docker\API\Model\IdResponse();
+        // API 1.48 renamed IdResponse to IDResponse; class names are case-sensitive on Linux.
+        $model = is_file(\dirname((new \ReflectionClass(\Docker\API\Client::class))->getFileName()).'/Model/IDResponse.php')
+            ? 'Docker\\API\\Model\\IDResponse'
+            : 'Docker\\API\\Model\\IdResponse';
+        $exec = new $model();
         $exec->setId('example-exec');
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('exit status 7');

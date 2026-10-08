@@ -4,7 +4,7 @@ description: "Find the calls which return streams, binary bodies, headers or unt
 ---
 
 These calls need more than the usual request-model/response-model pattern.
-The table describes the restored client with the API v1.45 package.
+The table applies to every supported API line.
 
 | Call | Default result / special behavior | Guide |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ The table describes the restored client with the API v1.45 package.
 | `containerLogs()` | `DockerRawStream`; TTY-aware output decoding | [Logs](/guides/logs) |
 | `execStart()` | Attached output stream, or no output when detached | [Exec](/guides/exec) |
 | `systemEvents()` | `EventStream`, not one event model | [Events and stats](/guides/events-and-stats) |
-| `containerStats()` | `StatsStream` by default; one decoded object with `stream=false` | [Events and stats](/guides/events-and-stats#continuous-stats) |
+| `containerStats()` | `StatsStream` by default; one sample with `stream=false` | [Events and stats](/guides/events-and-stats#continuous-stats) |
 | `containerArchive()` / `containerExport()` | Tar response; use a raw endpoint to retain the body | [Archive transfers](/guides/archives) |
 | `containerArchiveInfo()` | Metadata in a response header, not a response model | [Archive transfers](/guides/archives#read-path-metadata) |
 | `putContainerArchive()` | Tar request body; successful typed result is `null` | [Archive transfers](/guides/archives#upload-a-tar-archive) |
@@ -36,8 +36,9 @@ See [output framing](/guides/logs#output-chunks-and-tty-mode) for the difference
 between output chunks and lines.
 
 Do not decode a whole progress stream with one `json_decode()` call. Check
-`getError()` on every build, pull or push frame: HTTP 200 means the stream
-opened, not that the operation succeeded.
+`Docker\Stream\FrameError::message($frame)` on every build, pull or push
+frame: HTTP 200 means the stream opened, not that the operation succeeded. The
+helper reads whichever error field the installed API line has.
 
 ## Custom socket clients
 
@@ -78,7 +79,8 @@ $httpClient = new PluginClient(
 $docker = Docker::create($httpClient);
 ```
 
-The generated server plugin supplies `/v1.45` in this example. If your custom
+The generated server plugin supplies the installed API line's path, such as
+`/v1.56`, in this example. If your custom
 chain already supplies the versioned path, disable the server plugins with
 `Docker::create($httpClient, [], [], false)` to avoid configuring it twice.
 

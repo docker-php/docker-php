@@ -1,7 +1,70 @@
 ---
-title: "Upgrade to 3.0"
-description: "Migrate from the original packages or the Beluga fork."
+title: "Upgrade to 4.0"
+description: "Migrate from 3.x, the original packages or the Beluga fork."
 ---
+
+## From 3.x
+
+Change the client requirement to `docker-php/docker-php:^4.0`. Applications that
+cannot upgrade yet can stay on `^3.3`, which keeps Docker Engine API v1.45.
+
+### API version
+
+4.0 works with API v1.45 to v1.56, and Composer installs the newest API line
+unless you require one. Generated models and their methods differ between
+versions. To keep the 3.x models, require the v1.45 line:
+
+```bash
+composer require "docker-php/docker-php:^4.0" "docker-php/docker-php-api:>=7.1.45.0 <7.1.46.0"
+```
+
+To move to a newer line, check the models your code names. For example:
+
+- API 1.46 renamed `NetworksCreatePostResponse201` to `NetworkCreateResponse`.
+- API 1.48 renamed `ContainersIdJsonGetResponse200` to `ContainerInspectResponse`
+  and added `ContainerStatsResponse`.
+- API 1.52 removed `getError()` from `BuildInfo`, `CreateImageInfo` and
+  `PushImageInfo`. Use `Docker\Stream\FrameError::message($frame)`, which works
+  with every line.
+
+See [API versions](/api-versions) and Docker's
+[API version history](https://docs.docker.com/reference/api/engine/version-history/).
+
+### Request version negotiation
+
+Without `api_version` or `DOCKER_API_VERSION`, the bundled factory now sends an
+unversioned `/_ping` before its first request and uses the lower of the daemon's
+API version and the installed line. Setting either keeps a fixed version, as in
+3.x.
+
+### Unexpected error statuses throw
+
+An error status of 400 or above that the generated endpoint does not handle now
+throws `UnexpectedClientErrorException` or `UnexpectedServerErrorException`.
+In 3.x those calls returned `null`. To keep that behaviour:
+
+```php
+$docker = Docker::create()->throwOnUnexpectedStatus(false);
+```
+
+See [unexpected error statuses](/reference/requests-and-responses#unexpected-error-statuses).
+
+### `.dockerignore` is applied
+
+`Context` now leaves out the paths a context's `.dockerignore` excludes, as
+`docker build` does. To archive the whole directory as 3.x did, call
+`applyDockerignore(false)` on the context.
+
+### Stats samples
+
+From API 1.48, `containerStats()` returns `ContainerStatsResponse` models, for one
+sample and for each `StatsStream` frame. Earlier lines still return decoded
+`stdClass` objects.
+
+### Subclasses of `Docker`
+
+`Docker::systemEvents()` has a new optional `$accept` parameter. A subclass that
+overrides it needs the same parameter.
 
 ## From the original 2.x client
 
@@ -9,14 +72,14 @@ The new client requires PHP 8.1 or later, the `mbstring` extension, PSR-7 v2 and
 Jane 7 runtimes. Check your application's other dependencies against these
 requirements before changing its Composer constraints.
 
-Change the client requirement to `docker-php/docker-php:^3.0`. Remove an explicit
-`docker-php/docker-php-api:4.1.*` requirement, or change it to
-`>=7.1.45.0 <7.1.46.0` if your application depends on the API package directly.
+Change the client requirement to `docker-php/docker-php:^4.0`. Remove an explicit
+`docker-php/docker-php-api:4.1.*` requirement, or change it to one
+[API line](/api-versions) if your application depends on the API package directly.
 
 ```json
 {
   "require": {
-    "docker-php/docker-php": "^3.0"
+    "docker-php/docker-php": "^4.0"
   }
 }
 ```
@@ -29,11 +92,12 @@ composer update docker-php/docker-php docker-php/docker-php-api --with-all-depen
 
 Review endpoint signatures and generated model types. The PHP namespaces remain
 `Docker` and `Docker\API`, but that does not make all old API models or calling
-patterns compatible. The specification changes from the old API line to v1.45.
+patterns compatible. The specification changes from the old API line to the one
+you install. The changes from 3.x above also apply.
 
 ### Asynchronous client
 
-The old `DockerAsync` client and its Amp/Artax examples do not apply to 3.0.
+The old `DockerAsync` client and its Amp/Artax examples do not apply to 4.0.
 The maintained client uses synchronous endpoint calls and callback streams.
 Applications using `DockerAsync` need to adapt those call sites; this is not a
 drop-in replacement for the old promise-based client.
@@ -59,8 +123,9 @@ For applications on the Beluga API v1.45 line, the package-name migration does
 not require a PHP namespace change.
 
 Remove both Beluga requirements from your application's `composer.json`, if
-present. Add `docker-php/docker-php:^3.0`. If you require the API package
-directly, add `docker-php/docker-php-api:>=7.1.45.0 <7.1.46.0` as well.
+present. Add `docker-php/docker-php:^4.0`. If you require the API package
+directly, add the matching line as well, for example
+`docker-php/docker-php-api:>=7.1.45.0 <7.1.46.0` for the Beluga v1.45 models.
 
 Do not install both package families together: they contain the same PHP
 classes and the new packages declare conflicts with their Beluga counterparts.
@@ -72,8 +137,8 @@ composer update --with-all-dependencies
 ```
 
 Run that broader update in a test checkout, review unrelated dependency changes,
-and commit the tested lock file. If you use another Beluga Docker API line,
-review the endpoint and model changes to v1.45 before switching.
+and commit the tested lock file. The changes from 3.x above also apply. If you
+use another Beluga Docker API line, require the matching line here.
 
 ## Verify the application
 
@@ -84,6 +149,7 @@ review the endpoint and model changes to v1.45 before switching.
 - Commit `composer.lock` and keep the prior release and lock file available for
   rollback before deploying.
 
-Existing bounded client constraints such as `^2.0` do not automatically admit
-3.0. Existing API `4.1.*` constraints do not admit the new 7.x packages. Broad or
+Existing bounded client constraints such as `^2.0` or `^3.0` do not
+automatically admit 4.0. Existing API `4.1.*` constraints do not admit the new
+7.x packages. Broad or
 unbounded requirements do not provide that protection.

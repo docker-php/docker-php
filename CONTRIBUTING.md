@@ -69,7 +69,7 @@ $ git push -f origin feature-or-bug-fix-description
 
 ## Documentation
 
-Documentation for the 3.0 release lives in `docs/` and uses Mintlify.
+Documentation for the 4.0 release lives in `docs/` and uses Mintlify.
 See [DOCUMENTATION.md](DOCUMENTATION.md) for the local preview, validation commands
 and hosted setup. Test examples against a development Docker daemon, and keep
 instructions for unreleased packages clearly marked.

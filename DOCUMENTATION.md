@@ -1,6 +1,6 @@
 # Documentation development
 
-The Docker PHP 3.0 documentation uses Mintlify. Its source lives in `docs/` in
+The Docker PHP 4.0 documentation uses Mintlify. Its source lives in `docs/` in
 this repository, alongside the client code. This replaces the legacy MkDocs
 configuration; earlier documentation remains available in Git history.
 
@@ -89,7 +89,7 @@ review the draft and confirm the destination before doing that.
 
 ## Before publishing package releases
 
-- Review the v3.0 migration instructions and test their examples.
+- Review the 4.0 migration instructions and test their examples.
 - Confirm the connected repository, branch and docs path.
 - Check the hosted site's navigation, mobile layout and internal links.
 - Configure a custom documentation hostname and DNS separately if needed.

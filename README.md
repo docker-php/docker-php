@@ -11,7 +11,7 @@ This library aims to reach 100% API support of the Docker Engine.
 
 ## Documentation
 
-The [version 3.x documentation](https://docker-php.mintlify.site/) is available.
+The [version 4.x documentation](https://docker-php.mintlify.site/) is available.
 Its source lives in
 [docs/](docs/); see [DOCUMENTATION.md](DOCUMENTATION.md) to preview and edit it
 locally. The [legacy documentation](https://docker-php.readthedocs.io/en/latest/)
@@ -28,25 +28,24 @@ maintenance of the original `docker-php/docker-php` repository to give you a
 better upgrade path. Development will continue here, and we will archive
 `beluga-php/docker-php` once the migration is complete.
 
-Version 3.0 targets Docker Engine API v1.45. We plan
-to add the missing API versions and bring support up to the latest Docker Engine
-API. See [Upgrading to 3.0](#upgrading-to-30) below for how to migrate from
-existing releases.
+Version 4.0 works with Docker Engine API v1.45 to v1.56. See
+[Upgrading to 4.0](#upgrading-to-40) below for how to migrate from existing
+releases.
 
 ## Requirements
 
 - PHP 8.1 or later, with the `mbstring` extension.
 - [Composer](https://getcomposer.org/).
-- Access to a Docker daemon that accepts API v1.45 requests.
+- Access to a Docker daemon with API v1.45 or later (Docker Engine 26.0 or later).
 
 ## Installation
 
 ```bash
-composer require "docker-php/docker-php:^3.0"
+composer require "docker-php/docker-php:^4.0"
 ```
 
-Composer installs `docker-php/docker-php-api` as a dependency. The 3.0 release
-targets Docker API v1.45 and requires the matching generated API package.
+Composer also installs `docker-php/docker-php-api`, choosing the newest API line
+unless you require one. See [Docker API versions](#docker-api-versions).
 
 ## Usage
 
@@ -79,58 +78,64 @@ These guides cover callback streams, TTY output and raw response framing.
 
 ## Docker API versions
 
-See the official [Docker Engine API v1.45 reference](https://docs.docker.com/reference/api/engine/version/v1.45/)
-for endpoint descriptions, parameters and response schemas matching this API line.
-
-The client package follows semantic versioning. The generated API package uses
-`Jane-major.Docker-major.Docker-minor.revision`: `7.1.45.0` means Docker API 1.45,
-generated with Jane 7, revision 0.
-
-Keep generated API dependencies within one Docker specification. The
-3.0 client uses this range:
-
-```json
-"docker-php/docker-php-api": ">=7.1.45.0 <7.1.46.0"
-```
-
-With the default connection factory, `DOCKER_API_VERSION` overrides the version
-in request URLs:
+Each Docker Engine API version has its own `docker-php/docker-php-api` line with
+generated endpoints and models. The line uses the four-part version
+`Jane-major.Docker-major.Docker-minor.revision`: `7.1.56.0` means Docker API 1.56,
+generated with Jane 7, revision 0. To use a specific version, require its line:
 
 ```bash
-DOCKER_API_VERSION=1.52 php your-script.php
+composer require "docker-php/docker-php:^4.0" "docker-php/docker-php-api:>=7.1.51.0 <7.1.52.0"
 ```
 
-Since 3.1.0, the factory's `api_version` option can pin the request version
-directly in PHP. It takes precedence over `DOCKER_API_VERSION`. See
-[connection settings](https://docker-php.mintlify.site/connection#factory-options).
+Pin a line if your code names generated models or calls methods that differ
+between versions. See the official
+[Docker Engine API reference](https://docs.docker.com/reference/api/engine/) for
+each version's endpoints, parameters and response schemas.
 
-The generated endpoints and models still describe API v1.45. Changing the URL
-version does not add newer API fields or endpoints. The client does not
-automatically negotiate an API version with the daemon.
+The bundled connection factory negotiates the version in request URLs: it uses
+the lower of the installed line and the daemon's maximum API version, as the
+Docker CLI does. `DOCKER_API_VERSION` or the factory's `api_version` option fix
+the version instead. Changing the URL version does not change the generated
+models. See [API versions](https://docker-php.mintlify.site/api-versions).
 
-## Upgrading to 3.0
+## Upgrading to 4.0
+
+### From docker-php 3.x
+
+- Composer now installs the newest API line unless you require one. Require
+  `docker-php/docker-php-api:>=7.1.45.0 <7.1.46.0` to keep the 3.x models.
+- Requests negotiate the API version with the daemon unless you set one.
+- Error statuses the generated endpoints do not handle throw an
+  `UnexpectedStatusCodeException`. Call `throwOnUnexpectedStatus(false)` to
+  return `null` instead.
+- `Context` applies `.dockerignore`. Call `applyDockerignore(false)` to archive
+  the whole directory.
+
+Applications that cannot upgrade yet can stay on `^3.3`. See the
+[upgrade guide](https://docker-php.mintlify.site/migration#from-3-x) for model
+changes between API versions.
 
 ### From docker-php 2.x
 
-Version 3.0 requires PHP 8.1 or later, PSR-7 v2 and Jane 7-generated models.
+Version 4.0 requires PHP 8.1 or later, PSR-7 v2 and Jane 7-generated models.
 Review endpoint signatures, model types and HTTP client dependencies before
 upgrading. Check log and exec consumers against the
 [streaming documentation](https://docker-php.mintlify.site/reference/streams).
 
-Change the client requirement to `docker-php/docker-php:^3.0`. Remove an explicit
-`docker-php/docker-php-api:4.1.*` requirement, or change it to the API 1.45 range
+Change the client requirement to `docker-php/docker-php:^4.0`. Remove an explicit
+`docker-php/docker-php-api:4.1.*` requirement, or change it to one API line as
 shown above. Update dependencies, test your application and commit its updated
 `composer.lock`.
 
 ### From beluga-php
 
-Version 3.0 continues the client maintained under `beluga-php/docker-php`.
+Version 4.0 continues the client maintained under `beluga-php/docker-php`.
 The PHP namespaces remain `Docker` and `Docker\API`.
 
 Remove the `beluga-php/docker-php` requirement and any explicit
 `beluga-php/docker-php-api` requirement from `composer.json`. Add
-`docker-php/docker-php:^3.0`; add the API 1.45 range above if your application
-requires the generated API package directly. Resolve the package changes
+`docker-php/docker-php:^4.0`; to keep the Beluga v1.45 models, also require
+`docker-php/docker-php-api:>=7.1.45.0 <7.1.46.0`. Resolve the package changes
 together, then test the application and commit its updated `composer.lock`.
 
 Install one package family at a time: the Beluga and original packages contain

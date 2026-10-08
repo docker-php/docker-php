@@ -3,7 +3,7 @@ title: "Requests and responses"
 description: "Understand models, JSON-valued parameters, raw responses and errors."
 ---
 
-The generated API describes Docker Engine v1.45. `Docker\Docker` extends that
+The generated API describes the Docker Engine API version you install. `Docker\Docker` extends that
 client with connection handling and wrappers for selected streaming endpoints.
 Use `Docker\Docker`, not `Docker\API\Client`, for those wrappers.
 
@@ -81,6 +81,9 @@ contract, or use a raw response when you need the HTTP status. To make sure a
 [unexpected status exceptions](#unexpected-error-statuses).
 
 For absent or nullable response fields, use null checks or null-safe getters.
+Some Docker counters and limits are unsigned 64-bit integers. Values above
+`PHP_INT_MAX`, such as the `pids_stats.limit` Docker reports for a container
+without a PID limit, are returned as `PHP_INT_MAX`.
 Inspect responses and create request models serve different purposes; do not
 send an entire inspect response back as a creation or update payload.
 
@@ -165,15 +168,9 @@ Generated exceptions cover the status codes and JSON responses listed in
 Docker's API specification. Docker also returns errors the specification
 leaves out: `containerUpdate()` answers an invalid memory limit with HTTP 400,
 `networkCreate()` answers a duplicate name with 409, and a proxy in front of
-the daemon can return its own errors. Those calls return `null`.
+the daemon can return its own errors.
 
-Since `3.3.0` you can make them throw instead:
-
-```php
-$docker = Docker::create()->throwOnUnexpectedStatus();
-```
-
-An error status of 400 or above that the endpoint does not handle then throws
+An error status of 400 or above that the endpoint does not handle throws
 `Docker\Exception\UnexpectedClientErrorException` (4xx) or
 `UnexpectedServerErrorException` (5xx). Both extend
 `Docker\Exception\UnexpectedStatusCodeException`, which exposes the status
@@ -184,10 +181,11 @@ interfaces, so existing `catch` blocks for those still match.
 Success responses are unchanged: a `304` from starting a running container
 still returns `null`, and raw responses (`FETCH_RESPONSE`) are never checked.
 
-Without the option, these calls keep returning `null` and trigger an
-`E_USER_DEPRECATED` notice through `trigger_deprecation()`. Frameworks and
-PHPUnit report it in their deprecation logs; plain PHP needs an error handler
-to see it. Throwing becomes the default in 4.0.
+To return `null` for these responses instead, as 3.x did by default:
+
+```php
+$docker = Docker::create()->throwOnUnexpectedStatus(false);
+```
 
 Do not automatically retry every failed request. A connection failure after
 submission can leave the operation's outcome unknown. Reconcile the container

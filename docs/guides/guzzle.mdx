@@ -50,7 +50,6 @@ use Docker\DockerClientFactory;
 
 $httpClient = DockerClientFactory::create([
     'remote_socket' => 'unix:///run/custom/docker.sock',
-    'api_version' => '1.45',
     'timeout' => 10000,
 ]);
 
@@ -61,9 +60,8 @@ The fourth argument is `false` because this factory already configures the API
 path. For HTTP, HTTPS and certificate examples, see
 [connection settings](/connection#factory-options).
 
-The explicit `api_version` option overrides `DOCKER_API_VERSION` and requires
-client `3.1.0` or later. Omit it on `3.0.0` to use the environment setting or
-the default API version `1.45`.
+The factory negotiates the API version with the daemon. To fix a version, add
+the `api_version` option; see [API versions](/api-versions#request-url-version).
 
 `DockerClientFactory` includes `StreamingDecoderPlugin` automatically. If you
 build your own socket client and plugin chain, see
@@ -152,10 +150,11 @@ expose an unauthenticated daemon to an untrusted network.
 
 ### Paths, timeouts and streaming
 
-Use the daemon's root URL for `base_uri`, without `/v1.45`. These Guzzle examples
-keep the generated server plugins enabled, so Docker PHP adds the API path.
-`DOCKER_API_VERSION` configures the bundled factory; it does not override this
-Guzzle client. Do not copy the bundled example's fourth argument (`false`) into
+Use the daemon's root URL for `base_uri`, without a version such as `/v1.56`.
+These Guzzle examples keep the generated server plugins enabled, so Docker PHP
+adds the installed API line's path. Guzzle clients do not negotiate, and
+`DOCKER_API_VERSION` only configures the bundled factory, so install an
+[API line](/api-versions) your daemon supports. Do not copy the bundled example's fourth argument (`false`) into
 these examples.
 
 The empty `proxy` option disables HTTP proxy environment settings. Configure

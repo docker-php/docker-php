@@ -1,53 +1,57 @@
 ---
 title: "API versions"
-description: "Pin generated models to one Docker Engine API specification."
+description: "Choose a Docker Engine API version and how requests negotiate with the daemon."
 ---
 
-## Docker Engine API reference
+## Choose an API version
 
-The official [Docker Engine API v1.45 reference](https://docs.docker.com/reference/api/engine/version/v1.45/)
-describes the endpoints, parameters and response schemas used by this API line.
-Use it alongside these PHP examples; generated method signatures and model
-setters describe how to pass those values in PHP.
+Docker PHP 4.0 works with Docker Engine API v1.45 to v1.56. Each version has its
+own `docker-php/docker-php-api` release line with generated endpoints and
+models. Without a direct API requirement, Composer installs the newest line.
 
-## Two package versions
+To use a specific version, require its line next to the client:
 
-`docker-php/docker-php` follows semantic versioning. Its 3.0 release
-targets Docker Engine API v1.45.
-
-`docker-php/docker-php-api` uses a four-part scheme:
-`Jane-major.Docker-major.Docker-minor.revision`. For example, `7.1.45.0` means
-Docker Engine API v1.45, generated with Jane 7, revision 0. It is not the version
-of the high-level client.
-
-Keep generated API requirements within one specification:
-
-```json
-{
-  "require": {
-    "docker-php/docker-php": "^3.0",
-    "docker-php/docker-php-api": ">=7.1.45.0 <7.1.46.0"
-  }
-}
+```bash
+composer require "docker-php/docker-php:^4.0" "docker-php/docker-php-api:>=7.1.51.0 <7.1.52.0"
 ```
 
-The client already requires that API range. Add a direct API requirement only
-if your application needs one. Avoid broad API constraints such as `^7.1.45.0`:
-they also allow other Docker specifications.
+Pin a line if your code names generated models or calls methods that differ
+between versions. Docker renames models and changes fields between API versions;
+for example, API 1.48 replaced `ContainersIdJsonGetResponse200` with
+`ContainerInspectResponse`, and API 1.52 removed `getError()` from build, pull and
+push progress frames. Check Docker's
+[API version history](https://docs.docker.com/reference/api/engine/version-history/)
+and the [Docker Engine API reference](https://docs.docker.com/reference/api/engine/)
+for the version you use.
+
+## Package versions
+
+`docker-php/docker-php` follows semantic versioning.
+
+`docker-php/docker-php-api` uses a four-part scheme:
+`Jane-major.Docker-major.Docker-minor.revision`. For example, `7.1.56.0` means
+Docker Engine API v1.56, generated with Jane 7, revision 0. Keep a direct API
+requirement within one line, as above. A constraint such as `^7.1.45.0` allows
+every newer Docker specification.
 
 ## Request URL version
 
-The default factory uses `/v1.45` in request URLs. `DOCKER_API_VERSION` can
-override the URL version:
+The bundled factory negotiates the version in request URLs. Before the first
+request it sends an unversioned `/_ping` and reads the daemon's maximum API
+version from the response. Requests then use the lower of that version and the
+installed API line, as the Docker CLI does. An older daemon keeps working with a
+newer API package, and requests never ask for a version the installed models do
+not describe. `DockerClientFactory::defaultApiVersion()` returns the installed
+line's version.
+
+To skip negotiation, set the version yourself. `DOCKER_API_VERSION` sets it from
+the environment:
 
 ```bash
-DOCKER_API_VERSION=1.45 php your-script.php
+DOCKER_API_VERSION=1.51 php your-script.php
 ```
 
-Both `1.45` and `v1.45` are accepted. Choose a version supported by your daemon
-and compatible with the endpoints you use.
-
-Since client 3.1.0, you can pin the request version directly in PHP:
+The factory's `api_version` option sets it in PHP and overrides the environment:
 
 ```php
 <?php
@@ -57,29 +61,27 @@ use Docker\DockerClientFactory;
 
 $httpClient = DockerClientFactory::create([
     'remote_socket' => 'unix:///var/run/docker.sock',
-    'api_version' => '1.45',
+    'api_version' => '1.51',
 ]);
 $docker = Docker::create($httpClient, [], [], false);
 ```
 
-An explicit `api_version` overrides `DOCKER_API_VERSION`. Without it, the
-environment setting and default remain unchanged. The fourth argument disables
-the generated server plugins because the factory already adds the API path.
+Both `1.51` and `v1.51` are accepted. The fourth argument disables the generated
+server plugins because the factory already adds the API path.
+
+A client you build yourself, such as [Guzzle](/guides/guzzle), does not negotiate.
+The generated server plugins prefix requests with the installed line's version,
+so install a line your daemon supports.
 
 <Warning>
 Changing the URL version does not regenerate models or add newer fields and
-endpoints. The client does not automatically negotiate an API version with the
-daemon.
+endpoints. With an older daemon, fields added after its API version are absent
+from responses and ignored in requests.
 </Warning>
 
 ## Generated code
 
-The API repository contains the
-[v1.45 specification](https://github.com/docker-php/docker-php-api/blob/main/spec/v1.45.json)
-and [Jane configuration](https://github.com/docker-php/docker-php-api/blob/main/.jane-openapi).
-Generation requires Jane 7.14.4 or later within the Jane 7 release line and
-uses upstream output without local patches. See the
+Each line is generated from Docker's specification for that version with Jane
+7.14.4, without local patches. The API repository has one branch per line,
+such as [`7.1.56`](https://github.com/docker-php/docker-php-api/tree/7.1.56); see its
 [generation instructions](https://github.com/docker-php/docker-php-api#generation).
-
-Newer API lines will need their own generated code and compatible client
-requirements. They are separate work after the initial restored release.

@@ -86,7 +86,7 @@ use Docker\DockerClientFactory;
 
 $httpClient = DockerClientFactory::create([
     'remote_socket' => 'unix:///var/run/docker.sock',
-    'api_version' => '1.45',
+    'api_version' => '1.51',
     'timeout' => 10000,
 ]);
 
@@ -98,10 +98,11 @@ adds the daemon address and versioned path. See
 [the factory implementation](https://github.com/docker-php/docker-php/blob/main/src/DockerClientFactory.php)
 for the plugins it configures.
 
-`api_version` pins the request path in PHP, even if `DOCKER_API_VERSION` is set
-on the process. It accepts `1.45`, `v1.45` or `/v1.45`. If omitted, the factory
-uses `DOCKER_API_VERSION`, falling back to `1.45`. The timeout is in milliseconds.
-The `api_version` option requires client `3.1.0` or later.
+`api_version` fixes the request path in PHP, even if `DOCKER_API_VERSION` is set
+on the process. It accepts `1.51`, `v1.51` or `/v1.51`. If omitted, the factory
+uses `DOCKER_API_VERSION`; without either, it
+[negotiates](/api-versions#request-url-version) with the daemon. The timeout is
+in milliseconds.
 
 For a private CA without client certificates, pass the CA file directly:
 

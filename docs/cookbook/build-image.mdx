@@ -24,14 +24,16 @@ require __DIR__ . '/vendor/autoload.php';
 use Docker\API\Model\BuildInfo;
 use Docker\Context\Context;
 use Docker\Docker;
+use Docker\Stream\FrameError;
 
 $docker = Docker::create();
 $context = new Context(__DIR__ . '/build');
 
 $build = $docker->imageBuild($context->toStream(), ['t' => 'docker-php-example:latest']);
 $build->onFrame(function (BuildInfo $frame): void {
-    if ($frame->getError() !== null) {
-        throw new RuntimeException($frame->getError());
+    $error = FrameError::message($frame);
+    if ($error !== null) {
+        throw new RuntimeException($error);
     }
 
     echo $frame->getStream() ?? '';
@@ -44,22 +46,20 @@ of completed build results. The callback receives generated `BuildInfo` models.
 Check the frames for daemon-reported build errors as well as handling endpoint
 exceptions.
 
-`Context` requires `tar` on the machine running PHP. By default it archives the
-whole directory. To leave out the paths a `.dockerignore` file in that
-directory excludes, as `docker build` does, opt in:
+`Context` requires GNU or BSD `tar` on the machine running PHP. It leaves out
+the paths a `.dockerignore` file in the context directory excludes, as
+`docker build` does. Patterns follow the Docker CLI: `*`, `?`, character
+classes, `**` for any number of directories, `!` to re-include a path, and the
+last matching pattern wins. The `Dockerfile` and `.dockerignore` are always
+sent, because the daemon reads them; it then drops them if your patterns
+exclude them. If you build with a differently named Dockerfile through the
+`dockerfile` option, add a `!` exception for it.
+
+To archive the whole directory, as 3.x did by default:
 
 ```php
-$context = (new Context(__DIR__ . '/build'))->applyDockerignore();
+$context = (new Context(__DIR__ . '/build'))->applyDockerignore(false);
 ```
-
-Patterns follow the Docker CLI: `*`, `?`, character classes, `**` for any
-number of directories, `!` to re-include a path, and the last matching pattern
-wins. The `Dockerfile` and `.dockerignore` are always sent, because the daemon
-reads them; it then drops them if your patterns exclude them. If you build
-with a differently named Dockerfile through the `dockerfile` option, add a
-`!` exception for it. `applyDockerignore()` requires `3.3.0` or later and GNU
-or BSD `tar`. Without it, a context with a `.dockerignore` file triggers a
-deprecation notice; applying the file becomes the default in 4.0.
 
 The example leaves the tagged image on your development daemon. Remove that
 specific image when you no longer need it.
@@ -80,8 +80,9 @@ $build = $docker->imageBuild($context->toStream(), [
     'pull' => 'true',
 ]);
 $build->onFrame(function (BuildInfo $frame): void {
-    if ($frame->getError() !== null) {
-        throw new RuntimeException($frame->getError());
+    $error = FrameError::message($frame);
+    if ($error !== null) {
+        throw new RuntimeException($error);
     }
     echo $frame->getStream() ?? '';
 });
@@ -119,8 +120,9 @@ $context = $builder
 
 $build = $docker->imageBuild($context->toStream(), ['t' => 'docker-php-example:generated']);
 $build->onFrame(function (BuildInfo $frame): void {
-    if ($frame->getError() !== null) {
-        throw new RuntimeException($frame->getError());
+    $error = FrameError::message($frame);
+    if ($error !== null) {
+        throw new RuntimeException($error);
     }
     echo $frame->getStream() ?? '';
 });
@@ -152,8 +154,9 @@ $build = $docker->imageBuild(
     ['X-Registry-Config' => $registryConfig]
 );
 $build->onFrame(function (BuildInfo $frame): void {
-    if ($frame->getError() !== null) {
-        throw new RuntimeException($frame->getError());
+    $error = FrameError::message($frame);
+    if ($error !== null) {
+        throw new RuntimeException($error);
     }
     echo $frame->getStream() ?? '';
 });
@@ -166,7 +169,7 @@ just its hostname. Do not include registry-config headers in request logs.
 
 ## Builder backend limits
 
-The v1.45 spec defaults the `version` query parameter to the classic builder
+Docker's specification defaults the `version` query parameter to the classic builder
 (`'1'`). Whether that builder is available depends on your daemon. Merely
 setting `version => '2'` does not implement BuildKit session handling, secret
 mounts, SSH forwarding or Buildx workflows in this client. Validate the backend

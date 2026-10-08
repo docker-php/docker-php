@@ -27,6 +27,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Docker\API\Model\CreateImageInfo;
 use Docker\Docker;
+use Docker\Stream\FrameError;
 
 $docker = Docker::create();
 $username = getenv('DOCKER_REGISTRY_USER');
@@ -47,10 +48,11 @@ $pull = $docker->imageCreate(null, [
 ], ['X-Registry-Auth' => $auth]);
 
 $pull->onFrame(function (CreateImageInfo $frame): void {
-    if ($frame->getError() !== null) {
-        throw new RuntimeException($frame->getError());
+    $error = FrameError::message($frame);
+    if ($error !== null) {
+        throw new RuntimeException($error);
     }
-    printf("%s %s\n", $frame->getStatus() ?? '', $frame->getProgress() ?? '');
+    echo ($frame->getStatus() ?? ''), "\n";
 });
 $pull->wait();
 ```
@@ -84,10 +86,11 @@ $push = $docker->imagePush('registry.example.com/team/app', ['tag' => 'example']
     'X-Registry-Auth' => $authConfig,
 ]);
 $push->onFrame(function (PushImageInfo $frame): void {
-    if ($frame->getError() !== null) {
-        throw new RuntimeException($frame->getError());
+    $error = FrameError::message($frame);
+    if ($error !== null) {
+        throw new RuntimeException($error);
     }
-    printf("%s %s\n", $frame->getStatus() ?? '', $frame->getProgress() ?? '');
+    echo ($frame->getStatus() ?? ''), "\n";
 });
 $push->wait();
 ```

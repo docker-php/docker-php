@@ -7,24 +7,25 @@ description: "Install the client and its matching generated API package."
 
 - PHP 8.1 or later, with the `mbstring` extension.
 - [Composer](https://getcomposer.org/).
-- Access to a Docker daemon that accepts API v1.45 requests.
+- Access to a Docker daemon with API v1.45 or later (Docker Engine 26.0 or later).
 
 ## Stable installation
 
 ```bash
-composer require "docker-php/docker-php:^3.0"
+composer require "docker-php/docker-php:^4.0"
 ```
 
-Composer installs the matching `docker-php/docker-php-api` dependency. If your
-application requires the API package directly, keep its constraint within one
-[API line](/api-versions).
+Composer also installs `docker-php/docker-php-api`, choosing the newest
+[API line](/api-versions) unless you require one. Requests negotiate with the
+daemon, so an older daemon still works. Require a specific line if your code
+depends on generated model names or fields.
 
 ## Test the development version
 
 For a disposable test application, explicitly allow both development packages:
 
 ```bash
-composer require "docker-php/docker-php:3.0.x-dev" "docker-php/docker-php-api:7.1.45.x-dev" --with-all-dependencies
+composer require "docker-php/docker-php:4.0.x-dev" --with-all-dependencies
 ```
 
 Do not use these moving development versions for an unattended production

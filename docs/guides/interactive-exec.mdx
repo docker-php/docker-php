@@ -30,7 +30,6 @@ use Docker\DockerClientFactory;
 
 $docker = Docker::create(DockerClientFactory::createInteractive([
     'remote_socket' => 'unix:///var/run/docker.sock',
-    'api_version' => '1.45',
     'timeout' => 2000,
 ]), [], [], false);
 

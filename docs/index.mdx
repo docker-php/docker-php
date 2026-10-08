@@ -8,12 +8,14 @@ endpoint methods and models, connection handling, and decoded log and command
 output streams.
 
 <Note>
-These docs cover the Docker PHP 3.0 client and Docker API package 7.1.45.0.
+These docs cover the Docker PHP 4.0 client, which works with Docker Engine API
+v1.45 to v1.56. For 3.x, see the [upgrade guide](/migration#from-3-x).
 </Note>
 
-The first restored release targets Docker Engine API v1.45. The PHP namespaces
-remain `Docker` and `Docker\API`, including for applications migrating from
-Beluga.
+Choose a Docker API version by installing its
+[API package line](/api-versions); requests negotiate with the daemon. The PHP
+namespaces remain `Docker` and `Docker\API`, including for applications
+migrating from Beluga.
 
 <CardGroup cols={2}>
   <Card title="Install the client" href="/installation">

@@ -19,6 +19,7 @@ require __DIR__ . '/vendor/autoload.php';
 use Docker\API\Model\ContainersCreatePostBody;
 use Docker\API\Model\CreateImageInfo;
 use Docker\Docker;
+use Docker\Stream\FrameError;
 
 $docker = Docker::create();
 
@@ -27,8 +28,9 @@ $pull = $docker->imageCreate(null, [
     'tag' => 'latest',
 ]);
 $pull->onFrame(function (CreateImageInfo $frame): void {
-    if ($frame->getError() !== null) {
-        throw new RuntimeException($frame->getError());
+    $error = FrameError::message($frame);
+    if ($error !== null) {
+        throw new RuntimeException($error);
     }
 });
 $pull->wait();

@@ -22,4 +22,43 @@ class AttachWebsocketStreamTest extends TestCase
         $this->assertSame('hi', $stream->read());
         fclose($server);
     }
+
+    public function testCloseSendsCloseFrameAndClosesSocket(): void
+    {
+        [$client, $server] = stream_socket_pair(\STREAM_PF_UNIX, \STREAM_SOCK_STREAM, \STREAM_IPPROTO_IP);
+        $stream = new AttachWebsocketStream(Stream::create($client));
+
+        $stream->close();
+        $stream->close();
+
+        $frame = fread($server, 16);
+        $this->assertSame("\x88\x80", substr($frame, 0, 2));
+        $this->assertSame(6, \strlen($frame));
+        $this->assertSame('', fread($server, 1));
+        $this->assertTrue(feof($server));
+        $this->assertNull($stream->read());
+        fclose($server);
+    }
+
+    public function testCloseIgnoresPeerThatAlreadyClosed(): void
+    {
+        [$client, $server] = stream_socket_pair(\STREAM_PF_UNIX, \STREAM_SOCK_STREAM, \STREAM_IPPROTO_IP);
+        fclose($server);
+        $stream = new AttachWebsocketStream(Stream::create($client));
+
+        $stream->close();
+
+        $this->assertNull($stream->read());
+    }
+
+    public function testWriteAfterCloseThrows(): void
+    {
+        [$client, $server] = stream_socket_pair(\STREAM_PF_UNIX, \STREAM_SOCK_STREAM, \STREAM_IPPROTO_IP);
+        $stream = new AttachWebsocketStream(Stream::create($client));
+        $stream->close();
+        fclose($server);
+
+        $this->expectException(\RuntimeException::class);
+        $stream->write('exit');
+    }
 }

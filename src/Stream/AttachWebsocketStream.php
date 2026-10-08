@@ -30,6 +30,10 @@ class AttachWebsocketStream
      */
     public function write($data): void
     {
+        if (!\is_resource($this->socket)) {
+            throw new \RuntimeException('The WebSocket stream is closed.');
+        }
+
         $rand = random_int(0, 28);
         $frame = [
             'fin' => 1,
@@ -78,6 +82,23 @@ class AttachWebsocketStream
         }
 
         $this->socketWrite($frame['data']);
+    }
+
+    /**
+     * Send a close frame and close the connection.
+     *
+     * Later read() calls return null. Calling close() again does nothing.
+     */
+    public function close(): void
+    {
+        if (!\is_resource($this->socket)) {
+            return;
+        }
+
+        // Masked close frame without a status code (RFC 6455 section 5.5.1).
+        // The daemon may already have closed its side, so a failed write is ignored.
+        @$this->socketWrite("\x88\x80".random_bytes(4));
+        fclose($this->socket);
     }
 
     /**

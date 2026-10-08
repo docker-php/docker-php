@@ -132,10 +132,10 @@ TTY-aware decoder or handle all upgraded-response variants. Do not assume
 that terminal output or HTTP 101 will work through this wrapper.
 
 `containerAttachWebsocket()` uses a separate `AttachWebsocketStream` with
-`read()` and `write()`, not `onStdout()`/`wait()`. Its response handling is also
-narrow, and the existing WebSocket integration test is skipped. Treat it as
-a feature requiring validation with your daemon and transport, not a tested
-interactive-terminal recipe.
+`read()`, `write()` and `close()`, not `onStdout()`/`wait()`. Its response
+handling is also narrow, and the existing WebSocket integration test is
+skipped. Treat it as a feature requiring validation with your daemon and
+transport, not a tested interactive-terminal recipe.
 
 `DockerRawStream::onStdin()` is an output-channel callback; it is not a method
 for writing commands into a container. Prefer the [exec recipe](/guides/exec)

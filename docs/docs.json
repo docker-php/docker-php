@@ -45,8 +45,8 @@
   "navbar": {
     "links": [
       {
-        "label": "Engine API v1.45",
-        "href": "https://docs.docker.com/reference/api/engine/version/v1.45/"
+        "label": "Engine API",
+        "href": "https://docs.docker.com/reference/api/engine/"
       },
       {
         "label": "Issues",

@@ -1,5 +1,29 @@
 # Changelog
 
+## 3.3.0
+
+- Add `StatsStream`: `containerStats()` streams samples to `onFrame()` by
+  default instead of blocking on the endless response.
+- Add `stop()` to callback streams, so build, pull, push, event and stats
+  readers can finish from a callback.
+- Add `close()` to `AttachWebsocketStream`.
+- Accept a list of tags for `imageBuild()`'s `t` option.
+- Add opt-in exceptions for error statuses the generated endpoints do not
+  handle (`Docker::throwOnUnexpectedStatus()`). Without it, such calls still
+  return `null` and trigger a deprecation; throwing becomes the default in 4.0.
+- Add opt-in `.dockerignore` support for build contexts
+  (`Context::applyDockerignore()`). Without it, a context with a
+  `.dockerignore` triggers a deprecation; applying it becomes the default
+  in 4.0.
+- Fix `containerAttachWebsocket()`, which returned `null` for every real
+  WebSocket upgrade.
+- Fix `containerAttach()` losing TTY output, and handle upgraded attach
+  responses.
+- Fix WebSocket close, ping and empty frames, stalled or truncated frames,
+  65,536-byte payload lengths, mask key randomness and partial writes.
+- Declare the stream return types of `Docker` methods for static analysis.
+- Allow Guzzle 8 and PHPStan 2 for development.
+
 ## 3.2.0
 
 - Add opt-in interactive exec sessions with nonblocking stdin writes, bounded

@@ -156,6 +156,10 @@ class AttachWebsocketStream
     private function socketRead($length)
     {
         $read = '';
+        // Empty frames carry no payload; fread() rejects a zero length.
+        if ($length <= 0) {
+            return $read;
+        }
 
         do {
             $read .= fread($this->socket, $length - \strlen($read));

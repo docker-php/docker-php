@@ -14,7 +14,7 @@ The table describes the restored client with the API v1.45 package.
 | `containerLogs()` | `DockerRawStream`; TTY-aware output decoding | [Logs](/guides/logs) |
 | `execStart()` | Attached output stream, or no output when detached | [Exec](/guides/exec) |
 | `systemEvents()` | `EventStream`, not one event model | [Events and stats](/guides/events-and-stats) |
-| `containerStats()` | Plain decoded object with `stream=false`; no typed stream wrapper | [Events and stats](/guides/events-and-stats#read-one-stats-sample) |
+| `containerStats()` | `StatsStream` by default; one decoded object with `stream=false` | [Events and stats](/guides/events-and-stats#continuous-stats) |
 | `containerArchive()` / `containerExport()` | Tar response; use a raw endpoint to retain the body | [Archive transfers](/guides/archives) |
 | `containerArchiveInfo()` | Metadata in a response header, not a response model | [Archive transfers](/guides/archives#read-path-metadata) |
 | `putContainerArchive()` | Tar request body; successful typed result is `null` | [Archive transfers](/guides/archives#upload-a-tar-archive) |
@@ -28,8 +28,9 @@ Register callbacks before calling `wait()`. The endpoint call obtains the
 response; `wait()` reads its body and invokes callbacks synchronously.
 Registering a callback alone does not consume output or finish the operation.
 
-`onFrame()` receives generated models for build, pull, push and event streams.
-Their responses contain multiple JSON documents, not one JSON array.
+`onFrame()` receives generated models for build, pull, push and event streams,
+and decoded objects for stats streams. Their responses contain multiple JSON
+documents, not one JSON array.
 `onStdout()` and `onStderr()` receive strings for logs and exec output.
 See [output framing](/guides/logs#output-chunks-and-tty-mode) for the difference
 between output chunks and lines.
@@ -89,7 +90,8 @@ See [HTTP clients](/guides/guzzle) for the transport comparison.
 
 ## Lifetime, cancellation and timeouts
 
-`wait()` blocks until the stream ends or an error interrupts it. A log follow
+`wait()` blocks until the stream ends, `stop()` is called or an error
+interrupts it. A log follow
 or event subscription can remain open indefinitely. The client does not turn
 these calls into background jobs, promises or an event loop.
 
@@ -98,10 +100,12 @@ to the operation, and keep long-lived readers in a supervised worker rather
 than an ordinary web request. Reconnect and reconcile state in your application
 after a connection failure; there is no automatic durable event subscription.
 
-There is no uniform public cancellation method across these wrappers. Do not
-treat `CallbackStream::closeAndRead()` as a graceful stop signal: it closes
-the underlying body before calling `wait()`. For explicit stream ownership,
-use a raw endpoint, manage its PSR-7 body and close it in a `finally` block.
+Call `stop()` on a callback stream to close its body and end `wait()`. From
+inside a frame callback, `wait()` returns after that frame's callbacks have
+run. `stop()` requires `3.3.0` or later. Do not treat
+`CallbackStream::closeAndRead()` as a graceful stop signal: it closes the
+underlying body before calling `wait()`. For explicit stream ownership, use a
+raw endpoint, manage its PSR-7 body and close it in a `finally` block.
 Closing a build or pull connection can cancel the daemon operation.
 
 ## Raw and generated endpoints

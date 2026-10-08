@@ -12,6 +12,8 @@ abstract class CallbackStream
 
     private $onNewFrameCallables = [];
 
+    private bool $stopped = false;
+
     public function __construct(StreamInterface $stream)
     {
         $this->stream = $stream;
@@ -35,7 +37,7 @@ abstract class CallbackStream
      */
     public function wait(): void
     {
-        while (!$this->stream->eof()) {
+        while (!$this->stopped && !$this->stream->eof()) {
             $frame = $this->readFrame();
 
             if (null !== $frame) {
@@ -48,6 +50,23 @@ abstract class CallbackStream
                 }
             }
         }
+    }
+
+    /**
+     * Stop reading and close the response body.
+     *
+     * Called from a frame callback, wait() returns once the remaining callbacks
+     * for that frame have run. Closing a build or pull connection can cancel
+     * the daemon operation.
+     */
+    public function stop(): void
+    {
+        if ($this->stopped) {
+            return;
+        }
+
+        $this->stopped = true;
+        $this->stream->close();
     }
 
     public function closeAndRead(): void

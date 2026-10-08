@@ -1,6 +1,6 @@
 ---
 title: "Events and resource stats"
-description: "Read bounded event history and a single stats sample without opening an unintended endless stream."
+description: "Read bounded event history, a single stats sample or live stats without opening an unintended endless stream."
 ---
 
 These calls can stay open. Decide whether you want a finite query or a live
@@ -45,9 +45,9 @@ assuming no events were lost. Keep slow work out of the synchronous callback.
 
 ## Read one stats sample
 
-`containerStats()` defaults to streaming. The generated endpoint does not have
-a custom callback wrapper and parses a whole JSON response. Explicitly set
-`stream => false` for the normal decoded-result path:
+`containerStats()` streams by default and returns a `StatsStream` (see
+[continuous stats](#continuous-stats)). Set `stream => false` to get one
+decoded sample instead:
 
 ```php
 $stats = $docker->containerStats('my-container', ['stream' => false]);
@@ -71,14 +71,38 @@ version before calculating percentages.
 
 ## Continuous stats
 
-For a live reader, use
-`executeRawEndpoint(new Docker\API\Endpoint\ContainerStats($id, ['stream' => true]))`,
-check HTTP 200, and parse JSON documents incrementally from the PSR-7 body.
-Close that body when finished. Do not call `containerStats($id)` in an ordinary
-web request and assume it will return one sample.
+With the default `stream => true`, `containerStats()` returns a `StatsStream`.
+Docker sends a sample about once a second until the container stops, so call
+`stop()` once you have what you need. Its callback receives each sample as the
+same decoded object as `stream => false`:
 
-Socket chunks are not JSON-message boundaries. Buffer incomplete documents,
-place a limit on buffered data, and handle timeouts, malformed JSON and
-disconnects. There is no `StatsStream` or `onFrame()` method provided for this
-endpoint in the current client. See
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+
+$docker = Docker::create();
+$stats = $docker->containerStats('my-container');
+$samples = 0;
+$stats->onFrame(function (stdClass $sample) use ($stats, &$samples): void {
+    printf("Memory usage: %s bytes\n", (string) ($sample->memory_stats->usage ?? 'unavailable'));
+
+    if (++$samples === 5) {
+        $stats->stop();
+    }
+});
+$stats->wait();
+```
+
+`stop()` closes the response body, and `wait()` returns after the current
+sample's callbacks have run. Each sample's `precpu_stats` holds the previous
+reading, so a CPU percentage can be calculated from the second sample onwards.
+
+`StatsStream` requires `3.3.0` or later. Earlier clients have no stats wrapper;
+use `stream => false` there. Live samples need a transport that reads
+incrementally, such as the bundled socket client. Guzzle's cURL handler
+buffers the whole response; see [HTTP clients](/guides/guzzle). Keep the reader
+in a worker rather than an ordinary web request, and see
 [stream lifetime and cancellation](/reference/streams#lifetime-cancellation-and-timeouts).

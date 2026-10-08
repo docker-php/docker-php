@@ -8,6 +8,7 @@ use Docker\API\Model\ContainersCreatePostBody;
 use Docker\API\Model\ContainersIdExecPostBody;
 use Docker\API\Model\ExecIdStartPostBody;
 use Docker\Stream\DockerRawStream;
+use Docker\Stream\StatsStream;
 use Docker\Tests\TestCase;
 
 class LiveStreamTest extends TestCase
@@ -89,6 +90,31 @@ class LiveStreamTest extends TestCase
             $result = self::getDocker()->execInspect($exec->getId());
             self::assertFalse($result->getRunning());
             self::assertSame(0, $result->getExitCode());
+        } finally {
+            self::getDocker()->containerDelete($id, ['force' => true]);
+        }
+    }
+
+    public function testContainerStatsStreamsLiveSamples(): void
+    {
+        $id = $this->createContainer(false, ['sleep', '30']);
+
+        try {
+            $stats = self::getDocker()->containerStats($id);
+            $this->assertInstanceOf(StatsStream::class, $stats);
+            $reads = [];
+            $stats->onFrame(static function (\stdClass $sample) use ($stats, &$reads): void {
+                $reads[] = $sample->read;
+                if (2 === \count($reads)) {
+                    $stats->stop();
+                }
+            });
+            $started = microtime(true);
+            $stats->wait();
+
+            $this->assertCount(2, $reads);
+            $this->assertNotSame($reads[0], $reads[1]);
+            $this->assertLessThan(15, microtime(true) - $started, 'stop() should end wait() before the container exits');
         } finally {
             self::getDocker()->containerDelete($id, ['force' => true]);
         }

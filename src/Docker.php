@@ -11,6 +11,7 @@ use Docker\API\Model\ExecIdStartPostBody;
 use Docker\Endpoint\ContainerAttach;
 use Docker\Endpoint\ContainerAttachWebsocket;
 use Docker\Endpoint\ContainerLogs;
+use Docker\Endpoint\ContainerStats;
 use Docker\Endpoint\ExecStart;
 use Docker\Endpoint\ImageBuild;
 use Docker\Endpoint\ImageCreate;
@@ -26,6 +27,7 @@ use Docker\Stream\DockerRawStream;
 use Docker\Stream\EventStream;
 use Docker\Stream\InteractiveExecStream;
 use Docker\Stream\PushStream;
+use Docker\Stream\StatsStream;
 use Docker\Stream\SocketReadStream;
 use Http\Client\Socket\Stream as SocketStream;
 use Psr\Http\Message\ResponseInterface;
@@ -70,6 +72,20 @@ class Docker extends Client
             $accept,
             fn (): bool => (bool) $this->containerInspect($id)->getConfig()?->getTty()
         ), $fetch);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * With `stream => true` (the default) the result is a StatsStream that
+     * delivers one sample per frame; with `stream => false` it is one decoded
+     * sample.
+     *
+     * @return ($fetch is 'object' ? StatsStream|\stdClass|null : ResponseInterface)
+     */
+    public function containerStats(string $id, array $queryParameters = [], string $fetch = self::FETCH_OBJECT)
+    {
+        return $this->executeEndpoint(new ContainerStats($id, $queryParameters), $fetch);
     }
 
     /**

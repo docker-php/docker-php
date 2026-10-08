@@ -20,5 +20,6 @@ function dockerReturnTypes(Docker $docker): void
     assertType('Docker\Stream\CreateImageStream|null', $docker->imageCreate());
     assertType('Docker\Stream\PushStream|null', $docker->imagePush('name'));
     assertType('Docker\Stream\EventStream|null', $docker->systemEvents());
+    assertType('Docker\Stream\StatsStream|stdClass|null', $docker->containerStats('id'));
     assertType('Psr\Http\Message\ResponseInterface', $docker->containerLogs('id', [], Docker::FETCH_RESPONSE));
 }

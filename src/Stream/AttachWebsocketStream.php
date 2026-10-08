@@ -54,7 +54,8 @@ class AttachWebsocketStream
             }
         }
 
-        if ($frame['len'] > 2 ** 16) {
+        // 126 carries a 16-bit length, so anything above 0xFFFF needs the 64-bit form.
+        if ($frame['len'] > 0xFFFF) {
             $len = 127;
         } elseif ($frame['len'] > 125) {
             $len = 126;
@@ -71,10 +72,7 @@ class AttachWebsocketStream
         if (126 === $len) {
             $this->socketWrite(pack('n', $frame['len']));
         } elseif (127 === $len) {
-            $higher = $frame['len'] >> 32;
-            $lower = ($frame['len'] << 32) >> 32;
-            $this->socketWrite(pack('N', $higher));
-            $this->socketWrite(pack('N', $lower));
+            $this->socketWrite(pack('J', $frame['len']));
         }
 
         if (1 === $frame['mask']) {

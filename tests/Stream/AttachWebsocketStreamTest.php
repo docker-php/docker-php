@@ -6,6 +6,7 @@ namespace Docker\Tests\Stream;
 
 use Docker\Stream\AttachWebsocketStream;
 use Nyholm\Psr7\Stream;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AttachWebsocketStreamTest extends TestCase
@@ -21,6 +22,33 @@ class AttachWebsocketStreamTest extends TestCase
         $this->assertSame('', $stream->read());
         $this->assertSame('hi', $stream->read());
         fclose($server);
+    }
+
+    public static function payloadLengths(): iterable
+    {
+        yield '7-bit length' => [125, "\xFD", ''];
+        yield '16-bit length' => [126, "\xFE", pack('n', 126)];
+        yield 'largest 16-bit length' => [0xFFFF, "\xFE", pack('n', 0xFFFF)];
+        yield 'smallest 64-bit length' => [0x10000, "\xFF", pack('J', 0x10000)];
+    }
+
+    #[DataProvider('payloadLengths')]
+    public function testWriteEncodesPayloadLength(int $length, string $lengthByte, string $extendedLength): void
+    {
+        $socket = fopen('php://temp', 'w+');
+        $stream = new AttachWebsocketStream(Stream::create($socket));
+        $data = str_repeat('x', $length);
+
+        $stream->write($data);
+
+        rewind($socket);
+        $frame = stream_get_contents($socket);
+        $header = 2 + \strlen($extendedLength);
+        $this->assertSame("\x81".$lengthByte.$extendedLength, substr($frame, 0, $header));
+        $mask = substr($frame, $header, 4);
+        $payload = substr($frame, $header + 4);
+        $this->assertSame($length, \strlen($payload));
+        $this->assertSame($data, $payload ^ str_repeat($mask, intdiv($length, 4) + 1));
     }
 
     public function testCloseSendsCloseFrameAndClosesSocket(): void

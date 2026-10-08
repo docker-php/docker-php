@@ -6,6 +6,7 @@ namespace Docker\Tests\Resource;
 
 use Docker\API\Model\ContainersCreatePostBody;
 use Docker\Docker;
+use Docker\Stream\AttachWebsocketStream;
 use Docker\Stream\DockerRawStream;
 use Docker\Tests\TestCase;
 
@@ -24,9 +25,10 @@ class ContainerResourceTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
+        // The pull only runs while its progress stream is read.
         self::getDocker()->imageCreate('', [
             'fromImage' => 'busybox:latest',
-        ]);
+        ])->wait();
     }
 
     public function testAttach(): void
@@ -59,53 +61,79 @@ class ContainerResourceTest extends TestCase
         $this->assertSame('output', $stdoutFull);
     }
 
+    public function testAttachTty(): void
+    {
+        $containerConfig = new ContainersCreatePostBody();
+        $containerConfig->setImage('busybox:latest');
+        $containerConfig->setCmd(['sh', '-c', 'printf stdout; printf stderr >&2']);
+        $containerConfig->setTty(true);
+        $containerConfig->setAttachStdout(true);
+        $containerConfig->setAttachStderr(true);
+        $containerConfig->setLabels(['docker-php-test' => 'true']);
+        $id = $this->getManager()->containerCreate($containerConfig)->getId();
+
+        try {
+            $stream = $this->getManager()->containerAttach($id, ['stream' => true, 'stdout' => true, 'stderr' => true]);
+            $output = '';
+            $stream->onStdout(static function (string $chunk) use (&$output): void {
+                $output .= $chunk;
+            });
+            $this->getManager()->containerStart($id);
+            $this->getManager()->containerWait($id);
+            $stream->wait();
+
+            $this->assertSame('stdoutstderr', $output);
+        } finally {
+            $this->getManager()->containerDelete($id, ['force' => true]);
+        }
+    }
+
     public function testAttachWebsocket(): void
     {
-        $this->markTestSkipped('Since docker API 1.28 Websockets are binary so this test needs work. ' .
-            'See https://github.com/xtermjs/xterm.js/issues/883');
+        $operatingSystem = (string) $this->getManager()->systemInfo()->getOperatingSystem();
+        if (str_contains($operatingSystem, 'Docker Desktop')) {
+            $this->markTestSkipped('Docker Desktop\'s socket proxy does not forward WebSocket attach output.');
+        }
+
         $containerConfig = new ContainersCreatePostBody();
         $containerConfig->setImage('busybox:latest');
         $containerConfig->setCmd(['sh']);
+        $containerConfig->setAttachStdin(true);
         $containerConfig->setAttachStdout(true);
         $containerConfig->setAttachStderr(true);
-        $containerConfig->setAttachStdin(false);
         $containerConfig->setOpenStdin(true);
         $containerConfig->setTty(true);
-        $containerConfig->setLabels(new \ArrayObject(['docker-php-test' => 'true']));
+        $containerConfig->setLabels(['docker-php-test' => 'true']);
+        $id = $this->getManager()->containerCreate($containerConfig)->getId();
 
-        $containerCreateResult = $this->getManager()->containerCreate($containerConfig);
-        $webSocketStream = $this->getManager()->containerAttachWebsocket(
-            $containerCreateResult->getId(),
-            [
+        try {
+            $webSocketStream = $this->getManager()->containerAttachWebsocket($id, [
                 'stream' => true,
                 'stdout' => true,
                 'stderr' => true,
                 'stdin' => true,
-            ]
-        );
+            ]);
+            $this->assertInstanceOf(AttachWebsocketStream::class, $webSocketStream);
+            $this->getManager()->containerStart($id);
 
-        $this->getManager()->containerStart($containerCreateResult->getId());
+            $webSocketStream->write("echo docker-php-\$((40 + 2))\n");
+            $output = '';
+            $deadline = microtime(true) + 10;
+            while (!str_contains($output, 'docker-php-42') && microtime(true) < $deadline) {
+                $data = $webSocketStream->read(0, 200000);
+                $this->assertNotNull($data, 'The WebSocket closed before the command output arrived.');
+                $output .= (string) $data;
+            }
+            $this->assertStringContainsString('docker-php-42', $output);
 
-        // Read the bash first line
-        $webSocketStream->read();
-
-        // No output after that so it should be false
-        $this->assertFalse($webSocketStream->read());
-
-        // Write something to the container
-        $webSocketStream->write("echo test\n");
-
-        // Test for echo present (stdin)
-        $output = '';
-
-        while (false !== ($data = $webSocketStream->read())) {
-            $output .= $data;
+            $webSocketStream->write("exit\n");
+            $deadline = microtime(true) + 10;
+            while (null !== $webSocketStream->read(0, 200000) && microtime(true) < $deadline) {
+            }
+            $this->assertNull($webSocketStream->read(), 'The WebSocket should close when the shell exits.');
+        } finally {
+            $this->getManager()->containerDelete($id, ['force' => true]);
         }
-
-        $this->assertContains('echo', $output);
-
-        // Exit the container
-        $webSocketStream->write("exit\n");
     }
 
     public static function logsProvider(): iterable

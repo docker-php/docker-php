@@ -129,17 +129,51 @@ for status checks and raw-fetch error handling.
 `containerAttach()` attaches to the container's existing process; it does not
 create a new command like `containerExec()` followed by `execStart()`.
 
-The current attach wrapper recognizes HTTP 200 with the exact
-`application/vnd.docker.raw-stream` content type and creates a multiplexed
-`DockerRawStream`. Unlike the log and exec wrappers, it does not select a
-TTY-aware decoder or handle all upgraded-response variants. Do not assume
-that terminal output or HTTP 101 will work through this wrapper.
+`containerAttach()` returns a `DockerRawStream` for plain and upgraded
+responses. Docker labels TTY output and framed non-TTY output on plain
+responses with the same content type, so the client inspects the container's
+TTY setting to choose the decoder. TTY output arrives through `onStdout()`.
+Since `3.3.0`, attaching to a TTY container no longer loses its output.
 
-`containerAttachWebsocket()` uses a separate `AttachWebsocketStream` with
-`read()`, `write()` and `close()`, not `onStdout()`/`wait()`. Its response
-handling is also narrow, and the existing WebSocket integration test is
-skipped. Treat it as a feature requiring validation with your daemon and
-transport, not a tested interactive-terminal recipe.
+`containerAttachWebsocket()` returns an `AttachWebsocketStream` with `read()`,
+`write()` and `close()`, not `onStdout()`/`wait()`. It is useful when you need
+to write to the container's stdin over the attach connection:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Docker\Docker;
+
+$docker = Docker::create();
+$attach = $docker->containerAttachWebsocket('my-container', [
+    'stream' => true,
+    'stdin' => true,
+    'stdout' => true,
+    'stderr' => true,
+]);
+
+$attach->write("echo hello\n");
+// Print output until a second passes without any.
+while (is_string($output = $attach->read(1))) {
+    echo $output;
+}
+$attach->close();
+```
+
+`read()` waits up to the given seconds and microseconds for one frame. It
+returns the frame's bytes, `false` when nothing arrived in time, or `null` once
+Docker has closed the connection. A frame is a chunk of output, not a line.
+Docker mixes stdout and stderr in the same frames, with no marker for which
+stream a chunk came from. The stream answers pings and closes itself when
+Docker sends a close frame. `write()` sends one binary frame.
+
+WebSocket attach needs `3.3.0` or later; earlier clients returned `null`
+instead of a stream. Docker Desktop's socket proxy upgrades the connection but
+does not forward attach output; a Linux daemon or a remote engine works. For
+driving commands, [interactive exec](/guides/interactive-exec) gives separate
+stdout and stderr, exit codes and deadlines.
 
 `DockerRawStream::onStdin()` is an output-channel callback; it is not a method
 for writing commands into a container. Prefer the [exec recipe](/guides/exec)

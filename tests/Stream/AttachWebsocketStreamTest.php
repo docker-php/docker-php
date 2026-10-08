@@ -44,7 +44,7 @@ class AttachWebsocketStreamTest extends TestCase
         rewind($socket);
         $frame = stream_get_contents($socket);
         $header = 2 + \strlen($extendedLength);
-        $this->assertSame("\x81".$lengthByte.$extendedLength, substr($frame, 0, $header));
+        $this->assertSame("\x82".$lengthByte.$extendedLength, substr($frame, 0, $header));
         $mask = substr($frame, $header, 4);
         $payload = substr($frame, $header + 4);
         $this->assertSame($length, \strlen($payload));
@@ -88,5 +88,68 @@ class AttachWebsocketStreamTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
         $stream->write('exit');
+    }
+
+    public function testAnswersPingAndReturnsNextDataFrame(): void
+    {
+        [$client, $server] = $this->socketPair();
+        fwrite($server, "\x89\x02hi\x82\x02ok");
+        $stream = new AttachWebsocketStream(Stream::create($client));
+
+        $this->assertSame('ok', $stream->read());
+        $pong = fread($server, 16);
+        $this->assertSame("\x8A\x82", substr($pong, 0, 2));
+        $this->assertSame('hi', substr($pong, 6) ^ substr($pong, 2, 4));
+    }
+
+    public function testCloseFrameRepliesAndEndsStream(): void
+    {
+        [$client, $server] = $this->socketPair();
+        fwrite($server, "\x88\x02\x03\xe8");
+        $stream = new AttachWebsocketStream(Stream::create($client));
+
+        $this->assertNull($stream->read());
+        $this->assertSame("\x88\x80", substr(fread($server, 16), 0, 2));
+        $this->assertNull($stream->read());
+    }
+
+    public function testReadsSixtyFourBitLength(): void
+    {
+        [$client, $server] = $this->socketPair();
+        fwrite($server, "\x82\x7F".pack('J', 3).'abc');
+        $stream = new AttachWebsocketStream(Stream::create($client));
+
+        $this->assertSame('abc', $stream->read());
+    }
+
+    public function testConnectionEndingMidFrameEndsStream(): void
+    {
+        [$client, $server] = $this->socketPair();
+        fwrite($server, "\x82\x05ab");
+        fclose($server);
+        $stream = new AttachWebsocketStream(Stream::create($client));
+
+        $this->assertNull($stream->read());
+        $this->assertNull($stream->read());
+    }
+
+    public function testStalledFrameTimesOut(): void
+    {
+        [$client, $server] = $this->socketPair();
+        stream_set_timeout($client, 0, 100000);
+        fwrite($server, "\x82\x05ab");
+        $stream = new AttachWebsocketStream(Stream::create($client));
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Timed out');
+        $stream->read();
+    }
+
+    /**
+     * @return array{resource, resource}
+     */
+    private function socketPair(): array
+    {
+        return stream_socket_pair(\STREAM_PF_UNIX, \STREAM_SOCK_STREAM, \STREAM_IPPROTO_IP);
     }
 }

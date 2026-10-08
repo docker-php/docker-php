@@ -46,7 +46,12 @@ class Docker extends Client
      */
     public function containerAttach(string $id, array $queryParameters = [], string $fetch = self::FETCH_OBJECT, array $accept = [])
     {
-        return $this->executeEndpoint(new ContainerAttach($id, $queryParameters, $accept), $fetch);
+        return $this->executeEndpoint(new ContainerAttach(
+            $id,
+            $queryParameters,
+            $accept,
+            fn (): bool => (bool) $this->containerInspect($id)->getConfig()?->getTty()
+        ), $fetch);
     }
 
     /**

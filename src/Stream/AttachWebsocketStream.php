@@ -15,6 +15,11 @@ use Psr\Http\Message\StreamInterface;
  */
 class AttachWebsocketStream
 {
+    private const OPCODE_BINARY = 0x2;
+    private const OPCODE_CLOSE = 0x8;
+    private const OPCODE_PING = 0x9;
+    private const OPCODE_PONG = 0xA;
+
     /** @var resource The underlying socket */
     private $socket;
 
@@ -24,7 +29,7 @@ class AttachWebsocketStream
     }
 
     /**
-     * Send input to the container.
+     * Send input to the container as one binary frame.
      *
      * @param string $data Data to send
      */
@@ -34,52 +39,7 @@ class AttachWebsocketStream
             throw new \RuntimeException('The WebSocket stream is closed.');
         }
 
-        $rand = random_int(0, 28);
-        $frame = [
-            'fin' => 1,
-            'rsv1' => 0,
-            'rsv2' => 0,
-            'rsv3' => 0,
-            'opcode' => 1, // We always send text
-            'mask' => 1,
-            'len' => \strlen($data),
-            'mask_key' => substr(md5(uniqid()), $rand, 4),
-            'data' => $data,
-        ];
-
-        if (1 === $frame['mask']) {
-            for ($i = 0; $i < $frame['len']; ++$i) {
-                $frame['data'][$i]
-                    = \chr(\ord($frame['data'][$i]) ^ \ord($frame['mask_key'][$i % 4]));
-            }
-        }
-
-        // 126 carries a 16-bit length, so anything above 0xFFFF needs the 64-bit form.
-        if ($frame['len'] > 0xFFFF) {
-            $len = 127;
-        } elseif ($frame['len'] > 125) {
-            $len = 126;
-        } else {
-            $len = $frame['len'];
-        }
-
-        $firstByte = ($frame['fin'] << 7) | (($frame['rsv1'] << 7) >> 1) | (($frame['rsv2'] << 7) >> 2) | (($frame['rsv3'] << 7) >> 3) | (($frame['opcode'] << 4) >> 4);
-        $secondByte = ($frame['mask'] << 7) | (($len << 1) >> 1);
-
-        $this->socketWrite(\chr($firstByte));
-        $this->socketWrite(\chr($secondByte));
-
-        if (126 === $len) {
-            $this->socketWrite(pack('n', $frame['len']));
-        } elseif (127 === $len) {
-            $this->socketWrite(pack('J', $frame['len']));
-        }
-
-        if (1 === $frame['mask']) {
-            $this->socketWrite($frame['mask_key']);
-        }
-
-        $this->socketWrite($frame['data']);
+        $this->sendFrame(self::OPCODE_BINARY, (string) $data);
     }
 
     /**
@@ -93,107 +53,179 @@ class AttachWebsocketStream
             return;
         }
 
-        // Masked close frame without a status code (RFC 6455 section 5.5.1).
-        // The daemon may already have closed its side, so a failed write is ignored.
-        @$this->socketWrite("\x88\x80".random_bytes(4));
+        try {
+            // A close frame without a status code (RFC 6455 section 5.5.1). The
+            // daemon may already have closed its side, so a failed write is ignored.
+            $this->sendFrame(self::OPCODE_CLOSE, '');
+        } catch (\RuntimeException) {
+        }
         fclose($this->socket);
     }
 
     /**
-     * Block until it receive a frame from websocket or return null if no more connexion.
+     * Wait for the next data frame.
+     *
+     * Ping frames are answered with a pong and a close frame closes the stream;
+     * neither is returned. Docker sends output as it is written, so a frame is a
+     * chunk of output rather than a line or a whole message.
      *
      * @param int  $waitTime      Time to wait in seconds before return false
      * @param int  $waitMicroTime Time to wait in microseconds before return false
      * @param bool $getFrame      Whether to return the frame of websocket or only the data
      *
-     * @return false|string|array|null Null for socket not available, false for no message, string for the last message and the frame array if $getFrame is set to true
+     * @return false|string|array|null Null once the stream is closed, false if no frame arrived in time, the frame data, or the frame array if $getFrame is set to true
      */
     public function read($waitTime = 0, $waitMicroTime = 200000, $getFrame = false)
     {
-        if (!\is_resource($this->socket) || feof($this->socket)) {
-            return null;
-        }
-
-        $read = [$this->socket];
-        $write = null;
-        $expect = null;
-
-        if (0 === stream_select($read, $write, $expect, $waitTime, $waitMicroTime)) {
-            return false;
-        }
-
-        $firstByte = $this->socketRead(1);
-        $frame = [];
-        $firstByte = \ord($firstByte);
-        $secondByte = \ord($this->socketRead(1));
-
-        // First byte decoding
-        $frame['fin'] = ($firstByte & 128) >> 7;
-        $frame['rsv1'] = ($firstByte & 64) >> 6;
-        $frame['rsv2'] = ($firstByte & 32) >> 5;
-        $frame['rsv3'] = ($firstByte & 16) >> 4;
-        $frame['opcode'] = ($firstByte & 15);
-
-        // Second byte decoding
-        $frame['mask'] = ($secondByte & 128) >> 7;
-        $frame['len'] = ($secondByte & 127);
-
-        // Get length of the frame
-        if (126 === $frame['len']) {
-            $frame['len'] = unpack('n', $this->socketRead(2))[1];
-        } elseif (127 === $frame['len']) {
-            [$higher, $lower] = array_values(unpack('N2', $this->socketRead(8)));
-            $frame['len'] = ($higher << 32) | $lower;
-        }
-
-        // Get the mask key if needed
-        if (1 === $frame['mask']) {
-            $frame['mask_key'] = $this->socketRead(4);
-        }
-
-        $frame['data'] = $this->socketRead($frame['len']);
-
-        // Decode data if needed
-        if (1 === $frame['mask']) {
-            for ($i = 0; $i < $frame['len']; ++$i) {
-                $frame['data'][$i] = \chr(\ord($frame['data'][$i]) ^ \ord($frame['mask_key'][$i % 4]));
+        while (true) {
+            if (!\is_resource($this->socket) || feof($this->socket)) {
+                return null;
             }
-        }
 
-        if ($getFrame) {
-            return $frame;
-        }
+            $read = [$this->socket];
+            $write = null;
+            $expect = null;
+            $selected = @stream_select($read, $write, $expect, $waitTime, $waitMicroTime);
+            if (false === $selected) {
+                throw new \RuntimeException('Cannot wait for the WebSocket stream.');
+            }
+            if (0 === $selected) {
+                return false;
+            }
 
-        return (string) $frame['data'];
+            $frame = $this->readFrame();
+            if (null === $frame) {
+                // The daemon closed the connection before sending a whole frame.
+                fclose($this->socket);
+
+                return null;
+            }
+
+            if (self::OPCODE_CLOSE === $frame['opcode']) {
+                $this->close();
+
+                return null;
+            }
+            if (self::OPCODE_PING === $frame['opcode']) {
+                $this->sendFrame(self::OPCODE_PONG, $frame['data']);
+                continue;
+            }
+            if (self::OPCODE_PONG === $frame['opcode']) {
+                continue;
+            }
+
+            return $getFrame ? $frame : $frame['data'];
+        }
     }
 
     /**
-     * Force to have something of the expected size (block).
-     *
-     * @return string
+     * Read one frame, or return null when the connection ends first.
      */
-    private function socketRead($length)
+    private function readFrame(): ?array
+    {
+        $header = $this->socketRead(2);
+        if (2 !== \strlen($header)) {
+            return null;
+        }
+        $firstByte = \ord($header[0]);
+        $secondByte = \ord($header[1]);
+
+        $frame = [
+            'fin' => ($firstByte & 128) >> 7,
+            'rsv1' => ($firstByte & 64) >> 6,
+            'rsv2' => ($firstByte & 32) >> 5,
+            'rsv3' => ($firstByte & 16) >> 4,
+            'opcode' => $firstByte & 15,
+            'mask' => ($secondByte & 128) >> 7,
+            'len' => $secondByte & 127,
+        ];
+
+        if (126 === $frame['len'] || 127 === $frame['len']) {
+            $size = 126 === $frame['len'] ? 2 : 8;
+            $length = $this->socketRead($size);
+            if ($size !== \strlen($length)) {
+                return null;
+            }
+            $frame['len'] = unpack(2 === $size ? 'n' : 'J', $length)[1];
+        }
+
+        if (1 === $frame['mask']) {
+            $frame['mask_key'] = $this->socketRead(4);
+            if (4 !== \strlen($frame['mask_key'])) {
+                return null;
+            }
+        }
+
+        $frame['data'] = $this->socketRead($frame['len']);
+        if ($frame['len'] !== \strlen($frame['data'])) {
+            return null;
+        }
+
+        if (1 === $frame['mask']) {
+            $frame['data'] = $this->mask($frame['data'], $frame['mask_key']);
+        }
+
+        return $frame;
+    }
+
+    /**
+     * Send one masked frame, as clients must (RFC 6455 section 5.3).
+     */
+    private function sendFrame(int $opcode, string $data): void
+    {
+        $length = \strlen($data);
+        // 126 carries a 16-bit length, so anything above 0xFFFF needs the 64-bit form.
+        if ($length > 0xFFFF) {
+            $header = \chr(0x80 | 127).pack('J', $length);
+        } elseif ($length > 125) {
+            $header = \chr(0x80 | 126).pack('n', $length);
+        } else {
+            $header = \chr(0x80 | $length);
+        }
+        $maskKey = random_bytes(4);
+
+        $this->socketWrite(\chr(0x80 | $opcode).$header.$maskKey.$this->mask($data, $maskKey));
+    }
+
+    private function mask(string $data, string $maskKey): string
+    {
+        if ('' === $data) {
+            return '';
+        }
+
+        return $data ^ str_repeat($maskKey, intdiv(\strlen($data), 4) + 1);
+    }
+
+    /**
+     * Read exactly $length bytes, or fewer if the connection ends first.
+     */
+    private function socketRead(int $length): string
     {
         $read = '';
         // Empty frames carry no payload; fread() rejects a zero length.
-        if ($length <= 0) {
-            return $read;
+        while (\strlen($read) < $length && !feof($this->socket)) {
+            $chunk = @fread($this->socket, $length - \strlen($read));
+            // A stalled read returns false or '' depending on the PHP version.
+            if (stream_get_meta_data($this->socket)['timed_out']) {
+                throw new \RuntimeException('Timed out reading a WebSocket frame.');
+            }
+            if (false === $chunk) {
+                throw new \RuntimeException('Cannot read from the WebSocket stream.');
+            }
+            $read .= $chunk;
         }
-
-        do {
-            $read .= fread($this->socket, $length - \strlen($read));
-        } while (\strlen($read) < $length && !feof($this->socket));
 
         return $read;
     }
 
-    /**
-     * Write to the socket.
-     *
-     * @return int
-     */
-    private function socketWrite($data)
+    private function socketWrite(string $data): void
     {
-        return fwrite($this->socket, $data);
+        while ('' !== $data) {
+            $written = @fwrite($this->socket, $data);
+            if (false === $written || 0 === $written) {
+                throw new \RuntimeException('Cannot write to the WebSocket stream.');
+            }
+            $data = (string) substr($data, $written);
+        }
     }
 }

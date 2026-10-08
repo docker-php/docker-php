@@ -44,9 +44,22 @@ of completed build results. The callback receives generated `BuildInfo` models.
 Check the frames for daemon-reported build errors as well as handling endpoint
 exceptions.
 
-`Context` requires `tar` on the machine running PHP. Keep only intended build
-files in the context directory; the current helper archives that directory
-directly and does not apply `.dockerignore` filtering for you.
+`Context` requires `tar` on the machine running PHP. By default it archives the
+whole directory. To leave out the paths a `.dockerignore` file in that
+directory excludes, as `docker build` does, opt in:
+
+```php
+$context = (new Context(__DIR__ . '/build'))->applyDockerignore();
+```
+
+Patterns follow the Docker CLI: `*`, `?`, character classes, `**` for any
+number of directories, `!` to re-include a path, and the last matching pattern
+wins. The `Dockerfile` and `.dockerignore` are always sent, because the daemon
+reads them; it then drops them if your patterns exclude them. If you build
+with a differently named Dockerfile through the `dockerfile` option, add a
+`!` exception for it. `applyDockerignore()` requires `3.3.0` or later and GNU
+or BSD `tar`. Without it, a context with a `.dockerignore` file triggers a
+deprecation notice; applying the file becomes the default in 4.0.
 
 The example leaves the tagged image on your development daemon. Remove that
 specific image when you no longer need it.

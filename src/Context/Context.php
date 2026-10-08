@@ -47,6 +47,11 @@ class Context implements ContextInterface
      */
     private $format = self::FORMAT_STREAM;
 
+    private bool $applyDockerignore = false;
+
+    /** Temporary NUL-separated list of the paths to archive. */
+    private ?string $pathList = null;
+
     /**
      * @param string     $directory Directory of context
      * @param string     $format    Format to use when sending the call (stream or tar: string)
@@ -90,6 +95,19 @@ class Context implements ContextInterface
     }
 
     /**
+     * Leave out paths matched by the context's .dockerignore file, as `docker build` does.
+     *
+     * Without this, the whole directory is archived and a .dockerignore file
+     * triggers a deprecation notice. Applying it becomes the default in 4.0.
+     */
+    public function applyDockerignore(bool $enabled = true): static
+    {
+        $this->applyDockerignore = $enabled;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isStreamed()
@@ -114,7 +132,7 @@ class Context implements ContextInterface
      */
     public function toTar()
     {
-        $process = new Process(['/usr/bin/env', 'tar', '-c', '.'], $this->directory);
+        $process = new Process($this->tarCommand(), $this->directory);
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -132,7 +150,7 @@ class Context implements ContextInterface
     public function toStream()
     {
         if (!\is_resource($this->process)) {
-            $this->process = proc_open('/usr/bin/env tar -c .', [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']], $pipes, $this->directory);
+            $this->process = proc_open($this->tarCommand(), [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']], $pipes, $this->directory);
             $this->stream = $pipes[1];
         }
 
@@ -149,9 +167,46 @@ class Context implements ContextInterface
             proc_close($this->process);
         }
 
+        if (null !== $this->pathList) {
+            $this->fs->remove($this->pathList);
+        }
+
         if ($this->cleanup) {
             $this->fs->remove($this->directory);
         }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function tarCommand(): array
+    {
+        $dockerignore = $this->directory.\DIRECTORY_SEPARATOR.'.dockerignore';
+        if (!is_file($dockerignore)) {
+            return ['/usr/bin/env', 'tar', '-c', '.'];
+        }
+
+        if (!$this->applyDockerignore) {
+            trigger_deprecation(
+                'docker-php/docker-php',
+                '3.3',
+                'The build context %s has a .dockerignore file that is not applied; from 4.0 it will be. Call Context::applyDockerignore() to opt in now.',
+                $this->directory
+            );
+
+            return ['/usr/bin/env', 'tar', '-c', '.'];
+        }
+
+        // Write the list to a file rather than tar's stdin, so tar can stream
+        // the archive without waiting for the whole list to be read.
+        if (null === $this->pathList) {
+            $paths = Dockerignore::fromFile($dockerignore)->paths($this->directory);
+            $this->pathList = $this->fs->tempnam(sys_get_temp_dir(), 'docker-context-');
+            // "./" keeps names that start with "-" from being read as options.
+            $this->fs->dumpFile($this->pathList, implode('', array_map(static fn (string $path): string => './'.$path."\0", $paths)));
+        }
+
+        return ['/usr/bin/env', 'tar', '-c', '--no-recursion', '--null', '-T', $this->pathList];
     }
 
     /**

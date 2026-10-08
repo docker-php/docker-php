@@ -19,9 +19,16 @@ use Docker\Endpoint\InteractiveExecStart;
 use Docker\Endpoint\SystemEvents;
 use Docker\Exception\BadRequestException;
 use Docker\Http\InteractiveHttpClient;
+use Docker\Stream\AttachWebsocketStream;
+use Docker\Stream\BuildStream;
+use Docker\Stream\CreateImageStream;
+use Docker\Stream\DockerRawStream;
+use Docker\Stream\EventStream;
 use Docker\Stream\InteractiveExecStream;
+use Docker\Stream\PushStream;
 use Docker\Stream\SocketReadStream;
 use Http\Client\Socket\Stream as SocketStream;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Docker\Docker.
@@ -32,6 +39,8 @@ class Docker extends Client
 
     /**
      * {@inheritdoc}
+     *
+     * @return ($fetch is 'object' ? DockerRawStream|null : ResponseInterface)
      */
     public function containerAttach(string $id, array $queryParameters = [], string $fetch = self::FETCH_OBJECT, array $accept = [])
     {
@@ -40,6 +49,8 @@ class Docker extends Client
 
     /**
      * {@inheritdoc}
+     *
+     * @return ($fetch is 'object' ? AttachWebsocketStream|null : ResponseInterface)
      */
     public function containerAttachWebsocket(string $id, array $queryParameters = [], string $fetch = self::FETCH_OBJECT, array $accept = [])
     {
@@ -48,6 +59,8 @@ class Docker extends Client
 
     /**
      * {@inheritdoc}
+     *
+     * @return ($fetch is 'object' ? DockerRawStream|null : ResponseInterface)
      */
     public function containerLogs(string $id, array $queryParameters = [], string $fetch = self::FETCH_OBJECT, array $accept = [])
     {
@@ -61,6 +74,8 @@ class Docker extends Client
 
     /**
      * {@inheritdoc}
+     *
+     * @return ($fetch is 'object' ? DockerRawStream|null : ResponseInterface)
      */
     public function execStart(string $id, ?ExecIdStartPostBody $requestBody = null, string $fetch = self::FETCH_OBJECT, array $accept = [])
     {
@@ -96,7 +111,7 @@ class Docker extends Client
             || !preg_match('/(?:^|,)\s*upgrade\s*(?:,|$)/i', $response->getHeaderLine('Connection'))
             || $response->hasHeader('Transfer-Encoding')
             || $response->hasHeader('Content-Encoding')
-            || !\in_array($mediaType, [\Docker\Stream\DockerRawStream::HEADER, \Docker\Stream\DockerRawStream::MULTIPLEXED_HEADER], true)
+            || !\in_array($mediaType, [DockerRawStream::HEADER, DockerRawStream::MULTIPLEXED_HEADER], true)
             || (!$stream instanceof SocketReadStream && !$stream instanceof SocketStream)) {
             $stream->close();
             throw new \RuntimeException('Docker did not provide a supported interactive exec upgrade (HTTP '.$response->getStatusCode().').');
@@ -115,6 +130,8 @@ class Docker extends Client
 
     /**
      * {@inheritdoc}
+     *
+     * @return ($fetch is 'object' ? BuildStream|null : ResponseInterface)
      */
     public function imageBuild($requestBody = null, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT)
     {
@@ -123,12 +140,19 @@ class Docker extends Client
 
     /**
      * {@inheritdoc}
+     *
+     * @return ($fetch is 'object' ? CreateImageStream|null : ResponseInterface)
      */
     public function imageCreate(?string $requestBody = null, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT)
     {
         return $this->executeEndpoint(new ImageCreate($requestBody, $queryParameters, $headerParameters), $fetch);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return ($fetch is 'object' ? PushStream|null : ResponseInterface)
+     */
     public function imagePush(string $name, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT, array $accept = [])
     {
         if (isset($headerParameters['X-Registry-Auth']) && $headerParameters['X-Registry-Auth'] instanceof AuthConfig) {
@@ -140,6 +164,8 @@ class Docker extends Client
 
     /**
      * {@inheritdoc}
+     *
+     * @return ($fetch is 'object' ? EventStream|null : ResponseInterface)
      */
     public function systemEvents(array $queryParameters = [], string $fetch = self::FETCH_OBJECT)
     {

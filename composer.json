@@ -68,7 +68,7 @@
         "lint": "vendor/bin/parallel-lint --exclude vendor .",
         "php-cs-fixer": "vendor/bin/php-cs-fixer fix --dry-run --verbose --diff",
         "php-cs-fixer-fix": "vendor/bin/php-cs-fixer fix --verbose",
-        "phpstan": "vendor/bin/phpstan analyse --level 2 src",
+        "phpstan": "vendor/bin/phpstan analyse --level 2 src tests/StaticAnalysis",
         "phpunit": "vendor/bin/phpunit ./tests/ --coverage-html=./report/coverage/ --testdox-html=./report/testdox.html --disallow-test-output --process-isolation",
         "test": [
             "@lint",

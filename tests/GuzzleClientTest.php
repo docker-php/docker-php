@@ -9,9 +9,12 @@ use Docker\API\Model\ContainersCreatePostBody;
 use Docker\Docker;
 use Docker\Stream\DockerRawStream;
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\InvalidArgumentException as GuzzleInvalidArgumentException;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\TransferStats;
 use Http\Client\Common\PluginClient;
 use Nyholm\Psr7\Request;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -68,7 +71,7 @@ class GuzzleClientTest extends TransportTestCase
         $this->createCertificates();
         $address = $this->startServer(['ssl' => $this->serverTlsOptions()]);
 
-        $this->assertCertificateRejected($this->guzzle('https://'.$address));
+        $this->assertCertificateRejected('https://'.$address);
     }
 
     public function testHttpsRejectsWrongHostname(): void
@@ -76,7 +79,7 @@ class GuzzleClientTest extends TransportTestCase
         $this->createCertificates('DNS:not-docker.test');
         $address = $this->startServer(['ssl' => $this->serverTlsOptions()]);
 
-        $this->assertCertificateRejected($this->guzzle('https://'.$address, ['verify' => $this->directory.'/ca.pem']));
+        $this->assertCertificateRejected('https://'.$address, ['verify' => $this->directory.'/ca.pem']);
     }
 
     public function testMutualTlsRejectsMissingClientCertificate(): void
@@ -161,7 +164,7 @@ class GuzzleClientTest extends TransportTestCase
         $this->assertStringStartsWith('GET /_ping HTTP/1.1', $this->serverResult()['request']);
     }
 
-    public function testDefaultStreamingHandlerDoesNotUseCurlSocketOption(): void
+    public function testDefaultStreamingHandlerReadsIncrementally(): void
     {
         if (!\ini_get('allow_url_fopen')) {
             $this->markTestSkipped('The default PHP stream handler requires allow_url_fopen.');
@@ -170,7 +173,6 @@ class GuzzleClientTest extends TransportTestCase
         $client = new PluginClient(new GuzzleClient([
             'base_uri' => 'http://'.$address,
             'stream' => true,
-            'curl' => [\CURLOPT_UNIX_SOCKET_PATH => $this->directory.'/does-not-exist.sock'],
             'proxy' => '',
             'timeout' => 3,
         ]));
@@ -178,6 +180,36 @@ class GuzzleClientTest extends TransportTestCase
 
         $this->assertFalse($response->getBody()->isSeekable());
         $this->assertSame('http', $response->getBody()->getMetadata('wrapper_type'));
+        $this->assertSame('OK', $response->getBody()->getContents());
+        $this->assertStringContainsString('Host: '.$address."\r\n", $this->serverResult()['request']);
+    }
+
+    public function testDefaultStreamingHandlerDoesNotUseCurlSocketOption(): void
+    {
+        if (!\ini_get('allow_url_fopen')) {
+            $this->markTestSkipped('The default PHP stream handler requires allow_url_fopen.');
+        }
+        $options = [
+            'stream' => true,
+            'curl' => [\CURLOPT_UNIX_SOCKET_PATH => $this->directory.'/does-not-exist.sock'],
+            'proxy' => '',
+            'timeout' => 3,
+        ];
+
+        if (ClientInterface::MAJOR_VERSION >= 8) {
+            // Guzzle 8 rejects cURL-only options on the stream handler.
+            $client = new PluginClient(new GuzzleClient($options + ['base_uri' => 'http://localhost']));
+            $this->expectException(GuzzleInvalidArgumentException::class);
+            $client->sendRequest(new Request('GET', '/_ping'));
+
+            return;
+        }
+
+        // Guzzle 7 ignores them and connects to base_uri instead of the socket.
+        $address = $this->startServer();
+        $client = new PluginClient(new GuzzleClient($options + ['base_uri' => 'http://'.$address]));
+        $response = $client->sendRequest(new Request('GET', '/_ping'));
+
         $this->assertSame('OK', $response->getBody()->getContents());
         $this->assertStringContainsString('Host: '.$address."\r\n", $this->serverResult()['request']);
     }
@@ -197,13 +229,21 @@ class GuzzleClientTest extends TransportTestCase
         return ['status' => $status, 'body' => $body, 'headers' => ['Content-Type' => 'application/json']];
     }
 
-    private function assertCertificateRejected(GuzzleClient $client): void
+    private function assertCertificateRejected(string $url, array $options = []): void
     {
+        // Guzzle 8 removed the exception handler context; transfer stats report the cURL errno in both majors.
+        $errno = null;
+        $client = $this->guzzle($url, $options + [
+            'on_stats' => static function (TransferStats $stats) use (&$errno): void {
+                $errno = $stats->getHandlerErrorData();
+            },
+        ]);
+
         try {
             Docker::create($client);
             $this->fail('The server certificate should have been rejected.');
-        } catch (GuzzleException $exception) {
-            $this->assertSame(\CURLE_SSL_CACERT, $exception->getHandlerContext()['errno']);
+        } catch (GuzzleException) {
+            $this->assertSame(\CURLE_SSL_CACERT, $errno);
         }
     }
 

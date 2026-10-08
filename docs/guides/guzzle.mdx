@@ -4,7 +4,7 @@ description: "Compare the bundled socket client and Guzzle, with connection exam
 ---
 
 Docker PHP uses its bundled socket client by default. You can also pass a
-configured Guzzle 7 client to `Docker::create()`. Both support connection
+configured Guzzle 7 or 8 client to `Docker::create()`. Both support connection
 settings directly in PHP; environment variables are optional.
 
 ## Choosing a client
@@ -165,8 +165,9 @@ adjust it for builds, transfers or other long-running operations.
 The cURL handler buffers response bodies even with `stream => true`. Completed
 logs can still be decoded, but following logs or subscribing to events can
 wait indefinitely or hit the timeout before returning output. Guzzle's PHP
-stream handler can read incrementally, but does not use
-`CURLOPT_UNIX_SOCKET_PATH`; changing handlers changes which options work.
+stream handler can read incrementally, but cannot connect to a Unix socket:
+Guzzle 7 ignores the `curl` option on that handler and Guzzle 8 rejects it.
+Changing handlers changes which options work.
 
 `StreamingDecoderPlugin` handles decoding after the transport returns a
 response. It cannot remove buffering inside Guzzle's cURL handler. If you

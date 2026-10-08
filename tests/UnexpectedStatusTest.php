@@ -36,17 +36,24 @@ class UnexpectedStatusTest extends TestCase
         restore_error_handler();
     }
 
-    public function testUnhandledErrorReturnsNullWithDeprecationByDefault(): void
+    public function testUnhandledErrorThrowsByDefault(): void
     {
         $docker = $this->docker(new Response(400, self::JSON, '{"message":"Minimum memory limit allowed is 6MB"}'));
 
-        $this->assertNull($docker->containerUpdate('web', new ContainersIdUpdatePostBody()));
-        $this->assertCount(1, $this->deprecations);
-        $this->assertStringContainsString('Docker returned HTTP 400 for POST /containers/web/update: Minimum memory limit allowed is 6MB', $this->deprecations[0]);
-        $this->assertStringContainsString('throwOnUnexpectedStatus()', $this->deprecations[0]);
+        $this->expectException(UnexpectedClientErrorException::class);
+        $this->expectExceptionMessage('Docker returned HTTP 400 for POST /containers/web/update: Minimum memory limit allowed is 6MB');
+        $docker->containerUpdate('web', new ContainersIdUpdatePostBody());
     }
 
-    public function testOptInThrowsClientError(): void
+    public function testOptOutReturnsNull(): void
+    {
+        $docker = $this->docker(new Response(400, self::JSON, '{"message":"Minimum memory limit allowed is 6MB"}'))->throwOnUnexpectedStatus(false);
+
+        $this->assertNull($docker->containerUpdate('web', new ContainersIdUpdatePostBody()));
+        $this->assertSame([], $this->deprecations);
+    }
+
+    public function testClientErrorDetails(): void
     {
         $docker = $this->docker(new Response(409, self::JSON, '{"message":"network with name web already exists"}'))->throwOnUnexpectedStatus();
 
@@ -65,7 +72,7 @@ class UnexpectedStatusTest extends TestCase
         $this->assertSame([], $this->deprecations);
     }
 
-    public function testOptInThrowsServerErrorWithPlainTextBody(): void
+    public function testServerErrorWithPlainTextBody(): void
     {
         $docker = $this->docker(new Response(500, ['Content-Type' => 'text/plain'], "invalid reference format\n"))->throwOnUnexpectedStatus();
 
@@ -112,6 +119,21 @@ class UnexpectedStatusTest extends TestCase
 
         $this->assertInstanceOf(DockerRawStream::class, $stream);
         $this->assertSame(0, $response->getBody()->tell(), 'Successful responses must stay unread');
+    }
+
+    public function testUnlimitedPidsLimitDecodes(): void
+    {
+        // Docker reports a container without a PID limit as the largest uint64.
+        $docker = $this->docker(new Response(200, self::JSON, '{"read":"t1","pids_stats":{"current":3,"limit":18446744073709551615}}'));
+
+        $stats = $docker->containerStats('web', ['stream' => false]);
+
+        if ($stats instanceof \stdClass) {
+            // Before API 1.48 the sample is decoded without generated setters.
+            $this->assertSame(18446744073709551615.0, $stats->pids_stats->limit);
+        } else {
+            $this->assertSame(\PHP_INT_MAX, $stats->getPidsStats()->getLimit());
+        }
     }
 
     private function docker(ResponseInterface ...$responses): Docker

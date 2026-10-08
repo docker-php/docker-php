@@ -78,31 +78,27 @@ class ContextTest extends TestCase
         $this->assertFileDoesNotExist($file);
     }
 
-    public function testAppliesDockerignoreWhenEnabled(): void
+    public function testAppliesDockerignoreByDefault(): void
     {
         $directory = $this->contextWithDockerignore();
-        $deprecations = $this->captureDeprecations(static function () use ($directory, &$tar, &$stream): void {
-            $context = (new Context($directory))->applyDockerignore();
-            $tar = $context->toTar();
-            $stream = stream_get_contents($context->toStream());
-        });
+        $context = new Context($directory);
+        $tar = $context->toTar();
+        $stream = stream_get_contents($context->toStream());
 
-        $this->assertSame([], $deprecations);
         $expected = ['./.dockerignore', './Dockerfile', './app.php', './docs', './docs/README.md'];
         $this->assertSame($expected, $this->tarEntries($tar));
         $this->assertSame($expected, $this->tarEntries($stream));
     }
 
-    public function testDockerignoreIsNotAppliedByDefault(): void
+    public function testDockerignoreCanBeDisabled(): void
     {
         $directory = $this->contextWithDockerignore();
         $deprecations = $this->captureDeprecations(static function () use ($directory, &$tar): void {
-            $tar = (new Context($directory))->toTar();
+            $tar = (new Context($directory))->applyDockerignore(false)->toTar();
         });
 
         $this->assertContains('./secret.txt', $this->tarEntries($tar));
-        $this->assertCount(1, $deprecations);
-        $this->assertStringContainsString('Context::applyDockerignore()', $deprecations[0]);
+        $this->assertSame([], $deprecations);
     }
 
     public function testNoDeprecationWithoutDockerignore(): void

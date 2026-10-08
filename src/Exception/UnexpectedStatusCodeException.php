@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Docker returned an error status that the generated endpoint does not handle.
  *
- * Thrown when Docker::throwOnUnexpectedStatus() is enabled; catch
+ * Thrown unless Docker::throwOnUnexpectedStatus(false) is set; catch
  * UnexpectedClientErrorException or UnexpectedServerErrorException to tell 4xx
  * and 5xx responses apart.
  */

@@ -16,7 +16,7 @@ class ContainerStats extends BaseEndpoint
         // Both modes use application/json, so the request decides: `stream`
         // keeps the response open and sends one sample per document.
         if (200 === $response->getStatusCode() && $this->getQueryOptionsResolver()->resolve($this->queryParameters)['stream']) {
-            return new StatsStream($response->getBody());
+            return new StatsStream($response->getBody(), $serializer);
         }
 
         return parent::transformResponseBody($response, $serializer, $contentType);

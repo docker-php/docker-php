@@ -47,7 +47,7 @@ class Context implements ContextInterface
      */
     private $format = self::FORMAT_STREAM;
 
-    private bool $applyDockerignore = false;
+    private bool $applyDockerignore = true;
 
     /** Temporary NUL-separated list of the paths to archive. */
     private ?string $pathList = null;
@@ -95,10 +95,10 @@ class Context implements ContextInterface
     }
 
     /**
-     * Leave out paths matched by the context's .dockerignore file, as `docker build` does.
+     * Whether to leave out paths matched by the context's .dockerignore file,
+     * as `docker build` does (the default).
      *
-     * Without this, the whole directory is archived and a .dockerignore file
-     * triggers a deprecation notice. Applying it becomes the default in 4.0.
+     * Pass false to archive the whole directory, as 3.x did by default.
      */
     public function applyDockerignore(bool $enabled = true): static
     {
@@ -182,18 +182,7 @@ class Context implements ContextInterface
     private function tarCommand(): array
     {
         $dockerignore = $this->directory.\DIRECTORY_SEPARATOR.'.dockerignore';
-        if (!is_file($dockerignore)) {
-            return ['/usr/bin/env', 'tar', '-c', '.'];
-        }
-
-        if (!$this->applyDockerignore) {
-            trigger_deprecation(
-                'docker-php/docker-php',
-                '3.3',
-                'The build context %s has a .dockerignore file that is not applied; from 4.0 it will be. Call Context::applyDockerignore() to opt in now.',
-                $this->directory
-            );
-
+        if (!$this->applyDockerignore || !is_file($dockerignore)) {
             return ['/usr/bin/env', 'tar', '-c', '.'];
         }
 

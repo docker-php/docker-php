@@ -17,7 +17,12 @@ $responses = $config['responses'] ?? [($config['upgrade'] ?? false)
     ? ['status' => 101, 'body' => 'stream-output', 'headers' => ['Connection' => 'Upgrade', 'Upgrade' => 'tcp']]
     : ['body' => 'OK']];
 
-foreach ($responses as $response) {
+// Answer the client's unversioned API negotiation ping like a daemon, without
+// using up a scripted response. Pings are not reported to the test.
+$daemonApiVersion = $config['daemon_api_version'] ?? '1.99';
+$pings = 0;
+$response = array_shift($responses);
+while (null !== $response) {
     $connection = stream_socket_accept($server, 5);
     if (false === $connection) {
         throw new RuntimeException('No test client connected.');
@@ -47,6 +52,14 @@ foreach ($responses as $response) {
             }
             $body .= $chunk;
         }
+    }
+
+    if (($config['negotiation'] ?? true) && str_starts_with($request, "GET /_ping HTTP/1.1\r\n") && $pings < 3) {
+        ++$pings;
+        $headers = null === $daemonApiVersion ? '' : 'API-Version: '.$daemonApiVersion."\r\n";
+        fwrite($connection, "HTTP/1.1 200 OK\r\n".$headers."Content-Length: 2\r\nConnection: close\r\n\r\nOK");
+        fclose($connection);
+        continue;
     }
 
     $result = ['request' => $request, 'body' => $body];
@@ -81,5 +94,6 @@ foreach ($responses as $response) {
         }
     }
     fclose($connection);
+    $response = array_shift($responses);
 }
 fclose($server);

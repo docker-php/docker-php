@@ -38,9 +38,19 @@ class DockerClientFactoryTransportTest extends TransportTestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('OK', $response->getBody()->getContents());
         $request = $this->serverResult()['request'];
-        $this->assertStringStartsWith("GET /v1.45/_ping HTTP/1.1\r\n", $request);
+        $this->assertStringStartsWith('GET /v'.DockerClientFactory::defaultApiVersion()."/_ping HTTP/1.1\r\n", $request);
         $expectedHost = 'unix' === $scheme ? 'localhost' : $address;
         $this->assertStringContainsString('Host: '.$expectedHost."\r\n", $request);
+    }
+
+    public function testNegotiatesWithAnOlderDaemon(): void
+    {
+        $address = $this->startServer(['daemon_api_version' => '1.41']);
+
+        $response = DockerClientFactory::create(['remote_socket' => 'tcp://'.$address, 'timeout' => 3000])->sendRequest(new Request('GET', '/containers/json'));
+
+        $this->assertSame('OK', $response->getBody()->getContents());
+        $this->assertStringStartsWith('GET /v1.41/containers/json HTTP/1.1', $this->serverResult()['request']);
     }
 
     public function testHttpUrlFromEnvironment(): void

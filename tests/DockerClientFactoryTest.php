@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Docker\Tests;
 
 use Docker\DockerClientFactory;
+use Docker\Http\ApiVersionNegotiationPlugin;
 use Http\Client\Common\Plugin\AddPathPlugin;
 use Http\Client\Common\PluginClient;
 use Http\Client\Common\PluginClientFactory;
@@ -83,9 +84,19 @@ class DockerClientFactoryTest extends TestCase
         $this->assertSame($host, (string) $uri);
     }
 
-    public function testDefaultApiVersion(): void
+    public function testNegotiatesWithoutAnExplicitVersion(): void
     {
-        $this->assertSame('/v1.45', $this->getApiPath());
+        $plugins = $this->createdPlugins();
+
+        $this->assertCount(1, array_filter($plugins, static fn (object $plugin): bool => $plugin instanceof ApiVersionNegotiationPlugin));
+        $this->assertCount(0, array_filter($plugins, static fn (object $plugin): bool => $plugin instanceof AddPathPlugin));
+    }
+
+    public function testDefaultApiVersionMatchesGeneratedClient(): void
+    {
+        $specification = (new \ReflectionClass(\Docker\API\Client::class))->getFileName();
+        $this->assertMatchesRegularExpression('#^1\.[0-9]+$#', DockerClientFactory::defaultApiVersion());
+        $this->assertStringContainsString("createUri('/v".DockerClientFactory::defaultApiVersion()."')", file_get_contents($specification));
     }
 
     public function testApiVersionFromEnvironment(): void
@@ -202,7 +213,7 @@ class DockerClientFactoryTest extends TestCase
         $this->assertSame('test', $context['ssl']['peer_name']);
     }
 
-    private function getApiPath(array $config = []): string
+    private function createdPlugins(array $config = []): array
     {
         $plugins = [];
         PluginClientFactory::setFactory(static function ($client, array $createdPlugins, array $options) use (&$plugins): PluginClient {
@@ -214,7 +225,12 @@ class DockerClientFactoryTest extends TestCase
 
         DockerClientFactory::create($config);
 
-        foreach ($plugins as $plugin) {
+        return $plugins;
+    }
+
+    private function getApiPath(array $config = []): string
+    {
+        foreach ($this->createdPlugins($config) as $plugin) {
             if ($plugin instanceof AddPathPlugin) {
                 $uri = (new \ReflectionProperty($plugin, 'uri'))->getValue($plugin);
 

@@ -6,7 +6,6 @@ namespace Docker\Tests;
 
 use Composer\InstalledVersions;
 use Docker\API\Model\ContainersCreatePostBody;
-use Docker\API\Model\ContainersIdJsonGetResponse200;
 use Docker\API\Model\HealthcheckResult;
 use Docker\API\Model\NetworkSettings;
 use Docker\API\Model\PortBinding;
@@ -26,6 +25,14 @@ class GeneratedNormalizerTest extends TestCase
             [new ArrayDenormalizer(), new JaneObjectNormalizer()],
             [new JsonEncoder(null, new JsonDecode(['json_decode_associative' => true]))]
         );
+    }
+
+    /** API 1.48 renamed the generated inspect response model. */
+    private static function containerInspectModel(): string
+    {
+        return class_exists('Docker\\API\\Model\\ContainerInspectResponse')
+            ? 'Docker\\API\\Model\\ContainerInspectResponse'
+            : 'Docker\\API\\Model\\ContainersIdJsonGetResponse200';
     }
 
     public function testRenamedPackagesAreInstalledTogether(): void
@@ -89,7 +96,7 @@ class GeneratedNormalizerTest extends TestCase
     {
         $payload = '{"Id":"example","NetworkSettings":{"Ports":{"80/tcp":[{"HostIp":"127.0.0.1","HostPort":"8080"}],"2377/tcp":null,"53/udp":[]}}}';
         $serializer = $this->serializer();
-        $container = $serializer->deserialize($payload, ContainersIdJsonGetResponse200::class, 'json');
+        $container = $serializer->deserialize($payload, self::containerInspectModel(), 'json');
         $ports = $container->getNetworkSettings()->getPorts();
         self::assertNull($ports['2377/tcp']);
         self::assertSame([], $ports['53/udp']);

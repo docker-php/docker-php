@@ -53,3 +53,62 @@ jobs:
 
       - name: Run PHPUnit test suite
         run: composer run-script test-ci
+
+  api-versions:
+    name: API ${{ matrix.api-line }} (Docker ${{ matrix.docker }})
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        api-line: ["7.1.45", "7.1.46", "7.1.47", "7.1.48", "7.1.49", "7.1.50", "7.1.51", "7.1.52", "7.1.53", "7.1.54", "7.1.55", "7.1.56"]
+        # The runner's daemon is older than the newest lines, so those negotiate down.
+        docker: [runner]
+        include:
+          # Run the newest line against a daemon that supports it without negotiation.
+          - api-line: "7.1.56"
+            docker: "29"
+
+    services:
+      dind:
+        image: ${{ matrix.docker == '29' && 'docker:29-dind' || '' }}
+        options: --privileged
+        env:
+          DOCKER_TLS_CERTDIR: ""
+        ports:
+          - 2375:2375
+
+    env:
+      DOCKER_HOST: ${{ matrix.docker == '29' && 'tcp://127.0.0.1:2375' || '' }}
+
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+        with:
+          php-version: "8.5"
+          extensions: curl, openssl
+          tools: composer:v2
+          coverage: none
+
+      - name: Select the API line
+        run: composer require --no-update "docker-php/docker-php-api:>=${{ matrix.api-line }}.0 <${{ matrix.api-line }}.99999"
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # v4.0.0
+        with:
+          dependency-versions: highest
+
+      - name: Wait for the daemon
+        run: |
+          for attempt in $(seq 1 30); do docker version && break; sleep 2; done
+          docker version --format 'Daemon API {{.Server.APIVersion}}'
+
+      - name: Pull the docker image used by the tests.
+        run: docker pull busybox:latest
+
+      - name: Run PHPUnit test suite
+        run: composer run-script test-ci

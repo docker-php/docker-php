@@ -7,6 +7,7 @@ namespace Docker\Tests;
 use Docker\API\Exception\ContainerInspectNotFoundException;
 use Docker\API\Model\ContainersCreatePostBody;
 use Docker\Docker;
+use Docker\DockerClientFactory;
 use Docker\Stream\DockerRawStream;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface;
@@ -56,9 +57,9 @@ class GuzzleClientTest extends TransportTestCase
         $docker = $this->runDocumentationExample($example, $transport, $address);
 
         $this->assertSame([], $docker->containerList());
-        $this->assertStringStartsWith('GET /v1.45/info HTTP/1.1', $this->serverResult()['request']);
+        $this->assertStringStartsWith('GET /v'.DockerClientFactory::defaultApiVersion().'/info HTTP/1.1', $this->serverResult()['request']);
         $request = $this->serverResult(1);
-        $this->assertStringStartsWith('GET /v1.45/containers/json?', $request['request']);
+        $this->assertStringStartsWith('GET /v'.DockerClientFactory::defaultApiVersion().'/containers/json?', $request['request']);
         $host = 'unix' === $transport ? 'localhost' : $address;
         $this->assertStringContainsString('Host: '.$host."\r\n", $request['request']);
         if ('mutual-tls' === $transport) {
@@ -110,7 +111,7 @@ class GuzzleClientTest extends TransportTestCase
         $request = $this->serverResult(1);
         [$method, $uri] = explode(' ', $request['request'], 3);
         $this->assertSame('POST', $method);
-        $this->assertSame('/v1.45/containers/create', parse_url($uri, \PHP_URL_PATH));
+        $this->assertSame('/v'.DockerClientFactory::defaultApiVersion().'/containers/create', parse_url($uri, \PHP_URL_PATH));
         $json = json_decode($request['body'], true, 512, \JSON_THROW_ON_ERROR);
         $this->assertSame('busybox:latest', $json['Image']);
         $this->assertSame(['MODE=test'], $json['Env']);
@@ -149,12 +150,12 @@ class GuzzleClientTest extends TransportTestCase
 
         $this->assertSame("hello\n", $stdout);
         $this->assertSame("warn\n", $stderr);
-        $this->assertStringContainsString('/v1.45/containers/test/logs?', $this->serverResult(1)['request']);
+        $this->assertStringContainsString('/v'.DockerClientFactory::defaultApiVersion().'/containers/test/logs?', $this->serverResult(1)['request']);
     }
 
     public function testExplicitCurlHandlerBuffersDespiteStreamOption(): void
     {
-        $address = $this->startServer();
+        $address = $this->startServer(['negotiation' => false]);
         $client = new PluginClient($this->guzzle('http://'.$address, ['stream' => true]));
         $response = $client->sendRequest(new Request('GET', '/_ping'));
 
@@ -169,7 +170,7 @@ class GuzzleClientTest extends TransportTestCase
         if (!\ini_get('allow_url_fopen')) {
             $this->markTestSkipped('The default PHP stream handler requires allow_url_fopen.');
         }
-        $address = $this->startServer();
+        $address = $this->startServer(['negotiation' => false]);
         $client = new PluginClient(new GuzzleClient([
             'base_uri' => 'http://'.$address,
             'stream' => true,
@@ -206,7 +207,7 @@ class GuzzleClientTest extends TransportTestCase
         }
 
         // Guzzle 7 ignores them and connects to base_uri instead of the socket.
-        $address = $this->startServer();
+        $address = $this->startServer(['negotiation' => false]);
         $client = new PluginClient(new GuzzleClient($options + ['base_uri' => 'http://'.$address]));
         $response = $client->sendRequest(new Request('GET', '/_ping'));
 

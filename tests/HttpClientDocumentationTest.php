@@ -6,6 +6,7 @@ namespace Docker\Tests;
 
 use Docker\API\Model\ExecIdStartPostBody;
 use Docker\Docker;
+use Docker\DockerClientFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class HttpClientDocumentationTest extends TransportTestCase
@@ -50,9 +51,9 @@ class HttpClientDocumentationTest extends TransportTestCase
         self::assertSame("first\r\nlast\r\n", $stdout);
         self::assertNotNull($firstCallback);
         self::assertGreaterThan(500_000_000, $lastCallback - $firstCallback, 'Output was buffered until the peer finished.');
-        self::assertStringStartsWith('GET /v1.45/info HTTP/1.1', $this->serverResult()['request']);
+        self::assertStringStartsWith('GET /v'.DockerClientFactory::defaultApiVersion().'/info HTTP/1.1', $this->serverResult()['request']);
         $request = $this->serverResult(1)['request'];
-        self::assertStringStartsWith('POST /v1.45/exec/test/start HTTP/1.1', $request);
+        self::assertStringStartsWith('POST /v'.DockerClientFactory::defaultApiVersion().'/exec/test/start HTTP/1.1', $request);
         self::assertStringContainsString('Host: localhost', $request);
     }
 

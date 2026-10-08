@@ -103,8 +103,9 @@ class LiveStreamTest extends TestCase
             $stats = self::getDocker()->containerStats($id);
             $this->assertInstanceOf(StatsStream::class, $stats);
             $reads = [];
-            $stats->onFrame(static function (\stdClass $sample) use ($stats, &$reads): void {
-                $reads[] = $sample->read;
+            $stats->onFrame(static function (object $sample) use ($stats, &$reads): void {
+                // ContainerStatsResponse from API 1.48; a decoded stdClass before that.
+                $reads[] = $sample instanceof \stdClass ? $sample->read : $sample->getRead()?->format(\DATE_RFC3339_EXTENDED);
                 if (2 === \count($reads)) {
                     $stats->stop();
                 }

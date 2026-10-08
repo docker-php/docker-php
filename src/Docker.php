@@ -18,10 +18,13 @@ use Docker\Endpoint\ImageCreate;
 use Docker\Endpoint\ImagePush;
 use Docker\Endpoint\InteractiveExecStart;
 use Docker\Endpoint\SystemEvents;
+use Docker\API\Normalizer\JaneObjectNormalizer;
 use Docker\API\Runtime\Client\Endpoint;
+use Docker\API\Runtime\Client\FormEncoder;
 use Docker\Exception\BadRequestException;
 use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Http\InteractiveHttpClient;
+use Docker\Serializer\LargeIntegerJsonDecode;
 use Docker\Stream\AttachWebsocketStream;
 use Docker\Stream\BuildStream;
 use Docker\Stream\CreateImageStream;
@@ -34,6 +37,10 @@ use Docker\Stream\SocketReadStream;
 use Http\Client\Socket\Stream as SocketStream;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncode;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Docker\Docker.
@@ -42,14 +49,13 @@ class Docker extends Client
 {
     private bool $interactiveExecEnabled = false;
 
-    private bool $throwOnUnexpectedStatus = false;
+    private bool $throwOnUnexpectedStatus = true;
 
     /**
-     * Throw an UnexpectedStatusCodeException when Docker returns an error
-     * status that the generated endpoint does not handle.
+     * Whether an error status that the generated endpoint does not handle
+     * throws an UnexpectedStatusCodeException (the default).
      *
-     * Without this, such calls return null as in earlier releases and trigger
-     * a deprecation notice. Throwing becomes the default in 4.0.
+     * Pass false to return null for those responses, as 3.x did by default.
      */
     public function throwOnUnexpectedStatus(bool $enabled = true): static
     {
@@ -77,18 +83,9 @@ class Docker extends Client
             return $result;
         }
 
-        $exception = UnexpectedStatusCodeException::fromResponse($endpoint->getMethod(), $endpoint->getUri(), $response);
         if ($this->throwOnUnexpectedStatus) {
-            throw $exception;
+            throw UnexpectedStatusCodeException::fromResponse($endpoint->getMethod(), $endpoint->getUri(), $response);
         }
-
-        trigger_deprecation(
-            'docker-php/docker-php',
-            '3.3',
-            '%s The call returned null; from 4.0 it will throw %s. Call Docker::throwOnUnexpectedStatus() to opt in now.',
-            $exception->getMessage(),
-            $exception::class
-        );
 
         return null;
     }
@@ -137,10 +134,11 @@ class Docker extends Client
      * {@inheritdoc}
      *
      * With `stream => true` (the default) the result is a StatsStream that
-     * delivers one sample per frame; with `stream => false` it is one decoded
-     * sample.
+     * delivers one sample per frame; with `stream => false` it is one sample.
+     * Samples are ContainerStatsResponse models from API 1.48, and decoded
+     * \stdClass objects for earlier API versions.
      *
-     * @return ($fetch is 'object' ? StatsStream|\stdClass|null : ResponseInterface)
+     * @return ($fetch is 'object' ? StatsStream|object|null : ResponseInterface)
      */
     public function containerStats(string $id, array $queryParameters = [], string $fetch = self::FETCH_OBJECT)
     {
@@ -270,9 +268,10 @@ class Docker extends Client
      *
      * @return ($fetch is 'object' ? EventStream|null : ResponseInterface)
      */
-    public function systemEvents(array $queryParameters = [], string $fetch = self::FETCH_OBJECT)
+    public function systemEvents(array $queryParameters = [], string $fetch = self::FETCH_OBJECT, array $accept = [])
     {
-        return $this->executeEndpoint(new SystemEvents($queryParameters), $fetch);
+        // API 1.52 and later accept an Accept header; earlier endpoints ignore it.
+        return $this->executeEndpoint(new SystemEvents($queryParameters, $accept), $fetch);
     }
 
     public static function create(
@@ -287,6 +286,10 @@ class Docker extends Client
         }
 
         $client = parent::create($httpClient, $additionalPlugins, $additionalNormalizers, $applyServerPlugins);
+        $client->serializer = new Serializer(
+            [new ArrayDenormalizer(), new JaneObjectNormalizer(), ...$additionalNormalizers],
+            [new JsonEncoder(new JsonEncode(), new LargeIntegerJsonDecode(['json_decode_associative' => true])), new FormEncoder()]
+        );
         $client->interactiveExecEnabled = $httpClient instanceof InteractiveHttpClient;
         $response = $client->executeRawEndpoint(new SystemInfo());
         $testClient = $response->getBody()->getContents();

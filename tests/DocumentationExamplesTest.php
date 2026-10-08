@@ -128,7 +128,7 @@ class DocumentationExamplesTest extends TestCase
 
     public function testPullReportsAnErrorInsideAnHttp200Stream(): void
     {
-        $client = $this->client(static fn () => new Response(200, ['Content-Type' => 'application/json'], '{"error":"pull denied"}'));
+        $client = $this->client(static fn () => new Response(200, ['Content-Type' => 'application/json'], '{"errorDetail":{"message":"pull denied"},"error":"pull denied"}'));
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('pull denied');
         $this->runExample('guides/registry', 0, $client);
@@ -237,6 +237,9 @@ class DocumentationExamplesTest extends TestCase
 
     public function testStatsExplicitlyDisableStreaming(): void
     {
+        if (!class_exists('Docker\\API\\Model\\ContainerStatsResponse')) {
+            self::markTestSkipped('The stats example uses the model added in API 1.48.');
+        }
         $client = $this->client(static fn () => new Response(200, ['Content-Type' => 'application/json'], '{"memory_stats":{"usage":1024}}'));
         self::assertSame("Memory usage: 1024 bytes\n", $this->runExample('guides/events-and-stats', 1, $client));
         parse_str($this->requests[0]['query'], $query);
@@ -253,7 +256,7 @@ class DocumentationExamplesTest extends TestCase
 
     public function testBuildReportsDaemonErrorsAfterHttpSuccess(): void
     {
-        $client = $this->client(static fn () => new Response(200, ['Content-Type' => 'application/json'], '{"error":"build failed"}'));
+        $client = $this->client(static fn () => new Response(200, ['Content-Type' => 'application/json'], '{"errorDetail":{"message":"build failed"},"error":"build failed"}'));
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('build failed');
         $this->runExample('cookbook/build-image', 0, $client);

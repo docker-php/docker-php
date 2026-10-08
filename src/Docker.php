@@ -131,6 +131,34 @@ class Docker extends Client
     /**
      * {@inheritdoc}
      *
+     * @param array{
+     *    "dockerfile"?: string,
+     *    "t"?: string|list<string>,
+     *    "extrahosts"?: string,
+     *    "remote"?: string,
+     *    "q"?: bool,
+     *    "nocache"?: bool,
+     *    "cachefrom"?: string,
+     *    "pull"?: string,
+     *    "rm"?: bool,
+     *    "forcerm"?: bool,
+     *    "memory"?: int,
+     *    "memswap"?: int,
+     *    "cpushares"?: int,
+     *    "cpusetcpus"?: string,
+     *    "cpuperiod"?: int,
+     *    "cpuquota"?: int,
+     *    "buildargs"?: string,
+     *    "shmsize"?: int,
+     *    "squash"?: bool,
+     *    "labels"?: string,
+     *    "networkmode"?: string,
+     *    "platform"?: string,
+     *    "target"?: string,
+     *    "outputs"?: string,
+     *    "version"?: string,
+     * } $queryParameters
+     *
      * @return ($fetch is 'object' ? BuildStream|null : ResponseInterface)
      */
     public function imageBuild($requestBody = null, array $queryParameters = [], array $headerParameters = [], string $fetch = self::FETCH_OBJECT)

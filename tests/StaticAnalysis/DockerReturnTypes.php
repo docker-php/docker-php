@@ -16,6 +16,7 @@ function dockerReturnTypes(Docker $docker): void
     assertType('Docker\Stream\DockerRawStream|null', $docker->containerLogs('id'));
     assertType('Docker\Stream\DockerRawStream|null', $docker->execStart('id'));
     assertType('Docker\Stream\BuildStream|null', $docker->imageBuild());
+    assertType('Docker\Stream\BuildStream|null', $docker->imageBuild(null, ['t' => ['app:latest', 'app:1.0']]));
     assertType('Docker\Stream\CreateImageStream|null', $docker->imageCreate());
     assertType('Docker\Stream\PushStream|null', $docker->imagePush('name'));
     assertType('Docker\Stream\EventStream|null', $docker->systemEvents());

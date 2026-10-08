@@ -40,6 +40,28 @@ class ImageResourceTest extends TestCase
         $this->assertStringContainsString('Successfully', $lastMessage);
     }
 
+    public function testBuildAppliesSeveralTags(): void
+    {
+        $contextBuilder = new ContextBuilder();
+        $contextBuilder->from('busybox:latest');
+        $contextBuilder->add('/test', 'test file content');
+        $context = $contextBuilder->getContext();
+        $tags = ['docker-php-test-tags:one', 'docker-php-test-tags:two'];
+
+        $buildStream = $this->getManager()->imageBuild($context->read(), ['t' => $tags]);
+        $buildStream->wait();
+
+        try {
+            $repoTags = $this->getManager()->imageInspect($tags[0])->getRepoTags();
+            sort($repoTags);
+            $this->assertSame($tags, $repoTags);
+        } finally {
+            foreach ($tags as $tag) {
+                $this->getManager()->imageDelete($tag);
+            }
+        }
+    }
+
     public function testCreate(): void
     {
         $createImageStream = $this->getManager()->imageCreate('', [

@@ -79,6 +79,10 @@ $build->wait();
 Do not pre-URL-encode the JSON options. Declare `ARG APP_MODE` in the Dockerfile
 if the build uses it. Build arguments are not a safe channel for secrets.
 
+To apply several tags, pass a list to `t`, for example
+`'t' => ['docker-php-example:latest', 'docker-php-example:1.0']`. Docker PHP
+sends one `t` parameter per tag. Lists require client `3.3.0` or later.
+
 A streamed context is consumed by the first request. The original tar process
 is not rewindable. Keep the context alive until the request has
 finished, and do not assume a process-backed stream has a known byte length.

@@ -148,10 +148,11 @@ class DocumentationExamplesTest extends TestCase
 
     public static function buildExamples(): iterable
     {
+        // Index 1 is the one-line .dockerignore opt-in, which does not build.
         yield 'directory context' => [0];
-        yield 'query options' => [1];
-        yield 'generated context' => [2];
-        yield 'private base image' => [3];
+        yield 'query options' => [2];
+        yield 'generated context' => [3];
+        yield 'private base image' => [4];
     }
 
     /** @dataProvider buildExamples */
@@ -161,12 +162,12 @@ class DocumentationExamplesTest extends TestCase
         self::assertStringContainsString('Built successfully', $this->runExample('cookbook/build-image', $index, $client));
         self::assertSame('/build', $this->requests[0]['path']);
         self::assertStringContainsString('Dockerfile', $this->requests[0]['body']);
-        if (1 === $index) {
+        if (2 === $index) {
             parse_str($this->requests[0]['query'], $query);
             self::assertSame(['APP_MODE' => 'development'], json_decode($query['buildargs'], true, 512, \JSON_THROW_ON_ERROR));
             self::assertSame('true', $query['pull']);
         }
-        if (3 === $index) {
+        if (4 === $index) {
             $config = json_decode(base64_decode($this->requests[0]['headers']['X-Registry-Config'][0], true), true, 512, \JSON_THROW_ON_ERROR);
             self::assertSame('documentation-token', $config['registry.example.com']['password']);
         }

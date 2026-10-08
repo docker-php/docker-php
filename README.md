@@ -100,20 +100,10 @@ models. See [API versions](https://docker-php.mintlify.site/api-versions).
 
 ## Upgrading to 4.0
 
-### From docker-php 3.x
-
-- Composer now installs the newest API line unless you require one. Require
-  `docker-php/docker-php-api:>=7.1.45.0 <7.1.46.0` to keep the 3.x models.
-- Requests negotiate the API version with the daemon unless you set one.
-- Error statuses the generated endpoints do not handle throw an
-  `UnexpectedStatusCodeException`. Call `throwOnUnexpectedStatus(false)` to
-  return `null` instead.
-- `Context` applies `.dockerignore`. Call `applyDockerignore(false)` to archive
-  the whole directory.
-
-Applications that cannot upgrade yet can stay on `^3.3`. See the
-[upgrade guide](https://docker-php.mintlify.site/migration#from-3-x) for model
-changes between API versions.
+Most applications come from the original docker-php 2.x client or from
+`beluga-php/docker-php` 1.45.x. Follow the section for your current package,
+then check the [3.x changes](#from-docker-php-3x), because 4.0 also changes
+defaults that 2.x and Beluga applications rely on.
 
 ### From docker-php 2.x
 
@@ -140,6 +130,21 @@ together, then test the application and commit its updated `composer.lock`.
 
 Install one package family at a time: the Beluga and original packages contain
 the same PHP classes.
+
+### From docker-php 3.x
+
+- Composer now installs the newest API line unless you require one. Require
+  `docker-php/docker-php-api:>=7.1.45.0 <7.1.46.0` to keep the 3.x models.
+- Requests negotiate the API version with the daemon unless you set one.
+- Error statuses the generated endpoints do not handle throw an
+  `UnexpectedStatusCodeException`. Call `throwOnUnexpectedStatus(false)` to
+  return `null` instead.
+- `Context` applies `.dockerignore`. Call `applyDockerignore(false)` to archive
+  the whole directory.
+
+Applications that cannot upgrade yet can stay on `^3.3`. See the
+[upgrade guide](https://docker-php.mintlify.site/migration#from-3-x) for model
+changes between API versions.
 
 ## Development
 

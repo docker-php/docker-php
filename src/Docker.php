@@ -18,7 +18,9 @@ use Docker\Endpoint\ImageCreate;
 use Docker\Endpoint\ImagePush;
 use Docker\Endpoint\InteractiveExecStart;
 use Docker\Endpoint\SystemEvents;
+use Docker\API\Runtime\Client\Endpoint;
 use Docker\Exception\BadRequestException;
+use Docker\Exception\UnexpectedStatusCodeException;
 use Docker\Http\InteractiveHttpClient;
 use Docker\Stream\AttachWebsocketStream;
 use Docker\Stream\BuildStream;
@@ -30,6 +32,7 @@ use Docker\Stream\PushStream;
 use Docker\Stream\StatsStream;
 use Docker\Stream\SocketReadStream;
 use Http\Client\Socket\Stream as SocketStream;
+use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -38,6 +41,57 @@ use Psr\Http\Message\ResponseInterface;
 class Docker extends Client
 {
     private bool $interactiveExecEnabled = false;
+
+    private bool $throwOnUnexpectedStatus = false;
+
+    /**
+     * Throw an UnexpectedStatusCodeException when Docker returns an error
+     * status that the generated endpoint does not handle.
+     *
+     * Without this, such calls return null as in earlier releases and trigger
+     * a deprecation notice. Throwing becomes the default in 4.0.
+     */
+    public function throwOnUnexpectedStatus(bool $enabled = true): static
+    {
+        $this->throwOnUnexpectedStatus = $enabled;
+
+        return $this;
+    }
+
+    public function executeEndpoint(Endpoint $endpoint, string $fetch = self::FETCH_OBJECT)
+    {
+        if (self::FETCH_OBJECT !== $fetch) {
+            return parent::executeEndpoint($endpoint, $fetch);
+        }
+
+        $response = $this->executeRawEndpoint($endpoint);
+        if ($response->getStatusCode() < 400) {
+            return $endpoint->parseResponse($response, $this->serializer, $fetch);
+        }
+
+        // Error bodies are small. Buffer them so the message is still readable
+        // after the generated endpoint has parsed the body.
+        $response = $response->withBody(Stream::create((string) $response->getBody()));
+        $result = $endpoint->parseResponse($response, $this->serializer, $fetch);
+        if (null !== $result) {
+            return $result;
+        }
+
+        $exception = UnexpectedStatusCodeException::fromResponse($endpoint->getMethod(), $endpoint->getUri(), $response);
+        if ($this->throwOnUnexpectedStatus) {
+            throw $exception;
+        }
+
+        trigger_deprecation(
+            'docker-php/docker-php',
+            '3.3',
+            '%s The call returned null; from 4.0 it will throw %s. Call Docker::throwOnUnexpectedStatus() to opt in now.',
+            $exception->getMessage(),
+            $exception::class
+        );
+
+        return null;
+    }
 
     /**
      * {@inheritdoc}

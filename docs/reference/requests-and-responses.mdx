@@ -76,7 +76,9 @@ Use getters on models; do not assume every result is an array.
 
 Successful operations such as starting a container can have no response body.
 A `null` result is therefore not a general failure indicator. Check the endpoint
-contract, or use a raw response when you need the HTTP status.
+contract, or use a raw response when you need the HTTP status. To make sure a
+`null` never hides an error response, enable
+[unexpected status exceptions](#unexpected-error-statuses).
 
 For absent or nullable response fields, use null checks or null-safe getters.
 Inspect responses and create request models serve different purposes; do not
@@ -155,9 +157,37 @@ try {
 
 The factory itself makes an `/info` request and can fail before the `try` block
 above. Include client creation in your application's outer connection/error
-handling. Generated exceptions cover documented status/content-type pairs;
-do not assume they validate every unexpected proxy or daemon response. Use a
-raw response when your application requires strict HTTP status handling.
+handling.
+
+### Unexpected error statuses
+
+Generated exceptions cover the status codes and JSON responses listed in
+Docker's API specification. Docker also returns errors the specification
+leaves out: `containerUpdate()` answers an invalid memory limit with HTTP 400,
+`networkCreate()` answers a duplicate name with 409, and a proxy in front of
+the daemon can return its own errors. Those calls return `null`.
+
+Since `3.3.0` you can make them throw instead:
+
+```php
+$docker = Docker::create()->throwOnUnexpectedStatus();
+```
+
+An error status of 400 or above that the endpoint does not handle then throws
+`Docker\Exception\UnexpectedClientErrorException` (4xx) or
+`UnexpectedServerErrorException` (5xx). Both extend
+`Docker\Exception\UnexpectedStatusCodeException`, which exposes the status
+code, the request method and path, Docker's error message and the response.
+They also implement the generated `ClientException` and `ServerException`
+interfaces, so existing `catch` blocks for those still match.
+
+Success responses are unchanged: a `304` from starting a running container
+still returns `null`, and raw responses (`FETCH_RESPONSE`) are never checked.
+
+Without the option, these calls keep returning `null` and trigger an
+`E_USER_DEPRECATED` notice through `trigger_deprecation()`. Frameworks and
+PHPUnit report it in their deprecation logs; plain PHP needs an error handler
+to see it. Throwing becomes the default in 4.0.
 
 Do not automatically retry every failed request. A connection failure after
 submission can leave the operation's outcome unknown. Reconcile the container

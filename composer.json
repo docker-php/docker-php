@@ -34,8 +34,10 @@
     },
     "conflict": {
         "beluga-php/docker-php": "*",
+        "jane-php/json-schema-runtime": "<7.14.4",
+        "jane-php/open-api-runtime": "<7.14.4",
         "nikic/php-parser": "<4.13",
-        "php-http/message": "<1.15"
+        "php-http/message": "<1.16"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

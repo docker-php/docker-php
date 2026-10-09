@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.0.1
+
+### Fixed
+
+- Stop lowest-dependency installs from pulling in the abandoned
+  `php-http/message-factory` package. The client now conflicts with Jane
+  runtimes before 7.14.4, the version that generates the API packages, and with
+  `php-http/message` before 1.16.
+
 ## 4.0.0
 
 ### Breaking changes

@@ -3,12 +3,6 @@
     "description": "A Docker PHP client",
     "license": "MIT",
     "type": "library",
-    "funding": [
-        {
-            "type": "github",
-            "url": "https://github.com/flavioheleno"
-        }
-    ],
     "require": {
         "php": ">=8.1",
         "docker-php/docker-php-api": ">=7.1.45.0 <7.1.57.0",

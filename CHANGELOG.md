@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.2
+
+### Changed
+
+- Remove the funding links from `composer.json` and the repository, which
+  pointed to the Beluga maintainer's sponsorship pages. No code changes.
+
 ## 4.0.1
 
 ### Fixed

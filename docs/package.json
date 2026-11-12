@@ -12,7 +12,7 @@
     "check:examples": "php scripts/check-php-examples.php"
   },
   "devDependencies": {
-    "mint": "4.2.992"
+    "mint": "4.3.18"
   },
   "overrides": {
     "@modelcontextprotocol/sdk": "^1.32.1",

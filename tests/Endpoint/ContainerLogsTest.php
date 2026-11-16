@@ -71,11 +71,15 @@ class ContainerLogsTest extends TestCase
             throw new \LogicException('An error response must not inspect the container');
         });
 
+        // From API 1.57 the generated exception carries the deserialized error.
+        $serializer = $this->createMock(SerializerInterface::class);
+        $serializer->method('deserialize')->willReturnCallback(static fn (mixed $data, string $type): object => new $type());
+
         $this->expectException(ContainerLogsNotFoundException::class);
 
         $endpoint->parseResponse(
             new Response(404, ['Content-Type' => 'application/json'], '{"message":"No such container: missing"}'),
-            $this->createMock(SerializerInterface::class)
+            $serializer
         );
     }
 }

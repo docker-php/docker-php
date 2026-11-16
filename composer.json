@@ -5,7 +5,7 @@
     "type": "library",
     "require": {
         "php": ">=8.2",
-        "docker-php/docker-php-api": ">=7.1.45.0 <7.1.57.0",
+        "docker-php/docker-php-api": ">=7.1.45.0 <7.1.58.0",
         "nyholm/psr7": "^1.8",
         "php-http/client-common": "^2.7",
         "php-http/discovery": "^1.19",

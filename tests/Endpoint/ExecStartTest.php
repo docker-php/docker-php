@@ -90,11 +90,23 @@ class ExecStartTest extends TestCase
     public function testNonStreamResponsesKeepGeneratedBehavior(int $status, string $contentType, string $body): void
     {
         $config = (new ExecIdStartPostBody())->setDetach(true);
+        // From API 1.57 the generated endpoint deserializes JSON error bodies.
         $serializer = $this->createMock(SerializerInterface::class);
+        $serializer->method('deserialize')->willReturnCallback(static fn (mixed $data, string $type): object => new $type());
         $headers = '' === $contentType ? [] : ['Content-Type' => $contentType];
-        $expected = (new RawExecStart('test', $config))->parseResponse(new Response($status, $headers, $body), $serializer);
+        $expected = self::outcome(static fn () => (new RawExecStart('test', $config))->parseResponse(new Response($status, $headers, $body), $serializer));
 
-        self::assertSame($expected, (new ExecStart('test', $config))->parseResponse(new Response($status, $headers, $body), $serializer));
+        self::assertSame($expected, self::outcome(static fn () => (new ExecStart('test', $config))->parseResponse(new Response($status, $headers, $body), $serializer)));
+    }
+
+    /** @return array{string, mixed} the return value, or the class of the exception thrown */
+    private static function outcome(callable $parse): array
+    {
+        try {
+            return ['return', $parse()];
+        } catch (\Throwable $exception) {
+            return ['throw', $exception::class];
+        }
     }
 
     public function testRawEndpointPreservesFrameHeaders(): void

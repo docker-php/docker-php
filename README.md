@@ -28,7 +28,7 @@ maintenance of the original `docker-php/docker-php` repository to give you a
 better upgrade path. Development will continue here, and we will archive
 `beluga-php/docker-php` once the migration is complete.
 
-Version 4.0 works with Docker Engine API v1.45 to v1.56. See
+Version 4.1 works with Docker Engine API v1.45 to v1.57. See
 [Upgrading to 4.0](#upgrading-to-40) below for how to migrate from existing
 releases.
 
@@ -82,7 +82,7 @@ These guides cover callback streams, TTY output and raw response framing.
 
 Each Docker Engine API version has its own `docker-php/docker-php-api` line with
 generated endpoints and models. The line uses the four-part version
-`Jane-major.Docker-major.Docker-minor.revision`: `7.1.56.0` means Docker API 1.56,
+`Jane-major.Docker-major.Docker-minor.revision`: `7.1.57.0` means Docker API 1.57,
 generated with Jane 7, revision 0. To use a specific version, require its line:
 
 ```bash

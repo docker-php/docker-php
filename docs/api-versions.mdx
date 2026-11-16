@@ -5,7 +5,7 @@ description: "Choose a Docker Engine API version and how requests negotiate with
 
 ## Choose an API version
 
-Docker PHP 4.0 works with Docker Engine API v1.45 to v1.56. Each version has its
+Docker PHP 4.1 works with Docker Engine API v1.45 to v1.57. Each version has its
 own `docker-php/docker-php-api` release line with generated endpoints and
 models. Without a direct API requirement, Composer installs the newest line.
 
@@ -29,8 +29,8 @@ for the version you use.
 `docker-php/docker-php` follows semantic versioning.
 
 `docker-php/docker-php-api` uses a four-part scheme:
-`Jane-major.Docker-major.Docker-minor.revision`. For example, `7.1.56.0` means
-Docker Engine API v1.56, generated with Jane 7, revision 0. Keep a direct API
+`Jane-major.Docker-major.Docker-minor.revision`. For example, `7.1.57.0` means
+Docker Engine API v1.57, generated with Jane 7, revision 0. Keep a direct API
 requirement within one line, as above. A constraint such as `^7.1.45.0` allows
 every newer Docker specification.
 
@@ -83,5 +83,5 @@ from responses and ignored in requests.
 
 Each line is generated from Docker's specification for that version with Jane
 7.14.4, without local patches. The API repository has one branch per line,
-such as [`7.1.56`](https://github.com/docker-php/docker-php-api/tree/7.1.56); see its
+such as [`7.1.57`](https://github.com/docker-php/docker-php-api/tree/7.1.57); see its
 [generation instructions](https://github.com/docker-php/docker-php-api#generation).

@@ -34,9 +34,11 @@ releases.
 
 ## Requirements
 
-- PHP 8.1 or later, with the `mbstring` extension.
+- PHP 8.2 or later, with the `mbstring` extension.
 - [Composer](https://getcomposer.org/).
 - Access to a Docker daemon with API v1.45 or later (Docker Engine 26.0 or later).
+
+Docker PHP 4.0 is the last release line that supports PHP 8.1.
 
 ## Installation
 
@@ -107,7 +109,7 @@ defaults that 2.x and Beluga applications rely on.
 
 ### From docker-php 2.x
 
-Version 4.0 requires PHP 8.1 or later, PSR-7 v2 and Jane 7-generated models.
+Version 4.1 requires PHP 8.2 or later, PSR-7 v2 and Jane 7-generated models.
 Review endpoint signatures, model types and HTTP client dependencies before
 upgrading. Check log and exec consumers against the
 [streaming documentation](https://docker-php.mintlify.site/reference/streams).

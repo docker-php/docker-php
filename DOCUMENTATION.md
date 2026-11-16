@@ -9,7 +9,7 @@ No custom domain is configured.
 
 ## Local preview
 
-Use Node.js 22 or 24 LTS and PHP 8.1 or later. From the repository root:
+Use Node.js 22 or 24 LTS and PHP 8.2 or later. From the repository root:
 
 ```bash
 cd docs

@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.1.0
+
+### Changed
+
+- Require PHP 8.2 or later. PHP 8.1 reached end of life on 31 December 2025;
+  Docker PHP 4.0 remains available for it.
+- Allow the Docker Engine API v1.57 line (`docker-php/docker-php-api`
+  `>=7.1.45.0 <7.1.58.0`). Composer installs the newest line unless you require
+  one. API 1.57 adds a `restarting` attribute to container `die` events and
+  declares JSON error responses for streaming endpoints; generated model names
+  are unchanged from 1.56.
+
 ## 4.0.2
 
 ### Changed
